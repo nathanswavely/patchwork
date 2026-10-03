@@ -49,7 +49,7 @@
       explanations.push({
         label: 'Quorum',
         value: q + '%',
-        explain: q === 0 ? 'No minimum participation \u2014 any number of votes counts.' : `At least ${q}% of members must vote for a decision to count.`,
+        explain: q === 0 ? 'No minimum participation. Any number of votes counts.' : `At least ${q}% of members must vote for a decision to count.`,
       });
     }
 
@@ -320,5 +320,22 @@
     font-size: 0.85rem;
     line-height: 1.7;
     border-top: 1px solid var(--color-border);
+  }
+
+  /* A phone gets the whole width; a 39px strip of backdrop was not worth
+     the 39px of preview it cost. */
+  @media (max-width: 640px) {
+    .drawer {
+      width: 100vw;
+      border-left: none;
+    }
+  }
+
+  @media (pointer: coarse) {
+    .close-btn {
+      min-width: 44px;
+      min-height: 44px;
+      margin-right: -0.5rem;
+    }
   }
 </style>

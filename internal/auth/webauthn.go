@@ -21,10 +21,53 @@ import (
 )
 
 // WebAuthnService manages WebAuthn ceremonies.
+//
+// The inner *webauthn.WebAuthn is rebuilt, not mutated, whenever the list of
+// accepted origins changes (Reconfigure). That happens on a quiet path — at
+// startup, and after an admin lists or removes a native app — while ceremony
+// calls are reading it from every request, so the pointer is swapped under a
+// mutex and every reader takes the read side. The session store is untouched
+// by a rebuild: a ceremony already in flight finishes against the config it
+// began with.
 type WebAuthnService struct {
+	mu       sync.RWMutex
 	wa       *webauthn.WebAuthn
 	db       *database.DB
+	cfg      *config.Config
 	sessions *sessionStore
+}
+
+// engine returns the current relying party. Every ceremony goes through it
+// rather than touching s.wa, so Reconfigure has exactly one writer to race
+// with and it is holding the lock.
+func (s *WebAuthnService) engine() *webauthn.WebAuthn {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	return s.wa
+}
+
+// Reconfigure rebuilds the relying party so that it accepts this instance's
+// own origin plus extraOrigins.
+//
+// The extra ones are the apk-key-hash origins of the Android apps this quilt
+// vouches for (docs/adr/2026-09-20-an-instance-vouches-for-an-app.md). An
+// Android app's assertion names "android:apk-key-hash:…" rather than the
+// site's https origin, so a listed app that is not on this list is refused at
+// the last step of a sign-in that otherwise worked — which is the confusing
+// half of the failure, and the reason this is called from the same two places
+// the list can change.
+//
+// Building the new config fully before taking the lock means a rejected
+// config leaves the running one in place.
+func (s *WebAuthnService) Reconfigure(extraOrigins []string) error {
+	wa, err := newRelyingParty(s.cfg, extraOrigins)
+	if err != nil {
+		return err
+	}
+	s.mu.Lock()
+	s.wa = wa
+	s.mu.Unlock()
+	return nil
 }
 
 // maxWebAuthnSessions bounds the in-memory challenge store. Login challenges
@@ -139,9 +182,30 @@ func (s *sessionStore) cleanup() {
 }
 
 // NewWebAuthnService creates a configured WebAuthn service.
+//
+// It starts with the instance's own origin alone. Callers that have listed
+// native apps call Reconfigure with their origins once the database is open;
+// an instance that has listed none never calls it and behaves exactly as it
+// always has.
 func NewWebAuthnService(db *database.DB, cfg *config.Config) (*WebAuthnService, error) {
+	wa, err := newRelyingParty(cfg, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return &WebAuthnService{
+		wa:       wa,
+		db:       db,
+		cfg:      cfg,
+		sessions: newSessionStore(),
+	}, nil
+}
+
+// newRelyingParty builds the go-webauthn relying party for this instance,
+// accepting its own https origin plus any extras handed in.
+func newRelyingParty(cfg *config.Config, extraOrigins []string) (*webauthn.WebAuthn, error) {
 	rpID := cfg.Instance.Domain
-	rpOrigins := []string{"https://" + cfg.Instance.Domain}
+	rpOrigins := append([]string{"https://" + cfg.Instance.Domain}, extraOrigins...)
 
 	wa, err := webauthn.New(&webauthn.Config{
 		RPDisplayName: cfg.Instance.Name,
@@ -167,12 +231,7 @@ func NewWebAuthnService(db *database.DB, cfg *config.Config) (*WebAuthnService, 
 	if err != nil {
 		return nil, fmt.Errorf("init webauthn: %w", err)
 	}
-
-	return &WebAuthnService{
-		wa:       wa,
-		db:       db,
-		sessions: newSessionStore(),
-	}, nil
+	return wa, nil
 }
 
 // WebAuthnUser adapts a model.User + credentials for the webauthn.User interface.
@@ -201,17 +260,7 @@ const maxCredentialNameLen = 64
 // cut mid-character. Anything that reduces to nothing falls back to the
 // default — an unnamed passkey is still a usable passkey.
 func SanitizeCredentialName(name string) string {
-	cleaned := strings.Map(func(r rune) rune {
-		if r == '\t' || r == '\n' || r == '\r' {
-			return ' '
-		}
-		if unicode.IsControl(r) {
-			return -1
-		}
-		return r
-	}, name)
-
-	cleaned = strings.TrimSpace(cleaned)
+	cleaned := sanitizeDisplayText(name)
 	if cleaned == "" {
 		return DefaultCredentialName
 	}
@@ -223,6 +272,24 @@ func SanitizeCredentialName(name string) string {
 		}
 	}
 	return cleaned
+}
+
+// sanitizeDisplayText is the cleaning both SanitizeCredentialName and
+// auth.SanitizeNativeAppLabel do to a person-supplied string before it is
+// stored and rendered: whitespace trimmed, tabs and newlines flattened to
+// spaces, other control characters dropped. It caps nothing — the two
+// callers cap in runes at their own limits.
+func sanitizeDisplayText(s string) string {
+	cleaned := strings.Map(func(r rune) rune {
+		if r == '\t' || r == '\n' || r == '\r' {
+			return ' '
+		}
+		if unicode.IsControl(r) {
+			return -1
+		}
+		return r
+	}, s)
+	return strings.TrimSpace(cleaned)
 }
 
 // encodeTransports serializes the authenticator's transport hints for storage.
@@ -333,7 +400,7 @@ func (s *WebAuthnService) BeginRegistration(user *model.User) ([]byte, error) {
 		return nil, err
 	}
 
-	options, session, err := s.wa.BeginRegistration(waUser)
+	options, session, err := s.engine().BeginRegistration(waUser)
 	if err != nil {
 		return nil, fmt.Errorf("begin registration: %w", err)
 	}
@@ -362,7 +429,7 @@ func (s *WebAuthnService) FinishRegistration(user *model.User, response *protoco
 	}
 	s.sessions.Delete("reg:" + user.ID)
 
-	cred, err := s.wa.CreateCredential(waUser, *sessionData, response)
+	cred, err := s.engine().CreateCredential(waUser, *sessionData, response)
 	if err != nil {
 		return nil, fmt.Errorf("create credential: %w", err)
 	}
@@ -400,7 +467,7 @@ func (s *WebAuthnService) BeginStepUp(user *model.User) ([]byte, error) {
 		return nil, ErrNoCredentials
 	}
 
-	options, session, err := s.wa.BeginLogin(waUser)
+	options, session, err := s.engine().BeginLogin(waUser)
 	if err != nil {
 		return nil, fmt.Errorf("begin step-up: %w", err)
 	}
@@ -435,7 +502,7 @@ func (s *WebAuthnService) FinishStepUp(user *model.User, response *protocol.Pars
 	// second window.
 	s.sessions.Delete("sudo:" + user.ID)
 
-	cred, err := s.wa.ValidateLogin(waUser, *sessionData, response)
+	cred, err := s.engine().ValidateLogin(waUser, *sessionData, response)
 	if err != nil {
 		return fmt.Errorf("validate step-up: %w", err)
 	}
@@ -446,7 +513,7 @@ func (s *WebAuthnService) FinishStepUp(user *model.User, response *protocol.Pars
 
 // BeginLogin starts a WebAuthn login ceremony for discoverable credentials.
 func (s *WebAuthnService) BeginLogin() ([]byte, error) {
-	options, session, err := s.wa.BeginDiscoverableLogin()
+	options, session, err := s.engine().BeginDiscoverableLogin()
 	if err != nil {
 		return nil, fmt.Errorf("begin login: %w", err)
 	}
@@ -495,7 +562,7 @@ func (s *WebAuthnService) FinishLogin(response *protocol.ParsedCredentialAsserti
 		return waUser, nil
 	}
 
-	cred, err := s.wa.ValidateDiscoverableLogin(handler, *sessionData, response)
+	cred, err := s.engine().ValidateDiscoverableLogin(handler, *sessionData, response)
 	if err != nil {
 		return nil, fmt.Errorf("validate login: %w", err)
 	}

@@ -286,10 +286,10 @@ type Node struct {
 	// not vocabulary, so "tags" above means the approved, public list to
 	// every reader, and this stays a separate array rather than making one
 	// array mean different things to different viewers.
-	PendingTags      []string    `json:"pending_tags,omitempty"`
-	Status           string      `json:"status,omitempty"`
-	SubmittedBy      string      `json:"submitted_by,omitempty"`
-	SubmissionSource string      `json:"submission_source,omitempty"`
+	PendingTags      []string `json:"pending_tags,omitempty"`
+	Status           string   `json:"status,omitempty"`
+	SubmittedBy      string   `json:"submitted_by,omitempty"`
+	SubmissionSource string   `json:"submission_source,omitempty"`
 	// AcceptEventSuggestions is the patch-admin-owned switch for whether
 	// non-members may suggest events to this (active) patch (docs/adr/026).
 	AcceptEventSuggestions bool `json:"accept_event_suggestions"`
@@ -318,9 +318,9 @@ type Node struct {
 	// (docs/adr/037).
 	PublicGovernanceRecord string               `json:"public_governance_record,omitempty"`
 	FollowerPermissions    *FollowerPermissions `json:"follower_permissions,omitempty"`
-	GovernanceConfig    *GovernanceConfig    `json:"governance_config,omitempty"`
-	MemberCount         int                  `json:"member_count,omitempty"`
-	FollowerCount       int                  `json:"follower_count,omitempty"`
+	GovernanceConfig       *GovernanceConfig    `json:"governance_config,omitempty"`
+	MemberCount            int                  `json:"member_count,omitempty"`
+	FollowerCount          int                  `json:"follower_count,omitempty"`
 	// Events not yet started — distinct from the tree endpoint's
 	// event_count, which is every active event past and future
 	// (CONTEXT.md "Upcoming events"). Set on the single-node detail
@@ -754,4 +754,21 @@ type ContentReport struct {
 	// NodeID routes a report about a notice or a reply to that patch's
 	// admins (docs/adr/081). NULL for the kinds the instance panel handles.
 	NodeID *string `json:"node_id,omitempty"`
+}
+
+// NativeApp is one native app this quilt vouches for
+// (docs/adr/2026-09-20-an-instance-vouches-for-an-app.md). The row is what
+// the two platform association files are rendered from, so Identifier is
+// stored exactly as it will be published.
+type NativeApp struct {
+	ID         string `json:"id"`
+	Platform   string `json:"platform"`
+	Identifier string `json:"identifier"`
+	// Fingerprints is the app's SHA-256 signing-certificate fingerprints,
+	// Android only. Always present, always an array: an Apple row carries an
+	// empty one rather than a null, because a client that has to tell null
+	// from empty will get it wrong on one of them.
+	Fingerprints []string `json:"fingerprints"`
+	Label        string   `json:"label"`
+	CreatedAt    string   `json:"created_at"`
 }

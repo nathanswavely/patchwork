@@ -73,6 +73,15 @@ var (
 	magicLinkEmailLimiter = NewRateLimiterStore(rate.Every(20*time.Minute), 3)
 	magicLinkIPLimiter    = NewRateLimiterStore(rate.Every(6*time.Minute), 10)
 
+	// MagicCode verification: 10 attempts per email per 15 minutes — one
+	// budget for the window a code is alive in. This is not what stops a
+	// guesser. The row's own `attempts` counter is: it cannot be escaped by
+	// changing address, network or process, and at five wrong codes it marks
+	// the row used, spending the emailed link too. This limiter only keeps
+	// the endpoint cheap, so a flood aimed at one mailbox does not buy an
+	// unbounded number of hashes and queries.
+	magicCodeEmailLimiter = NewRateLimiterStore(rate.Every(90*time.Second), 10)
+
 	// InviteGeneration: 20 per admin/hour.
 	inviteGenerationLimiter = NewRateLimiterStore(rate.Every(3*time.Minute), 20)
 
@@ -123,6 +132,18 @@ func CheckMagicLinkRate(email, ip string) error {
 	}
 	if !magicLinkIPLimiter.Allow("ip:" + ip) {
 		return fmt.Errorf("rate limit exceeded for IP")
+	}
+	return nil
+}
+
+// CheckMagicCodeRate limits verification attempts per email address. Keyed on
+// the address rather than the caller, because the address is what a guesser
+// would be attacking and an IP is what they would change. The refusal it
+// returns is never shown to the client in a form that differs from a wrong
+// code — see auth.ErrInvalidMagicCode.
+func CheckMagicCodeRate(email string) error {
+	if !magicCodeEmailLimiter.Allow("code:" + email) {
+		return fmt.Errorf("rate limit exceeded for email")
 	}
 	return nil
 }

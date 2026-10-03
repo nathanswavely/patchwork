@@ -20,12 +20,14 @@ func TestPaths(t *testing.T) {
 		{"pending members", PatchMembersPending("gallery-row"), "/patches/gallery-row/members?status=pending"},
 		{"patch setup", PatchSetup("gallery-row"), "/patches/gallery-row/setup"},
 		{"event", Event("ev-1"), "/events/ev-1"},
+		{"user", User("sophia-chen"), "/users/sophia-chen"},
 		{"proposal", Proposal("gallery-row", "pr-1"), "/patches/gallery-row/governance/pr-1"},
 		{"governance doc", GovernanceDoc("gallery-row", "doc-1"), "/patches/gallery-row/governance/docs/doc-1"},
 		{"noticeboard", PatchNoticeboard("gallery-row"), "/patches/gallery-row/noticeboard"},
 		{"notice", Notice("gallery-row", "n-1"), "/patches/gallery-row/noticeboard/n-1"},
 		{"noticeboard reports", PatchNoticeboardReports("gallery-row"), "/patches/gallery-row/settings/noticeboard"},
 		{"remote patch", RemotePatch("other.example", "their-patch"), "/quilts/other.example/patches/their-patch"},
+		{"sign-in link", SignInLink("tok123"), "/login/link/tok123"},
 		{"absolute", Absolute("arts.example", "/events/ev-1"), "https://arts.example/events/ev-1"},
 	}
 	for _, c := range cases {

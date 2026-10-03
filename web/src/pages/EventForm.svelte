@@ -901,4 +901,15 @@
       flex-direction: column;
     }
   }
+
+  /* The only way to change the hosting patch; on a finger it is a real
+     target, reaching into the chip's padding rather than growing it. */
+  @media (pointer: coarse) {
+    .chip-x {
+      min-width: 36px;
+      min-height: 36px;
+      justify-content: center;
+      margin: -0.5rem -0.6rem -0.5rem -0.3rem;
+    }
+  }
 </style>

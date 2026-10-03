@@ -221,4 +221,10 @@
   .person-profile-link {
     font-size: 0.85rem;
   }
+
+  @media (pointer: coarse) {
+    .person-trigger {
+      min-height: 40px;
+    }
+  }
 </style>

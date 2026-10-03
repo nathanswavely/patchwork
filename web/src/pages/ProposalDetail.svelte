@@ -26,6 +26,22 @@
   // it actually meant. membershipRole is set for every active row and empty
   // for everyone else, so it is the standing test.
   let hasStanding = $derived(!!patch.value.membershipRole);
+
+  // The sticky bar is for when the vote section has scrolled away. Shown
+  // always, it sat on top of the section's own buttons on a phone: two
+  // sets of vote buttons on one screen, the lower one half hidden.
+  let voteSectionEl = $state(null);
+  let voteSectionInView = $state(false);
+  $effect(() => {
+    const el = voteSectionEl;
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      voteSectionInView = false;
+      return;
+    }
+    const io = new IntersectionObserver(([entry]) => { voteSectionInView = entry.isIntersecting; });
+    io.observe(el);
+    return () => io.disconnect();
+  });
   let proposalId = $derived(getParams().id || '');
 
   let proposal = $state(null);
@@ -348,7 +364,7 @@
         <!-- Vote section — a direct change was never voted on, and an election
              counts approvals over a slate rather than yes/no on a question -->
         {#if !isElection && !isDirectChange && showsTally}
-          <section class="proposal-section">
+          <section class="proposal-section" bind:this={voteSectionEl}>
             <h2>{advisory ? 'Advisory vote' : 'Vote'}</h2>
             {#if soleVoter}
               <p class="sole-voter-note">You're the only eligible voter, so your vote decides this immediately.</p>
@@ -365,6 +381,7 @@
               openedAt={proposal.created_at}
               userVote={proposal.my_vote}
               votingEndsAt={proposal.voting_ends_at}
+              showTimeLeft={false}
               state={effectiveState}
               voters={proposal.voters || []}
               {canVote}
@@ -422,7 +439,7 @@
     abstainCount={proposal.abstain_count || 0}
     userVote={proposal.my_vote}
     votingEndsAt={proposal.voting_ends_at}
-    visible={true}
+    visible={!voteSectionInView}
     onVote={handleVote}
   />
 {/if}
@@ -606,5 +623,16 @@
       padding: 0.5rem 0.65rem;
       font-size: 0.8rem;
     }
+  }
+
+  /* The link keeps its two words together and drops under the sentence
+     when there isn't room beside it. */
+  .changes-summary {
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+  }
+
+  .changes-summary .btn-link {
+    white-space: nowrap;
   }
 </style>

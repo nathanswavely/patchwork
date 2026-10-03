@@ -371,8 +371,7 @@
         <h1>{selectedInterests.size > 0 ? 'Patches you might like' : 'Everything on this quilt'}</h1>
         <p class="subtitle">
           {matching.length}
-          {matching.length === 1 ? 'patch' : 'patches'}{selectedInterests.size > 0 ? ' match what you picked' : ''}{' '}
-          — the ones with something coming up are first.
+          {matching.length === 1 ? 'patch' : 'patches'}{selectedInterests.size > 0 ? ' match what you picked' : ''}{'. '}The ones with something coming up are first.
         </p>
 
         <div class="patch-list">
@@ -468,14 +467,14 @@
           {:else if isLoggedIn()}
             <p class="counter">Follow a few and they become your quilt.</p>
           {:else}
-            <p class="counter">Following needs an account — reading never does.</p>
+            <p class="counter">Following needs an account. Reading never does.</p>
           {/if}
 
           {#if isLoggedIn() && !bulletinDecided && bulletinChannels.length > 0}
             <div class="bulletin-offer">
               <p class="bulletin-ask">
                 Once a month, we can tell you which patches joined. The whole
-                list, in the order they arrived — nothing picked out for you.
+                list, in the order they arrived, with nothing picked out for you.
               </p>
               <div class="bulletin-choices">
                 <button

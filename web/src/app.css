@@ -146,6 +146,14 @@
     --btn-sm-pad-x: 0.85rem;
     --btn-sm-font: 0.85rem;
   }
+
+  /* A text-shaped button keeps its size in the line and gains a finger's
+     worth of target above and below it: padding the negative margin gives
+     straight back, so nothing around it moves. */
+  .btn-link {
+    padding-block: 0.6rem;
+    margin-block: -0.6rem;
+  }
 }
 
 /* ---- Light theme — textile canvas + punk palette ----
@@ -423,7 +431,9 @@ button:disabled {
 .container-narrow {
   max-width: 640px;
   margin: 0 auto;
-  padding: 0 1rem;
+  /* No padding: every page wearing this sits inside a shell, and the shell
+     owns the gutter (docs/adr/038). A second inset here made 28px sides on
+     a phone and cost the forms 32px of width. */
 }
 
 /* Standard work-mode content area — used by shells and standalone pages.
@@ -629,12 +639,18 @@ button:disabled {
     display: none !important;
   }
 
+  /* clip, not hidden: overflow-x: hidden makes body a scroll container
+     that never scrolls, and every position: sticky below it then sticks to
+     that instead of the viewport, which is to say never. hidden stays as
+     the fallback for a browser without clip. */
   html {
     overflow-x: hidden;
+    overflow-x: clip;
   }
 
   body {
     overflow-x: hidden;
+    overflow-x: clip;
   }
 
   input[type="text"],
@@ -649,6 +665,11 @@ button:disabled {
     width: 100%;
     max-width: 100%;
   }
+  /* This is right for a field stacked in a form and wrong for one in a
+     flex row: a full-width select is a 100% flex basis, and it takes the
+     row from whatever sits beside it (the event-source form's URL field
+     was left 26px wide). A row holding a select wraps on a phone, and its
+     select sets width: auto. CSS cannot tell the two apart from here. */
 
   /* iOS zooms the whole page when a focused field is under 16px. Component
      styles are scoped (higher specificity than a bare element selector), so
@@ -664,6 +685,26 @@ button:disabled {
     min-height: 44px;
     min-width: 44px;
     justify-content: center;
+  }
+
+  /* The top of a workspace page on a phone (the admin panel, a patch's
+     workspace). Three insets stacked there, each reasonable alone: the
+     content area's 1.5rem, every page header's own 1.5rem, and a 2em
+     display-font h1, so the first control landed a third of the way down
+     the screen. The shells' up links take the first line; the heading
+     follows it closely. The patch workspace tightens further in PatchShell,
+     where the up link shares the cluster's row. */
+  .workspace-body.work-content {
+    padding-top: 0.75rem;
+  }
+
+  .workspace-body h1 {
+    font-size: 1.6rem;
+  }
+
+  .workspace-body.work-content .page-header {
+    padding-top: 0.25rem;
+    padding-bottom: 0.75rem;
   }
 
   /* Tighter gutters buy back width the scroll would otherwise cost. */

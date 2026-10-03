@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -19,6 +20,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
+	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
 // clientIP extracts the client IP address from the request. See
@@ -164,22 +166,55 @@ func RedeemInviteLink(db *database.DB, cfg *config.Config) http.HandlerFunc {
 	}
 }
 
-// magicLinkURL builds the verify link — both the one emailed and the one
-// printed to the server log when SMTP is not configured. It must point at the
-// API route (/api/v1/auth/verify/{token}), not an SPA path: the SPA has no
-// verify route and would silently fall back to the home page. With
+// magicLinkURL builds the sign-in link — both the one emailed and the one
+// printed to the server log when SMTP is not configured. It points at the
+// SPA's link page (weblink.SignInLink), which spends nothing on load and asks
+// the server by POST whether this browser is the one that asked
+// (docs/adr/2026-09-28-a-link-knows-where-it-was-asked-for.md). With
 // instance.domain set it must be clickable from outside the box
 // (DEPLOYMENT.md tells deployers to grep the log for it), so it uses https on
 // the public domain like the other outward-facing URLs. Only a domainless
 // config (local dev) falls back to localhost.
 func magicLinkURL(domain, port, token string) string {
 	if domain != "" {
-		return fmt.Sprintf("https://%s/api/v1/auth/verify/%s", domain, token)
+		return weblink.Absolute(domain, weblink.SignInLink(token))
 	}
 	if port == "" {
 		port = "8080"
 	}
-	return fmt.Sprintf("http://localhost:%s/api/v1/auth/verify/%s", port, token)
+	return fmt.Sprintf("http://localhost:%s%s", port, weblink.SignInLink(token))
+}
+
+// signInRequestCookie holds the nonce that binds a sign-in link to the
+// browser that asked for it. Scoped to the two routes that read it and alive
+// as long as a link is, so it outlives nothing it could vouch for.
+const signInRequestCookie = "patchwork_signin_request"
+
+const signInRequestCookiePath = "/api/v1/auth/magic-link"
+
+// signInRequestNonce returns the nonce this browser already holds, or mints
+// one and sets it. Reusing a live cookie is what lets a person who asks twice
+// open either link here and be signed in.
+func signInRequestNonce(w http.ResponseWriter, r *http.Request) string {
+	if c, err := r.Cookie(signInRequestCookie); err == nil && len(c.Value) >= 32 && len(c.Value) <= 128 {
+		return c.Value
+	}
+	nonce, err := auth.NewRequesterNonce()
+	if err != nil {
+		// No binding is the safe failure: the link still works, by code
+		// or by the "sign in on this device" button.
+		return ""
+	}
+	http.SetCookie(w, &http.Cookie{
+		Name:     signInRequestCookie,
+		Value:    nonce,
+		Path:     signInRequestCookiePath,
+		MaxAge:   15 * 60,
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+	})
+	return nonce
 }
 
 // RequestMagicLink handles POST /api/v1/auth/magic-link.
@@ -225,6 +260,10 @@ func RequestMagicLink(db *database.DB, cfg *config.Config) http.HandlerFunc {
 
 		ip := clientIP(r)
 
+		// Bind the link to this browser. Set before the throttle, so the
+		// response looks the same whether or not anything was issued.
+		requesterHash := auth.RequesterHash(signInRequestNonce(w, r))
+
 		// Rate limit. The client still gets the blanket 200 — whether an
 		// address has an account must stay unanswerable — but the log must
 		// say what happened, because without SMTP the log *is* the delivery
@@ -244,15 +283,19 @@ func RequestMagicLink(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			linkFor := func(token string) string {
 				return magicLinkURL(cfg.Instance.Domain, cfg.Server.Port, token)
 			}
-			if err := auth.GenerateMagicLink(db, email, cfg.SMTP, linkFor); err != nil {
+			if err := auth.GenerateMagicLink(db, email, requesterHash, cfg.SMTP, linkFor); err != nil {
 				log.Printf("magic link: send to %s failed: %v", email, err)
 			}
 		} else {
-			// No SMTP — generate the link and print to the server log.
-			token, err := auth.GenerateMagicLinkLocal(db, email)
+			// No SMTP — generate the link and print it to the server log,
+			// with the code under it. Same reason the throttle notice is
+			// logged at all (#222): without SMTP the log *is* the delivery
+			// channel, so a client that signs in by code has nowhere else to
+			// read one.
+			token, code, err := auth.GenerateMagicLinkLocal(db, email, requesterHash)
 			if err == nil {
 				link := magicLinkURL(cfg.Instance.Domain, cfg.Server.Port, token)
-				log.Printf("\n\033[1;36m✉  Magic link for %s:\033[0m\n   \033[4m%s\033[0m\n", email, link)
+				log.Printf("\n\033[1;36m✉  Magic link for %s:\033[0m\n   \033[4m%s\033[0m\n   \033[1mcode: %s\033[0m\n", email, link, code)
 			} else {
 				log.Printf("magic link: generate for %s failed: %v", email, err)
 			}
@@ -263,38 +306,136 @@ func RequestMagicLink(db *database.DB, cfg *config.Config) http.HandlerFunc {
 	}
 }
 
-// VerifyMagicLink handles GET /api/v1/auth/verify/{token}.
-// Existing accounts are logged straight in. An unknown email gets a signup
-// token instead of an account — the username is chosen by the person, never
-// derived from the email (docs/adr/013) — and is sent to /signup/complete.
-func VerifyMagicLink(db *database.DB) http.HandlerFunc {
+// MagicLinkRedirect handles GET /api/v1/auth/verify/{token} and its
+// /auth/verify/{token} alias: the URLs sign-in mail carried before the link
+// pointed at its own page. A GET never spends a link
+// (docs/adr/2026-09-28-a-link-knows-where-it-was-asked-for.md), because mail
+// scanners fetch links before a person sees them; it sends the browser to the
+// page that decides. API clients post to /api/v1/auth/magic-link/open.
+func MagicLinkRedirect() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rawToken := r.PathValue("token")
 		if rawToken == "" {
 			http.Error(w, `{"error":"token required"}`, http.StatusBadRequest)
 			return
 		}
+		http.Redirect(w, r, weblink.SignInLink(url.PathEscape(rawToken)), http.StatusFound)
+	}
+}
 
-		user, signupToken, err := auth.VerifyMagicLink(db, rawToken)
+// OpenMagicLink handles POST /api/v1/auth/magic-link/open with
+// {token, here}. It is the only way a link signs anybody in
+// (docs/adr/2026-09-28-a-link-knows-where-it-was-asked-for.md):
+//
+//   - the browser that asked (its cookie matches the row): signed in, or
+//     username_required plus a signup token for a new address (docs/adr/013);
+//   - anywhere else: {"status":"code"} with the code to type where sign-in
+//     was asked for, and nothing spent;
+//   - here: true, the "Sign in on this device" button: signed in, and the row
+//     spent, so the code stops working.
+//
+// Unknown, spent and expired links are one refusal.
+func OpenMagicLink(db *database.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req struct {
+			Token string `json:"token"`
+			Here  bool   `json:"here"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Token == "" {
+			writeJSONError(w, http.StatusBadRequest, "invalid or expired link")
+			return
+		}
+
+		nonce := ""
+		if c, err := r.Cookie(signInRequestCookie); err == nil {
+			nonce = c.Value
+		}
+
+		opening, err := auth.OpenMagicLink(db, req.Token, nonce, req.Here)
 		if err != nil {
-			http.Error(w, `{"error":"`+err.Error()+`"}`, http.StatusBadRequest)
+			if !errors.Is(err, auth.ErrInvalidMagicLink) {
+				log.Printf("magic link: open failed: %v", err)
+			}
+			writeJSONError(w, http.StatusBadRequest, "invalid or expired link")
+			return
+		}
+
+		if !opening.Redeemed {
+			writeJSONStatus(w, http.StatusOK, map[string]interface{}{
+				"status": "code",
+				"email":  opening.Email,
+				"code":   opening.Code,
+			})
+			return
+		}
+
+		if opening.User == nil {
+			writeJSONStatus(w, http.StatusOK, map[string]interface{}{
+				"status":       "username_required",
+				"signup_token": opening.SignupToken,
+			})
+			return
+		}
+
+		ip := clientIP(r)
+		sessionToken, err := auth.CreateSession(db, opening.User.ID, ip, r.UserAgent())
+		if err != nil {
+			writeJSONError(w, http.StatusInternalServerError, "failed to create session")
+			return
+		}
+		auth.SetSessionCookie(w, sessionToken)
+		auth.LogAuditEvent(db, opening.User.ID, "user.login", "user", opening.User.ID, `{"method":"magic_link"}`, ip)
+
+		writeJSONStatus(w, http.StatusOK, map[string]interface{}{
+			"status": "signed_in",
+			"user":   opening.User,
+		})
+	}
+}
+
+// VerifyMagicCode handles POST /api/v1/auth/magic-link/verify with
+// {email, code}. It is the same sign-in as the emailed link, for a client
+// that cannot receive that link in its own session — a native app, a CLI,
+// a second device — so the proof walks back as six typed digits instead of
+// a redirect. Nothing about it is specific to any one kind of client.
+//
+// Responses match the JSON branch of VerifyMagicLink: the user with a
+// session cookie set, or username_required plus a signup token for an
+// address with no account yet (docs/adr/013).
+func VerifyMagicCode(db *database.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req struct {
+			Email string `json:"email"`
+			Code  string `json:"code"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			writeJSONError(w, http.StatusBadRequest, "invalid or expired code")
+			return
+		}
+
+		// The per-email limiter keeps this endpoint cheap; the row's own
+		// attempt counter is what actually bounds a guesser (five wrong
+		// codes spend the row, link included). A throttled caller gets the
+		// one generic refusal every other failure gets, so the endpoint has
+		// exactly one thing to say and cannot be read for anything else.
+		email, err := auth.NormalizeEmail(req.Email)
+		if err == nil {
+			if rerr := middleware.CheckMagicCodeRate(email); rerr != nil {
+				writeJSONError(w, http.StatusBadRequest, "invalid or expired code")
+				return
+			}
+		}
+
+		user, signupToken, err := auth.VerifyMagicCode(db, req.Email, req.Code)
+		if err != nil {
+			writeJSONError(w, http.StatusBadRequest, "invalid or expired code")
 			return
 		}
 
 		if user == nil {
-			// New email: no account yet. Hand the browser to the
-			// username-selection page; API clients get the token as JSON.
-			accept := r.Header.Get("Accept")
-			if accept == "" || accept == "*/*" || len(accept) > 20 {
-				dest := "/signup/complete?token=" + signupToken
-				if rd := r.URL.Query().Get("redirect"); rd != "" && len(rd) < 256 && rd[0] == '/' {
-					dest += "&redirect=" + rd
-				}
-				http.Redirect(w, r, dest, http.StatusFound)
-				return
-			}
-			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(map[string]string{
+			// New address: no account yet. The client sends the person to
+			// username selection with this token.
+			writeJSONStatus(w, http.StatusOK, map[string]interface{}{
 				"status":       "username_required",
 				"signup_token": signupToken,
 			})
@@ -305,26 +446,15 @@ func VerifyMagicLink(db *database.DB) http.HandlerFunc {
 
 		sessionToken, err := auth.CreateSession(db, user.ID, ip, r.UserAgent())
 		if err != nil {
-			http.Error(w, `{"error":"failed to create session"}`, http.StatusInternalServerError)
+			writeJSONError(w, http.StatusInternalServerError, "failed to create session")
 			return
 		}
 
 		auth.SetSessionCookie(w, sessionToken)
-		auth.LogAuditEvent(db, user.ID, "user.login", "user", user.ID, `{"method":"magic_link"}`, ip)
-
-		// If request is from a browser (not API client), redirect.
-		accept := r.Header.Get("Accept")
-		if accept == "" || accept == "*/*" || len(accept) > 20 {
-			dest := "/dashboard"
-			if rd := r.URL.Query().Get("redirect"); rd != "" && len(rd) < 256 && rd[0] == '/' {
-				dest = rd
-			}
-			http.Redirect(w, r, dest, http.StatusFound)
-			return
-		}
+		auth.LogAuditEvent(db, user.ID, "user.login", "user", user.ID, `{"method":"magic_code"}`, ip)
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(user)
+		_ = json.NewEncoder(w).Encode(user)
 	}
 }
 

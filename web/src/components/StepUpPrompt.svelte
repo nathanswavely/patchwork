@@ -159,7 +159,7 @@
     </p>
     <p class="su-help">
       Make a new set at Settings → Security, then sign out and sign back in
-      using one of them — a code only confirms things once it is older than
+      using one of them. A code only confirms things once it is older than
       your sign-in.
     </p>
     <div class="su-actions">
@@ -171,7 +171,7 @@
     <h3 class="su-title">Confirm it's you</h3>
     <p class="su-help">
       This action can't be undone, so Patchwork asks for a fresh proof it's
-      you — not just the session you're already signed in with.
+      you, not just the session you're already signed in with.
     </p>
 
     {#if passkeyNote}

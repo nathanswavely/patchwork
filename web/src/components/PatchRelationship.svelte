@@ -395,4 +395,16 @@
   .standing-menu button:hover {
     background: var(--color-overlay);
   }
+
+  @media (pointer: coarse) {
+    .standing {
+      min-height: 40px;
+    }
+
+    .standing-menu button {
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+    }
+  }
 </style>

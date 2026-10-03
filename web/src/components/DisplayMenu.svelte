@@ -123,4 +123,10 @@
     color: var(--color-bg);
     font-weight: 600;
   }
+
+  @media (pointer: coarse) {
+    .segmented button {
+      min-height: 40px;
+    }
+  }
 </style>
