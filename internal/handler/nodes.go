@@ -611,7 +611,11 @@ func GetNode(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"slug required"}`, http.StatusBadRequest)
 			return
 		}
-		viewer := middleware.UserFromContext(r.Context())
+		// The standing this payload reports is what the whole SPA draws
+		// its patch chrome from, so a preview has to be nobody here too or
+		// the page would say "you are an admin" over a visitor's view
+		// (see view_as_visitor.go).
+		viewer := viewerOf(r)
 
 		var n model.Node
 		var linksJSON, fpJSON, gcJSON, apJSON string

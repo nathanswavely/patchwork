@@ -19,6 +19,7 @@
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
   import { isLoggedIn, isAdmin as isInstanceAdmin } from '../stores/auth.svelte.js';
+  import { signedInForPatchView, viewingAsVisitor } from '../lib/preview.js';
   import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
   import { eventPostingRight } from '../lib/patchWorkspace.js';
   import { handleFromDID } from '../lib/atproto.js';
@@ -106,9 +107,14 @@
   let canSeeGovernance = $derived(!isUnclaimed);
 
   // What posting an event here would actually do — see eventPostingRight.
+  //
+  // Both viewer facts go through the preview (F-126): the server is
+  // answering this page as the public, so a reader previewing must not be
+  // offered the door a signed-in stranger gets, nor the one an instance
+  // admin gets.
   let postingRight = $derived(eventPostingRight({
-    signedIn: isLoggedIn(),
-    isInstanceAdmin: isInstanceAdmin(),
+    signedIn: signedInForPatchView(isLoggedIn()),
+    isInstanceAdmin: isInstanceAdmin() && !viewingAsVisitor(),
     viewerTrusted: viewerTrusted === true,
     isUnclaimed,
     // The role test, stated here rather than taken from the isMember prop:

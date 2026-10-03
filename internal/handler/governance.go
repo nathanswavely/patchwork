@@ -74,7 +74,9 @@ func validDocVisibility(v string) bool {
 // the result, and docs/adr/050 leaves this the one follower key that gates a
 // read — of the one thing there is to withhold.
 func canReadPatchDocs(db *database.DB, r *http.Request, nodeID string) bool {
-	user := middleware.UserFromContext(r.Context())
+	// See viewerIsInPatchRoom: a preview is read through the same gates the
+	// public is, so the two cannot disagree.
+	user := viewerOf(r)
 	if user == nil {
 		return false
 	}

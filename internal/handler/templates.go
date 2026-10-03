@@ -9,7 +9,6 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
-	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 )
 
@@ -271,7 +270,11 @@ func GovernanceOverview(db *database.DB) http.HandlerFunc {
 		// the viewer can be in one vote's electorate and outside another's,
 		// when a tenure requirement changed between them. Ask per proposal.
 		var needsVote int
-		if user := middleware.UserFromContext(r.Context()); user != nil {
+		// viewerOf: a nudge is something the page says to a reader, so an
+		// admin previewing their patch as a visitor is not owed one. Found
+		// by the preview-equals-a-stranger test, which is what that test
+		// is for (see view_as_visitor.go).
+		if user := viewerOf(r); user != nil {
 			needsVote = countProposalsAwaitingVote(db, nodeID, user.ID, gcJSON)
 		}
 
