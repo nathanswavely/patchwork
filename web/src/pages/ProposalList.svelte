@@ -108,6 +108,22 @@
     if (p.state === 'unsettled') return 'unsettled';
     return p.status;
   }
+
+  // What the row says, as against what it is.
+  //
+  // The two were one function, so the badge printed the state name. CONTEXT.md
+  // has always said a lapse reads "not decided" on every surface, and this
+  // surface said "lapsed"; the election-shaped sibling said "unsettled",
+  // which a founder could not place — "Unsettled like unresolved? Unsettled
+  // like still running?" Both are states that mean the thing ended and
+  // decided nothing, and both now say so. The state keeps its name, which is
+  // what statusClass and the filter still read (F-107).
+  function rowLabel(p) {
+    const st = rowStatus(p);
+    if (st === 'lapsed') return 'not decided';
+    if (st === 'unsettled') return 'nobody elected';
+    return st;
+  }
 </script>
 
 <GovernanceShell activeSection="proposals">
@@ -195,7 +211,7 @@
                   {:else if proposal.status === 'open' && proposal.voting_ends_at}
                     <span class="time-remaining">{timeRemaining(proposal.voting_ends_at)}</span>
                   {:else if proposal.status !== 'open' && !isDirectRow(proposal)}
-                    <span class="muted">{rowStatus(proposal)}</span>
+                    <span class="muted">{rowLabel(proposal)}</span>
                   {/if}
                 </div>
                 {#if (proposal.approve_count || 0) + (proposal.reject_count || 0) > 0}
@@ -210,7 +226,7 @@
                   </div>
                 {/if}
               </div>
-              <span class="badge {statusClass(rowStatus(proposal))}">{rowStatus(proposal)}</span>
+              <span class="badge {statusClass(rowStatus(proposal))}">{rowLabel(proposal)}</span>
             </a>
           {/each}
         </div>
