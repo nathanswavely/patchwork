@@ -77,4 +77,21 @@ describe('the source settings page offers the correction', () => {
   it('does not offer a preview for a source already corrected', () => {
     expect(src).toContain('if (source.local_time_stamped_utc) return null;');
   });
+
+  it('offers no preview when the correction would not move anything', () => {
+    // A patch on UTC: same instant, differently spelled. The string
+    // comparison this replaced announced a move from 11:00 PM to 11:00 PM.
+    expect(reinterpretUTCAsLocal('2026-10-01T23:00:00Z', 'UTC')).not.toBe('2026-10-01T23:00:00Z');
+    expect(src).toContain('Date.parse(corrected) === Date.parse(source.sample_starts_at)');
+  });
+
+  it('puts each setting on its own line under the source', () => {
+    // The settings blocks span the row; that only means something on a
+    // grid. On the old flex row they sat beside the name, and a long host
+    // ran under the "Who can see these events" label.
+    const css = src.replace(/\r\n/g, '\n');
+    expect(css).toMatch(/\.source-row \{[^}]*display: grid;/);
+    expect(css).toMatch(/\.source-correction \{[^}]*grid-column: 1 \/ -1;/);
+    expect(css).toMatch(/\.source-actions \{[^}]*grid-column: 2;[^}]*grid-row: 1;/);
+  });
 });

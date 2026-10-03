@@ -303,10 +303,15 @@
         <input type="checkbox" bind:checked={subjectRecusal} />
         People don't vote on proposals about themselves
       </label>
-      <p class="recusal-hint muted">
-        Someone nominated for admin sits their own vote out. They stay in the
-        electorate for everything else.
-      </p>
+      <!-- Each explanation shows while its choice is the one made: read
+           before choosing, three of them pushed this form past two screens
+           on a phone. -->
+      {#if subjectRecusal}
+        <p class="recusal-hint muted">
+          Someone nominated for admin sits their own vote out. They stay in the
+          electorate for everything else.
+        </p>
+      {/if}
     </div>
   {/if}
 
@@ -316,11 +321,13 @@
       <option value="patchwork">In Patchwork</option>
       <option value="elsewhere">Somewhere else, recorded here</option>
     </select>
-    <p class="venue-hint muted">
-      Pick the second if your board is elected at a meeting, on paper, or in
-      another tool. Patchwork will stop conducting leadership changes and let
-      an admin record what was decided.
-    </p>
+    {#if leadershipVenue === 'elsewhere'}
+      <p class="venue-hint muted">
+        Pick the second if your board is elected at a meeting, on paper, or in
+        another tool. Patchwork will stop conducting leadership changes and let
+        an admin record what was decided.
+      </p>
+    {/if}
   </div>
 
   <div class="field">
@@ -329,12 +336,14 @@
       <option value="patchwork">In Patchwork</option>
       <option value="elsewhere">Somewhere else, recorded here</option>
     </select>
-    <p class="venue-hint muted">
-      Pick the second if your members decide at meetings. Proposals stay open
-      for discussion and lose the vote buttons, and an admin records the
-      adopted text on the charter afterwards. Rules changes stay a direct
-      change an admin applies.
-    </p>
+    {#if proposalVenue === 'elsewhere'}
+      <p class="venue-hint muted">
+        Pick the second if your members decide at meetings. Proposals stay open
+        for discussion and lose the vote buttons, and an admin records the
+        adopted text on the charter afterwards. Rules changes stay a direct
+        change an admin applies.
+      </p>
+    {/if}
   </div>
 
   <div class="field">

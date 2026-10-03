@@ -81,11 +81,21 @@ test.describe('Patch Appearance — Picker', () => {
     await expect(page.locator('.drafter-canvas')).toBeVisible();
     await expect(page.getByText('0 of 24 seams')).toBeVisible();
 
-    // Sew one seam: first anchor to last anchor (corner to corner).
-    // dispatchEvent: corner anchors sit exactly on the SVG edge, where
-    // Playwright's hit-testing sees the canvas instead of the circle.
-    await page.locator('.anchor').first().dispatchEvent('click');
-    await page.locator('.anchor').last().dispatchEvent('click');
+    // Sew one seam: first anchor to last anchor (corner to corner). The
+    // canvas takes the tap and snaps it to the nearest anchor (the dots
+    // are drawn, not clicked), so tap where each anchor is, as a person
+    // would.
+    const centre = async (loc) => {
+      const b = await loc.boundingBox();
+      return [b.x + b.width / 2, b.y + b.height / 2];
+    };
+    // Mouse coordinates are the viewport's, so the whole canvas has to be
+    // on screen before the anchors are measured.
+    await page.locator('.drafter-canvas').scrollIntoViewIfNeeded();
+    const [x1, y1] = await centre(page.locator('.anchor').first());
+    const [x2, y2] = await centre(page.locator('.anchor').last());
+    await page.mouse.click(x1, y1);
+    await page.mouse.click(x2, y2);
     await expect(page.getByText('1 of 24 seams')).toBeVisible();
 
     // Color a piece with fabric 2.

@@ -574,7 +574,7 @@
                    remote patch it comes from a cross-quilt snapshot that
                    carries no upcoming figure at all (CONTEXT.md
                    "Upcoming events"). -->
-              <p class="card-stats">{patch.is_unclaimed ? `${patch.follower_count || 0} Following` : `${patch.member_count || 0} Member${patch.member_count === 1 ? '' : 's'}`} - {patch.event_count || 0} Event{patch.event_count === 1 ? '' : 's'}</p>
+              <p class="card-stats">{patch.is_unclaimed ? `${patch.follower_count || 0} Following` : `${patch.member_count || 0} member${patch.member_count === 1 ? '' : 's'}`}{' · '}{patch.event_count || 0} event{patch.event_count === 1 ? '' : 's'}</p>
               {#if patch.description}
                 <p class="card-desc">{patch.description}</p>
               {/if}
@@ -732,7 +732,7 @@
             <!-- The lens narrowed to nothing while the quilt still holds
                  patches: say how many, and offer the one step back. -->
             <p class="muted">
-              No patches in view — {ordered.length} elsewhere on the quilt.
+              No patches in view. {ordered.length} elsewhere on the quilt.
             </p>
             <div class="empty-actions">
               <button class="btn btn-secondary" onclick={() => setInViewOnly(false)}>Show them all</button>
