@@ -428,4 +428,21 @@
     border-radius: var(--radius);
     margin: 1rem 0;
   }
+
+  /* The title keeps a readable measure: when it and the actions do not
+     fit on one line (a phone, or a Delete confirm opening), the actions
+     wrap below it. Side by side they never shrank, so the confirm crushed
+     the title to 69px and pushed Cancel off the screen. */
+  .detail-header {
+    flex-wrap: wrap;
+  }
+
+  .detail-header h1 {
+    flex: 1 1 14rem;
+    min-width: 0;
+  }
+
+  .header-actions {
+    flex-wrap: wrap;
+  }
 </style>

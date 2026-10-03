@@ -279,7 +279,7 @@ func TestVerifyMagicCodeSignsInExistingUser(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	_, code, err := GenerateMagicLinkLocal(db, email)
+	_, code, err := GenerateMagicLinkLocal(db, email, "")
 	if err != nil {
 		t.Fatalf("GenerateMagicLinkLocal: %v", err)
 	}
@@ -308,7 +308,7 @@ func TestVerifyMagicCodeAcceptsSpacedCode(t *testing.T) {
 	db := setupTestDB(t)
 	email := "spaces@example.com"
 
-	_, code, err := GenerateMagicLinkLocal(db, email)
+	_, code, err := GenerateMagicLinkLocal(db, email, "")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -330,7 +330,7 @@ func TestVerifyMagicCodeUnknownAddressAsksForAUsername(t *testing.T) {
 	db := setupTestDB(t)
 	email := "stranger@example.com"
 
-	_, code, err := GenerateMagicLinkLocal(db, email)
+	_, code, err := GenerateMagicLinkLocal(db, email, "")
 	if err != nil {
 		t.Fatal(err)
 	}

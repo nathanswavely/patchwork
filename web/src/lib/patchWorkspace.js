@@ -73,6 +73,39 @@ export function workspaceTabs({
 }
 
 /**
+ * Where "up" goes from a workspace page that has no section list of its
+ * own on screen: a charter, a proposal, a notice, or one of their forms.
+ * On a phone the workspace draws it beside the relationship cluster, since
+ * the context crumb names only the patch and the browser's back button was
+ * the only way out. Section pages return null: their own list is the way
+ * around. A page that knows a nearer parent (a charter's history knows its
+ * charter) says so through the shell's breadcrumb instead, and that wins.
+ *
+ * @param {string} routeName
+ * @param {string} slug
+ * @returns {{href: string, label: string} | null}
+ */
+export function workspaceUpLink(routeName, slug) {
+  const base = `/patches/${slug}`;
+  switch (routeName) {
+    case 'governanceDocDetail':
+    case 'governanceDocNew':
+    case 'governanceDocHistory':
+    case 'governanceDocPropose':
+    case 'governanceRulesPropose':
+      return { href: `${base}/governance/docs`, label: 'Documents' };
+    case 'governanceProposal':
+    case 'governanceProposalNew':
+      return { href: `${base}/governance/proposals`, label: 'Proposals' };
+    case 'patchNotice':
+    case 'patchNoticeNew':
+      return { href: `${base}/noticeboard`, label: 'Noticeboard' };
+    default:
+      return null;
+  }
+}
+
+/**
  * What actually happens when this viewer posts an event to this patch.
  *
  * Mirrors the server's rule in events.go (docs/adr/026) rather than the

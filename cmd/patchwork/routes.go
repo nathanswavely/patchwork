@@ -134,11 +134,17 @@ func buildRoutes(d serverDeps) (*http.ServeMux, []route) {
 	// the handler, the way the request route's does, on top of this shared
 	// unauthed budget.
 	t.handleFunc("POST /api/v1/auth/magic-link/verify", rl(handler.VerifyMagicCode(d.db)))
-	t.handleFunc("GET /api/v1/auth/verify/{token}", handler.VerifyMagicLink(d.db))
+	// The link's page posts here; only a browser holding the nonce the row
+	// was bound to is signed in without pressing anything
+	// (docs/adr/2026-09-28-a-link-knows-where-it-was-asked-for.md).
+	t.handleFunc("POST /api/v1/auth/magic-link/open", rl(handler.OpenMagicLink(d.db)))
+	// Mail sent before the link had its own page. A GET never spends a
+	// link; these send the browser to the page.
+	t.handleFunc("GET /api/v1/auth/verify/{token}", handler.MagicLinkRedirect())
 	// Alias for magic links mailed before the link builder was fixed: they
 	// point at /auth/verify/{token}, which the SPA has no route for and would
 	// swallow into the home page. Keep it working.
-	t.handleFunc("GET /auth/verify/{token}", handler.VerifyMagicLink(d.db))
+	t.handleFunc("GET /auth/verify/{token}", handler.MagicLinkRedirect())
 	t.handleFunc("GET /api/v1/auth/signup/{token}/validate", rl(handler.ValidateSignupToken(d.db)))
 	t.handleFunc("POST /api/v1/auth/signup", rl(handler.CompleteSignup(d.db)))
 	t.handleFunc("POST /api/v1/auth/webauthn/login/begin", rl(handler.WebAuthnLoginBegin(d.wa)))

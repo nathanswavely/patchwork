@@ -157,7 +157,7 @@ export function passkeyErrorMessage(err, action = 'login') {
         return 'This device cannot produce the passkey check this site needs. Confirm with a recovery code instead.';
       }
       if (action === 'enroll') {
-        return 'This device cannot create the kind of passkey this site needs, so you cannot add one here. Recovery codes work instead — make a set at Settings → Security.';
+        return 'This device cannot create the kind of passkey this site needs, so you cannot add one here. Recovery codes work instead: make a set at Settings → Security.';
       }
       return 'This device cannot use the kind of passkey this site needs. Sign in with a recovery code or an email link below.';
     case 'SecurityError':

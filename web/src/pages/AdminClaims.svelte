@@ -3,6 +3,8 @@
   import { showToast } from '../stores/toast.svelte.js';
   import Skeleton from '../components/Skeleton.svelte';
   import { formatDay as formatDate } from '../lib/datetime.js';
+  import { navigate } from '../stores/router.svelte.js';
+  import ConfirmAction from '../components/ConfirmAction.svelte';
 
   let claims = $state([]);
   let awaitingSetup = $state([]);
@@ -58,24 +60,40 @@
       {#each claims as claim (claim.id)}
         <div class="claim-card card">
           <div class="claim-header">
-            <h3>{claim.node_name}</h3>
+            <h3>
+              <a
+                href="/patches/{claim.node_slug}"
+                class="claim-patch"
+                onclick={(e) => { e.preventDefault(); navigate(`/patches/${claim.node_slug}`); }}
+              >{claim.node_name}</a>
+            </h3>
             <span class="badge">{claim.method}</span>
           </div>
+          <!-- One fact per line on a phone: the domain and the email are the
+               evidence being weighed, and run together they were one muted
+               wrapped sentence. -->
           <div class="claim-meta muted">
-            Claimed by {claim.claimant_display_name || claim.claimant_username} &middot; {formatDate(claim.created_at)}
+            <span>Claimed by {claim.claimant_display_name || claim.claimant_username}</span><span class="sep">{' · '}</span><span>{formatDate(claim.created_at)}</span>
             {#if claim.verification_domain}
-              &middot; verified domain: {claim.verification_domain}
+              <span class="sep">{' · '}</span><span class="fact">verified domain: {claim.verification_domain}</span>
             {/if}
             {#if claim.email}
-              &middot; email: {claim.email}
+              <span class="sep">{' · '}</span><span class="fact">email: {claim.email}</span>
             {/if}
           </div>
           {#if claim.evidence}
             <p class="claim-evidence">{claim.evidence}</p>
           {/if}
+          <!-- Reject asks first: side by side with Approve, one mis-tap used
+               to refuse somebody their patch. -->
           <div class="claim-actions">
             <button class="btn btn-primary btn-sm" onclick={() => handleAction(claim.id, 'approve')}>Approve</button>
-            <button class="btn btn-danger btn-sm" onclick={() => handleAction(claim.id, 'reject')}>Reject</button>
+            <ConfirmAction
+              label="Reject"
+              confirmLabel="Reject"
+              variant="danger"
+              onConfirm={() => handleAction(claim.id, 'reject')}
+            />
           </div>
         </div>
       {/each}
@@ -169,4 +187,23 @@
     gap: 0.5rem;
   }
 
+
+  .claim-patch {
+    color: inherit;
+  }
+
+  .claim-actions {
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 640px) {
+    .claim-meta .fact {
+      display: block;
+      color: var(--color-text);
+    }
+
+    .claim-meta .sep:has(+ .fact) {
+      display: none;
+    }
+  }
 </style>

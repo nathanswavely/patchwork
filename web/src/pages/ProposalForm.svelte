@@ -506,4 +506,11 @@
     gap: 0.75rem;
     padding-top: 0.5rem;
   }
+
+  @media (pointer: coarse) {
+    .toggle-btn {
+      min-height: 40px;
+      padding-inline: 0.9rem;
+    }
+  }
 </style>

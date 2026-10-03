@@ -68,7 +68,13 @@
       {#each submissions as sub (sub.id)}
         <div class="submission-card card">
           <div class="sub-header">
-            <h3>{sub.title}</h3>
+            <h3>
+              <a
+                href="/events/{sub.id}"
+                class="sub-event"
+                onclick={(e) => { e.preventDefault(); navigate(`/events/${sub.id}`); }}
+              >{sub.title}</a>
+            </h3>
             <span class="muted">{formatDate(sub.starts_at, sub.timezone)} &middot; {formatTime(sub.starts_at, sub.timezone)}</span>
           </div>
           <p class="sub-patch">
@@ -111,7 +117,7 @@
 
     {#if nextCursor}
       <div style="text-align: center; padding: 1rem 0;">
-        <button class="btn btn-secondary" onclick={() => loadSubmissions(true)}>Load More</button>
+        <button class="btn btn-secondary" onclick={() => loadSubmissions(true)}>Load more</button>
       </div>
     {/if}
   {/if}
@@ -184,4 +190,8 @@
     font-size: 0.85rem;
   }
 
+
+  .sub-event {
+    color: inherit;
+  }
 </style>

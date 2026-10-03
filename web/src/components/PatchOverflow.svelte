@@ -168,4 +168,17 @@
     padding-right: 1.5rem;
   }
 
+  @media (pointer: coarse) {
+    .overflow-trigger {
+      width: 40px;
+      height: 40px;
+    }
+
+    .overflow-menu > button,
+    .overflow-menu > a {
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+    }
+  }
 </style>
