@@ -19,6 +19,13 @@ func Patch(slug string) string {
 	return "/patches/" + slug
 }
 
+// User is a person's public profile — SPA route /users/:username. Build it
+// only from a live username: a tombstone's is blank (docs/adr/086), and a
+// link to "/users/" would land on nothing.
+func User(username string) string {
+	return "/users/" + username
+}
+
 // PatchEvents is a patch's workspace events tab — /patches/:slug/events.
 func PatchEvents(slug string) string {
 	return Patch(slug) + "/events"
@@ -116,6 +123,14 @@ func SubmitPatch() string {
 // /quilts/:host/patches/:slug (docs/adr/024).
 func RemotePatch(host, slug string) string {
 	return "/quilts/" + host + Patch(slug)
+}
+
+// SignInLink is the page a sign-in email's link opens: /login/link/:token.
+// Opening it spends nothing; the page decides, by POST, whether this browser
+// is the one that asked
+// (docs/adr/2026-09-28-a-link-knows-where-it-was-asked-for.md).
+func SignInLink(token string) string {
+	return "/login/link/" + token
 }
 
 // Absolute turns an in-app path into a full URL on this instance, for the

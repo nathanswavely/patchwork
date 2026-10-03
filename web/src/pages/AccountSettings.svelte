@@ -4,8 +4,14 @@
   import { showToast } from '../stores/toast.svelte.js';
   import { navigate } from '../stores/router.svelte.js';
   import { withStepUp, stepUpStatus, PasskeyRequiredError } from '../lib/stepUp.js';
+  import { isNarrow } from '../stores/viewport.svelte.js';
   import PasskeyNotice from '../components/PasskeyNotice.svelte';
 
+
+  // On a phone the four rare sections (moving, the two exports, deleting
+  // the account) fold to their headings. Open, their explanations ran the
+  // page past four screens for things done once, if ever.
+  let narrow = $derived(isNarrow());
   let user = $derived(getUser());
   let displayName = $state('');
   // Personal discovery filter (docs/adr/037).
@@ -471,7 +477,8 @@
     </section>
 
     <section class="pw-section">
-      <h2>I have moved</h2>
+      <details class="pw-fold" open={!narrow}>
+        <summary><h2>I have moved</h2></summary>
       <p class="muted profile-hint">
         Point your profile at wherever you are now. Your page here keeps
         working and says where you went. This is only about you, not about
@@ -495,13 +502,14 @@
           </button>
         </div>
       </form>
+      </details>
     </section>
 
     <section class="pw-section">
       <h2>Contact card</h2>
       <p class="muted profile-hint">
         The ways you are willing to be reached. Nothing here is public and
-        nothing is shared by adding it — you give each item to one patch at a
+        nothing is shared by adding it. You give each item to one patch at a
         time, in
         <a href="/settings/patches" onclick={(e) => { e.preventDefault(); navigate('/settings/patches'); }}>My Patches</a>.
         A patch's admins and members can then see it; its followers cannot.
@@ -664,12 +672,13 @@
     </section>
 
     <section class="pw-section">
-      <h2>Download my data</h2>
+      <details class="pw-fold" open={!narrow}>
+        <summary><h2>Download my data</h2></summary>
       <p class="muted profile-hint">
         One file with everything this quilt holds about you: your profile and
         contact card, every membership including the ones you keep hidden, the
         proposals, votes, comments, notices and events you wrote, and your
-        settings. Nothing anyone else wrote, and no sign-in secrets — so it is
+        settings. Nothing anyone else wrote, and no sign-in secrets, so it is
         safe to keep, and it will not let anyone into your account.
       </p>
       <div class="field-actions">
@@ -677,16 +686,18 @@
           {downloadingData ? 'Preparing...' : 'Download my data'}
         </button>
       </div>
+      </details>
     </section>
 
     <section class="pw-section">
-      <h2>Member seamrip</h2>
+      <details class="pw-fold" open={!narrow}>
+        <summary><h2>Member seamrip</h2></summary>
       <p class="muted profile-hint">
         A copy of this quilt as you can see it, in the format a new Patchwork
         reads. It is here so a community can start again elsewhere without
         waiting for an admin. It holds every public patch on this quilt and
         the private ones you belong to, with their events, charters, member
-        lists, and proposals with their votes and discussion — the same things
+        lists, and proposals with their votes and discussion: the same things
         those patches' pages show you. It does not hold email addresses,
         contact cards, or noticeboards. Other people travel as a name and a
         picture, so the new quilt invites everyone back and each person sets
@@ -697,6 +708,7 @@
           {takingSeamrip ? 'Preparing...' : 'Take a copy'}
         </button>
       </div>
+      </details>
     </section>
 
     {#if steward?.steward}
@@ -744,7 +756,8 @@
 
     <!-- ===== Danger zone (docs/adr/086) ===== -->
     <section class="pw-section">
-      <h2 class="danger-heading">Danger Zone</h2>
+      <details class="pw-fold" open={!narrow}>
+        <summary><h2 class="danger-heading">Danger Zone</h2></summary>
       <div class="danger-card">
         <h3>Delete your account</h3>
         <PasskeyNotice show={!hasPasskey} action="delete your account" />
@@ -819,6 +832,7 @@
           </div>
         {/if}
       </div>
+      </details>
     </section>
   {/if}
 </div>
@@ -1029,4 +1043,54 @@
     padding-top: 0.25rem;
   }
 
+  /* A folded section's heading is its summary: the whole line is the
+     target, with a caret saying it opens. Open on a wide screen, where
+     nothing folds. */
+  .pw-fold > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    min-height: 44px;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .pw-fold > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .pw-fold > summary h2 {
+    margin: 0;
+  }
+
+  .pw-fold > summary::after {
+    content: '';
+    width: 0.5rem;
+    height: 0.5rem;
+    border-right: 2px solid var(--color-text-muted);
+    border-bottom: 2px solid var(--color-text-muted);
+    transform: rotate(45deg);
+    margin-right: 0.35rem;
+    transition: transform 150ms ease;
+  }
+
+  .pw-fold[open] > summary::after {
+    transform: rotate(-135deg);
+  }
+
+  .pw-fold[open] > summary {
+    margin-bottom: 0.5rem;
+  }
+
+  @media (min-width: 641px) {
+    .pw-fold > summary {
+      pointer-events: none;
+      cursor: default;
+    }
+
+    .pw-fold > summary::after {
+      display: none;
+    }
+  }
 </style>

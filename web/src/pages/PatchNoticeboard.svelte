@@ -302,4 +302,18 @@
   .check-row input { margin-top: 0.25rem; }
   .check-row span > .muted { display: block; font-size: 0.8rem; }
   .form-actions { display: flex; gap: 0.5rem; }
+
+  /* The hint keeps a readable measure and the button its one line: when
+     they do not fit together the button wraps below instead of folding
+     its own label. */
+  .board-header { flex-wrap: wrap; }
+  .board-hint { flex: 1 1 16rem; min-width: 0; }
+  .board-header .btn { white-space: nowrap; }
+
+  @media (pointer: coarse) {
+    .toggle-btn {
+      min-height: 40px;
+      padding-inline: 0.9rem;
+    }
+  }
 </style>

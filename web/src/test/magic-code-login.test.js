@@ -25,7 +25,7 @@ describe('the code form on the sent-email state', () => {
 
   it('offers the code under the "Check your email" text', () => {
     expect(src).toContain('Check your email');
-    expect(src).toContain('Or enter the code from the email');
+    expect(src).toContain('Opened the link on another device? Enter the code it shows');
     expect(src).toContain('id="signin-code"');
   });
 

@@ -61,6 +61,8 @@
   import AdminTags from './pages/AdminTags.svelte';
   import AdminTagSuggestions from './pages/AdminTagSuggestions.svelte';
   import { adminTabLanding, legacyAdminPath } from './lib/adminPanel.js';
+  import { workspaceUpLink } from './lib/patchWorkspace.js';
+  import { isNarrow } from './stores/viewport.svelte.js';
   import AdminUsers from './pages/AdminUsers.svelte';
   import AdminAuditLog from './pages/AdminAuditLog.svelte';
   import AdminSubmissions from './pages/AdminSubmissions.svelte';
@@ -93,6 +95,7 @@
   import Login from './pages/Login.svelte';
   import InviteLanding from './pages/InviteLanding.svelte';
   import SignupComplete from './pages/SignupComplete.svelte';
+  import SignInLink from './pages/SignInLink.svelte';
   import Welcome from './pages/Welcome.svelte';
   import Discover from './pages/Discover.svelte';
   import Toast from './components/Toast.svelte';
@@ -204,6 +207,9 @@
   addRoute('/login', 'login');
   addRoute('/invite/:token', 'invite');
   addRoute('/signup/complete', 'signupComplete');
+  // The page a sign-in email's link opens. Public: the token is the proof,
+  // and the click may happen in a browser with no session.
+  addRoute('/login/link/:token', 'signInLink');
   addRoute('/welcome', 'welcome');
   // Discovery mode (docs/adr/075): standing, public, re-enterable. Welcome's
   // steps 2 and 3 used to live behind /welcome's auth gate and were spent
@@ -313,7 +319,7 @@
   let isAdminRoute = $derived(adminRoutes.has(routeName));
 
   // Standalone routes — no shell wrapper
-  const standaloneRoutes = new Set(['welcome', 'login', 'invite', 'signupComplete']);
+  const standaloneRoutes = new Set(['welcome', 'login', 'invite', 'signupComplete', 'signInLink']);
   let isStandaloneRoute = $derived(standaloneRoutes.has(routeName));
 
   // Social shell wraps everything except standalone pages (admin included —
@@ -414,9 +420,12 @@
     redirectProposalDetail: (p) => `/patches/${p.slug}/governance/${p.id}`,
     redirectGovernanceSetup: (p) => `/patches/${p.slug}/governance`,
     redirectPatchScopedEvent: (p) => `/events/${p.id}`,
-    // A tab with sections has no page of its own (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md).
-    adminReviewIndex: () => adminTabLanding('review'),
-    adminSettingsIndex: () => adminTabLanding('settings'),
+    // A tab with sections has no page of its own on a wide screen
+    // (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md). On a
+    // narrow one its bare URL is the list of its sections, which the
+    // drill-down navigates through, so it stays put.
+    adminReviewIndex: () => (isNarrow() ? null : adminTabLanding('review')),
+    adminSettingsIndex: () => (isNarrow() ? null : adminTabLanding('settings')),
     // The flat admin scheme, one level up from where each page now lives.
     // Null for a path that never existed: that is a not-found, not a bounce.
     redirectAdminLegacy: (p) => legacyAdminPath(p.rest),
@@ -509,7 +518,7 @@
       // 'discover' is exempt for the same reason 'patchNew' is: it is a
       // place a new person can deliberately go, and yanking them back to
       // orientation from the surface orientation hands off to is a loop.
-      if (!['welcome', 'discover', 'login', 'invite', 'signupComplete', 'claimPatch', 'patchSetup', 'patchNew'].includes(routeName)
+      if (!['welcome', 'discover', 'login', 'invite', 'signupComplete', 'claimPatch', 'patchSetup', 'patchNew', 'signInLink'].includes(routeName)
           && !isOnboardingDismissed(getUser()?.id)) {
         navigate('/welcome');
       }
@@ -533,6 +542,8 @@
         <InviteLanding />
       {:else if routeName === 'signupComplete'}
         <SignupComplete />
+      {:else if routeName === 'signInLink'}
+        <SignInLink />
       {/if}
     {/snippet}
   </ThresholdShell>
@@ -602,7 +613,7 @@
       </div>
     </main>
   {:else}
-    <PatchShell slug={routeParams.slug} activeTab={patchTab}>
+    <PatchShell slug={routeParams.slug} activeTab={patchTab} up={workspaceUpLink(routeName, routeParams.slug)}>
       {#snippet children()}
         {#if routeName === 'governanceHub'}
           <GovernanceHub />

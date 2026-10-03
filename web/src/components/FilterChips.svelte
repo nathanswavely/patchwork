@@ -233,4 +233,10 @@
   .chips-flow {
     margin-bottom: 1rem;
   }
+
+  @media (pointer: coarse) {
+    .chip {
+      min-height: 36px;
+    }
+  }
 </style>

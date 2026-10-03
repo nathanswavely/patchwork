@@ -110,15 +110,17 @@ export default async function globalSetup() {
     if (!res.ok) throw new Error(`magic-link request failed: ${res.status}`);
 
     const token = await waitFor(
-      () => output.match(/\/api\/v1\/auth\/verify\/([A-Za-z0-9]+)/)?.[1],
+      () => output.match(/\/login\/link\/([A-Za-z0-9]+)/)?.[1],
       'magic link in server log', 10000,
     );
 
-    // Accept: application/json takes the API branch of the verify handler
-    // (no redirect).
-    const verify = await fetch(`${API}/api/v1/auth/verify/${token}`, {
-      headers: { Accept: 'application/json' },
-      redirect: 'manual',
+    // This fetch holds no binding cookie, so it is not "the browser that
+    // asked": here:true is the page's "Sign in on this device" button
+    // (docs/adr/2026-09-28-a-link-knows-where-it-was-asked-for.md).
+    const verify = await fetch(`${API}/api/v1/auth/magic-link/open`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Patchwork-Request': 'true' },
+      body: JSON.stringify({ token, here: true }),
     });
     if (!verify.ok) {
       throw new Error(`magic-link verify failed: ${verify.status}`);

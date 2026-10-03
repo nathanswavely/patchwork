@@ -15,6 +15,9 @@
   import { PALETTES, PALETTE_KEYS, paletteForPatch } from '../lib/quiltTheme.js';
   import { BLOCKS, getBlockIndex, getRotation } from '../lib/quiltBlocks.js';
   import { templateMembershipPolicy } from '../lib/governanceTemplates.js';
+  import { isNarrow } from '../stores/viewport.svelte.js';
+
+  let narrow = $derived(isNarrow());
 
   // Patch setup (docs/adr/039) reuses this exact form: a claim is creation
   // with prepopulated fields, not a handoff. mode='setup' prepopulates
@@ -492,106 +495,113 @@
           <TagPicker bind:selected={tags} bind:suggested={suggestTags} disabled={submitting} />
         </div>
 
-        <div class="field">
-          <label>Tile</label>
-          <p class="field-hint muted">
-            How this patch looks on the quilt. You can change it anytime
-            in Patch Settings → Appearance, and draft your own block there too.
-          </p>
-          <div class="tile-picker">
-            <div class="tile-preview-col">
-              <svg
-                bind:this={previewEl}
-                class="tile-preview"
-                viewBox="0 0 {PREVIEW_SIZE} {PREVIEW_SIZE}"
-                width={PREVIEW_SIZE}
-                height={PREVIEW_SIZE}
-                role="img"
-                aria-label="Tile preview"
-              ></svg>
-              <button
-                type="button"
-                class="btn btn-secondary btn-sm"
-                onclick={() => { rotation = (rotation + 90) % 360; }}
-                disabled={submitting}
-                title="Rotate 90°"
-              >
-                Rotate
-              </button>
-            </div>
-            <div class="tile-choices">
-              <div class="palette-row" role="group" aria-label="Palette">
-                {#each PALETTE_KEYS as key (key)}
-                  {@const p = PALETTES[key]}
-                  <button
-                    type="button"
-                    class="palette-chip"
-                    class:selected={palette === key}
-                    onclick={() => { palette = key; }}
-                    disabled={submitting}
-                    title="{p.name}: {p.subtitle}"
-                    aria-label={p.name}
-                    aria-pressed={palette === key}
-                  >
-                    <span style="background: {p.primary}"></span>
-                    <span style="background: {p.secondary}"></span>
-                    <span style="background: {p.bg}"></span>
-                  </button>
-                {/each}
+        <!-- The tile and its motif are optional here and editable later in
+             Patch Settings; on a phone, with the fabric wall and blocks, they
+             were a screen and a half of a form that is only asking who this
+             patch is. Folded there, open and unlabelled on a wide screen. -->
+        <details class="appearance-fold" open={!narrow}>
+          <summary>Appearance (optional)</summary>
+          <div class="field">
+            <label>Tile</label>
+            <p class="field-hint muted">
+              How this patch looks on the quilt. You can change it anytime
+              in Patch Settings → Appearance, and draft your own block there too.
+            </p>
+            <div class="tile-picker">
+              <div class="tile-preview-col">
+                <svg
+                  bind:this={previewEl}
+                  class="tile-preview"
+                  viewBox="0 0 {PREVIEW_SIZE} {PREVIEW_SIZE}"
+                  width={PREVIEW_SIZE}
+                  height={PREVIEW_SIZE}
+                  role="img"
+                  aria-label="Tile preview"
+                ></svg>
+                <button
+                  type="button"
+                  class="btn btn-secondary btn-sm"
+                  onclick={() => { rotation = (rotation + 90) % 360; }}
+                  disabled={submitting}
+                  title="Rotate 90°"
+                >
+                  Rotate
+                </button>
               </div>
-              <div class="block-row" role="group" aria-label="Block">
-                {#each BLOCKS as block (block.key)}
-                  <button
-                    type="button"
-                    class="block-chip"
-                    class:selected={blockKey === block.key}
-                    onclick={() => { blockKey = block.key; }}
-                    disabled={submitting}
-                    title={block.name}
-                    aria-label={block.name}
-                    aria-pressed={blockKey === block.key}
-                  >
-                    <svg
-                      bind:this={thumbEls[block.key]}
-                      viewBox="0 0 {THUMB_SIZE} {THUMB_SIZE}"
-                      width={THUMB_SIZE}
-                      height={THUMB_SIZE}
-                      role="img"
+              <div class="tile-choices">
+                <div class="palette-row" role="group" aria-label="Palette">
+                  {#each PALETTE_KEYS as key (key)}
+                    {@const p = PALETTES[key]}
+                    <button
+                      type="button"
+                      class="palette-chip"
+                      class:selected={palette === key}
+                      onclick={() => { palette = key; }}
+                      disabled={submitting}
+                      title="{p.name}: {p.subtitle}"
+                      aria-label={p.name}
+                      aria-pressed={palette === key}
+                    >
+                      <span style="background: {p.primary}"></span>
+                      <span style="background: {p.secondary}"></span>
+                      <span style="background: {p.bg}"></span>
+                    </button>
+                  {/each}
+                </div>
+                <div class="block-row" role="group" aria-label="Block">
+                  {#each BLOCKS as block (block.key)}
+                    <button
+                      type="button"
+                      class="block-chip"
+                      class:selected={blockKey === block.key}
+                      onclick={() => { blockKey = block.key; }}
+                      disabled={submitting}
+                      title={block.name}
                       aria-label={block.name}
-                    ></svg>
-                  </button>
-                {/each}
+                      aria-pressed={blockKey === block.key}
+                    >
+                      <svg
+                        bind:this={thumbEls[block.key]}
+                        viewBox="0 0 {THUMB_SIZE} {THUMB_SIZE}"
+                        width={THUMB_SIZE}
+                        height={THUMB_SIZE}
+                        role="img"
+                        aria-label={block.name}
+                      ></svg>
+                    </button>
+                  {/each}
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="field">
-          <label>Motif</label>
-          <p class="field-hint muted">
-            Optional. The mark that appears beside the name on the quilt.
-            Unset, it follows your first tag. You can change it later in
-            Patch Settings.
-          </p>
-          <div class="motif-grid">
-            {#each MOTIF_KEYS as key (key)}
-              {@const m = MOTIFS[key]}
-              {@const MotifIcon = m.component}
-              <button
-                type="button"
-                class="motif-swatch"
-                class:selected={motif === key}
-                onclick={() => { motif = motif === key ? '' : key; }}
-                disabled={submitting}
-                title={m.name}
-                aria-pressed={motif === key}
-                aria-label={m.name}
-              >
-                <MotifIcon size={18} weight="fill" />
-              </button>
-            {/each}
+          <div class="field">
+            <label>Motif</label>
+            <p class="field-hint muted">
+              Optional. The mark that appears beside the name on the quilt.
+              Unset, it follows your first tag. You can change it later in
+              Patch Settings.
+            </p>
+            <div class="motif-grid">
+              {#each MOTIF_KEYS as key (key)}
+                {@const m = MOTIFS[key]}
+                {@const MotifIcon = m.component}
+                <button
+                  type="button"
+                  class="motif-swatch"
+                  class:selected={motif === key}
+                  onclick={() => { motif = motif === key ? '' : key; }}
+                  disabled={submitting}
+                  title={m.name}
+                  aria-pressed={motif === key}
+                  aria-label={m.name}
+                >
+                  <MotifIcon size={18} weight="fill" />
+                </button>
+              {/each}
+            </div>
           </div>
-        </div>
+        </details>
 
         <div class="field">
           <label>The lining</label>
@@ -1123,4 +1133,19 @@
     overflow-y: auto;
   }
 
+
+  .appearance-fold > summary {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  @media (min-width: 641px) {
+    .appearance-fold > summary {
+      display: none;
+    }
+  }
 </style>

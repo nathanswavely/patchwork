@@ -16,6 +16,7 @@
   import Skeleton from '../components/Skeleton.svelte';
   import ErrorState from '../components/ErrorState.svelte';
   import { isPlaceZone } from '../lib/datetime.js';
+  import { isNarrow } from '../stores/viewport.svelte.js';
 
   let loading = $state(true);
   let error = $state('');
@@ -450,6 +451,16 @@
         </div>
 
         <BlockDrafter bind:draft={iconDraft} bind:bundle={iconBundle} previewLabel="in the switcher" />
+
+        <!-- On a phone "Save icon" above sits a long scroll from the drafter.
+             Once there is a change, the same button follows the drafting. -->
+        {#if isNarrow() && iconDirty}
+          <div class="icon-save-bar">
+            <button class="btn btn-primary" onclick={saveIcon} disabled={savingIcon || !iconDirty}>
+              {savingIcon ? 'Saving…' : 'Save icon'}
+            </button>
+          </div>
+        {/if}
       </div>
     </section>
 
@@ -835,5 +846,21 @@
     align-items: center;
     gap: 0.6rem;
     flex-wrap: wrap;
+  }
+
+  .icon-save-bar {
+    position: sticky;
+    bottom: calc(var(--pw-nav-h) + 0.5rem);
+    z-index: 5;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.75rem;
+    padding: 0.5rem;
+    background: var(--color-glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: 0 4px 16px var(--color-shadow);
   }
 </style>

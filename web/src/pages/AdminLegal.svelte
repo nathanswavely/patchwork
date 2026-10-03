@@ -255,4 +255,19 @@
   .unsaved {
     font-size: 0.82rem;
   }
+
+  /* A phone: two equal tabs, each with its state under its title. Side by
+     side the title and its badge each broke onto a second line. */
+  @media (max-width: 640px) {
+    .doc-tab {
+      flex: 1;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+      min-height: 56px;
+      padding: 6px 8px;
+      text-align: center;
+      white-space: nowrap;
+    }
+  }
 </style>

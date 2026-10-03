@@ -65,4 +65,13 @@
   .switch input:checked + .track .thumb {
     transform: translateX(16px);
   }
+
+  /* The track is drawn 22px tall; the label around it is a 44px target,
+     given back by the negative margin so the row does not grow. */
+  @media (pointer: coarse) {
+    .switch {
+      padding: 11px 4px;
+      margin: -11px -4px;
+    }
+  }
 </style>
