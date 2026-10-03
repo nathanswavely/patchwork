@@ -286,8 +286,13 @@ func TestSetSeatTerm_RefusedWhileAContestRuns(t *testing.T) {
 	if code != http.StatusConflict {
 		t.Fatalf("expected 409 while a contest runs, got %d: %s", code, body)
 	}
-	if !strings.Contains(body, "contest") {
-		t.Errorf("expected the refusal to say a contest is running, got %s", body)
+	// "Election", because that is the word the product says for this event
+	// everywhere now: the hub said contest, the proposal said Council
+	// election and the panel said The ballot, and a member could not tell
+	// whether they were one thing or four (F-107). The backend keeps its
+	// contest_* field names.
+	if !strings.Contains(body, "election running now") {
+		t.Errorf("expected the refusal to say an election is running, got %s", body)
 	}
 }
 

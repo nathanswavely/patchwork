@@ -277,7 +277,11 @@ func openElectionFor(db *database.DB, nodeID string, gc model.GovernanceConfig, 
 		// the whole voting window, and would have sat above the result after
 		// that. The panel below it is the phase-aware surface and says which
 		// stage this is, with its dates.
-		"This patch elects its admins. Nominations open first, then the ballot.",
+		// "Then the ballot" named the voting phase after the thing a voter
+		// casts in it, which is the fourth name for one event that F-107 is
+		// about. The two phases are nominations and voting, and those are
+		// the words the bell and the panel heading use.
+		"This patch elects its admins. Nominations open first, then voting.",
 		duration, created, created, seats, nominationsClose,
 	)
 	if err != nil {

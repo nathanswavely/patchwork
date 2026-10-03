@@ -1124,8 +1124,14 @@ election-shaped sibling of **lapsed**, and it carries `status =
 'rejected'` for the same reason and with the same rule: read `state`
 first. A contest that settles nothing seats nobody, so nobody in it is
 **seated**, however the approvals fell.
+On a chip or a row, where there is no room for the sentence, it reads
+**nobody elected** rather than "unsettled": the state name is ours, and
+on its own it is as easily read as *still running* as *ended having
+settled nothing*, which is the reading a founder took. The sentence
+forms stay — the banner's "This election settled nothing; nobody was
+seated", the Record's "Nobody was elected."
 _Avoid_: failed, rejected, void, cancelled (nothing was called off — the
-contest ran and ended)
+contest ran and ended), unsettled as a label a reader sees on its own
 
 **Attestation**:
 A record of a decision the community made at a venue that isn't
@@ -1235,8 +1241,18 @@ A proposal that fills one or more seats. It is a proposal like any other
 differing only in what a ballot says and how the result is read: the
 electorate approves as many candidates as it likes, and the most-approved
 take the open seats.
+The UI word is **election**, everywhere and only. Four words for it
+reached one reader in one sitting — the hub said *contest*, the proposal
+said *Council election*, the panel headed itself *The ballot*, the bell
+said *nominations* then *voting* — and he could not tell whether they
+were one event or four he was behind on. *Contest* is fine in this
+glossary and in code comments, where the reader is us; it is not a word
+the product says. *Nominations*, *voting* and *result* are the phases,
+and the panel and the bell use exactly those three. A **ballot** is the
+thing a voter casts, never the event they cast it in.
 _Avoid_: race, poll, vote (that is the act of casting), ranked-choice
-(elections approve, they do not rank)
+(elections approve, they do not rank), contest (ours, not theirs), the
+ballot (as a name for the election)
 
 **Candidate**:
 A person named on an election's ballot for a seat. Note the collision:

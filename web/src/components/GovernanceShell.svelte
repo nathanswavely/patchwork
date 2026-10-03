@@ -33,6 +33,12 @@
   let sections = $derived([
     { label: 'Overview', href: `/patches/${slug}/governance` },
     { label: 'Documents', href: `/patches/${slug}/governance/docs` },
+    // Reading a patch's rules is a section like any other. It used to be
+    // reachable only through a link called "Propose a change to these
+    // rules", which is how somebody who wanted to check one setting ended
+    // up on a review screen deciding whether pressing Submit would start a
+    // fortnight-long vote (F-117).
+    { label: 'Rules', href: `/patches/${slug}/governance/rules` },
     ...(recordWithheld ? [] : [
       { label: 'Proposals', href: `/patches/${slug}/governance/proposals` },
       { label: 'Record', href: `/patches/${slug}/governance/record` },
