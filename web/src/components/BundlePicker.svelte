@@ -32,7 +32,12 @@
 </script>
 
 <div class="bundle">
-  <span class="bundle-label">Bundle</span>
+  <!-- The selected fabric's name as text, beside the label: a swatch's name
+       otherwise lived only in a tooltip, which a finger never sees. -->
+  <div class="bundle-head">
+    <span class="bundle-label">Bundle</span>
+    <span class="muted fabric-name">{swatchName(bundle[selectedSlot])}</span>
+  </div>
   <div class="bundle-slots">
     {#each bundle as hex, i}
       <button
@@ -70,6 +75,17 @@
 </div>
 
 <style>
+  .bundle-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .fabric-name {
+    font-size: 0.8rem;
+  }
+
   .bundle-label {
     display: block;
     font-size: 0.78rem;
@@ -77,7 +93,6 @@
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: var(--color-text-muted);
-    margin-bottom: 0.4rem;
   }
 
   .bundle-slots {
@@ -130,5 +145,29 @@
   .swatch.selected {
     outline: 2px solid var(--color-primary);
     outline-offset: 1px;
+  }
+
+  /* A finger: slots and swatches big enough to hit, the wall across the
+     full width instead of a 320px strip of 23px squares, and "−" apart from
+     "+" so adding a fabric never removes one. */
+  @media (pointer: coarse) {
+    .bundle-slots {
+      gap: 0.5rem;
+    }
+
+    .slot {
+      width: 40px;
+      height: 40px;
+    }
+
+    .slot-remove {
+      margin-left: auto;
+    }
+
+    .wall {
+      grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+      gap: 0.4rem;
+      max-width: none;
+    }
   }
 </style>

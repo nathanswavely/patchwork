@@ -9,6 +9,11 @@
    * Settings and Governance use, so the panel reads like a workspace
    * rather than a row of fifteen tabs. The tab and section lists come
    * from lib/adminPanel.js; this file only draws them.
+   *
+   * On a narrow screen there is no tab row: the panel drills down, one
+   * level on screen at a time. /admin carries the five tabs as a list above
+   * the Overview, Review and Settings are lists of their sections, and every
+   * page below the root has one back link up a level.
    */
   import { navigate, getPath } from '../stores/router.svelte.js';
   import { api } from '../lib/api.js';
@@ -18,7 +23,7 @@
   import ContextCrumb from './ContextCrumb.svelte';
   import WorkspaceSearch from './WorkspaceSearch.svelte';
   import SettingsShell from './SettingsShell.svelte';
-  import { Gauge, Tray, Users, GearSix, ListMagnifyingGlass } from 'phosphor-svelte';
+  import { Gauge, Tray, Users, GearSix, ListMagnifyingGlass, CaretLeft, CaretRight } from 'phosphor-svelte';
 
   let { children } = $props();
 
@@ -67,6 +72,13 @@
     }))
   );
 
+  // The tabs the narrow-screen root lists. Overview is the root itself.
+  let menuTabs = $derived(tabs.filter((t) => t.id !== 'overview'));
+
+  function tabHref(tab) {
+    return tab.sections ? tab.sections[0].href : tab.href;
+  }
+
   function isActive(tab) {
     return tab.id === activeId;
   }
@@ -93,7 +105,7 @@
     <nav class="workspace-tabs">
       {#each tabs as tab (tab.id)}
         {@const Icon = tab.icon}
-        {@const href = tab.sections ? tab.sections[0].href : tab.href}
+        {@const href = tabHref(tab)}
         <a
           {href}
           class="workspace-tab"
@@ -111,8 +123,34 @@
   </div>
 
   <div class="workspace-body work-content">
+    {#if activeId === 'overview'}
+      <nav class="admin-menu" aria-label="Administration">
+        {#each menuTabs as tab (tab.id)}
+          {@const Icon = tab.icon}
+          <a href={tab.href} class="admin-menu-link" onclick={(e) => handleNav(e, tab.href)}>
+            <span class="tab-icon"><Icon size={20} weight="duotone" /></span>
+            <span class="admin-menu-label">{tab.label}</span>
+            {#if tab.id === 'review' && reviewTotal > 0}
+              <span class="tab-count" aria-label="{reviewTotal} waiting">{reviewTotal}</span>
+            {/if}
+            <span class="admin-menu-caret"><CaretRight size={14} weight="bold" /></span>
+          </a>
+        {/each}
+      </nav>
+    {:else if !activeTab?.sections}
+      <a href="/admin" class="admin-back" onclick={(e) => handleNav(e, '/admin')}>
+        <CaretLeft size={14} weight="bold" />
+        Administration
+      </a>
+    {/if}
+
     {#if activeTab?.sections}
-      <SettingsShell title={activeTab.label} sections={sidebarSections}>
+      <SettingsShell
+        title={activeTab.label}
+        sections={sidebarSections}
+        indexHref={activeTab.href}
+        parent={{ href: '/admin', label: 'Administration' }}
+      >
         {#snippet children()}
           {@render children()}
         {/snippet}
@@ -185,6 +223,73 @@
 
   .workspace-tab.active .tab-icon {
     color: var(--color-accent);
+  }
+
+  /* The narrow screen's navigation. Neither exists on a wide one. */
+  .admin-menu,
+  .admin-back {
+    display: none;
+  }
+
+  @media (max-width: 640px) {
+    .workspace-nav {
+      display: none;
+    }
+
+    .workspace-body {
+      margin-top: 56px; /* the tab row cleared the global bar before */
+    }
+
+    .admin-menu {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1.5rem;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .admin-back {
+      display: inline-flex;
+    }
+  }
+
+  .admin-menu-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 52px;
+    padding: 0.75rem 0.25rem;
+    font-size: 1rem;
+    color: var(--color-text);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .admin-menu-link:hover {
+    text-decoration: none;
+  }
+
+  .admin-menu-label {
+    flex: 1;
+  }
+
+  .admin-menu-caret {
+    display: flex;
+    color: var(--color-text-muted);
+  }
+
+  .admin-back {
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 44px;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    text-decoration: none;
+  }
+
+  .admin-back:hover {
+    color: var(--color-text);
+    text-decoration: none;
   }
 
   .tab-count {

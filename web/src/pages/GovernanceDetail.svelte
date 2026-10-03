@@ -80,7 +80,7 @@
               class="btn-link"
               onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/docs/${doc.id}/history`); }}
             >
-              History ({doc.version} versions)
+              History ({doc.version} {doc.version === 1 ? 'version' : 'versions'})
             </a>
             {#if isLoggedIn() && isMember && membershipRole !== 'follower'}
               <a

@@ -92,7 +92,7 @@
 <div class="page-fade">
   <div class="container-narrow">
     <h1>Connected Quilts</h1>
-    <p class="page-desc">Connect other Patchworks to keep them a click away in the quilt switcher. Each opens on its own site. Your connections are part of your account, so they follow you to any device.</p>
+    <p class="page-desc">Connect other Patchworks to reach them from the quilt switcher. Each opens on its own site. Your connections are part of your account, so they follow you to any device.</p>
 
     <div class="follow-link card">
       <h2>Follow a patch from another quilt</h2>

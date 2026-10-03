@@ -342,6 +342,23 @@ func main() {
 		log.Fatalf("webauthn: %v", err)
 	}
 
+	// Teach the relying party the origins of the native apps this quilt
+	// vouches for (docs/adr/2026-09-20-an-instance-vouches-for-an-app.md). An
+	// Android app's assertion arrives as "android:apk-key-hash:…" rather than
+	// this instance's https origin, so a listed app cannot sign in until that
+	// origin is accepted. The admin handlers reload it after every add and
+	// remove; this is the same call at boot. An instance that has listed
+	// nothing gets an empty list and the behaviour it always had.
+	if origins, err := auth.NativeAppOrigins(db); err != nil {
+		log.Printf("native apps: could not derive sign-in origins: %v", err)
+	} else if len(origins) > 0 {
+		if err := wa.Reconfigure(origins); err != nil {
+			log.Printf("native apps: could not load sign-in origins: %v", err)
+		} else {
+			log.Printf("native apps: accepting %d Android sign-in origin(s)", len(origins))
+		}
+	}
+
 	// The gazetteer is optional infrastructure (docs/adr/082): a place index
 	// built offline and copied in. Absent, the server runs exactly as it did
 	// before it existed and every address is placed by hand.
