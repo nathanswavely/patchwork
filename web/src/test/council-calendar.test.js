@@ -94,7 +94,7 @@ describe('GovernanceOverview — what you can do about it today', () => {
 
   it('says "nothing until <date>" when that is the honest answer', () => {
     expect(src).toMatch(
-      /There is nothing to do until \$\{formatDay\(nextContestOpens\)\}, when the next contest opens and any member may stand\./
+      /There is nothing to do until \$\{formatDay\(nextContestOpens\)\}, when the next election opens and any member may stand\./
     );
   });
 

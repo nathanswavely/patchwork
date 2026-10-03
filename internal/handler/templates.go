@@ -9,7 +9,6 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
-	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 )
 
@@ -111,6 +110,14 @@ func countProposalsAwaitingVote(db *database.DB, nodeID, userID, nodeGCJSON stri
 	//     election forever — during nominations, when no ballot may be cast,
 	//     and after someone has already approved a slate.
 	//
+	// An election has a second way to be answered. Taking part without
+	// approving anybody writes `election_abstentions` and no
+	// `election_ballots` row, so a contest a member had deliberately turned
+	// up to went on being counted as one they owed a ballot on. That table
+	// arrived after this query did, which is the way a count like this
+	// decays: the new act was added to the tally that decides the contest
+	// and not to the nudge that chases it.
+	//
 	// docs/adr/044's rule is that the nudge names the same set the gate does.
 	rows, err := db.Query(
 		`SELECT COALESCE(p.voting_terms,''), COALESCE(p.target_user_id,'') FROM proposals p
@@ -119,9 +126,11 @@ func countProposalsAwaitingVote(db *database.DB, nodeID, userID, nodeGCJSON stri
 		 AND (p.seats_contested = 0 OR (
 		       p.voting_ends_at IS NOT NULL
 		       AND NOT EXISTS (SELECT 1 FROM election_ballots b
-		                       WHERE b.proposal_id = p.id AND b.voter_id = ?)))
+		                       WHERE b.proposal_id = p.id AND b.voter_id = ?)
+		       AND NOT EXISTS (SELECT 1 FROM election_abstentions a
+		                       WHERE a.proposal_id = p.id AND a.voter_id = ?)))
 		 AND NOT EXISTS (SELECT 1 FROM votes v WHERE v.proposal_id = p.id AND v.user_id = ?)`,
-		nodeID, userID, userID,
+		nodeID, userID, userID, userID,
 	)
 	if err != nil {
 		return 0
@@ -271,7 +280,11 @@ func GovernanceOverview(db *database.DB) http.HandlerFunc {
 		// the viewer can be in one vote's electorate and outside another's,
 		// when a tenure requirement changed between them. Ask per proposal.
 		var needsVote int
-		if user := middleware.UserFromContext(r.Context()); user != nil {
+		// viewerOf: a nudge is something the page says to a reader, so an
+		// admin previewing their patch as a visitor is not owed one. Found
+		// by the preview-equals-a-stranger test, which is what that test
+		// is for (see view_as_visitor.go).
+		if user := viewerOf(r); user != nil {
 			needsVote = countProposalsAwaitingVote(db, nodeID, user.ID, gcJSON)
 		}
 

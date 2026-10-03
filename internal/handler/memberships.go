@@ -438,7 +438,10 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 			statusFilter = "active"
 		}
 
-		user := middleware.UserFromContext(r.Context())
+		// viewerOf: this whole handler is a read, and an admin previewing
+		// their patch as a visitor gets the roster a visitor gets
+		// (see view_as_visitor.go).
+		user := viewerOf(r)
 
 		// The patch's own admins hold every management verb here, and the
 		// one surface that is theirs alone: who has been invited and has not
@@ -759,6 +762,30 @@ func ListMyMemberships(db *database.DB) http.HandlerFunc {
 		// "my patches", and an invitation is not one; the caller's open
 		// invitations are GET /users/me/invitations, read by name.
 		args := []interface{}{user.ID}
+
+		// ?status=archived asks the opposite question: which patches am I
+		// responsible for that nobody can open.
+		//
+		// A printmaker archived a duplicate of her press by accident and
+		// found out a year later by reading her personal export, because
+		// every slug route refuses an archived patch (docs/adr/034) and no
+		// list she could reach named one. She was its admin; the product's
+		// answer to her was "Patch not found".
+		//
+		// Its own parameter rather than extra rows in the default list,
+		// because every client treats this endpoint as "patches I can open"
+		// — the membership store derives the role the whole app gates on
+		// from it, and an admin row for a patch that 404s would draw doors
+		// all over a patch nobody can reach.
+		//
+		// Admin rows only. Being carried along on a patch somebody else
+		// archived is not a thing to answer for, and restore is an instance
+		// admin's act in either case.
+		if r.URL.Query().Get("status") == "archived" {
+			query = strings.Replace(query,
+				"AND m.status IN ('active', 'pending') AND n.status IN ('active','unclaimed')",
+				"AND m.status = 'active' AND m.role = 'admin' AND n.status = 'archived' AND n.removed_at IS NULL", 1)
+		}
 
 		if after != "" {
 			query += " AND m.id > ?"

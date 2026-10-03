@@ -16,8 +16,12 @@ function source(relPath) {
 describe('Account settings: taking a copy of the quilt', () => {
   const src = source('pages/AccountSettings.svelte');
 
+  // The heading leads with plain words now and keeps the product's own
+  // word beside them: "Member seamrip" above a Danger Zone gave no clue
+  // which way it cut, and one reader spent half a minute deciding whether
+  // it would remove her (F-103).
   it('offers the control under its own heading', () => {
-    expect(src).toContain('<h2>Member seamrip</h2>');
+    expect(src).toContain('<h2>A copy of this quilt (seamrip)</h2>');
     expect(src).toMatch(/onclick=\{takeMemberSeamrip\}/);
   });
 
@@ -61,6 +65,6 @@ describe('Account settings: taking a copy of the quilt', () => {
   });
 
   it('leaves the personal export beside it, not replaced by it', () => {
-    expect(src).toContain('<h2>Download my data</h2>');
+    expect(src).toContain('<h2>Your own data</h2>');
   });
 });

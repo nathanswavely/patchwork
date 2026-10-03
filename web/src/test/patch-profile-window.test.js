@@ -219,8 +219,13 @@ describe('PatchOverflow', () => {
     expect(src).toMatch(/isUnclaimed \? 'events' : 'governance'/);
   });
 
+  // The signed-in test goes through the visitor preview now (F-126):
+  // reporting is a signed-in act, so it is not on the menu a visitor sees,
+  // so it is not on the menu a preview of that shows. The property this
+  // holds — signed in, and not one of the people who run the patch — is
+  // unchanged.
   it('homes Report, and hides it from the people who run the patch', () => {
-    expect(src).toMatch(/canReport = \$derived\(isLoggedIn\(\) && !isAdmin/);
+    expect(src).toMatch(/canReport = \$derived\(signedInForPatchView\(isLoggedIn\(\)\) && !isAdmin/);
   });
 
   // Opening the report modal closes the menu. Mounted inside it, the modal

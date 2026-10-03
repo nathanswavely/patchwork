@@ -15,6 +15,7 @@
    */
   import { setContext } from 'svelte';
   import { api } from '../lib/api.js';
+  import { patchLoadError, archivedPatchName } from '../lib/patchError.js';
   import { navigate } from '../stores/router.svelte.js';
   import { setPatchName } from '../stores/patchName.svelte.js';
   import { workspaceFinderProvider } from '../lib/finderProviders.js';
@@ -100,9 +101,24 @@
     }
   });
 
+  // An archived patch this viewer administers, named. Empty for everybody
+  // else, who is told exactly what they were told before (docs/adr/034).
+  let archivedName = $state('');
+
+  // Whether the load failed, held apart from the message.
+  //
+  // The error branch used to test the message string, which worked only
+  // because every failure had one. A plain not-found now deliberately has
+  // none — its heading says everything there is to say — and an empty
+  // string is falsy, so the page fell past the error branch and sat on its
+  // loading skeleton for ever. Whether something failed and what to print
+  // about it are two questions.
+  let loadFailed = $state(false);
+
   async function loadNode() {
     loading = true;
     error = '';
+    loadFailed = false;
     try {
       const data = await api(`nodes/${slug}`);
       node = data.node || data;
@@ -117,7 +133,9 @@
       verificationDomain = data.verification_domain || '';
       setPatchName(node?.name || slug);
     } catch (e) {
-      error = e.message || 'Failed to load patch';
+      error = patchLoadError(e);
+      archivedName = archivedPatchName(e) || (e?.data?.archived ? slug : '');
+      loadFailed = true;
       node = null;
     } finally {
       loading = false;
@@ -290,11 +308,11 @@
         <Skeleton lines={1} height="0.9rem" width="80%" />
       </div>
     </div>
-  {:else if error && !node}
+  {:else if loadFailed && !node}
     <div class="workspace-body container">
       <div class="shell-error">
-        <h2>Patch not found</h2>
-        <p class="muted">{error}</p>
+        <h2>{archivedName ? `${archivedName} is archived` : 'Patch not found'}</h2>
+        {#if error}<p class="muted">{error}</p>{/if}
         <div class="shell-error-actions">
           <button class="btn btn-secondary" onclick={loadNode}>Retry</button>
           <a href="/" class="btn btn-secondary" onclick={(e) => { e.preventDefault(); navigate('/'); }}>Back to Quilt</a>
