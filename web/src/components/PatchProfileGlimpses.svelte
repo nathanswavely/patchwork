@@ -22,7 +22,7 @@
   import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
   import { eventPostingRight } from '../lib/patchWorkspace.js';
   import { handleFromDID } from '../lib/atproto.js';
-  import { formatEventDate, formatEventTime, upcomingFrom } from '../lib/datetime.js';
+  import { formatEventDate, formatEventTime, upcomingFrom, formatDay } from '../lib/datetime.js';
 
   // The glimpse shows three, not the five it used to fetch. A stacked row
   // is taller than the clipped one-liner it replaces, and the section
@@ -76,6 +76,7 @@
   // "No members yet" about a patch with forty people in it.
   let publicMemberList = $state('everyone');
   let recentProposals = $state([]);
+  let proposalTotal = $state(0);
   let governanceDocs = $state([]);
   // Whether the governance list this viewer got held only what the patch
   // published. Read off the listing that applied the rule, so the empty
@@ -152,6 +153,21 @@
   let moreEvents = $derived(
     Math.max(0, (node?.upcoming_event_count ?? recentEvents.length) - recentEvents.length)
   );
+  // What this capped list is not showing, the same way the events glimpse
+  // has always reported it. A press running seven contests published three
+  // rows with the same title and said nothing about the other four; its
+  // founder found them by opening her personal export.
+  let moreProposals = $derived(Math.max(0, proposalTotal - recentProposals.length));
+
+  // When each one was opened, so three rows reading "Council election" are
+  // three different contests rather than one thing shown three times. An
+  // open one says when it closes instead, which is the fact somebody
+  // looking at it still has to act on (F-058).
+  function proposalWhen(p) {
+    if (p.status === 'open' && p.voting_ends_at) return `closes ${formatDay(p.voting_ends_at)}`;
+    return formatDay(p.created_at);
+  }
+
   let showAbout = $derived(!!node?.website || (node?.links?.length ?? 0) > 0 || !!node?.address || !!node?.image_url || !!atprotoHandle);
 
   // Keyed on the slug and on whether governance is readable, because the
@@ -192,6 +208,7 @@
     memberTotal = node?.member_count ?? members.length;
     publicMemberList = memberData.public_member_list || 'everyone';
     recentProposals = proposalData.items || proposalData || [];
+    proposalTotal = proposalData.total ?? recentProposals.length;
     recordWithheld = proposalData.public_governance_record === 'nobody';
     // A pristine or stale lining is the project's own text, shipped in the
     // binary and byte-identical on every patch on the quilt, so a row for it
@@ -414,6 +431,7 @@
               onclick={go(`/patches/${slug}/governance/${proposal.id}`)}
             >
               <span class="row-title">{proposal.title}</span>
+              <span class="row-meta muted">{proposalWhen(proposal)}</span>
               <!-- Red is for a decision the patch made. Lapsed and unsettled
                    are absences, so they keep the pill's muted default. -->
               <span
@@ -424,6 +442,13 @@
               >{outcome}</span>
             </a>
           {/each}
+          {#if moreProposals > 0}
+            <a
+              class="glimpse-more"
+              href="/patches/{slug}/governance/proposals"
+              onclick={go(`/patches/${slug}/governance/proposals`)}
+            >{moreProposals} more</a>
+          {/if}
         </div>
       {:else if loaded}
         <!-- Two kinds of empty, two sentences. A viewer who is shown only
