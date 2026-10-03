@@ -98,7 +98,11 @@
       // page, beside a council block saying nobody held the role. What the
       // record can always say truthfully is what the *contest* did, and the
       // council block two inches away says what the council is.
-      if (e.outcome !== 'seated') return 'Settled nothing. Nobody was elected.';
+      // Leads with the fact, not with "Settled nothing", which one reader
+      // took for a dispute: "the vote was tied or disputed, something
+      // contentious. It means nobody turned up." The seats sentence is the
+      // banner's, so the two pages say one thing (F-107).
+      if (e.outcome !== 'seated') return 'Nobody was elected. The seats it was for are unchanged.';
       // Who, when the contest recorded it. "The electorate seated a council"
       // named nobody and overstated one chair of three as a whole council,
       // and "electorate" is not a word the co-op that read it has ever said

@@ -345,7 +345,7 @@ func fillEmptyCouncil(n *Notifier, nodeID, slug, name string, rules governanceRu
 		announceCouncilEmpty(n, nodeID, slug, name,
 			"Every seat was vacated for inactivity, so this patch has no admins. It elects its council, and no election can be scheduled — its seats carry no term end. An instance admin has been told.")
 		raiseSuccessionNeeded(n, nodeID, slug, name,
-			"Its seats were vacated for inactivity. It elects its council and no contest can be scheduled, so nothing will refill it on its own.")
+			"Its seats were vacated for inactivity. It elects its council and no election can be scheduled, so nothing will refill it on its own.")
 
 	case "meritocratic":
 		// Admins are nominated and the community ratifies (docs/adr/051), and
