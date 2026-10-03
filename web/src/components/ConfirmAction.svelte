@@ -87,4 +87,24 @@
     color: var(--color-on-accent);
     border-color: var(--color-accent);
   }
+
+  /* The confirm state is wider than the button it replaces, and it opens
+     inside rows that were already full. It may wrap rather than push its
+     Cancel past the edge. */
+  .confirm-group {
+    flex-wrap: wrap;
+  }
+
+  /* On a phone the confirm button's own label is the question; the prompt
+     stays for a screen reader and gives up its 90px. */
+  @media (max-width: 640px) {
+    .confirm-prompt {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+  }
 </style>

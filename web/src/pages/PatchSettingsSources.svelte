@@ -4,6 +4,9 @@
   import { formatEventTime, reinterpretUTCAsLocal } from '../lib/datetime.js';
   import { showToast } from '../stores/toast.svelte.js';
   import ConfirmAction from '../components/ConfirmAction.svelte';
+  import { isNarrow } from '../stores/viewport.svelte.js';
+
+  let narrow = $derived(isNarrow());
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -103,7 +106,10 @@
     if (source.local_time_stamped_utc) return null; // already corrected
     if (!source.sample_starts_at || !source.timezone) return null;
     const corrected = reinterpretUTCAsLocal(source.sample_starts_at, source.timezone);
-    if (corrected === source.sample_starts_at) return null;
+    // Compare instants, not strings: the server writes `…:00Z` and the
+    // conversion hands back `…:00.000Z`, so a patch on UTC showed a move
+    // from 11:00 PM to 11:00 PM.
+    if (Date.parse(corrected) === Date.parse(source.sample_starts_at)) return null;
     return {
       before: formatEventTime(source.sample_starts_at, source.timezone),
       after: formatEventTime(corrected, source.timezone),
@@ -150,8 +156,8 @@
       sources = sources.map((s) => (s.id === id ? updated : s));
       showToast(
         value
-          ? "Saved — sync now to rewrite this source's times"
-          : 'Saved — this feed will be taken at its word again',
+          ? "Saved. Sync now to rewrite this source's times"
+          : 'Saved. This feed will be taken at its word again',
         'success',
       );
     } catch (e) {
@@ -323,13 +329,18 @@
 
 <div class="page-fade">
   <h2>Event Sources</h2>
-  <p class="muted subtitle">
-    Calendar feeds this patch pulls events from. Paste an ICS address (a
-    Google Calendar's secret address, the calendar feed from your website),
-    an events page from Squarespace, Humanitix, and similar sites, or an
-    atproto handle whose calendar you want to follow.
-    Imported events publish directly and stay in step with the feed.
-  </p>
+  <!-- On a phone this 52-word explanation sat above the only control on
+       the page, so it folds there. Open, and unlabelled, on a wide screen. -->
+  <details class="intro-fold" open={!narrow}>
+    <summary>What works?</summary>
+    <p class="muted subtitle">
+      Calendar feeds this patch pulls events from. Paste an ICS address (a
+      Google Calendar's secret address, the calendar feed from your website),
+      an events page from Squarespace, Humanitix, and similar sites, or an
+      atproto handle whose calendar you want to follow.
+      Imported events publish directly and stay in step with the feed.
+    </p>
+  </details>
 
   {#if loading}
     <p class="muted" style="padding: 2rem 0;">Loading...</p>
@@ -366,10 +377,9 @@
                   <option value={tier}>{label}</option>
                 {/each}
               </select>
-              <p class="correction-hint muted">
-                The tier new events from this feed are created at. Events
-                already imported keep the tier they have. Anything but Public
-                also stops these events federating to other quilts.
+              <p class="correction-hint tier-hint muted">
+                Applies to events imported from now on. Anything but Public
+                also stops them federating to other quilts.
               </p>
             </div>
             <div class="source-correction">
@@ -383,10 +393,8 @@
                 <span>This calendar publishes local times as UTC</span>
               </label>
               <p class="correction-hint muted">
-                Tick this only if the feed's times run hours earlier than the times
-                on the venue's own page. Patchwork then reads each time as the
-                venue's clock instead of Greenwich's, and the next sync rewrites
-                this source's events.
+                Only if this feed's times run hours earlier than the venue's own
+                page. The next sync rewrites its events.
                 {#if previewFor(source)}
                   <br />Its next event would move from
                   <strong>{previewFor(source).before}</strong> to
@@ -477,7 +485,7 @@
     <h2 class="section-head">Programs credited to you</h2>
     <p class="muted subtitle">
       Recurring listings someone recognized as yours. They stay on the
-      venue's calendar — these are offers to put your name on them too, and
+      venue's calendar. These are offers to put your name on them too, and
       the venue confirms each one.
     </p>
     <ul class="program-list">
@@ -495,7 +503,7 @@
         {#if mine.length === 0}
           <li class="offer-empty muted">
             {p.routed
-              ? 'Nothing waiting — every listing is either linked or dismissed.'
+              ? 'Nothing waiting. Every listing is either linked or dismissed.'
               : `Nothing yet: “${p.display_name}” has not been mapped to a patch, so these listings are not events on this quilt.`}
           </li>
         {:else}
@@ -613,8 +621,14 @@
   }
   .correction-hint {
     margin: 0.25rem 0 0 1.6rem;
+    max-width: 38rem;
     font-size: 0.85rem;
     line-height: 1.5;
+  }
+  /* The checkbox hint indents to sit under its label's text; the select
+     has no box beside it, so its hint starts at the edge. */
+  .tier-hint {
+    margin-left: 0;
   }
   .source-tier {
     display: block;
@@ -642,16 +656,21 @@
     margin: 0 0 1.5rem;
   }
 
+  /* A grid, not a flex row: the name and the buttons share the top line
+     and each setting takes a full-width line under them. As a flex row the
+     settings sat beside the name, and a long host ran under the label. */
   .source-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    column-gap: 1rem;
     padding: 0.75rem 0;
     border-bottom: 1px solid var(--color-border);
   }
 
   .source-info {
+    grid-column: 1;
+    grid-row: 1;
     display: flex;
     flex-direction: column;
     gap: 0.15rem;
@@ -661,6 +680,7 @@
   .source-host {
     font-size: 0.92rem;
     font-weight: 500;
+    overflow-wrap: anywhere;
   }
 
   .source-url {
@@ -668,7 +688,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 340px;
   }
 
   .source-status {
@@ -680,10 +699,11 @@
   }
 
   .source-actions {
+    grid-column: 2;
+    grid-row: 1;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    flex-shrink: 0;
   }
 
   .add-form {
@@ -807,5 +827,54 @@
     gap: 0.4rem;
     flex-shrink: 0;
     flex-wrap: wrap;
+  }
+
+  /* A phone: the address gets the full width, the tier and the button share
+     the line below. In one row the select (full width on phones, app.css)
+     took the space and left the URL field 26px wide. */
+  @media (max-width: 640px) {
+    /* Beside the buttons a host had about 170px and broke mid-word; the
+       buttons take their own line under it instead. */
+    .source-info,
+    .source-actions {
+      grid-column: 1 / -1;
+    }
+
+    .source-actions {
+      grid-row: 2;
+      margin-top: 0.5rem;
+    }
+
+    .add-form {
+      flex-wrap: wrap;
+    }
+
+    .add-form input {
+      flex: 1 1 100%;
+    }
+
+    .add-form select {
+      width: auto;
+      flex: 1 1 auto;
+    }
+
+    .add-form .btn {
+      white-space: nowrap;
+    }
+  }
+
+  .intro-fold > summary {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 0.9rem;
+    color: var(--color-primary);
+    cursor: pointer;
+  }
+
+  @media (min-width: 641px) {
+    .intro-fold > summary {
+      display: none;
+    }
   }
 </style>

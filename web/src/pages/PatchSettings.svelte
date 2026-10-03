@@ -2,6 +2,7 @@
   import { getContext } from 'svelte';
   import { getPath, navigate, replaceRoute } from '../stores/router.svelte.js';
   import { patchSettingsSections } from '../lib/patchWorkspace.js';
+  import { isNarrow } from '../stores/viewport.svelte.js';
   import SettingsShell from '../components/SettingsShell.svelte';
   import PatchSettingsInfo from './PatchSettingsInfo.svelte';
   import PatchSettingsAppearance from './PatchSettingsAppearance.svelte';
@@ -69,6 +70,12 @@
   // sources-only trusted contributor actually has.
   let defaultSection = $derived(sourcesOnly ? 'sources' : 'info');
 
+  // On a narrow screen the bare /settings path is the list of sections and
+  // the shell drills down from it. A sources-only contributor has one
+  // section, and a list of one is a step with nothing to choose, so they
+  // keep landing on it directly.
+  let indexHref = $derived(sourcesOnly ? null : `/patches/${slug}/settings`);
+
   // Default to the landing section at the bare /settings path, and steer
   // away from any section that doesn't apply to this patch's claim state or
   // this viewer's standing — a stale link or a status change shouldn't
@@ -79,6 +86,7 @@
   $effect(() => {
     if (patch.value.loading) return;
     if (currentPath === `/patches/${slug}/settings` || currentPath === `/patches/${slug}/settings/`) {
+      if (indexHref && isNarrow()) return;
       replaceRoute(`/patches/${slug}/settings/${defaultSection}`);
       return;
     }
@@ -92,13 +100,16 @@
 {#if !canViewSettings}
   <p class="muted">You do not have permission to view settings.</p>
 {:else}
-  {#if asInstanceAdmin}
+  <!-- On a phone, said once where Patch Settings opens rather than above
+       every section; the drill-down passes through the list to get there.
+       A wide screen has no list page, so it stays on every section. -->
+  {#if asInstanceAdmin && (!isNarrow() || currentPath === indexHref || currentPath === `${indexHref}/`)}
     <p class="instance-admin-note">
       You are here as an admin of this quilt, not as an admin of this patch.
       Changes you save are this patch's.
     </p>
   {/if}
-  <SettingsShell title="Patch Settings" {sections}>
+  <SettingsShell title="Patch Settings" {sections} {indexHref}>
     {#if sourcesOnly}
       <!-- Always Sources, regardless of what activePage resolved to: a
            trusted contributor with no patch-admin standing gets exactly the

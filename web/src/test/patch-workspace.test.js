@@ -119,3 +119,98 @@ describe('#6: shells are wired to the helpers', () => {
     expect(src).toMatch(/isUnclaimed[\s\S]*?\/patches\/\{slug\}\/events/);
   });
 });
+
+describe('Patch Settings drills down on a narrow screen', () => {
+  const page = source('pages/PatchSettings.svelte');
+
+  it('opts into the drill-down with its bare path as the list', () => {
+    expect(page).toContain('<SettingsShell title="Patch Settings" {sections} {indexHref}>');
+    expect(page).toContain('indexHref = $derived(sourcesOnly ? null : `/patches/${slug}/settings`)');
+  });
+
+  it('leaves the bare path alone on a narrow screen and redirects it on a wide one', () => {
+    expect(page).toContain('if (indexHref && isNarrow()) return;');
+  });
+});
+
+describe('the workspace tabs are a bottom bar on a narrow screen', () => {
+  const shell = source('components/PatchShell.svelte');
+
+  it('never has more than five tabs to fit, for any viewer', () => {
+    const most = workspaceTabs({ isAdmin: true, membershipRole: 'admin' });
+    expect(ids(most)).toEqual(['governance', 'members', 'events', 'noticeboard', 'settings']);
+  });
+
+  it('pins the tabs to the foot at the quilt rail\'s breakpoint and height', () => {
+    expect(shell).toMatch(/@media \(max-width: 768px\) \{[\s\S]*\.workspace-tabs \{\s*position: fixed;[\s\S]*height: var\(--pw-nav-h\);/);
+  });
+
+  it('draws no bar for a single tab, and clears the bar only when there is one', () => {
+    expect(shell).toContain('class:single={tabs.length < 2}');
+    expect(shell).toContain('class:over-tab-bar={tabs.length >= 2}');
+  });
+
+  it('lifts the sticky vote bar above whichever tab bar is at the foot', () => {
+    expect(source('components/StickyVoteBar.svelte')).toContain('bottom: var(--pw-nav-h);');
+  });
+});
+
+describe('the way up from a workspace page with no section list on screen', () => {
+  it('goes to the section list a detail page belongs to', async () => {
+    const { workspaceUpLink } = await import('../lib/patchWorkspace.js');
+    expect(workspaceUpLink('governanceProposal', 'p')).toEqual({ href: '/patches/p/governance/proposals', label: 'Proposals' });
+    expect(workspaceUpLink('governanceProposalNew', 'p').href).toBe('/patches/p/governance/proposals');
+    expect(workspaceUpLink('governanceDocDetail', 'p')).toEqual({ href: '/patches/p/governance/docs', label: 'Documents' });
+    expect(workspaceUpLink('governanceRulesPropose', 'p').href).toBe('/patches/p/governance/docs');
+    expect(workspaceUpLink('patchNotice', 'p')).toEqual({ href: '/patches/p/noticeboard', label: 'Noticeboard' });
+  });
+
+  it('is nothing on a section page, whose own list is the way around', async () => {
+    const { workspaceUpLink } = await import('../lib/patchWorkspace.js');
+    for (const r of ['governanceHub', 'governanceProposals', 'governanceDocs', 'governanceRecord', 'patchMembers', 'patchEvents', 'patchNoticeboard', 'patchSettingsInfo']) {
+      expect(workspaceUpLink(r, 'p')).toBeNull();
+    }
+  });
+
+  it("opens the phone's patch bar, preferring a shell's own link, then a linked breadcrumb", () => {
+    const shell = source('components/PatchShell.svelte');
+    expect(shell).toContain("setContext('workspaceUp'");
+    expect(shell.indexOf('if (registeredUp) return registeredUp;')).toBeLessThan(shell.indexOf('breadcrumbExtra.filter((seg) => seg.href)'));
+    expect(shell).toMatch(/<PatchBarMenu[\s\S]*\{upLink\}/);
+    expect(source('components/PatchBarMenu.svelte')).toContain("let back = $derived(upLink || { href: '/', label: getInstanceName() });");
+    expect(source('App.svelte')).toContain('up={workspaceUpLink(routeName, routeParams.slug)}');
+  });
+
+  it('Patch Settings hands its back link to that row instead of drawing it in the page', () => {
+    const settings = source('components/SettingsShell.svelte');
+    expect(settings).toContain("getContext('workspaceUp')");
+    expect(settings).toContain('{#if indexHref && !workspaceUp}');
+  });
+});
+
+describe('on a phone the patch name is the menu', () => {
+  const shell = source('components/PatchShell.svelte');
+  const bar = source('components/PatchBarMenu.svelte');
+  const rel = source('components/PatchRelationship.svelte');
+
+  it('puts the patch bar in the global bar and drops the crumb and cluster row below 768px', () => {
+    expect(shell).toContain('<GlobalBar patchContext>');
+    expect(shell).toMatch(/\.crumb-group,\s*\.workspace-cluster \{\s*display: none;/);
+    expect(source('components/GlobalBar.svelte')).toMatch(/\.top-bar\.patch-context \.new-menu-container \{\s*display: none;/);
+  });
+
+  it("keeps a visitor's next rung in the sheet, not in the bar or a strip", () => {
+    expect(bar.slice(0, bar.indexOf('{#if sheetOpen}'))).not.toContain('<PatchRelationship');
+    expect(shell).not.toContain('visitor-rung');
+    expect(rel).not.toContain("mode === 'primary'");
+  });
+
+  it('puts standing, the public profile, posting, subscribing and reporting in the sheet', () => {
+    const sheet = bar.slice(bar.indexOf('<div class="patch-sheet"'));
+    expect(sheet).toMatch(/<PatchRelationship[\s\S]*size="sm"/);
+    expect(sheet).toContain('View the public profile');
+    expect(sheet).toContain("{postingRight === 'direct' ? 'New event' : 'Suggest an event'}");
+    expect(sheet).toContain('Subscribe');
+    expect(sheet).toContain('Report');
+  });
+});

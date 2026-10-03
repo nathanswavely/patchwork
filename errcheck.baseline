@@ -1519,17 +1519,13 @@ internal/handler/reports.go:	db.Exec(
 internal/handler/reports.go:	db.Exec(
 internal/handler/reports.go:	db.Exec(`UPDATE events SET image_url = '', image_alt = '', updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?`, rpt.EntityID)
 internal/handler/reports.go:	db.Exec(`UPDATE nodes SET image_url = '', image_alt = '', updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?`, rpt.EntityID)
-internal/handler/reports.go:	db.QueryRow("SELECT COALESCE(display_name, username) FROM users WHERE id = ?", rpt.EntityID).Scan(&rpt.TargetName)
-internal/handler/reports.go:	db.QueryRow("SELECT COALESCE(display_name, username) FROM users WHERE id = ?", rpt.ReporterID).Scan(&reporterName)
 internal/handler/reports.go:	db.QueryRow("SELECT COUNT(*) FROM events WHERE id = ?", req.EntityID).Scan(&exists)
 internal/handler/reports.go:	db.QueryRow("SELECT COUNT(*) FROM nodes WHERE id = ?", req.EntityID).Scan(&exists)
 internal/handler/reports.go:	db.QueryRow("SELECT COUNT(*) FROM users WHERE id = ?", req.EntityID).Scan(&exists)
 internal/handler/reports.go:	db.QueryRow("SELECT body FROM notice_replies WHERE id = ?", rpt.EntityID).Scan(&rpt.TargetName)
 internal/handler/reports.go:	db.QueryRow("SELECT n.node_id FROM notice_replies r JOIN notices n ON n.id = r.notice_id WHERE r.id = ?", req.EntityID).Scan(&roomNodeID)
-internal/handler/reports.go:	db.QueryRow("SELECT name FROM nodes WHERE id = ?", rpt.EntityID).Scan(&rpt.TargetName)
 internal/handler/reports.go:	db.QueryRow("SELECT node_id FROM notices WHERE id = ?", req.EntityID).Scan(&roomNodeID)
 internal/handler/reports.go:	db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", roomNodeID).Scan(&slug, &name)
-internal/handler/reports.go:	db.QueryRow("SELECT title FROM events WHERE id = ?", rpt.EntityID).Scan(&rpt.TargetName)
 internal/handler/reports.go:	db.QueryRow("SELECT title FROM notices WHERE id = ?", rpt.EntityID).Scan(&rpt.TargetName)
 internal/handler/reports.go:	defer rows.Close()
 internal/handler/reports.go:	json.NewEncoder(w).Encode(map[string]interface{}{

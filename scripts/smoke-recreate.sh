@@ -52,13 +52,19 @@ curl -fsS -X POST "$BASE/api/v1/auth/magic-link" \
   -H 'Content-Type: application/json' -H 'X-Patchwork-Request: true' \
   -d '{"email":"smoke@example.com"}' >/dev/null
 sleep 1
-TOKEN=$($COMPOSE logs patchwork 2>&1 | grep -oE 'auth/verify/[A-Za-z0-9_-]+' | tail -1 | awk -F/ '{print $3}')
+TOKEN=$($COMPOSE logs patchwork 2>&1 | grep -oE 'login/link/[A-Za-z0-9_-]+' | tail -1 | awk -F/ '{print $3}')
 [ -n "$TOKEN" ] || fail "no magic link found in app log"
 
 # On a new email, verify does not sign you in — it hands back a signup token
 # and asks for a username (docs/adr/013). The session cookie comes from
 # completing signup with that token.
-SIGNUP=$(curl -fsS -H 'Accept: application/json' "$BASE/api/v1/auth/verify/$TOKEN" \
+#
+# curl holds no binding cookie, so it is not the browser that asked: here:true
+# is the link page's "Sign in on this device" button
+# (docs/adr/2026-09-28-a-link-knows-where-it-was-asked-for.md).
+SIGNUP=$(curl -fsS -X POST "$BASE/api/v1/auth/magic-link/open" \
+  -H 'Content-Type: application/json' -H 'X-Patchwork-Request: true' \
+  -d "{\"token\":\"$TOKEN\",\"here\":true}" \
   | grep -oE '"signup_token":"[a-f0-9]+"' | cut -d'"' -f4)
 [ -n "$SIGNUP" ] || fail "verify did not return a signup token"
 
