@@ -125,7 +125,7 @@ a working one. Shared helper names, new columns on a table two branches
 both touched, and a route registered twice all fail this way.
 
 **The ledger form, which announces itself by going quiet.**
-`copy/ledger.json` is generated: `copy-ledger sync` rewrites the recorded
+`copy/ledger.json` is generated: `make copy-sync` (SlopChop) rewrites the recorded
 line number of every string in any file a branch touched. So two branches
 that share no source file at all still conflict there, and the more
 parallel work is in flight the more certain it is. What makes it worth its
@@ -138,7 +138,7 @@ main. **When checks do not appear within a minute or two, check
 
 Resolve it by regenerating, never by hand: take main's copy whole
 (`git checkout --theirs copy/ledger.json`), then re-run
-`node tools/copy-ledger/cli.js sync`, which rebuilds the line numbers from
+`make copy-sync`, which rebuilds the line numbers from
 the merged source. Then confirm you clobbered nobody's decision —
 
 ```sh
