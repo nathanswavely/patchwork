@@ -10362,7 +10362,7 @@
       "text": "Followers here can now see only what any visitor can.",
       "words": 10,
       "tier": "helper",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "The case where a patch had granted followers nothing else. Worth saying rather than trailing off, so the reader learns the state of the shelf either way.",
       "occurrences": [
@@ -10380,7 +10380,7 @@
       "text": "Followers here can still see",
       "words": 5,
       "tier": "label",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "Opens the list of what followers keep. Assembled from the patch own rules rather than written as a fixed sentence, because the three keys differ per patch and a static claim would be wrong somewhere.",
       "occurrences": [
@@ -22076,7 +22076,7 @@
       "text": "No quorum required. {turnout.voted} of {turnout.eligible} voted.",
       "words": 7,
       "tier": "helper",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "Turnout where the patch asks for no quorum: still worth stating, because a reader who has just been told the contest settled nothing will ask how many turned up.",
       "occurrences": [
@@ -22094,7 +22094,7 @@
       "text": "Quorum met: {turnout.voted} of {turnout.eligible} voted, {turnout.needed} needed.",
       "words": 8,
       "tier": "helper",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "The sentence the ordinary proposal already uses, in the count rather than the percentage. A contest that failed six times in a row reported only \"Settled nothing\", while the number that decided it sat on a settings form two clicks away.",
       "occurrences": [
@@ -22112,7 +22112,7 @@
       "text": "{phase === 'closed' ? 'Quorum not met' : 'Quorum not yet met'}: {turnout.voted} of {turnout.eligible} voted, {turnout.needed} needed.",
       "words": 18,
       "tier": "prose",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "Same sentence, and the tense follows the phase: not yet met while the ballot is open, not met once it has closed. One reads as a thing you can still fix.",
       "occurrences": [
@@ -22166,7 +22166,7 @@
       "text": "not seated",
       "words": 2,
       "tier": "label",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "The losing row said nothing at all, and a reader took the blank for still-pending. Quiet, because losing is an outcome and not a warning.",
       "occurrences": [
@@ -22202,7 +22202,7 @@
       "text": "Why you are standing",
       "words": 4,
       "tier": "label",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "The field the first person to stand in a real contest asked for: \"Ask me for a few lines when I press the button.\" Marked optional, because a patch where everybody knows everybody should not be made to write an essay.",
       "occurrences": [
@@ -22280,7 +22280,7 @@
       "text": "A few lines the other members will see beside your name on the ballot.",
       "words": 14,
       "tier": "helper",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "Says where the words will appear, which is the point of them: four voters decided on the strength of a comment behind a Discussion tab because the ballot was a list of bare names.",
       "occurrences": [
@@ -22298,7 +22298,7 @@
       "text": "{STATEMENT_MAX - statement.length} characters left",
       "words": 5,
       "tier": "label",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "A plain remaining count. The cap keeps the ballot a list; an argument belongs in the discussion.",
       "occurrences": [
@@ -22370,7 +22370,7 @@
       "text": "You can change this until voting closes.",
       "words": 7,
       "tier": "helper",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "Shortened. It used to carry \"Approving nobody is the same as not voting\", which was true and is no longer, now that approving nobody is an act you can take.",
       "occurrences": [
@@ -22388,7 +22388,7 @@
       "text": "You are counted as taking part and approving nobody. Ticking a name and saving replaces that.",
       "words": 16,
       "tier": "prose",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "The state after abstaining, and how to leave it. Reads back what the server holds rather than what was clicked, so it survives a reload.",
       "occurrences": [
@@ -22406,7 +22406,7 @@
       "text": "Counts toward the turnout this election needs, the way an abstention counts on an ordinary proposal.",
       "words": 16,
       "tier": "prose",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "Answers the question two members could not resolve between a notice asking them to turn up and a page saying it would do nothing. Names the ordinary proposal on purpose: the behaviour is the same one they already know.",
       "occurrences": [
@@ -24162,7 +24162,7 @@
       "text": "Vacant",
       "words": 1,
       "tier": "label",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "The chair nobody is in. Unchanged wording, moved out of a ternary into a branch so a withheld holder is a third state rather than an inferred vacancy.",
       "occurrences": [
@@ -24180,7 +24180,7 @@
       "text": "Held",
       "words": 1,
       "tier": "label",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "A chair that is held by somebody this reader is not shown. Deliberately not a name and not Vacant: the sentence above already says the patch does not list its admins publicly, and this row only has to not claim the seat is empty.",
       "occurrences": [
@@ -30795,7 +30795,7 @@
       "text": "The longest-standing members who have taken part recently become interim admins. If nobody has, nobody steps in.",
       "words": 17,
       "tier": "prose",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "Corrected, not reworded. docs/adr/102 made interim promotion require presence as well as tenure and promote nobody where nobody qualifies, and the old hint promised \"the three longest-standing members step in\" in the present tense. Two members read it against patches where nobody had.",
       "occurrences": [
@@ -30813,7 +30813,7 @@
       "text": "Admins name their successors. If none are left to, the longest-standing members who have taken part recently step in.",
       "words": 19,
       "tier": "prose",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "Corrected, not reworded. docs/adr/102 made interim promotion require presence as well as tenure and promote nobody where nobody qualifies, and the old hint promised \"the three longest-standing members step in\" in the present tense. Two members read it against patches where nobody had.",
       "occurrences": [
@@ -30831,7 +30831,7 @@
       "text": "Members elect the next admins. Until then the longest-standing members who have taken part recently step in, and if nobody has the seats stay empty until the election.",
       "words": 28,
       "tier": "prose",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "Corrected, not reworded. docs/adr/102 made interim promotion require presence as well as tenure and promote nobody where nobody qualifies, and the old hint promised \"the three longest-standing members step in\" in the present tense. Two members read it against patches where nobody had.",
       "occurrences": [
@@ -45583,7 +45583,7 @@
       "text": "Last updated {formatDay(doc.updated_at)}",
       "words": 3,
       "tier": "label",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "Unchanged words. The date behind them moved from a bare toLocaleDateString, which rendered 8/25/2025, to the app format, Aug 25, 2025. Slashes-and-numbers is the format that gets read wrong, and it was the only place the app still used it.",
       "occurrences": [
@@ -45971,7 +45971,7 @@
       "text": "Updated {formatDay(doc.updated_at)}",
       "words": 2,
       "tier": "label",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "Unchanged words. The date behind them moved from a bare toLocaleDateString, which rendered 8/25/2025, to the app format, Aug 25, 2025. Slashes-and-numbers is the format that gets read wrong, and it was the only place the app still used it.",
       "occurrences": [
@@ -46176,7 +46176,7 @@
       "text": "The members seated a council.",
       "words": 5,
       "tier": "label",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "For contests that resolved before the outcome was recorded, so they cannot be named. \"The members\" rather than \"the electorate\", which is not a word the co-op that read it has ever said out loud.",
       "occurrences": [
@@ -46212,7 +46212,7 @@
       "text": "Their seat was vacated: they had taken no part in governance here for the patch’s inactivity period.",
       "words": 17,
       "tier": "prose",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "The sentence a founder came back for twice. Says both halves of her question, when and why, and names the rule rather than a number, because the inactivity period is per patch.",
       "occurrences": [
@@ -46230,7 +46230,7 @@
       "text": "Their seat was vacated.",
       "words": 4,
       "tier": "label",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "The same event where the sweep recorded no reason. Says what is known and does not invent the rest.",
       "occurrences": [
@@ -46248,7 +46248,7 @@
       "text": "Stepped in as an interim admin, under this patch’s succession policy.",
       "words": 11,
       "tier": "helper",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "An interim promotion. Names the policy because the reader is often finding out for the first time that their patch has one.",
       "occurrences": [
@@ -46266,7 +46266,7 @@
       "text": "Made an admin.",
       "words": 3,
       "tier": "label",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "A person made an admin by another person, where the record has lost who did it. The actor is named in the branch above where it is known.",
       "occurrences": [
@@ -46284,7 +46284,7 @@
       "text": "Stopped being an admin.",
       "words": 4,
       "tier": "label",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "Somebody off the council by a decision rather than by the clock. Deliberately not \"removed\": the same act covers stepping down and being stood down, and the record should not assert which.",
       "occurrences": [
@@ -46338,7 +46338,7 @@
       "text": "Every decision this patch has reached, and every one it failed to, newest first.",
       "words": 14,
       "tier": "helper",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "The old heading promised everything the patch had settled over a list that was nine-tenths things it did not settle.",
       "occurrences": [
@@ -55700,7 +55700,7 @@
       "text": "Added {formatDay(cred.created_at)}",
       "words": 2,
       "tier": "label",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "Unchanged words. The date behind them moved from a bare toLocaleDateString, which rendered 8/25/2025, to the app format, Aug 25, 2025. Slashes-and-numbers is the format that gets read wrong, and it was the only place the app still used it.",
       "occurrences": [
@@ -55830,7 +55830,7 @@
       "text": "· Signed in {formatDay(s.created_at)}",
       "words": 4,
       "tier": "label",
-      "status": "as-is",
+      "status": "unreviewed",
       "replacement": null,
       "note": "Unchanged words. The date behind them moved from a bare toLocaleDateString, which rendered 8/25/2025, to the app format, Aug 25, 2025. Slashes-and-numbers is the format that gets read wrong, and it was the only place the app still used it.",
       "occurrences": [
@@ -61717,24 +61717,6 @@
       ]
     },
     {
-      "id": "3ffd8c59e54a",
-      "text": "This patch was sharing its unpublished charters with followers, from a default Patchwork shipped rather than a choice this patch made. That default is now off. Published charters are unaffected, and you can grant it again under Follower Permissions, at the bottom of Propose a change to these rules.",
-      "words": 49,
-      "tier": "prose",
-      "status": "as-is",
-      "replacement": null,
-      "note": "The rollout notice. Two changes: it now names where the switch actually is (Follower Permissions, at the bottom of Propose a change to these rules) rather than pointing vaguely at Governance, and it hands off to the sentence below naming the three keys it did not touch. An admin read the old one and went hunting for the rest: \"The one thing the site chose to write to me about is the one of the four I care least about.\"",
-      "occurrences": [
-        {
-          "file": "internal/handler/follower_charters_default.go",
-          "line": 121,
-          "kind": "go-string",
-          "raw": "This patch was sharing its unpublished charters with followers, from a default Patchwork shipped rather than a choice this patch made. That default is now off. Published charters are unaffected, and you can grant it again under Follower Permissions, at the bottom of Propose a change to these rules. ",
-          "quote": "\""
-        }
-      ]
-    },
-    {
       "id": "e89384ba2da5",
       "text": "this seat is in the contest running now: it can be removed once that settles",
       "words": 15,
@@ -63797,6 +63779,34 @@
     "333cc9191828",
     "628295863485",
     "cda001fb14fc",
-    "a085a59f1538"
+    "a085a59f1538",
+    "4363de41fb95",
+    "05447859f9db",
+    "783b3a63ce41",
+    "a4253c9fd79b",
+    "d42408b76bf2",
+    "0705aee0938e",
+    "baebccfb306b",
+    "7985ed247ad5",
+    "02e2cd140c67",
+    "7e1558368bcd",
+    "f8040dddb3a5",
+    "1c0d9e8c19ca",
+    "a68c61702bbb",
+    "85cd61f8c3c8",
+    "4474cf7ca062",
+    "a920ba08e058",
+    "2abee9d8f799",
+    "d51ef43c34e6",
+    "a7a0af9344c4",
+    "8e7744b0b45e",
+    "9f50f781a363",
+    "30b9dae3ff4c",
+    "73d7724bc77e",
+    "daf091a504fe",
+    "fb4bb0ff71e6",
+    "7095e9401311",
+    "8b829d65bf57",
+    "d3b11eb4a0b8"
   ]
 }
