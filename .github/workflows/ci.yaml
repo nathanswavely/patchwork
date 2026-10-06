@@ -131,7 +131,7 @@ jobs:
         if: github.event_name == 'pull_request'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx --yes slopchop@0.2.0 comment || true
+        run: npx --yes slopchop@0.2.1 comment || true
 
       - name: Copy provenance ledger
         run: make copy-check

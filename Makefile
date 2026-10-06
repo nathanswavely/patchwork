@@ -117,7 +117,7 @@ release-notes-check:
 #
 # Pinned to an exact version, the npm equivalent of pinning an action to a
 # SHA: a published version cannot change underneath us.
-SLOPCHOP ?= npx --yes slopchop@0.2.0
+SLOPCHOP ?= npx --yes slopchop@0.2.1
 
 copy-sync:
 	$(SLOPCHOP) sync
