@@ -42,7 +42,7 @@
        "Approve" two inches under a panel reading "Approved": "that bottom
        bar says Approve even on the rules proposal where I've already
        voted" (F-050). -->
-  <div class="sticky-vote-bar">
+  <div class="lt-action-bar sticky-vote-bar">
     <div class="vote-buttons">
       <button
         class="vote-btn approve"
@@ -77,27 +77,14 @@
 {/if}
 
 <style>
+  /* Liquid Textile's action bar: fixed to the foot, surface, top edge,
+     shadow, the slide-up and its reduced-motion opt-out. It sits on
+     --lt-chrome-bottom, which here is Patchwork's tab bar, the patch
+     workspace's or the quilt's (--pw-nav-h is 0px where there is none).
+     Above the rail and the global bar, as it always was. */
   .sticky-vote-bar {
-    position: fixed;
-    /* Above the mobile tab bar, the patch workspace's or the quilt's.
-       --pw-nav-h is 0px where there is none. */
-    bottom: var(--pw-nav-h);
-    left: 0;
-    right: 0;
-    background: var(--color-surface);
-    border-top: 1px solid var(--color-border);
-    box-shadow: 0 -2px 8px var(--color-shadow);
-    padding: 0.6rem 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    --lt-chrome-bottom: var(--pw-nav-h);
     z-index: 100;
-    animation: slideUp 200ms ease;
-  }
-
-  @keyframes slideUp {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
   }
 
   .vote-buttons {
