@@ -303,13 +303,13 @@
           <div class="review-card-header">{directChange ? 'Describe this change' : 'Describe your proposal'}</div>
           <div class="review-card-body">
             <div class="field">
-              <label for="rules-title">Summary of changes</label>
-              <input id="rules-title" type="text" bind:value={title} disabled={submitting} />
+              <label class="lt-label" for="rules-title">Summary of changes</label>
+              <input class="lt-field" id="rules-title" type="text" bind:value={title} disabled={submitting} />
             </div>
 
             <div class="field">
-              <label for="rules-desc">{directChange ? 'Why this change?' : 'Why are you proposing this?'} <span class="lt-muted">(optional)</span></label>
-              <textarea id="rules-desc" bind:value={description} rows="4" disabled={submitting} placeholder="Help others understand why this change matters."></textarea>
+              <label class="lt-label" for="rules-desc"><span>{directChange ? 'Why this change?' : 'Why are you proposing this?'} <span class="lt-optional">(optional)</span></span></label>
+              <textarea class="lt-field" id="rules-desc" bind:value={description} rows="4" disabled={submitting} placeholder="Help others understand why this change matters."></textarea>
             </div>
 
             <p class="submit-consequence lt-muted">{submitConsequence}</p>
@@ -425,11 +425,6 @@
     flex-direction: column;
     gap: 0.3rem;
     margin-bottom: 1rem;
-  }
-
-  .field label {
-    font-size: 0.85rem;
-    font-weight: 500;
   }
 
   .submit-consequence {

@@ -170,7 +170,7 @@
       {#if claim.setup_expires_at}
         <p class="lt-muted">Approval expires {formatExpiry(claim.setup_expires_at)}.</p>
       {/if}
-      <div class="form-actions" style="margin-top: 1rem;">
+      <div class="lt-actions form-actions" style="margin-top: 1rem;">
         <a
           href="/patches/{slug}/setup"
           class="lt-btn lt-btn-primary"
@@ -213,7 +213,7 @@
         <p>Your claim is with the quilt admins for review. You'll be notified when it's resolved.</p>
       {/if}
 
-      <div class="form-actions" style="margin-top: 1rem;">
+      <div class="lt-actions form-actions" style="margin-top: 1rem;">
         {#if claim.method === 'dns' || claim.method === 'meta_tag' || claim.method === 'did'}
           <button class="lt-btn lt-btn-primary" onclick={handleVerify} disabled={verifying}>
             {verifying ? 'Checking...' : 'Verify Now'}
@@ -251,16 +251,16 @@
 
     {#if selectedMethod === 'admin'}
       <div class="field">
-        <label for="evidence">Tell us why you should own this patch</label>
-        <textarea id="evidence" bind:value={evidence} rows="4" placeholder="I'm the owner of this venue / I run this organization / etc."></textarea>
+        <label class="lt-label" for="evidence">Tell us why you should own this patch</label>
+        <textarea class="lt-field" id="evidence" bind:value={evidence} rows="4" placeholder="I'm the owner of this venue / I run this organization / etc."></textarea>
       </div>
     {/if}
 
     {#if selectedMethod === 'email'}
       <div class="field">
-        <label for="claim-email">Your email at @{verificationDomain}</label>
-        <input id="claim-email" type="email" bind:value={email} placeholder={'you@' + verificationDomain} />
-        <span class="lt-muted field-hint">The address must be at the organization's verified domain.</span>
+        <label class="lt-label" for="claim-email">Your email at @{verificationDomain}</label>
+        <input class="lt-field" id="claim-email" type="email" bind:value={email} placeholder={'you@' + verificationDomain} />
+        <span class="lt-hint field-hint">The address must be at the organization's verified domain.</span>
       </div>
     {/if}
 
@@ -268,7 +268,7 @@
       <p class="lt-error-text">{error}</p>
     {/if}
 
-    <div class="form-actions">
+    <div class="lt-actions form-actions">
       <button class="lt-btn lt-btn-primary" onclick={handleClaim} disabled={submitDisabled}>
         {claiming ? 'Submitting...' : 'Submit Claim'}
       </button>
@@ -351,20 +351,6 @@
     flex-direction: column;
     gap: 0.35rem;
     margin-bottom: 1.25rem;
-  }
-
-  .field label {
-    font-size: 0.85rem;
-    font-weight: 500;
-  }
-
-  .field-hint {
-    font-size: 0.78rem;
-  }
-
-  .form-actions {
-    display: flex;
-    gap: 0.75rem;
   }
 
   .verify-card {

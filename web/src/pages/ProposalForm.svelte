@@ -182,13 +182,13 @@
 
       <form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
         <div class="field">
-          <label for="title">Title <span class="required">*</span></label>
-          <input id="title" type="text" bind:value={title} disabled={submitting} required />
+          <label class="lt-label" for="title"><span>Title <span class="lt-required">*</span></span></label>
+          <input class="lt-field" id="title" type="text" bind:value={title} disabled={submitting} required />
         </div>
 
         <div class="field">
-          <label>
-            Description
+          <label class="lt-label">
+            <span>Description</span>
             <div class="toggle-group">
               <button type="button" class="toggle-btn" class:active={!previewMode} onclick={() => previewMode = false}>Write</button>
               <button type="button" class="toggle-btn" class:active={previewMode} onclick={() => previewMode = true}>Preview</button>
@@ -204,6 +204,7 @@
             </div>
           {:else}
             <textarea
+              class="lt-field"
               id="body"
               bind:value={body}
               rows="8"
@@ -214,7 +215,7 @@
         </div>
 
         <div class="field">
-          <label>Type</label>
+          <label class="lt-label">Type</label>
           <div class="type-radio-group">
             {#each typeOptions as opt}
               <label class="type-radio-option" class:selected={proposalType === opt.value}>
@@ -238,9 +239,9 @@
                nominate; everywhere else a membership proposal is ordinary. -->
           {#if proposalType === 'membership' && canNominate}
             <div class="nominee-field">
-              <label for="nominee">Nominate for admin <span class="required">*</span></label>
+              <label class="lt-label" for="nominee"><span>Nominate for admin <span class="lt-required">*</span></span></label>
               {#if nominatable.length > 0}
-                <select id="nominee" bind:value={nomineeId} disabled={submitting} required>
+                <select class="lt-field" id="nominee" bind:value={nomineeId} disabled={submitting} required>
                   <option value="">Choose a member</option>
                   {#each nominatable as m}
                     <option value={m.user_id}>{m.display_name || m.username}</option>
@@ -281,7 +282,7 @@
              voting patch nothing appears here: the vote is the decision. -->
         {#if adminDecides && isPatchAdmin}
           <div class="field">
-            <label>How this gets decided</label>
+            <label class="lt-label">How this gets decided</label>
             <div class="type-radio-group">
               <label class="type-radio-option" class:selected={!putToVote}>
                 <input type="radio" name="ceremony" value={false} bind:group={putToVote} disabled={submitting} />
@@ -307,8 +308,8 @@
 
         {#if asksDuration}
           <div class="field">
-            <label for="duration">{advisoryVote ? 'How long to ask' : 'Voting Duration'}</label>
-            <select id="duration" bind:value={durationHours} disabled={submitting}>
+            <label class="lt-label" for="duration">{advisoryVote ? 'How long to ask' : 'Voting Duration'}</label>
+            <select class="lt-field" id="duration" bind:value={durationHours} disabled={submitting}>
               {#each durationOptions as opt}
                 <option value={opt.value}>{opt.label}</option>
               {/each}
@@ -321,7 +322,7 @@
           <p class="lt-error-text">{error}</p>
         {/if}
 
-        <div class="field-actions">
+        <div class="lt-actions field-actions">
           <button type="submit" class="lt-btn lt-btn-primary" disabled={submitting}>
             {#if directChange}
               {submitting ? 'Applying...' : 'Apply change'}
@@ -365,21 +366,14 @@
      Write/Preview toggle). Without `>` this also matched the nested
      .type-radio-option labels and shoved their radio and text to opposite
      edges via space-between. */
+  /* A label's words and its Write/Preview toggle share a line. */
   .field > label {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--color-text-muted);
-    display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: space-between;
   }
 
-  .required {
-    color: var(--color-error);
-  }
-
   textarea {
-    resize: vertical;
     min-height: 160px;
   }
 
@@ -493,8 +487,6 @@
   }
 
   .field-actions {
-    display: flex;
-    gap: 0.75rem;
     padding-top: 0.5rem;
   }
 

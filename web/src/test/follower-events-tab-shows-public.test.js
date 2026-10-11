@@ -67,7 +67,7 @@ describe('The rules editor says what the Events switch does', () => {
     // This change is about `events` only (CLAUDE.md): proposals, charters
     // and members keep their bare checkboxes.
     const followerBlock = src.slice(src.indexOf('Follower Permissions'), src.indexOf('</div>', src.indexOf('Follower Permissions')));
-    expect(followerBlock).toMatch(/Proposals<\/label>\s*<label>/);
-    expect(followerBlock).toMatch(/Charters<\/label>\s*<label>/);
+    expect(followerBlock).toMatch(/Proposals<\/label>\s*<label class="lt-check">/);
+    expect(followerBlock).toMatch(/Charters<\/label>\s*<label class="lt-check">/);
   });
 });

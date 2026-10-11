@@ -114,7 +114,7 @@ Violations may result in a warning, temporary suspension, or removal from the co
 
         <form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
           <div class="field">
-            <label>Start from a template</label>
+            <label class="lt-label">Start from a template</label>
             <div class="template-selector">
               {#each templates as tmpl}
                 <button
@@ -130,13 +130,13 @@ Violations may result in a warning, temporary suspension, or removal from the co
           </div>
 
           <div class="field">
-            <label for="doc-title">Title <span class="required">*</span></label>
-            <input id="doc-title" type="text" bind:value={title} disabled={submitting} required />
+            <label class="lt-label" for="doc-title"><span>Title <span class="lt-required">*</span></span></label>
+            <input class="lt-field" id="doc-title" type="text" bind:value={title} disabled={submitting} required />
           </div>
 
           <div class="editor-section">
             <div class="editor-header">
-              <label>Content</label>
+              <label class="lt-label">Content</label>
               <SegmentedControl
                 label="Editor view"
                 options={[{ value: 'write', label: 'Write' }, { value: 'preview', label: 'Preview' }]}
@@ -167,12 +167,12 @@ Violations may result in a warning, temporary suspension, or removal from the co
           </div>
 
           <div class="field">
-            <label for="doc-visibility">Who can read this</label>
-            <select id="doc-visibility" bind:value={visibility} disabled={submitting}>
+            <label class="lt-label" for="doc-visibility">Who can read this</label>
+            <select class="lt-field" id="doc-visibility" bind:value={visibility} disabled={submitting}>
               <option value="members">Members only</option>
               <option value="public">Anyone</option>
             </select>
-            <p class="lt-muted field-hint">
+            <p class="lt-hint field-hint">
               {visibility === 'public'
                 ? 'Visitors, search engines, and other quilts can read this document.'
                 : 'Only this patch’s members and admins can read this document. You can publish it later.'}
@@ -183,7 +183,7 @@ Violations may result in a warning, temporary suspension, or removal from the co
             <p class="lt-error-text">{error}</p>
           {/if}
 
-          <div class="field-actions">
+          <div class="lt-actions field-actions">
             <button type="submit" class="lt-btn lt-btn-primary" disabled={submitting}>
               {submitting ? 'Saving...' : 'Save'}
             </button>
@@ -213,29 +213,11 @@ Violations may result in a warning, temporary suspension, or removal from the co
     gap: 0.25rem;
   }
 
-  .field label {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--color-text-muted);
-  }
-
-  .required {
-    color: var(--color-error);
-  }
-
   .field select {
-    padding: 0.45rem 0.6rem;
-    font-size: 0.9rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    background: var(--color-surface);
-    color: var(--color-text);
-    font-family: inherit;
     max-width: 22rem;
   }
 
   .field-hint {
-    font-size: 0.8rem;
     max-width: 52ch;
   }
 
@@ -277,12 +259,6 @@ Violations may result in a warning, temporary suspension, or removal from the co
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
-
-  .editor-header label {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--color-text-muted);
   }
 
   .editor-panels {
@@ -329,8 +305,6 @@ Violations may result in a warning, temporary suspension, or removal from the co
   }
 
   .field-actions {
-    display: flex;
-    gap: 0.75rem;
     padding-top: 0.5rem;
   }
 

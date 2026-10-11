@@ -429,28 +429,29 @@
       <form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
         {#if mode === 'setup'}
           <div class="field">
-            <label for="setup-slug">Address</label>
-            <input id="setup-slug" type="text" value={setupSlug} disabled readonly />
-            <span class="field-hint lt-muted">This is the patch's existing address.</span>
+            <label class="lt-label" for="setup-slug">Address</label>
+            <input class="lt-field" id="setup-slug" type="text" value={setupSlug} disabled readonly />
+            <span class="lt-hint field-hint">This is the patch's existing address.</span>
           </div>
         {/if}
 
         <div class="field">
-          <label for="name">Name <span class="required">*</span></label>
-          <input id="name" type="text" bind:value={name} disabled={submitting} required placeholder="e.g. Gallery Row, Lancaster Beats Lab" />
+          <label class="lt-label" for="name"><span>Name <span class="lt-required">*</span></span></label>
+          <input class="lt-field" id="name" type="text" bind:value={name} disabled={submitting} required placeholder="e.g. Gallery Row, Lancaster Beats Lab" />
         </div>
 
         <div class="field">
-          <label for="description">Description</label>
-          <textarea id="description" bind:value={description} rows="4" disabled={submitting} placeholder="What is this patch about?"></textarea>
+          <label class="lt-label" for="description">Description</label>
+          <textarea class="lt-field" id="description" bind:value={description} rows="4" disabled={submitting} placeholder="What is this patch about?"></textarea>
         </div>
 
         <div class="field">
           <!-- "Location" names an event's venue and never this field
                (CONTEXT.md, docs/adr/046). The patch's own prose field is
                the Address, which is what Patch Settings calls it too. -->
-          <label for="address">Address</label>
+          <label class="lt-label" for="address">Address</label>
           <input
+            class="lt-field"
             id="address"
             type="text"
             bind:value={address}
@@ -480,13 +481,13 @@
         </div>
 
         <div class="field">
-          <label for="website">Website</label>
-          <input id="website" type="url" bind:value={website} disabled={submitting} placeholder="https://..." />
+          <label class="lt-label" for="website">Website</label>
+          <input class="lt-field" id="website" type="url" bind:value={website} disabled={submitting} placeholder="https://..." />
         </div>
 
         <div class="field">
-          <label>Tags</label>
-          <p class="field-hint lt-muted">
+          <label class="lt-label">Tags</label>
+          <p class="lt-hint field-hint">
             What kind of patch is this? Tags help people find you, and new
             patches are placed near others with the same tags on the quilt.
             The first tag decides your default motif. Missing a word? Suggest
@@ -502,8 +503,8 @@
         <details class="appearance-fold" open={!narrow}>
           <summary>Appearance (optional)</summary>
           <div class="field">
-            <label>Tile</label>
-            <p class="field-hint lt-muted">
+            <label class="lt-label">Tile</label>
+            <p class="lt-hint field-hint">
               How this patch looks on the quilt. You can change it anytime
               in Patch Settings → Appearance, and draft your own block there too.
             </p>
@@ -576,8 +577,8 @@
           </div>
 
           <div class="field">
-            <label>Motif</label>
-            <p class="field-hint lt-muted">
+            <label class="lt-label">Motif</label>
+            <p class="lt-hint field-hint">
               Optional. The mark that appears beside the name on the quilt.
               Unset, it follows your first tag. You can change it later in
               Patch Settings.
@@ -604,8 +605,8 @@
         </details>
 
         <div class="field">
-          <label>The lining</label>
-          <p class="field-hint lt-muted">
+          <label class="lt-label">The lining</label>
+          <p class="lt-hint field-hint">
             Every patch starts with a shared community standards called the lining. It is always public, and if your patch amends it, the changes are public and the patch is marked as having amended the lining.
           </p>
           <button type="button" class="lining-toggle" onclick={toggleLining}>
@@ -631,20 +632,20 @@
              admins formed the opposite belief in silence, and a default
              nobody is told about is how that happened the first time. -->
         <div class="field">
-          <label>Members and governance</label>
-          <p class="field-hint lt-muted">
+          <label class="lt-label">Members and governance</label>
+          <p class="lt-hint field-hint">
             Your member list and your proposals start out visible to members only. Events, your description and your tile are public. You can publish either one later in Patch Settings.
           </p>
         </div>
 
         <fieldset class="field policy-field">
-          <legend>Membership Policy <span class="required">*</span></legend>
+          <legend class="lt-label"><span>Membership Policy <span class="lt-required">*</span></span></legend>
           <!-- The distinction the form otherwise never mentions. Joining and
                following are different relationships, and only one of them is
                what this setting governs — so somebody can pick Open reasoning
                that people need it to see the patch at all, which is the one
                thing it has nothing to do with. -->
-          <p class="field-hint lt-muted">
+          <p class="lt-hint field-hint">
             Members vote on proposals and appear in the patch's member list.
             Following is separate and always open: anyone can follow a public
             patch and see its events.
@@ -654,7 +655,7 @@
                  template below and will keep following it until it is
                  answered here. Without the line, picking a template silently
                  moves an answer further up the page. -->
-            <p class="field-hint lt-muted">Set by the {templates.find((t) => t.id === template)?.name || template} template. Change it if that is not this patch.</p>
+            <p class="lt-hint field-hint">Set by the {templates.find((t) => t.id === template)?.name || template} template. Change it if that is not this patch.</p>
           {/if}
           <div class="policy-grid">
             {#each membershipPolicies as p (p.id)}
@@ -670,8 +671,8 @@
         </fieldset>
 
         <div class="field">
-          <label>Governance Template</label>
-          <p class="field-hint lt-muted">How should this patch be organized? You can change this later.</p>
+          <label class="lt-label">Governance Template</label>
+          <p class="lt-hint field-hint">How should this patch be organized? You can change this later.</p>
           <div class="template-grid">
             {#each templates as t}
               <label class="template-card" class:selected={template === t.id}>
@@ -693,7 +694,7 @@
           <p class="lt-error-text">{error}</p>
         {/if}
 
-        <div class="field-actions">
+        <div class="lt-actions field-actions">
           <button type="submit" class="lt-btn lt-btn-primary" disabled={submitting}>
             {#if mode === 'setup'}
               {submitting ? 'Finishing...' : 'Finish setup'}
@@ -804,28 +805,20 @@
     text-decoration: underline;
   }
 
-  .field label {
+  /* The policy and template cards sit inside a field and took its label's
+     type through .field label; they keep it. */
+  .policy-card,
+  .template-card {
     font-size: 0.85rem;
     font-weight: 500;
     color: var(--color-text-muted);
   }
 
-  .required {
-    color: var(--color-error);
-  }
-
   textarea {
-    resize: vertical;
     min-height: 80px;
   }
 
-  .field-row {
-    display: flex;
-    gap: 1rem;
-  }
-
   .field-hint {
-    font-size: 0.8rem;
     margin-bottom: 0.5rem;
   }
 
@@ -958,9 +951,6 @@
   }
 
   .policy-field legend {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--color-text-muted);
     padding: 0;
     margin-bottom: 0.25rem;
   }
@@ -1090,8 +1080,6 @@
   }
 
   .field-actions {
-    display: flex;
-    gap: 0.75rem;
     padding-top: 0.5rem;
   }
 
@@ -1105,11 +1093,6 @@
     text-decoration: underline;
   }
 
-  @media (max-width: 640px) {
-    .field-row {
-      flex-direction: column;
-    }
-  }
   .lining-toggle {
     align-self: flex-start;
     border: none;

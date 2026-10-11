@@ -472,8 +472,9 @@
             label="Where"
           />
           <div class="field">
-            <label for="trust-message">Why (optional)</label>
+            <label class="lt-label" for="trust-message">Why (optional)</label>
             <textarea
+              class="lt-field"
               id="trust-message"
               rows="2"
               placeholder="I book shows at three venues here."
@@ -484,7 +485,7 @@
           {#if trustError}
             <p class="lt-error-text">{trustError}</p>
           {/if}
-          <div class="field-actions">
+          <div class="lt-actions field-actions">
             <button
               type="button"
               class="lt-btn lt-btn-primary lt-btn-sm"
@@ -519,7 +520,7 @@
             The {pendingReviewers} will look at it. Your event will appear on
             the calendar once it's approved.
           </p>
-          <div class="field-actions">
+          <div class="lt-actions field-actions">
             {#if lockSlug}
               <a
                 href="/patches/{lockSlug}"
@@ -567,17 +568,17 @@
 
       <form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
         <div class="field">
-          <label for="title">Title <span class="required">*</span></label>
-          <input id="title" type="text" bind:value={title} disabled={submitting} required />
+          <label class="lt-label" for="title"><span>Title <span class="lt-required">*</span></span></label>
+          <input class="lt-field" id="title" type="text" bind:value={title} disabled={submitting} required />
         </div>
 
         <div class="field">
-          <label for="description">Description</label>
-          <textarea id="description" bind:value={description} rows="4" disabled={submitting}></textarea>
+          <label class="lt-label" for="description">Description</label>
+          <textarea class="lt-field" id="description" bind:value={description} rows="4" disabled={submitting}></textarea>
         </div>
 
         <div class="field">
-          <label for="node">Hosting Patch <span class="required">*</span></label>
+          <label class="lt-label" for="node"><span>Hosting Patch <span class="lt-required">*</span></span></label>
           {#if fixed}
             <!-- Stated, not asked. An edit cannot move an event between
                  patches and a suggestion goes to the patch you came from,
@@ -616,7 +617,7 @@
             />
           {/if}
           {#if !fixed && willReview}
-            <p class="image-hint lt-muted">
+            <p class="lt-hint image-hint">
               You aren't a member of this patch, so the {reviewers} will look
               at your event before it appears.
             </p>
@@ -626,14 +627,14 @@
 
         {#if showTierControl}
           <div class="field">
-            <label for="event-visibility">Who can see this</label>
-            <select id="event-visibility" bind:value={visibility} disabled={submitting}>
+            <label class="lt-label" for="event-visibility">Who can see this</label>
+            <select class="lt-field" id="event-visibility" bind:value={visibility} disabled={submitting}>
               {#each tierOptions as tier (tier)}
                 <option value={tier}>{TIER_LABELS[tier]}</option>
               {/each}
             </select>
             {#if !followersMayHaveEvents}
-              <p class="image-hint lt-muted">
+              <p class="lt-hint image-hint">
                 Followers can't see this patch's non-public events. That is set
                 at the patch level, under
                 {#if canEditRules}<a
@@ -646,26 +647,26 @@
         {/if}
 
         <div class="field">
-          <label for="location">Location</label>
-          <input id="location" type="text" bind:value={location} placeholder="Where is this happening?" disabled={submitting} />
+          <label class="lt-label" for="location">Location</label>
+          <input class="lt-field" id="location" type="text" bind:value={location} placeholder="Where is this happening?" disabled={submitting} />
         </div>
 
         <!-- Where the event already lives on the web: tickets, the venue's
              own listing, the RSVP form. Events pulled from a calendar feed
              fill this in from the feed (docs/adr/079). -->
         <div class="field">
-          <label for="event-url">Event page</label>
-          <input id="event-url" type="url" bind:value={eventUrl} disabled={submitting} placeholder="https://..." />
-          <p class="image-hint lt-muted">
+          <label class="lt-label" for="event-url">Event page</label>
+          <input class="lt-field" id="event-url" type="url" bind:value={eventUrl} disabled={submitting} placeholder="https://..." />
+          <p class="lt-hint image-hint">
             Where to buy tickets or read more, if this event has a page
             somewhere else.
           </p>
         </div>
 
         <div class="field">
-          <label for="image-url">Image address</label>
-          <input id="image-url" type="url" bind:value={imageUrl} disabled={submitting} placeholder="https://..." />
-          <p class="image-hint lt-muted">
+          <label class="lt-label" for="image-url">Image address</label>
+          <input class="lt-field" id="image-url" type="url" bind:value={imageUrl} disabled={submitting} placeholder="https://..." />
+          <p class="lt-hint image-hint">
             Link a flyer or photo you already have online. Patchwork points at
             it and never keeps a copy.
           </p>
@@ -676,23 +677,23 @@
              referent. -->
         {#if imageUrl.trim()}
           <div class="field">
-            <label for="image-alt">Describe the image</label>
-            <input id="image-alt" type="text" bind:value={imageAlt} disabled={submitting} placeholder="Flyer for the March show" />
-            <p class="image-hint lt-muted">
+            <label class="lt-label" for="image-alt">Describe the image</label>
+            <input class="lt-field" id="image-alt" type="text" bind:value={imageAlt} disabled={submitting} placeholder="Flyer for the March show" />
+            <p class="lt-hint image-hint">
               Read aloud by screen readers, and shown if the image stops
               loading.
             </p>
           </div>
         {/if}
 
-        <div class="field-row">
+        <div class="lt-field-row">
           <div class="field">
-            <label for="starts-at">Starts At <span class="required">*</span></label>
-            <input id="starts-at" type="datetime-local" bind:value={startsAt} disabled={submitting} required />
+            <label class="lt-label" for="starts-at"><span>Starts At <span class="lt-required">*</span></span></label>
+            <input class="lt-field" id="starts-at" type="datetime-local" bind:value={startsAt} disabled={submitting} required />
           </div>
           <div class="field">
-            <label for="ends-at">Ends At</label>
-            <input id="ends-at" type="datetime-local" bind:value={endsAt} disabled={submitting} />
+            <label class="lt-label" for="ends-at">Ends At</label>
+            <input class="lt-field" id="ends-at" type="datetime-local" bind:value={endsAt} disabled={submitting} />
           </div>
         </div>
 
@@ -710,8 +711,9 @@
 
         <div class="field">
           {#if zoneOverridden}
-            <label for="event-timezone">Timezone</label>
+            <label class="lt-label" for="event-timezone">Timezone</label>
             <input
+              class="lt-field"
               id="event-timezone"
               type="text"
               bind:value={timezone}
@@ -736,7 +738,7 @@
           <p class="lt-error-text">{error}</p>
         {/if}
 
-        <div class="field-actions">
+        <div class="lt-actions field-actions">
           <button type="submit" class="lt-btn lt-btn-primary" disabled={submitting || !nodeId}>
             {submitting ? 'Saving...' : isEdit ? 'Save Changes' : willReview ? 'Suggest Event' : 'Create Event'}
           </button>
@@ -825,8 +827,6 @@
   }
 
   .image-hint {
-    font-size: 0.78rem;
-    line-height: 1.5;
     margin: 0.3rem 0 0;
   }
 
@@ -835,16 +835,6 @@
     flex-direction: column;
     gap: 0.25rem;
     flex: 1;
-  }
-
-  .field label {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--color-text-muted);
-  }
-
-  .required {
-    color: var(--color-error);
   }
 
   .fixed-patch {
@@ -881,26 +871,13 @@
   }
 
   textarea {
-    resize: vertical;
     min-height: 80px;
   }
 
-  .field-row {
-    display: flex;
-    gap: 1rem;
-  }
-
   .field-actions {
-    display: flex;
-    gap: 0.75rem;
     padding-top: 0.5rem;
   }
 
-  @media (max-width: 640px) {
-    .field-row {
-      flex-direction: column;
-    }
-  }
 
   /* The only way to change the hosting patch; on a finger it is a real
      target, reaching into the chip's padding rather than growing it. */

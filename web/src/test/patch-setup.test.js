@@ -183,7 +183,7 @@ describe('PatchForm reuses one component for creation and setup (docs/adr/039)',
 
   it('shows the slug read-only with the setup hint, never an editable field', () => {
     expect(src).toContain("This is the patch's existing address");
-    expect(src).toMatch(/<input id="setup-slug" type="text" value={setupSlug} disabled readonly \/>/);
+    expect(src).toMatch(/<input class="lt-field" id="setup-slug" type="text" value={setupSlug} disabled readonly \/>/);
   });
 
   it('shows the approval expiry', () => {
