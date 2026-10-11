@@ -886,8 +886,8 @@
 
   .blockers {
     border: 1px solid var(--color-warning, #b8860b);
-    background: var(--color-warning-bg, rgba(184, 134, 11, 0.08));
-    border-radius: var(--radius-sm, 4px);
+    background: var(--color-warning-bg);
+    border-radius: var(--radius);
     padding: 0.75rem 1rem;
     margin-bottom: 1rem;
     font-size: 0.88rem;
@@ -1028,7 +1028,7 @@
     flex-direction: column;
     gap: 0.4rem;
     padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--color-border);
   }
   .contact-item-row:last-child {
     border-bottom: none;

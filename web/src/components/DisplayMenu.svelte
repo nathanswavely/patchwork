@@ -114,7 +114,7 @@
   }
 
   .segmented button:hover {
-    background: var(--color-surface-hover, rgba(127, 127, 127, 0.12));
+    background: var(--color-overlay-hover);
     color: var(--color-text);
   }
 

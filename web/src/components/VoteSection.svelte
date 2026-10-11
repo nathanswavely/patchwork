@@ -369,7 +369,7 @@
 
   .terms-info {
     margin-top: 0.25rem;
-    font-size: var(--font-size-sm);
+    font-size: var(--lt-text-sm);
   }
 
   .threshold-info {

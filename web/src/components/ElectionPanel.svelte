@@ -544,7 +544,7 @@
 
   .err {
     font-size: 0.82rem;
-    color: var(--color-danger, #c0392b);
+    color: var(--color-error);
     margin: 0.4rem 0 0;
   }
 </style>

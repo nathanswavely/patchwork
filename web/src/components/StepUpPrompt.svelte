@@ -272,7 +272,7 @@
      and the code face are this field's own. */
   .su-input {
     width: 100%;
-    font-family: var(--font-mono, monospace);
+    font-family: var(--font-mono);
   }
 
   .su-error {

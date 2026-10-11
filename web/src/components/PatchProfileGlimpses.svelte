@@ -687,7 +687,7 @@
 
   .about-handle .handle {
     font-size: 0.88rem;
-    font-family: var(--font-mono, ui-monospace, monospace);
+    font-family: var(--font-mono);
     word-break: break-all;
   }
 

@@ -258,7 +258,7 @@
   }
 
   .form textarea {
-    font-family: var(--font-mono, monospace);
+    font-family: var(--font-mono);
     font-size: 0.82rem;
     line-height: 1.5;
     resize: vertical;
@@ -274,7 +274,7 @@
 
   .err {
     font-size: 0.8rem;
-    color: var(--color-danger, #c0392b);
+    color: var(--color-error);
     margin: 0.3rem 0 0;
   }
 </style>

@@ -29,8 +29,8 @@
     margin: 0 0 1rem;
     padding: 0.75rem 1rem;
     border: 1px solid var(--color-warning, #b8860b);
-    border-radius: var(--radius-sm, 4px);
-    background: var(--color-warning-bg, rgba(184, 134, 11, 0.08));
+    border-radius: var(--radius);
+    background: var(--color-warning-bg);
     font-size: 0.9rem;
     line-height: 1.5;
   }

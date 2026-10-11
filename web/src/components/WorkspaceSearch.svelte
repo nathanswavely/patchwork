@@ -347,7 +347,7 @@
   .finder-kbd {
     flex-shrink: 0;
     font-size: 0.68rem;
-    font-family: var(--font-mono, monospace);
+    font-family: var(--font-mono);
     color: var(--color-text-muted);
     border: 1px solid var(--color-border);
     border-radius: 4px;

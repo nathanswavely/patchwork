@@ -223,13 +223,13 @@
   .admin-usage {
     display: flex;
     flex-direction: column;
-    gap: var(--space-lg, 1.5rem);
+    gap: var(--pw-stack);
   }
 
   .card {
     background: var(--color-surface, #fff);
     border: 1px solid var(--color-border, #e3e0da);
-    border-radius: var(--radius-md, 8px);
+    border-radius: var(--radius);
     padding: 1.25rem;
   }
 
@@ -274,7 +274,7 @@
     border: 1px solid var(--color-border, #e3e0da);
     background: transparent;
     padding: 0.35rem 0.75rem;
-    border-radius: var(--radius-sm, 6px);
+    border-radius: var(--radius);
     cursor: pointer;
     font: inherit;
     color: inherit;
@@ -282,7 +282,7 @@
 
   .range-tab.active {
     background: var(--color-primary, #333);
-    color: var(--color-on-primary, #fff);
+    color: var(--color-btn-on-primary);
     border-color: var(--color-primary, #333);
   }
 
@@ -299,7 +299,7 @@
   .tile {
     background: var(--color-surface, #fff);
     border: 1px solid var(--color-border, #e3e0da);
-    border-radius: var(--radius-md, 8px);
+    border-radius: var(--radius);
     padding: 1rem;
     display: flex;
     flex-direction: column;
@@ -356,7 +356,7 @@
   .two-col {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-lg, 1.5rem);
+    gap: var(--pw-stack);
   }
 
   @media (max-width: 720px) {
