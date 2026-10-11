@@ -496,7 +496,7 @@
       onSave={(v) => saveTimezone(v)}
       placeholder={instanceTimezone || 'e.g. America/New_York'}
     />
-    <p class="field-hint lt-muted">
+    <p class="lt-hint field-hint">
       An IANA place name. Leave it empty to follow the quilt{instanceTimezone
         ? `, which keeps time in ${instanceTimezone.replace(/_/g, ' ')}`
         : ''}.
@@ -516,7 +516,7 @@
           Moving from {zoneChoice.from.replace(/_/g, ' ')} to {zoneChoice.to.replace(/_/g, ' ')}
           changes what time {zoneChoice.events_affected === 1 ? 'it reads' : 'they read'} as.
         </p>
-        <div class="zone-choice-actions">
+        <div class="lt-actions zone-choice-actions">
           <button
             type="button"
             class="lt-btn lt-btn-primary"
@@ -583,7 +583,7 @@
           onCancel={closePicker}
         />
       {:else}
-        <div class="location-actions">
+        <div class="lt-actions location-actions">
           <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={openPicker}>
             {onMap ? 'Adjust map location' : 'Set map location'}
           </button>
@@ -617,7 +617,7 @@
       <span class="links-label">Founded</span>
     </div>
     <input
-      class="founded-input"
+      class="lt-field founded-input"
       type="date"
       max={today}
       bind:value={foundedAt}
@@ -629,7 +629,7 @@
     </p>
     {#if foundedError}<p class="image-error">{foundedError}</p>{/if}
     {#if foundedDirty}
-      <div class="tags-actions">
+      <div class="lt-actions tags-actions">
         <button
           class="lt-btn lt-btn-primary lt-btn-sm"
           onclick={() => saveFoundedAt(foundedAt)}
@@ -651,9 +651,9 @@
        refusal. -->
   <div class="image-section">
     <span class="image-label">Image</span>
-    <input type="url" bind:value={imageUrl} disabled={savingImage} placeholder="https://..." />
+    <input class="lt-field" type="url" bind:value={imageUrl} disabled={savingImage} placeholder="https://..." />
     {#if imageUrl.trim()}
-      <input type="text" bind:value={imageAlt} disabled={savingImage} placeholder="Describe the image" />
+      <input class="lt-field" type="text" bind:value={imageAlt} disabled={savingImage} placeholder="Describe the image" />
     {/if}
     <p class="image-hint lt-muted">
       Link a picture you already have online. Patchwork points at it and never
@@ -701,17 +701,17 @@
       <div class="add-link-form">
         <input
           type="url"
-          class="link-input"
+          class="lt-field link-input"
           placeholder="https://..."
           bind:value={newLinkUrl}
         />
         <input
           type="text"
-          class="link-input"
+          class="lt-field link-input"
           placeholder="Label (optional)"
           bind:value={newLinkLabel}
         />
-        <div class="add-link-actions">
+        <div class="lt-actions add-link-actions">
           <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={addLink} disabled={savingLinks || !newLinkUrl.trim()}>
             {savingLinks ? 'Saving...' : 'Save'}
           </button>
@@ -746,7 +746,7 @@
       disabled={savingTags}
     />
     {#if tagsDirty}
-      <div class="tags-actions">
+      <div class="lt-actions tags-actions">
         <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={saveTags} disabled={savingTags}>
           {savingTags ? 'Saving...' : 'Save tags'}
         </button>
@@ -825,7 +825,7 @@
     <div class="links-header">
       <span class="links-label">Event suggestions</span>
     </div>
-    <label class="toggle-row">
+    <label class="lt-check toggle-row">
       <input
         type="checkbox"
         checked={node?.accept_event_suggestions === true}
@@ -853,7 +853,7 @@
       field to undo it.
     </p>
     <input
-      class="moved-input"
+      class="lt-field moved-input"
       type="url"
       bind:value={movedTo}
       disabled={savingMoved}
@@ -861,7 +861,7 @@
     />
     {#if movedError}<p class="image-error">{movedError}</p>{/if}
     {#if movedDirty}
-      <div class="tags-actions">
+      <div class="lt-actions tags-actions">
         <button
           class="lt-btn lt-btn-primary lt-btn-sm"
           onclick={() => saveMovedTo(movedTo.trim())}
@@ -881,7 +881,6 @@
 <style>
   .field-hint {
     margin: -0.5rem 0 1rem;
-    font-size: 0.85rem;
   }
 
   .zone-choice {
@@ -895,12 +894,6 @@
   .zone-choice-lead {
     margin: 0 0 0.75rem;
     font-size: 0.95rem;
-  }
-
-  .zone-choice-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
   }
 
   .zone-choice-hint {
@@ -926,15 +919,6 @@
     color: var(--color-text-muted);
   }
 
-  .image-section input {
-    padding: 0.4rem 0.6rem;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    background: var(--color-surface);
-    color: var(--color-text);
-    font-size: 0.88rem;
-    font-family: inherit;
-  }
 
   .image-hint {
     font-size: 0.78rem;
@@ -952,25 +936,9 @@
     align-self: flex-start;
   }
 
-  .founded-input {
-    padding: 0.4rem 0.6rem;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    background: var(--color-surface);
-    color: var(--color-text);
-    font-size: 0.88rem;
-    font-family: inherit;
-  }
 
   .moved-input {
     width: 100%;
-    padding: 0.4rem 0.6rem;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    background: var(--color-surface);
-    color: var(--color-text);
-    font-size: 0.88rem;
-    font-family: inherit;
   }
 
   .links-section {
@@ -1034,31 +1002,11 @@
 
   .link-input {
     width: 100%;
-    padding: 0.45rem 0.6rem;
-    font-size: 0.88rem;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    background: var(--color-surface);
-    color: var(--color-text);
-    font-family: inherit;
   }
 
-  .link-input:focus {
-    outline: none;
-    border-color: var(--color-primary);
-  }
-
-  .add-link-actions {
-    display: flex;
-    gap: 0.4rem;
-  }
 
   .toggle-row {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
     font-size: 0.88rem;
-    cursor: pointer;
   }
 
   .toggle-row input {
@@ -1128,8 +1076,6 @@
   }
 
   .tags-actions {
-    display: flex;
-    gap: 0.4rem;
     margin-top: 0.5rem;
   }
 
@@ -1183,9 +1129,6 @@
   }
 
   .location-actions {
-    display: flex;
-    gap: 0.4rem;
-    align-items: center;
     margin-top: 0.5rem;
   }
 

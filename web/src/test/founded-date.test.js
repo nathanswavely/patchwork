@@ -23,7 +23,7 @@ describe('PatchSettingsInfo — the Founded date', () => {
   const src = source('pages/PatchSettingsInfo.svelte');
 
   it('is a date input bounded at today, seeded from the node', () => {
-    expect(src).toMatch(/class="founded-input"\s+type="date"\s+max=\{today\}\s+bind:value=\{foundedAt\}/);
+    expect(src).toMatch(/class="lt-field founded-input"\s+type="date"\s+max=\{today\}\s+bind:value=\{foundedAt\}/);
     expect(src).toMatch(/foundedAt = node\.founded_at \|\| ''/);
     expect(src).toMatch(/const today = new Date\(\)\.toISOString\(\)\.slice\(0, 10\)/);
   });

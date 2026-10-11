@@ -366,8 +366,9 @@
               </span>
             </div>
             <div class="source-correction">
-              <label class="source-tier" for="tier-{source.id}">Who can see these events</label>
+              <label class="lt-label source-tier" for="tier-{source.id}">Who can see these events</label>
               <select
+                class="lt-field"
                 id="tier-{source.id}"
                 value={source.visibility || 'public'}
                 disabled={!!retiering[source.id]}
@@ -377,13 +378,13 @@
                   <option value={tier}>{label}</option>
                 {/each}
               </select>
-              <p class="correction-hint tier-hint lt-muted">
+              <p class="lt-hint correction-hint tier-hint">
                 Applies to events imported from now on. Anything but Public
                 also stops them federating to other quilts.
               </p>
             </div>
             <div class="source-correction">
-              <label class="correction-toggle">
+              <label class="lt-check correction-toggle">
                 <input
                   type="checkbox"
                   checked={source.local_time_stamped_utc}
@@ -392,7 +393,7 @@
                 />
                 <span>This calendar publishes local times as UTC</span>
               </label>
-              <p class="correction-hint lt-muted">
+              <p class="lt-hint correction-hint">
                 Only if this feed's times run hours earlier than the venue's own
                 page. The next sync rewrites its events.
                 {#if previewFor(source)}
@@ -402,7 +403,7 @@
                 {/if}
               </p>
             </div>
-            <div class="source-actions">
+            <div class="lt-actions source-actions">
               <button
                 class="lt-btn lt-btn-secondary lt-btn-sm"
                 disabled={syncing[source.id] || source.status === 'pending'}
@@ -427,13 +428,14 @@
            (docs/adr/064), and type="url" makes the browser refuse to submit
            one before the server ever sees it. The server validates. -->
       <input
+        class="lt-field"
         type="text"
         inputmode="url"
         placeholder="https://…/basic.ics  or  an atproto handle"
         bind:value={newUrl}
         disabled={adding}
       />
-      <select bind:value={newVisibility} disabled={adding} aria-label="Who can see these events">
+      <select class="lt-field" bind:value={newVisibility} disabled={adding} aria-label="Who can see these events">
         {#each Object.entries(TIER_LABELS) as [tier, label] (tier)}
           <option value={tier}>{label}</option>
         {/each}
@@ -442,7 +444,7 @@
         {adding ? 'Attaching…' : 'Attach feed'}
       </button>
     </form>
-    <p class="lt-muted hint">
+    <p class="lt-hint hint">
       Removing a source keeps past events and removes upcoming imported ones.
     </p>
   {/if}
@@ -464,7 +466,7 @@
               {#if hold.location}<span class="lt-muted">{' · '}{hold.location}</span>{/if}
             </span>
           </div>
-          <div class="hold-actions">
+          <div class="lt-actions hold-actions">
             <button
               class="lt-btn lt-btn-secondary lt-btn-sm"
               disabled={deciding[hold.id]}
@@ -514,7 +516,7 @@
                 <span class="offer-title">{o.title}</span>
                 <span class="lt-muted offer-owner">{'on '}{o.owner_name}</span>
               </div>
-              <div class="offer-actions">
+              <div class="lt-actions offer-actions">
                 <button
                   class="lt-btn lt-btn-secondary lt-btn-sm"
                   disabled={offering[o.event_id]}
@@ -563,7 +565,7 @@
               {/if}
             </span>
           </div>
-          <div class="source-actions">
+          <div class="lt-actions source-actions">
             <ConfirmAction
               label="Stop"
               confirmLabel={entry.suggests
@@ -613,17 +615,11 @@
     margin-top: 0.5rem;
   }
   .correction-toggle {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
     font-size: 0.9rem;
-    cursor: pointer;
   }
   .correction-hint {
     margin: 0.25rem 0 0 1.6rem;
     max-width: 38rem;
-    font-size: 0.85rem;
-    line-height: 1.5;
   }
   /* The checkbox hint indents to sit under its label's text; the select
      has no box beside it, so its hint starts at the edge. */
@@ -631,13 +627,7 @@
     margin-left: 0;
   }
   .source-tier {
-    display: block;
-    font-size: 0.9rem;
     margin-bottom: 0.25rem;
-  }
-  .source-correction select {
-    font-size: 0.9rem;
-    padding: 0.25rem 0.4rem;
   }
 
   h2 {
@@ -701,9 +691,6 @@
   .source-actions {
     grid-column: 2;
     grid-row: 1;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
   }
 
   .add-form {
@@ -718,7 +705,6 @@
   }
 
   .hint {
-    font-size: 0.78rem;
     margin-top: 0.5rem;
   }
 
@@ -768,7 +754,6 @@
   .offer-info { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
   .offer-when { font-size: 0.8rem; }
   .offer-owner { font-size: 0.8rem; }
-  .offer-actions { display: flex; gap: 0.4rem; }
 
   .hold-list {
     list-style: none;
@@ -823,10 +808,7 @@
   }
 
   .hold-actions {
-    display: flex;
-    gap: 0.4rem;
     flex-shrink: 0;
-    flex-wrap: wrap;
   }
 
   /* A phone: the address gets the full width, the tier and the button share

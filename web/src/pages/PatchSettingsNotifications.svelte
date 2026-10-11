@@ -55,7 +55,7 @@
   {:else}
     <div class="category-list">
       {#each categories as cat}
-        <div class="category-row">
+        <div class="lt-setting category-row">
           <div class="category-info">
             <span class="category-label">{cat.label}</span>
             <span class="category-desc lt-muted">{cat.description}</span>
@@ -82,15 +82,6 @@
     display: flex;
     flex-direction: column;
     gap: 0;
-  }
-
-  .category-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid var(--color-border);
-    gap: 1rem;
   }
 
   .category-info {

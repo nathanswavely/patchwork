@@ -26,7 +26,9 @@ describe('a row wraps rather than squeezing its name', () => {
     ['pages/UserSettingsPatches.svelte', '.patch-info {\n      flex: 1 1 100%;'],
     ['pages/EventDetail.svelte', '.detail-header h1 {\n    flex: 1 1 14rem;'],
     ['pages/SecuritySettings.svelte', '.cred-info {\n    flex: 1 1 12rem;'],
-    ['pages/PatchSettingsNoticeboard.svelte', '.setting-info { flex: 1 1 14rem;'],
+    // Liquid Textile's .lt-setting: its words take flex 1 1 14rem, and the
+    // control wraps under them.
+    ['pages/PatchSettingsNoticeboard.svelte', '<div class="lt-setting">'],
     ['pages/PatchNoticeboard.svelte', '.board-hint { flex: 1 1 16rem;'],
   ];
   for (const [file, rule] of cases) {

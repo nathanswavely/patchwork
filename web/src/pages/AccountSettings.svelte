@@ -438,24 +438,24 @@
       </p>
       <form onsubmit={(e) => { e.preventDefault(); saveProfile(); }}>
         <div class="field">
-          <label for="username-display">Username</label>
-          <input id="username-display" type="text" value={user.username} disabled />
-          <small class="lt-muted">Username cannot be changed.</small>
+          <label class="lt-label" for="username-display">Username</label>
+          <input class="lt-field" id="username-display" type="text" value={user.username} disabled />
+          <small class="lt-hint">Username cannot be changed.</small>
         </div>
         <div class="field">
-          <label for="display-name">Display Name</label>
-          <input id="display-name" type="text" bind:value={displayName} disabled={saving} />
+          <label class="lt-label" for="display-name">Display Name</label>
+          <input class="lt-field" id="display-name" type="text" bind:value={displayName} disabled={saving} />
         </div>
         <div class="field">
-          <label for="bio">Bio</label>
-          <textarea id="bio" rows="3" bind:value={bio} disabled={saving}></textarea>
+          <label class="lt-label" for="bio">Bio</label>
+          <textarea class="lt-field" id="bio" rows="3" bind:value={bio} disabled={saving}></textarea>
         </div>
         <div class="field">
-          <span class="field-label">Links</span>
+          <span class="lt-label">Links</span>
           {#each links as link, i}
             <div class="link-row">
-              <input type="text" placeholder="Label" bind:value={link.label} disabled={saving} class="link-label" />
-              <input type="url" placeholder="https://…" bind:value={link.url} disabled={saving} class="link-url" />
+              <input type="text" placeholder="Label" bind:value={link.label} disabled={saving} class="lt-field link-label" />
+              <input type="url" placeholder="https://…" bind:value={link.url} disabled={saving} class="lt-field link-url" />
               <button type="button" class="lt-btn lt-btn-sm link-remove" onclick={() => removeLink(i)} title="Remove link">✕</button>
             </div>
           {/each}
@@ -463,7 +463,7 @@
             Add link
           </button>
         </div>
-        <div class="field-actions">
+        <div class="lt-actions field-actions">
           <button type="submit" class="lt-btn lt-btn-primary" disabled={saving}>
             {saving ? 'Saving...' : 'Save'}
           </button>
@@ -486,8 +486,9 @@
       </p>
       <form onsubmit={(e) => { e.preventDefault(); saveMovedTo(); }}>
         <div class="field">
-          <label for="moved-to">New address</label>
+          <label class="lt-label" for="moved-to">New address</label>
           <input
+            class="lt-field"
             id="moved-to"
             type="url"
             bind:value={movedTo}
@@ -496,7 +497,7 @@
           />
           {#if movedError}<small class="lt-error-text">{movedError}</small>{/if}
         </div>
-        <div class="field-actions">
+        <div class="lt-actions field-actions">
           <button type="submit" class="lt-btn lt-btn-primary" disabled={movedSaving}>
             {movedSaving ? 'Saving...' : 'Save'}
           </button>
@@ -523,12 +524,13 @@
         {#each contactItems as item (item.id)}
           <li class="contact-item-row">
             <div class="contact-item-fields">
-              <select bind:value={item.kind} disabled={contactBusy} aria-label="Kind">
+              <select class="lt-field" bind:value={item.kind} disabled={contactBusy} aria-label="Kind">
                 {#each CONTACT_KINDS as k}
                   <option value={k.value}>{k.label}</option>
                 {/each}
               </select>
               <input
+                class="lt-field"
                 type="text"
                 bind:value={item.value}
                 disabled={contactBusy}
@@ -537,6 +539,7 @@
                 aria-label="Value"
               />
               <input
+                class="lt-field"
                 type="text"
                 bind:value={item.label}
                 disabled={contactBusy}
@@ -574,12 +577,13 @@
       {#if draft}
         <form class="contact-draft" onsubmit={(e) => { e.preventDefault(); addContactItem(); }}>
           <div class="contact-item-fields">
-            <select bind:value={draft.kind} disabled={contactBusy} aria-label="Kind">
+            <select class="lt-field" bind:value={draft.kind} disabled={contactBusy} aria-label="Kind">
               {#each CONTACT_KINDS as k}
                 <option value={k.value}>{k.label}</option>
               {/each}
             </select>
             <input
+              class="lt-field"
               type="text"
               bind:value={draft.value}
               disabled={contactBusy}
@@ -587,18 +591,18 @@
               placeholder={KIND_PLACEHOLDER[draft.kind]}
               aria-label="Value"
             />
-            <input type="text" bind:value={draft.label} disabled={contactBusy} maxlength="40" placeholder="Label (optional)" aria-label="Label" />
+            <input class="lt-field" type="text" bind:value={draft.label} disabled={contactBusy} maxlength="40" placeholder="Label (optional)" aria-label="Label" />
           </div>
           {#if draft.kind === 'email'}
-            <small class="lt-muted">Separate from the address you sign in with. That one is never shared.</small>
+            <small class="lt-hint">Separate from the address you sign in with. That one is never shared.</small>
           {/if}
-          <div class="field-actions">
+          <div class="lt-actions field-actions">
             <button type="submit" class="lt-btn lt-btn-primary" disabled={contactBusy || !draft.value.trim()}>Add item</button>
             <button type="button" class="lt-btn" disabled={contactBusy} onclick={() => (draft = null)}>Cancel</button>
           </div>
         </form>
       {:else if contactItems.length < MAX_CONTACT_ITEMS}
-        <div class="field-actions">
+        <div class="lt-actions field-actions">
           <button type="button" class="lt-btn" disabled={contactBusy} onclick={startDraft}>Add contact item</button>
         </div>
       {:else}
@@ -611,7 +615,7 @@
       <p class="lt-muted profile-hint">
         Patchwork opens on the whole quilt. Switch this on to start on My Quilt instead.
       </p>
-      <label class="toggle-row">
+      <label class="lt-check toggle-row">
         <input
           type="checkbox"
           checked={startOnMyQuilt}
@@ -624,7 +628,7 @@
 
     <section class="lt-section">
       <h2>Discovery</h2>
-      <label class="toggle-row">
+      <label class="lt-check toggle-row">
         <input
           type="checkbox"
           checked={hideAmendedLinings}
@@ -655,7 +659,7 @@
           replaces it.
         </p>
       {/if}
-      <div class="field-actions">
+      <div class="lt-actions field-actions">
         {#if feedEnabled}
           <button class="lt-btn lt-btn-secondary" onclick={generateFeed} disabled={feedBusy}>
             Regenerate address
@@ -692,7 +696,7 @@
         This is about you and nobody else. For your community's own
         records, take a copy of the quilt below.
       </p>
-      <div class="field-actions">
+      <div class="lt-actions field-actions">
         <button class="lt-btn lt-btn-secondary" onclick={downloadMyData} disabled={downloadingData}>
           {downloadingData ? 'Preparing...' : 'Download my data'}
         </button>
@@ -725,7 +729,7 @@
         Nothing here removes you or changes this quilt. Any Patchwork can
         read the file, so it goes to whoever sets the new one up.
       </p>
-      <div class="field-actions">
+      <div class="lt-actions field-actions">
         <button class="lt-btn lt-btn-secondary" onclick={takeMemberSeamrip} disabled={takingSeamrip}>
           {takingSeamrip ? 'Preparing...' : 'Take a copy'}
         </button>
@@ -751,12 +755,12 @@
           </p>
         {/if}
         <div class="field">
-          <label for="steward-blurb">What you look after (in your own words)</label>
-          <input id="steward-blurb" type="text" maxlength="200"
+          <label class="lt-label" for="steward-blurb">What you look after (in your own words)</label>
+          <input class="lt-field" id="steward-blurb" type="text" maxlength="200"
             placeholder="keeps the lights on and pays the bill"
             bind:value={stewardBlurb} disabled={stewardSaving} />
         </div>
-        <div class="field-actions">
+        <div class="lt-actions field-actions">
           {#if steward.listed}
             <button class="lt-btn lt-btn-primary" onclick={() => setStewardListed(true)} disabled={stewardSaving}>
               Save
@@ -824,9 +828,10 @@
           </div>
         {/if}
 
-        <label class="field">
-          <span class="field-label">Type your username to confirm: <strong>{user.username}</strong></span>
+        <label class="lt-label">
+          <span>Type your username to confirm: <strong>{user.username}</strong></span>
           <input
+            class="lt-field"
             type="text"
             bind:value={confirmUsername}
             placeholder={user.username}
@@ -920,11 +925,9 @@
   }
 
   .toggle-row {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    gap: 0.6rem;
     font-size: 0.9rem;
-    cursor: pointer;
+    font-weight: 500;
     margin-bottom: 0.35rem;
   }
 
@@ -957,13 +960,6 @@
     gap: 0.25rem;
   }
 
-  .field label,
-  .field-label {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--color-text-muted);
-  }
-
   .link-row {
     display: flex;
     gap: 0.4rem;
@@ -988,21 +984,6 @@
   .add-link {
     align-self: flex-start;
     margin-top: 0.25rem;
-  }
-
-  .field-actions {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .toggle-row {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 500;
   }
 
   .toggle-row input {
