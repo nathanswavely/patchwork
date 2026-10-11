@@ -114,6 +114,7 @@ range, a date for everything after it.
 | # | Decision |
 |---|----------|
 | [007](007-media-references-not-bytes.md) | Media: the instance stores references, patches own their bytes *(the reference half ships — pasted URLs with required alt text, migration 052; the presigned upload half needs a bucket and does not)* |
+| [2026-10-11](2026-10-11-the-design-system-is-liquid-textile-vendored.md) | The design system is Liquid Textile, vendored: its files live in `web/src/vendor/liquid-textile/`, changed only by `scripts/sync-lt.sh` and never edited in place; Patchwork's `--color-*`, spacing, font and button tokens read Liquid Textile's, and only Patchwork's own (ink on fabric, the quilt's badges and dim, canvas chrome, the tab bar) stay defined in `app.css`; the light theme is warm white; `lib/textile.css` is retired *(applies 077 to a stylesheet; gives 038's reserved `[data-density]` a home; steps 1–2 of the migration are built, the class rename, components, behaviours and theme store follow)* |
 
 ## Adopted as design boundaries — implementation is backlog
 
