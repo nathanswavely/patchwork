@@ -434,7 +434,7 @@
   {:else}
     <!-- Action banner — needs your vote -->
     {#if overview.needs_vote > 0}
-      <div class="attention-banner">
+      <div class="lt-banner lt-tone-accent attention-banner">
         <span class="attention-icon">
           <CheckSquare size={16} weight="duotone" />
         </span>
@@ -452,7 +452,7 @@
          not a ballot — so without this the hub said nothing for the whole
          fortnight, which is the only stretch when standing is possible. -->
     {#if election?.phase === 'nominating'}
-      <div class="attention-banner">
+      <div class="lt-banner lt-tone-accent attention-banner">
         <span class="attention-icon">
           <UsersThree size={16} weight="duotone" />
         </span>
@@ -789,11 +789,6 @@
     display: flex;
     gap: 0.75rem;
     align-items: flex-start;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--color-accent);
-    border-radius: var(--radius);
-    background: color-mix(in srgb, var(--color-accent) 5%, var(--color-surface));
-    margin-bottom: 1.5rem;
   }
 
   .attention-icon {

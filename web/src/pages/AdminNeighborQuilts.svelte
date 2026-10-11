@@ -84,8 +84,8 @@
   {#if loading}
     <p class="lt-muted">Loading…</p>
   {:else if quilts.length === 0}
-    <div class="empty-state">
-      <p>No neighbor quilts yet.</p>
+    <div class="lt-empty">
+      <p class="lt-empty-title">No neighbor quilts yet.</p>
       <p class="lt-muted">Add another Patchwork's URL to publicly connect your communities.</p>
     </div>
   {:else}
@@ -174,12 +174,6 @@
     font-size: 0.82rem;
     color: var(--color-text-muted);
     word-break: break-all;
-  }
-
-  .empty-state {
-    text-align: center;
-    padding: 2rem 1rem;
-    color: var(--color-text-muted);
   }
 
   .lt-error-text {

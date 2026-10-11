@@ -92,8 +92,8 @@
 </script>
 
 {#if !inRoom}
-  <div class="permission-notice">
-    <p>The noticeboard is for this patch's members.</p>
+  <div class="lt-empty">
+    <p class="lt-empty-title">The noticeboard is for this patch's members.</p>
     <p class="lt-muted">Become a member to read and put up notices.</p>
   </div>
 {:else if composing}
@@ -180,8 +180,8 @@
     {:else if error}
       <p class="lt-error-text">{error}</p>
     {:else if notices.length === 0}
-      <div class="empty-state">
-        <p>Nothing on the board yet.</p>
+      <div class="lt-empty">
+        <p class="lt-empty-title">Nothing on the board yet.</p>
         {#if mayPost}
           <p class="lt-muted">Put up the first notice.</p>
         {/if}
@@ -215,10 +215,6 @@
 {/if}
 
 <style>
-  .permission-notice { text-align: center; padding: 3rem 1rem; }
-  .permission-notice p:first-child { font-weight: 500; margin-bottom: 0.25rem; }
-  .empty-state { text-align: center; padding: 2rem 0; }
-  .empty-state p:first-child { font-weight: 500; margin-bottom: 0.25rem; }
 
   .board-header {
     display: flex;

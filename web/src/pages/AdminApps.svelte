@@ -118,8 +118,8 @@
   {#if loading}
     <p class="lt-muted">Loading…</p>
   {:else if apps.length === 0}
-    <div class="empty-state">
-      <p>No apps listed.</p>
+    <div class="lt-empty">
+      <p class="lt-empty-title">No apps listed.</p>
       <p class="lt-muted">This quilt vouches for nobody, and publishes neither file.</p>
     </div>
   {:else}
@@ -328,12 +328,6 @@
   .add-form textarea {
     font-family: monospace;
     font-size: 0.8rem;
-  }
-
-  .empty-state {
-    text-align: center;
-    padding: 2rem 1rem;
-    color: var(--color-text-muted);
   }
 
   .lt-error-text {

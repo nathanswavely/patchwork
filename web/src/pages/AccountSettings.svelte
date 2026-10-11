@@ -780,7 +780,7 @@
     <section class="lt-section">
       <details class="pw-fold" open={!narrow}>
         <summary><h2 class="danger-heading">Danger Zone</h2></summary>
-      <div class="danger-card">
+      <div class="lt-banner lt-tone-error danger-card">
         <h3>Delete your account</h3>
         <PasskeyNotice show={!hasPasskey} action="delete your account" />
         <p class="danger-warning">
@@ -865,8 +865,8 @@
   }
 
   .danger-card {
-    border: 1px solid var(--color-error);
-    border-radius: 6px;
+    /* A banner's small type is for a notice; this holds a form. */
+    font-size: inherit;
     padding: 1.25rem;
     max-width: var(--pw-measure-narrow);
   }

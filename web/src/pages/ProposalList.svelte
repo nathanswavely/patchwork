@@ -131,8 +131,8 @@
 <GovernanceShell activeSection="proposals">
   {#snippet children()}
 {#if permissionDenied}
-  <div class="permission-notice">
-    <p>This content is only visible to members.</p>
+  <div class="lt-empty">
+    <p class="lt-empty-title">This content is only visible to members.</p>
     <p class="lt-muted">Become a member to access proposals.</p>
   </div>
 {:else}
@@ -240,15 +240,6 @@
 </GovernanceShell>
 
 <style>
-  .permission-notice {
-    text-align: center;
-    padding: 3rem 1rem;
-  }
-
-  .permission-notice p:first-child {
-    font-weight: 500;
-    margin-bottom: 0.25rem;
-  }
 
   .page-header {
     display: flex;

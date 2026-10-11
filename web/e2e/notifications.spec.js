@@ -183,7 +183,7 @@ test.describe('Notifications — Activity Feed', () => {
     // Should show day groups with activity items
     const dayGroup = page.locator('.day-group').first();
     const hasActivity = await dayGroup.isVisible().catch(() => false);
-    const hasEmpty = await page.locator('.empty-state').isVisible().catch(() => false);
+    const hasEmpty = await page.locator('.lt-empty').isVisible().catch(() => false);
     expect(hasActivity || hasEmpty).toBeTruthy();
   });
 

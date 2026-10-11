@@ -2461,7 +2461,7 @@
 
 {#if loading}
   <div class="canvas-state" style="padding-right: {insetRight * 100}%">
-    <div class="loading-spinner"></div>
+    <div class="lt-spinner loading-spinner"></div>
     <p>Loading quilt...</p>
   </div>
 {:else if error}
@@ -2671,15 +2671,9 @@
   }
 
   .loading-spinner {
-    width: 32px;
-    height: 32px;
-    border: 3px solid var(--color-border);
-    border-top-color: var(--color-primary);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+    font-size: 32px;
+    border-width: 3px;
   }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
 
   :global(.canvas-tooltip) {
     display: none;

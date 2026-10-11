@@ -255,12 +255,14 @@
 
     <!-- Empty state -->
     {#if memberships.length === 0}
-      <div class="empty-state">
-        <p>You haven't joined any patches yet.</p>
+      <div class="lt-empty">
+        <p class="lt-empty-title">You haven't joined any patches yet.</p>
         <p class="lt-muted">The groups near you are on the quilt.</p>
-        <a href="/" class="lt-btn lt-btn-primary" onclick={(e) => { e.preventDefault(); navigate('/'); }}>
-          Explore Quilt
-        </a>
+        <div class="lt-empty-actions">
+          <a href="/" class="lt-btn lt-btn-primary" onclick={(e) => { e.preventDefault(); navigate('/'); }}>
+            Explore Quilt
+          </a>
+        </div>
       </div>
     {/if}
 
@@ -434,18 +436,6 @@
   }
 
   /* Empty state */
-  .empty-state {
-    text-align: center;
-    padding: 3rem 0;
-  }
-
-  .empty-state p {
-    margin-bottom: 0.5rem;
-  }
-
-  .empty-state .lt-btn {
-    margin-top: 1rem;
-  }
 
   @media (max-width: 640px) {
     .quick-actions {

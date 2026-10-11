@@ -14,7 +14,7 @@
 </script>
 
 {#if show}
-  <p class="passkey-notice" role="status">
+  <p class="lt-banner lt-tone-warning passkey-notice" role="status">
     <strong>Confirmation needed.</strong>
     To {action} you'll be asked to confirm, and you don't have a passkey
     enrolled yet. <a href="/settings/security">Add a passkey</a> first — it
@@ -27,12 +27,6 @@
 <style>
   .passkey-notice {
     margin: 0 0 1rem;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--color-warning, #b8860b);
-    border-radius: var(--radius);
-    background: var(--color-warning-bg);
-    font-size: 0.9rem;
-    line-height: 1.5;
   }
 
   .passkey-notice a {

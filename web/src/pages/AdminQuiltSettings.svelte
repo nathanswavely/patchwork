@@ -591,7 +591,7 @@
     <!-- ===== Danger zone ===== -->
     <section class="section">
       <h2 class="danger-heading">Danger Zone</h2>
-      <div class="danger-card">
+      <div class="lt-banner lt-tone-error danger-card">
         <h3>Wipe this quilt</h3>
         <PasskeyNotice show={!hasPasskey} action="wipe this quilt" />
         <p class="danger-warning">
@@ -823,8 +823,8 @@
   }
 
   .danger-card {
-    border: 1px solid var(--color-error);
-    border-radius: 6px;
+    /* A banner's small type is for a notice; this holds a form. */
+    font-size: inherit;
     padding: 1.25rem;
     display: flex;
     flex-direction: column;

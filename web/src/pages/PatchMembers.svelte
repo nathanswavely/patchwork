@@ -94,8 +94,8 @@
 </script>
 
 {#if permissionDenied}
-  <div class="permission-notice">
-    <p>This content is only visible to members.</p>
+  <div class="lt-empty">
+    <p class="lt-empty-title">This content is only visible to members.</p>
     <p class="lt-muted">Become a member to access the member list.</p>
   </div>
 {:else}
@@ -106,13 +106,13 @@
     <!-- The count is deliberately still here (docs/adr/095 decision 3): the
          quilt sizes this patch's tile by it, so withholding it on this one
          page would hide nothing and only make the page read as evasive. -->
-    <div class="empty-state">
-      <p>This patch doesn't publish its member list.</p>
+    <div class="lt-empty">
+      <p class="lt-empty-title">This patch doesn't publish its member list.</p>
       <p class="lt-muted">{memberCount === 1 ? '1 member' : `${memberCount} members`}.</p>
     </div>
   {:else if members.length === 0}
-    <div class="empty-state">
-      <p>No members yet.</p>
+    <div class="lt-empty">
+      <p class="lt-empty-title">No members yet.</p>
       <p class="lt-muted">Share your patch's invite link to grow your community.</p>
     </div>
   {:else}
@@ -182,25 +182,6 @@
 {/if}
 
 <style>
-  .permission-notice {
-    text-align: center;
-    padding: 3rem 1rem;
-  }
-
-  .permission-notice p:first-child {
-    font-weight: 500;
-    margin-bottom: 0.25rem;
-  }
-
-  .empty-state {
-    text-align: center;
-    padding: 2rem 0;
-  }
-
-  .empty-state p:first-child {
-    font-weight: 500;
-    margin-bottom: 0.25rem;
-  }
 
   .members-header {
     display: flex;

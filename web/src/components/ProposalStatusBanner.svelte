@@ -143,7 +143,7 @@
        headed, not where it is (docs/adr/051). Until nominations close there is
        no ballot and no clock, so the phase decides this branch, not the
        state. -->
-  <div class="status-banner voting">
+  <div class="status-banner lt-banner lt-tone-primary voting">
     <!-- With the date (docs/adr/106). This said only that nominations were
          open; the one number on the page was the voting countdown, which is
          a different deadline. Three members of a co-op arrived to stand after
@@ -173,7 +173,7 @@
        the ordinary ballot and the ordinary clock, and decides nothing: the
        maintainer may approve or decline at any time, and when the window
        closes the proposal comes back to them with the tally attached. -->
-  <div class="status-banner voting advisory">
+  <div class="status-banner lt-banner lt-tone-primary voting advisory">
     <p>{advisoryLine}</p>
     {#if canDecide || mayWithdraw}
       <div class="banner-actions">
@@ -201,7 +201,7 @@
   </div>
 
 {:else if effectiveState === 'voting'}
-  <div class="status-banner voting">
+  <div class="status-banner lt-banner lt-tone-primary voting">
     <p>{votingLine}</p>
     {#if mayWithdraw}
       <div class="banner-actions">
@@ -220,7 +220,7 @@
        carrying no ballot: a member's proposal is born here, and an
        advisory vote lands back here when its window closes. No clock ends
        it; only an admin's decision or the author withdrawing does. -->
-  <div class="status-banner awaiting">
+  <div class="status-banner lt-banner lt-tone-muted awaiting">
     <p>
       {#if hasBallots}
         The members have been asked and the vote has closed. The maintainer decides, with the tally below.
@@ -263,7 +263,7 @@
        proposal is open — it can be discussed, revised and withdrawn — and has
        no ballot, because a patch with both would let an admin who disliked
        where a tally was heading record a meeting result instead. -->
-  <div class="status-banner elsewhere">
+  <div class="status-banner lt-banner lt-tone-muted elsewhere">
     <p>
       Open for discussion. This patch decides at meetings, not here, and what
       it decides gets recorded on the charter afterwards.
@@ -281,7 +281,7 @@
   </div>
 
 {:else if effectiveState === 'approved'}
-  <div class="status-banner approved-pending">
+  <div class="status-banner lt-banner lt-tone-accent approved-pending">
     <p>The community approved this change. An admin needs to make it official.</p>
     {#if isAdmin}
       <div class="banner-actions">
@@ -300,12 +300,12 @@
        own since docs/adr/097; the outcome a year of contests is actually for
        had none. Who was seated is in the panel below, which is why this does
        not repeat it. -->
-  <div class="status-banner in-effect">
+  <div class="status-banner lt-banner lt-tone-success in-effect">
     <p>This election has closed and the council below is seated.</p>
   </div>
 
 {:else if effectiveState === 'in_effect' || effectiveState === 'passed'}
-  <div class="status-banner in-effect">
+  <div class="status-banner lt-banner lt-tone-success in-effect">
     <p>
       {#if directChange}
         This change is in effect.
@@ -321,7 +321,7 @@
   <!-- The window closed under quorum (docs/adr/097). Nobody decided
        anything, so this is worded as a vote that did not happen rather than
        one that failed; the tally below is who turned up. -->
-  <div class="status-banner lapsed">
+  <div class="status-banner lt-banner lt-tone-muted lapsed">
     <p>Voting ended without reaching quorum. This proposal lapsed and was not decided.</p>
   </div>
 
@@ -331,7 +331,7 @@
        lapse — holdover, not a rejection — so it never wears the tally
        sentence below, which would read "0 approved, 0 rejected" over a
        contest the community simply did not settle. -->
-  <div class="status-banner unsettled">
+  <div class="status-banner lt-banner lt-tone-muted unsettled">
     <!-- Not "the council continues" (docs/adr/106): this banner outlives the
          council it would be describing, and on a patch with no admins it was
          the same comfortable lie the record was telling. The seats it names
@@ -339,7 +339,7 @@
     <p>This election settled nothing; nobody was seated, and the seats it was for are unchanged.</p>
   </div>
 {:else if effectiveState === 'rejected'}
-  <div class="status-banner rejected">
+  <div class="status-banner lt-banner lt-tone-muted rejected">
     <!-- A decline is one person's decision (docs/adr/092), and the tally, if
          any, was advice — so it is never worded as a vote that failed. -->
     <p>
@@ -352,28 +352,18 @@
   </div>
 
 {:else if effectiveState === 'withdrawn'}
-  <div class="status-banner withdrawn">
+  <div class="status-banner lt-banner lt-tone-muted withdrawn">
     <p>Withdrawn by the author.</p>
   </div>
 {/if}
 
 <style>
   .status-banner {
-    padding: 0.75rem 1rem;
-    border-radius: var(--radius);
     margin-bottom: 1.25rem;
-    font-size: 0.88rem;
-    line-height: 1.5;
   }
 
   .status-banner p {
     margin: 0;
-  }
-
-  .voting {
-    background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
-    border: 1px solid var(--color-primary);
-    color: var(--color-text);
   }
 
   /* Advice, not a decision: the vote's own tint, dashed, so it reads as a
@@ -382,41 +372,10 @@
     border-style: dashed;
   }
 
-  .awaiting {
-    background: var(--color-overlay);
-    border: 1px solid var(--color-border);
-    color: var(--color-text);
-  }
-
-  .elsewhere {
-    background: var(--color-overlay);
-    border: 1px solid var(--color-border);
-    color: var(--color-text);
-  }
-
-  .approved-pending {
-    background: color-mix(in srgb, var(--color-accent) 8%, var(--color-surface));
-    border: 1px solid var(--color-accent);
-    color: var(--color-text);
-  }
-
-  .in-effect {
-    background: color-mix(in srgb, var(--color-success) 10%, var(--color-surface));
-    border: 1px solid var(--color-success);
-    color: var(--color-text);
-  }
-
-  .rejected {
-    background: var(--color-overlay);
-    border: 1px solid var(--color-border);
-    color: var(--color-text-muted);
-  }
-
+  .rejected,
   .withdrawn,
   .lapsed,
   .unsettled {
-    background: var(--color-overlay);
-    border: 1px solid var(--color-border);
     color: var(--color-text-muted);
   }
 

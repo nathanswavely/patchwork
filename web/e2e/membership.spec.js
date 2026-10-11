@@ -89,7 +89,7 @@ test.describe('Membership — Dashboard Sections', () => {
     await goto(page, '/dashboard');
     await expectNoError(page);
     // New user should see empty state or onboarding prompt
-    const hasEmptyState = await page.locator('.empty-state').isVisible().catch(() => false);
+    const hasEmptyState = await page.locator('.lt-empty').isVisible().catch(() => false);
     const hasAnyContent = await page.locator('.section-title').first().isVisible().catch(() => false);
     // Either empty state or some content is fine — just shouldn't error
     expect(hasEmptyState || hasAnyContent || true).toBeTruthy();

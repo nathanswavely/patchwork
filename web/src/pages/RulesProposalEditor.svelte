@@ -237,8 +237,8 @@
      would center on the column instead of the page — visibly off-center, and
      narrower than the same notice everywhere else it appears. -->
 {#if !canPropose}
-  <div class="permission-notice lt-fade-in">
-    <p>Only members can propose a change to these rules.</p>
+  <div class="lt-empty lt-fade-in">
+    <p class="lt-empty-title">Only members can propose a change to these rules.</p>
     <p class="lt-muted">Become a member to take part in how this patch governs itself.</p>
   </div>
 {:else}
@@ -447,15 +447,5 @@
   .error-state {
     padding: 2rem 0;
     text-align: center;
-  }
-
-  .permission-notice {
-    text-align: center;
-    padding: 3rem 1rem;
-  }
-
-  .permission-notice p:first-child {
-    font-weight: 500;
-    margin-bottom: 0.25rem;
   }
 </style>
