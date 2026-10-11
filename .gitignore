@@ -11,7 +11,8 @@
 *.dylib
 *.test
 *.out
-vendor/
+# Go module vendoring, at the root only: web/src/vendor/ is committed (Liquid Textile).
+/vendor/
 
 # SQLite
 *.db

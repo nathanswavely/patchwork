@@ -2044,8 +2044,8 @@
     // anyway. Three stacked widths stand in for a soft falloff without a
     // filter. This is the ground the light sits on, so it goes first.
     // The colour is the theme's, not black: on denim the seam sinks into the
-    // ground because the shading is as dark as the ground, and on raw cotton
-    // the same relationship needs the shading to be cream. textile.css owns
+    // ground because the shading is as dark as the ground, and on cotton
+    // the same relationship needs it to be pale. Liquid Textile owns
     // the triplet and a gain on the alpha, since a pale stroke needs more of
     // it than a black one to read at all.
     if (CLOTH.bevel > 0) {

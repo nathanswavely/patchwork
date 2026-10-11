@@ -1,0 +1,707 @@
+/**
+ * Liquid Textile — the expressive layer
+ *
+ * Textile character on top of the foundation: a twill weave, topstitching,
+ * sewn edges and shadows, frosted resin, one brass, seam inks, and the
+ * layering presets (wash, glaze, vellum, appliqué, dye). patterns.css,
+ * textures.css and raw.css hold the grounds and edges.
+ *
+ * Most of it is a FINISH: data-finish="textile" on a page, a region or
+ * one element swaps the foundation components inside for their tactile
+ * versions, changing their material and nothing else (see FINISHES).
+ *
+ * Themeable via CSS custom properties on [data-theme]. Reads the
+ * foundation's tokens, with fallbacks where it can stand alone.
+ */
+
+/* ================================================================
+   TOKENS — Textile-specific design variables
+   ================================================================ */
+
+[data-theme="light"] {
+  --lt-ink: #2a2725;           /* ink */
+  --lt-canvas: #f6f5f2;        /* warm white cotton */
+  --lt-thread: #cbc7bf;        /* undyed thread */
+  --lt-thread-heavy: #77736d;  /* twine */
+  --lt-wash: rgba(42, 39, 37, 0.05);
+  --lt-wash-heavy: rgba(42, 39, 37, 0.10);
+
+  --lt-radius: 0px;
+  --lt-radius-pill: 999px;
+
+  --lt-shadow-x: 3px;
+  --lt-shadow-y: 3px;
+  --lt-shadow-color: rgba(42, 39, 37, 0.15);
+
+  --lt-pattern-color: rgba(42, 39, 37, 0.07);
+  --lt-pattern-color-heavy: rgba(42, 39, 37, 0.12);
+
+  /* Seam ink where two patches meet: the stitch, the pressed-allowance
+     highlight it throws, and the topstitch that runs in the ditch.
+     (Backported from Patchwork, 2026-08-24.) */
+  --lt-seam-ink: rgba(28, 24, 18, 0.55);
+  --lt-seam-ridge: rgba(255, 255, 255, 0.75);
+  --lt-seam-stitch: rgba(255, 255, 255, 0.7);
+
+  /* The shading either side of a seam: the bevel's falloff and the
+     doming's shadow side. Each is an r, g, b triplet plus a gain on the
+     alpha the renderer computes, because the renderer owns how deep the
+     puff is and the theme owns what color it is. On warm white cotton
+     the seam is the pale ground, the way it is black on denim: shading
+     in the color of the ground is what lets a seam belong to the quilt instead of outlining
+     every tile. A pale stroke over colored fabric needs more alpha than a
+     black one to read, hence a gain above one; the shadow side is hemp
+     twine held well back so the lit side still wins.
+     Use as rgba(var(--lt-seam-shade), calc(alpha * var(--lt-seam-shade-gain))).
+     (Backported from Patchwork, 2026-09.) */
+  --lt-seam-shade: 246, 245, 242;
+  --lt-seam-shade-gain: 2.6;
+  --lt-seam-shadow: 122, 116, 106;
+  --lt-seam-shadow-gain: 0.4;
+}
+
+[data-theme="dark"] {
+  --lt-ink: #e0dbd4;           /* bleached linen */
+  --lt-canvas: #151820;        /* raw denim */
+  --lt-thread: #2e3240;        /* indigo thread */
+  --lt-thread-heavy: #4a5060;  /* faded denim stitch */
+  --lt-wash: rgba(224, 219, 212, 0.06);
+  --lt-wash-heavy: rgba(224, 219, 212, 0.12);
+
+  --lt-radius: 0px;
+  --lt-radius-pill: 999px;
+
+  --lt-shadow-x: 3px;
+  --lt-shadow-y: 3px;
+  --lt-shadow-color: rgba(224, 219, 212, 0.08);
+
+  --lt-pattern-color: rgba(224, 219, 212, 0.05);
+  --lt-pattern-color-heavy: rgba(224, 219, 212, 0.09);
+
+  /* On denim the ground is already dark, so the stitch darkens harder and
+     the highlight pulls back: a 0.75 white ridge reads as a chalk line. */
+  --lt-seam-ink: rgba(0, 0, 0, 0.72);
+  --lt-seam-ridge: rgba(255, 255, 255, 0.22);
+  --lt-seam-stitch: rgba(226, 220, 208, 0.45);
+
+  /* Black shading on a near-black ground: the seam sinks in. */
+  --lt-seam-shade: 0, 0, 0;
+  --lt-seam-shade-gain: 1;
+  --lt-seam-shadow: 0, 0, 0;
+  --lt-seam-shadow-gain: 0.85;
+}
+
+/* ================================================================
+   TYPOGRAPHY — grotesque for reading, hand-lettered for voice.
+
+   The rule (foundation.css states it in full): the hand-lettered face
+   goes on page headings and on a name that stands for where you are,
+   never below 1rem and never on anything read in bulk. Patchwork learned
+   it the hard way: Shantell as the only face was personality at heading
+   sizes and strain at 0.85rem in a dense list.
+
+   Shantell Sans BNCE axis: -100 (structured) to 100 (bouncy).
+   Stacks read the foundation's tokens, with the same families as a
+   fallback so this file still works on its own.
+   ================================================================ */
+
+.lt-font {
+  font-family: var(--lt-font, 'Space Grotesk Variable', 'Space Grotesk', system-ui, sans-serif);
+}
+
+/* Body text: grotesque, low-fatigue */
+.lt-type-body {
+  font-family: var(--lt-font, 'Space Grotesk Variable', 'Space Grotesk', system-ui, sans-serif);
+  font-weight: 400;
+}
+
+/* UI labels, nav: grotesque */
+.lt-type-ui {
+  font-family: var(--lt-font, 'Space Grotesk Variable', 'Space Grotesk', system-ui, sans-serif);
+  font-weight: 500;
+}
+
+/* Headings: the h1/h2 voice, for a heading that is not an h1 or h2.
+   1.25rem and up. */
+.lt-type-heading {
+  font-family: var(--lt-font-display, 'Shantell Sans Variable', 'Shantell Sans', system-ui, sans-serif);
+  font-variation-settings: 'BNCE' var(--lt-bounce, 20);
+  font-weight: 700;
+}
+
+/* A name that stands for where you are: the app's name in its bar, the
+   workspace you are inside. The heading voice, sized for a bar, and safe
+   to squeeze: it ellipses rather than wraps. Never smaller than 1rem. */
+.lt-type-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--lt-font-display, 'Shantell Sans Variable', 'Shantell Sans', system-ui, sans-serif);
+  font-variation-settings: 'BNCE' var(--lt-bounce, 20);
+  font-size: max(1em, 1rem);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* There is no bouncier style. .lt-type-display (BNCE 40) and
+   .lt-type-hand (BNCE 80) were removed in 0.3.0: Patchwork never used
+   either, and one bounce value is the rule. */
+
+/* --- Manufactured typography — industrial hardware, not hand-drawn --- */
+
+/* Machined label: geometric sans for chips, tags, buttons */
+.lt-type-machined {
+  font-family: var(--lt-font, 'Space Grotesk Variable', 'Space Grotesk', system-ui, sans-serif);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* Stamped: condensed, all-caps, like die-stamped metal */
+.lt-type-stamped {
+  font-family: var(--lt-font, 'Space Grotesk Variable', 'Space Grotesk', system-ui, sans-serif);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.85em;
+}
+
+/* Serial: monospace for counts, numbers, codes */
+.lt-type-serial {
+  font-family: var(--lt-font-mono, 'Space Mono', 'SF Mono', monospace);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+/* ================================================================
+   FINISHES — the textile version of a foundation component
+   data-finish="textile" swaps components for their tactile versions:
+     .lt-btn     a patch: twill weave, topstitch, sewn edge
+     .lt-switch  a snap: a topstitched strap with a nickel snap
+     .lt-tag     a white label, sewn on as a flattened loop
+     .lt-card    a patch card: faint weave, inner topstitch, sewn shadow
+     .lt-chip    resin: frosted
+   Put it on <html> for a whole app, on a section for a region, or on
+   one element for an accent. data-finish="plain" opts a part back out,
+   one level deep (textile inside plain inside textile is not supported).
+   One component, one markup: the finish changes the material and
+   nothing else, so size, density, --lt-target, focus ring, sentence
+   case and contrast stay the component's own.
+   Every selector is the component's own class plus zero-specificity
+   :where() and :not(:where()), so an app's one-class rule still wins on
+   source order, as it does over the plain component.
+   Ghost and link buttons, and pending chips, stay plain: they have no
+   material to change. Brass, resin as a class, depth and the 1px lines
+   stay classes, because they say something (earned, floating, proposed)
+   rather than how a component is made.
+   The finishes were settled with Nathan on workbenches, 2026-10-05
+   (patch, card, resin: round 2; snap and tag: six rounds each).
+   ================================================================ */
+
+/* --- Weave, per theme ---
+   A twill: one diagonal grain of a darker and a lighter thread, the way
+   denim reads up close. Not a grid, which at this scale is graph paper.
+   Each thread may only move a fill AWAY from its label's color, or the
+   weave eats contrast: light-theme fills carry white labels, so their
+   weave is mostly dark thread; dark-theme fills carry ink, so mostly
+   light thread. Worst case, a label over a thread: light primary 5.0:1,
+   dark error 4.6:1 (5.2:1 and 4.7:1 plain). */
+:root {
+  --lt-thread-dark: rgba(0, 0, 0, 0.05);
+  --lt-thread-light: rgba(255, 255, 255, 0.02);
+  --lt-stitch-alpha: 50%;     /* how loud a topstitch is, as a share of its ink */
+  --lt-sewn-offset: 2px;      /* how far a sewn edge sits out */
+}
+[data-theme="dark"] {
+  --lt-thread-dark: rgba(0, 0, 0, 0.02);
+  --lt-thread-light: rgba(255, 255, 255, 0.06);
+}
+:root,
+[data-theme] {
+  --lt-weave: repeating-linear-gradient(135deg,
+    var(--lt-thread-dark) 0 1px, var(--lt-thread-light) 1px 2px, transparent 2px 4px);
+  --lt-weave-faint: repeating-linear-gradient(135deg,
+    color-mix(in srgb, var(--lt-thread-dark) 60%, transparent) 0 1px,
+    color-mix(in srgb, var(--lt-thread-light) 60%, transparent) 1px 2px, transparent 2px 4px);
+}
+
+/* --- Button: a patch, sewn on ---
+   The button's own fill, the weave over it, a dashed topstitch in the
+   label's color just inside the edge, and a sewn edge underneath in a
+   darker shade of the fill. The stitch sits closer the smaller the
+   button: 2px inside a regular one, 1.5px inside a small one, 3px on a
+   touch screen where every button is 44px. A danger patch is filled,
+   where a plain danger button is outlined, and a secondary patch takes
+   the surface, since weave over nothing is not cloth.
+   The fill and inset live on the variants; only the textile rules read
+   them, so a plain button is untouched. */
+.lt-btn { --lt-fill: var(--lt-color-surface); --lt-stitch-inset: 2px; }
+.lt-btn-sm { --lt-stitch-inset: 1.5px; }
+@media (pointer: coarse) {
+  .lt-btn,
+  .lt-btn-sm { --lt-stitch-inset: 3px; }
+}
+.lt-btn-primary { --lt-fill: var(--lt-color-primary); }
+.lt-btn-warning { --lt-fill: var(--lt-color-accent); }
+.lt-btn-danger { --lt-fill: var(--lt-color-error); }
+
+.lt-btn:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *, .lt-btn-ghost, .lt-btn-link)) {
+  position: relative;
+  background-image: var(--lt-weave);
+  box-shadow: 0 var(--lt-sewn-offset) 0 color-mix(in srgb, var(--lt-fill) 55%, #000);
+  font-weight: 600;
+  transition: transform var(--lt-quick, 150ms) var(--lt-ease, ease),
+    box-shadow var(--lt-quick, 150ms) var(--lt-ease, ease), background-color var(--lt-quick, 150ms) ease;
+}
+.lt-btn:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *, .lt-btn-ghost, .lt-btn-link))::after {
+  content: '';
+  position: absolute;
+  inset: var(--lt-stitch-inset);
+  border: 1px dashed color-mix(in srgb, currentColor var(--lt-stitch-alpha), transparent);
+  border-radius: max(0px, calc(var(--lt-radius-control, 6px) - var(--lt-stitch-inset)));
+  pointer-events: none;
+}
+.lt-btn-secondary:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *)) {
+  background-color: var(--lt-color-surface);
+}
+.lt-btn-danger:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *)),
+.lt-btn-danger:hover:not(:disabled):where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *)) {
+  background-color: var(--lt-color-error);
+  border-color: var(--lt-color-error);
+  color: var(--lt-color-on-error);
+}
+.lt-btn:hover:not(:disabled):where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *, .lt-btn-ghost, .lt-btn-link)) {
+  transform: translateY(-1px);
+  box-shadow: 0 calc(var(--lt-sewn-offset) + 1px) 0 color-mix(in srgb, var(--lt-fill) 55%, #000);
+}
+.lt-btn:active:not(:disabled):where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *, .lt-btn-ghost, .lt-btn-link)) {
+  transform: translateY(1px);
+  box-shadow: 0 calc(var(--lt-sewn-offset) - 1px) 0 color-mix(in srgb, var(--lt-fill) 55%, #000);
+}
+.lt-btn:disabled:where([data-finish="textile"], [data-finish="textile"] *) { box-shadow: none; }
+
+/* --- Card: a patch card, sewn onto the page ---
+   Faint weave, a topstitch inside the edge, a sewn shadow. The border
+   stays the card's 1px. On a whole textile page every card gets it; as
+   an accent, keep it for a card that holds something that could move
+   (Patchwork ADR 038: an event, a patch, a member), not a page's own
+   sections. */
+.lt-card:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *)) {
+  position: relative;
+  background-image: var(--lt-weave-faint);
+  box-shadow: var(--lt-sewn-offset) var(--lt-sewn-offset) 0 var(--lt-shadow-color);
+}
+.lt-card:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *))::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 1px dashed color-mix(in srgb, var(--lt-color-text) 22%, transparent);
+  border-radius: max(0px, calc(var(--lt-radius-control, 6px) - 4px));
+  pointer-events: none;
+}
+.lt-card:where([data-density="compact"] *, [data-density="compact"]):where([data-finish="textile"], [data-finish="textile"] *)::after { inset: 3px; }
+
+/* --- Switch: a snap ---
+   A strap in a sunken track, sewn in at the left and topstitched like a
+   patch, with a nickel snap at its end. On, the strap lies snapped and
+   its face shows the cap, a smooth dome, where a switch's thumb would
+   be. Off, the end comes unsnapped and folds back over itself on a
+   diagonal crease, dropping over the bottom edge: you see the strap's
+   paler reverse and the snap's other half, the socket, and the track
+   shows the stud it was snapped to. Still a checkbox: no script.
+   Fills are the plain switch's (muted off, primary on: 5.8:1 and 5.0:1
+   against the surface light, 5.5:1 and 7.0:1 dark). The track is muted
+   at 22% (1.34:1 light, 1.43:1 dark) with a muted edge at 70% (3.0:1
+   light, 3.4:1 dark). The topstitch is the patch's, 1.5px inside.
+   The fold is a half turn about the crease (rotate3d), so the end
+   mirrors as cloth does, and its face swaps edge-on, halfway, by a
+   discrete transition. It hangs about 9px below the switch when off;
+   give a settings row that much room underneath.
+   Both pseudo-elements are the strap, so the touch target is a
+   transparent border sized from --lt-target, and the track's edge is an
+   inset shadow inside it.
+   Geometry, in the switch's box (40 x 22): the crease runs from (11, 0)
+   to (28.19, 22), at 52deg, so the strap's direction folds to 104deg,
+   down and a little back; the snap is centered at (29, 11).
+   The metal is in --lt-snap-hi, --lt-snap-metal and --lt-snap-lo
+   (highlight, body, shade); nickel by default, the same in both themes. */
+.lt-switch:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *)) {
+  --lt-snap-fabric: var(--lt-color-text-muted);
+  --lt-snap-thread: var(--lt-color-on-muted);
+  --lt-snap-hi: #ffffff;
+  --lt-snap-metal: #c3c8ce;
+  --lt-snap-lo: #6b7279;
+  --lt-snap-reach: max(0px, calc((var(--lt-target, 24px) - 22px) / 2));
+  --lt-snap-ease: cubic-bezier(0.3, 1.15, 0.5, 1);
+  box-sizing: content-box;
+  width: 40px;
+  height: 22px;
+  border: var(--lt-snap-reach) solid transparent;
+  border-left-width: 4px;
+  border-right-width: 4px;
+  margin: calc(-1 * var(--lt-snap-reach)) -4px;
+  border-radius: 15px / calc(11px + var(--lt-snap-reach));
+}
+/* Both states: the plain switch paints its checked track to the border edge. */
+.lt-switch:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *)),
+.lt-switch:checked:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *)) {
+  background:
+    /* The stud, under the strap's end. */
+    radial-gradient(circle at 29px 11px,
+      var(--lt-snap-hi) 0 0.7px, var(--lt-snap-metal) 1.3px 2px, var(--lt-snap-lo) 2.6px,
+      rgba(0, 0, 0, 0.25) 3px, transparent 3.8px) padding-box,
+    linear-gradient(color-mix(in srgb, var(--lt-color-text-muted) 22%, transparent) 0 0) padding-box;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lt-color-text-muted) 70%, transparent),
+    inset 0 1px 3px rgba(0, 0, 0, 0.22);
+}
+.lt-switch:checked:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *)) {
+  --lt-snap-fabric: var(--lt-color-primary);
+  --lt-snap-thread: var(--lt-color-on-primary);
+}
+.lt-switch:checked:hover:not(:disabled):where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *)) {
+  --lt-snap-fabric: var(--lt-color-primary-hover);
+}
+.lt-switch:focus-visible:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *)) {
+  outline-offset: calc(2px - var(--lt-snap-reach));
+}
+.lt-switch:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *))::before,
+.lt-switch:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *))::after {
+  content: '';
+  position: absolute;
+  inset: auto;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 22px;
+  border-radius: 11px;
+  background-color: var(--lt-snap-fabric);
+  /* Each half draws the whole topstitch and is clipped at the crease,
+     so the line meets itself; on the fold it shows on the reverse. */
+  outline: 1px dashed color-mix(in srgb, var(--lt-snap-thread) var(--lt-stitch-alpha), transparent);
+  outline-offset: -2.5px;
+}
+/* The sewn part, from the start of the track to the crease. The plain
+   switch slides its thumb on :checked; this is sewn, so it stays. */
+.lt-switch:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *))::before,
+.lt-switch:checked:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *))::before {
+  clip-path: polygon(0 0, 11.5px 0, 28.69px 100%, 0 100%);
+  transform: none;
+  transition: background-color var(--lt-quick, 150ms) ease;
+}
+/* The end, beyond the crease. Off: folded back, reverse up. */
+.lt-switch:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *))::after {
+  clip-path: polygon(11px 0, 100% 0, 100% 100%, 28.19px 100%);
+  transform-origin: 11px 0;
+  transition:
+    transform 420ms var(--lt-snap-ease),
+    background-image 420ms var(--lt-snap-ease),
+    background-color var(--lt-quick, 150ms) ease;
+  transition-behavior: allow-discrete;
+  transform: perspective(70px) rotate3d(0.6157, 0.788, 0, 180deg);
+  background-image:
+    /* The socket: a metal ring around a dark hole. */
+    radial-gradient(circle at 29px 11px,
+      rgba(0, 0, 0, 0.6) 0 1.3px, var(--lt-snap-lo) 1.8px, var(--lt-snap-hi) 2.5px,
+      var(--lt-snap-metal) 3.5px, var(--lt-snap-lo) 4.8px, rgba(0, 0, 0, 0.3) 5.3px, transparent 6.1px),
+    /* The crease: light caught on the bend, then the shade beneath it. */
+    linear-gradient(52deg, transparent 21.7px, rgba(255, 255, 255, 0.5) 22.2px,
+      rgba(255, 255, 255, 0.1) 24.6px, rgba(0, 0, 0, 0.26) 27.6px,
+      rgba(0, 0, 0, 0.07) 33px, transparent 38px),
+    /* The far end falls away. */
+    linear-gradient(52deg, transparent 37px, rgba(0, 0, 0, 0.18) 45px),
+    /* The reverse is paler. */
+    linear-gradient(rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.16));
+}
+/* On: flat, face up. Three layers to the reverse's four, so the swap is
+   discrete rather than a cross-fade. */
+.lt-switch:checked:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *))::after {
+  /* none, not rotate3d(…, 0deg): at rest the end is not a 3D layer, so
+     it rasterizes with the sewn part and no seam shows at the crease on
+     a 2x screen. none still interpolates with the fold. */
+  transform: none;
+  background-image:
+    /* The cap: a smooth dome, lit from the top left. */
+    radial-gradient(circle 2.6px at 27.5px 9.4px, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0)),
+    radial-gradient(circle at 29px 11px,
+      var(--lt-snap-hi) 0, var(--lt-snap-metal) 3.4px, var(--lt-snap-lo) 5.3px,
+      color-mix(in srgb, var(--lt-snap-lo) 70%, #000) 5.7px, transparent 6.1px),
+    /* Its shadow on the strap, gone by 6.9px: the crease is 7.1px from
+       its center, and a shadow cut off there drew a line at real size. */
+    radial-gradient(circle at 29.4px 12px, rgba(0, 0, 0, 0.3) 5.4px, transparent 6.9px);
+}
+
+/* --- Chip: resin, frosted ---
+   A frosted, milky finish (Patchwork's filter chips over the quilt). In
+   dark it is a lit dark ground, not a white film, so a bright tile
+   behind cannot take the label with it. Text is body color, 7.3:1 at
+   worst over a magenta tile (light), 6.8:1 over white (dark). Pressed
+   takes the primary fill and keeps the dome.
+   A tag's own color goes in --lt-resin-color: it tints the resin at 22%
+   and the text stays body color (5.0:1 at worst, a white tag in dark).
+   .lt-resin is also a class, for a chip over a canvas on a plain page;
+   .lt-resin-frosted and .lt-resin-tinted are older names for it, kept
+   because Patchwork's chips and e2e specs use them. */
+.lt-resin,
+.lt-chip:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *, .lt-chip-pending)) {
+  border-radius: 999px;
+  border-color: rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--lt-color-text);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.5), inset 0 -1px 1px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+[data-theme="dark"] :is(.lt-resin, .lt-chip:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *, .lt-chip-pending))) {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(40, 45, 58, 0.88);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.12), inset 0 -1px 1px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+:is(.lt-resin, .lt-chip:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *, .lt-chip-pending)))[style*="--lt-resin-color"] {
+  background: color-mix(in srgb, var(--lt-resin-color) 22%, rgba(255, 255, 255, 0.7));
+}
+[data-theme="dark"] :is(.lt-resin, .lt-chip:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *, .lt-chip-pending)))[style*="--lt-resin-color"] {
+  background: color-mix(in srgb, var(--lt-resin-color) 22%, rgba(40, 45, 58, 0.9));
+}
+:is(.lt-resin, .lt-chip:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *, .lt-chip-pending)))[aria-pressed="true"],
+[data-theme="dark"] :is(.lt-resin, .lt-chip:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *, .lt-chip-pending)))[aria-pressed="true"] {
+  background: var(--lt-color-primary);
+  border-color: var(--lt-color-primary);
+  color: var(--lt-color-on-primary);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3), inset 0 -1px 1px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+.lt-resin-frosted,
+.lt-resin-tinted { /* older names for the same finish; the tint is --lt-resin-color */ }
+
+/* --- Tag: a label, sewn on as a flattened loop ---
+   A ribbon sewn on at the foot, up and over a fold at the top, back
+   down behind to the same seam, and pressed flat a little to the left,
+   as clothing labels are. Seen from the front: a white label (light;
+   the page's ground in dark) with a 1px edge in the tag's color, a
+   stitch across the full width just above the foot, the right end
+   bulging a little, and on the left the loop's open end as a lens in
+   light shadow, between the front's edge (bowing 1.5px in) and the
+   underside (bowing 2px out), closing at both corners. No weave.
+   Same size as the plain tag: the seam sits below the descenders.
+   Tone text on the label, light: 5.2:1 (primary) to 5.9:1; dark: 4.7:1
+   (error) to 8.4:1.
+   Drawn as two layers behind the text: a fill (the silhouette: the
+   face, the seam, the lens) and an edge (1px lines: top, foot, both
+   curves on the left, the bulge on the right). Each is a mask of SVG
+   ends, stretched to the tag's height with their strokes held at 1px
+   by non-scaling-stroke, and plain bands between, so the curves are
+   smooth, the line even and the corners meet. The ends' geometry is
+   baked into the SVGs; the tag's border box is the four corners.
+   Settled with Nathan, 2026-10-05, from his drawing (six rounds). */
+/* Only where masks work: without them the edge layer would cover the
+   whole tag in its edge color. Elsewhere the tag stays plain. */
+@supports (mask-image: none) or (-webkit-mask-image: none) {
+  .lt-tag:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *)) {
+    --lt-tag-face: #ffffff;
+    --lt-tag-edge: color-mix(in srgb, currentColor 40%, transparent);
+    --lt-tag-seam: color-mix(in srgb, currentColor 60%, transparent);
+    --lt-tag-shade: color-mix(in srgb, color-mix(in srgb, currentColor 25%, var(--lt-tag-face)) 88%, #000);
+    position: relative;
+    isolation: isolate;
+    margin-inline: 2px;   /* the underside on the left, the bulge on the right */
+    border-color: transparent;
+    border-radius: 0;
+    background: transparent;
+  }
+  [data-theme="dark"] .lt-tag:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *)) {
+    --lt-tag-face: var(--lt-color-bg);
+    --lt-tag-shade: color-mix(in srgb, color-mix(in srgb, currentColor 25%, var(--lt-tag-face)) 93%, #000);
+  }
+  .lt-tag:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *))::before,
+  .lt-tag:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *))::after {
+    content: '';
+    position: absolute;
+    inset: -1px -3px;
+    pointer-events: none;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+  }
+  /* The fill. */
+  .lt-tag:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *))::before {
+    z-index: -2;
+    background:
+      repeating-linear-gradient(90deg, var(--lt-tag-seam) 0 3px, transparent 3px 5px) 3px calc(100% - 1.5px) / calc(100% - 6px) 1px no-repeat,
+      /* the lens, left of the front's edge: an ellipse close to the
+         curve, whose seam the edge line covers */
+      radial-gradient(ellipse 4.5px 67% at -1px 50%, var(--lt-tag-shade) 4.4px, transparent 4.7px),
+      var(--lt-tag-face);
+    mask-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 5 100' preserveAspectRatio='none'%3E%3Cpath d='M2 0Q-2 50 2 100L5 100L5 0Z'/%3E%3C/svg%3E"),
+      linear-gradient(#000 0 0),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 100' preserveAspectRatio='none'%3E%3Cpath d='M0 0L1 0Q5 50 1 100L0 100Z'/%3E%3C/svg%3E");
+    mask-position: 0 0, 4.5px 0, 100% 0;
+    mask-size: 5px 100%, calc(100% - 7px) 100%, 3px 100%;
+    -webkit-mask-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 5 100' preserveAspectRatio='none'%3E%3Cpath d='M2 0Q-2 50 2 100L5 100L5 0Z'/%3E%3C/svg%3E"),
+      linear-gradient(#000 0 0),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 100' preserveAspectRatio='none'%3E%3Cpath d='M0 0L1 0Q5 50 1 100L0 100Z'/%3E%3C/svg%3E");
+    -webkit-mask-position: 0 0, 4.5px 0, 100% 0;
+    -webkit-mask-size: 5px 100%, calc(100% - 7px) 100%, 3px 100%;
+  }
+  /* The edge. */
+  .lt-tag:where([data-finish="textile"], [data-finish="textile"] *):not(:where([data-finish="plain"], [data-finish="plain"] *))::after {
+    z-index: -1;
+    background: var(--lt-tag-edge);
+    mask-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 5 100' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%23000' stroke-width='1'%3E%3Cpath d='M2.5 0Q-1.5 50 2.5 100' vector-effect='non-scaling-stroke'/%3E%3Cpath d='M2 0Q5 50 2 100' vector-effect='non-scaling-stroke'/%3E%3C/g%3E%3C/svg%3E"),
+      linear-gradient(#000 0 0),
+      linear-gradient(#000 0 0),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 100' preserveAspectRatio='none'%3E%3Cpath d='M0.5 0Q4.5 50 0.5 100' fill='none' stroke='%23000' stroke-width='1' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+    mask-position: 0 0, 2px 0, 2px 100%, 100% 0;
+    mask-size: 5px 100%, calc(100% - 4px) 1px, calc(100% - 4px) 1px, 3px 100%;
+    -webkit-mask-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 5 100' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%23000' stroke-width='1'%3E%3Cpath d='M2.5 0Q-1.5 50 2.5 100' vector-effect='non-scaling-stroke'/%3E%3Cpath d='M2 0Q5 50 2 100' vector-effect='non-scaling-stroke'/%3E%3C/g%3E%3C/svg%3E"),
+      linear-gradient(#000 0 0),
+      linear-gradient(#000 0 0),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 100' preserveAspectRatio='none'%3E%3Cpath d='M0.5 0Q4.5 50 0.5 100' fill='none' stroke='%23000' stroke-width='1' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+    -webkit-mask-position: 0 0, 2px 0, 2px 100%, 100% 0;
+    -webkit-mask-size: 5px 100%, calc(100% - 4px) 1px, calc(100% - 4px) 1px, 3px 100%;
+  }
+}
+
+/* --- Depth ---
+   Sewn: attached to the page, a hard offset. Layer: a separate piece on
+   top, a soft close shadow. Both are box-shadows on the element itself;
+   no wrapper. (A raw-edged element needs filter: drop-shadow instead,
+   since clip-path cuts a box-shadow off; raw edges are decoration.) */
+.lt-sewn { box-shadow: var(--lt-sewn-offset) var(--lt-sewn-offset) 0 var(--lt-shadow-color); }
+.lt-layer { box-shadow: 0 1px 2px var(--lt-color-shadow), 0 4px 12px var(--lt-color-shadow); }
+
+/* --- Stitch, baste, seam: 1px lines ---
+   Stitch (dashed) says proposed, not yet real: a draft, a pending link.
+   Baste (dotted) says temporary: a drop zone, a placeholder. Both recolor
+   an existing 1px border; put them on a card or any bordered box.
+   A seam is a dashed rule between sections, a textile alternative to
+   .lt-section's solid one. */
+.lt-stitch {
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--lt-color-text) 40%, transparent);
+}
+.lt-baste {
+  border-style: dotted;
+  border-color: color-mix(in srgb, var(--lt-color-text) 40%, transparent);
+}
+.lt-seam {
+  height: 0;
+  margin: var(--lt-stack, 1.5rem) 0;
+  border: 0;
+  border-top: 1px dashed color-mix(in srgb, var(--lt-color-text) 25%, transparent);
+}
+
+/* --- Brass: the one metal that means something ---
+   <span class="lt-count lt-brass">. For an earned marker or a count
+   worth noticing, sparingly; a class, not part of the textile finish,
+   because it says "earned". The same in both themes: metal does not
+   change color with the lights. (The snap's nickel is hardware, not a
+   marker.) Ink on its darkest stop 4.9:1, its lightest 8.5:1. */
+.lt-brass {
+  background: linear-gradient(170deg, #d8b04c, #a8822a);
+  color: #241800;
+  box-shadow: inset 0 1px 0 rgba(255, 240, 190, 0.7), inset 0 -1px 0 rgba(70, 45, 0, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lt-btn,
+  .lt-switch,
+  .lt-switch::before,
+  .lt-switch::after { transition: none; }
+  .lt-btn:hover:not(:disabled),
+  .lt-btn:active:not(:disabled) { transform: none; }
+}
+
+/* ================================================================
+   LAYERING — five presets for one surface over another.
+   Four of them carry text, and the text never blends: a blend mode on
+   an element blends its words with whatever is behind them, which is
+   how glaze and dye used to leave labels unreadable. Instead each is a
+   translucent ground at a measured opacity, with the backdrop showing
+   through as blur and color. The floor is 0.72: body text over a 0.72
+   ground clears 6.9:1 (light) and 5.1:1 (dark) over ANY backdrop, black
+   and white included. Blur only averages the backdrop, so it never
+   makes this worse.
+   Dye is the fifth and is a stain, not a surface: it never holds text.
+   Reviewed 2026-10-05; vellum is unchanged (Patchwork's patch badges).
+   ================================================================ */
+
+/*
+ * WASH — a tint on a surface, like one pass of diluted watercolor.
+ * For quiet emphasis on part of a page or card: a section, a row.
+ * A tint, not a layer: put it on a surface, never over a canvas or a
+ * picture. It sits under the content (a background image over the
+ * element's own color), so the text keeps its color. At --lt-wash (5%
+ * ink light, 6% dark) even muted text holds AA: 5.0:1 light, 4.8:1
+ * dark, at worst; body text 10:1 or better. (--lt-wash-heavy would take
+ * muted text to 4.2:1.)
+ */
+.lt-wash {
+  background-image: linear-gradient(var(--lt-wash), var(--lt-wash));
+}
+
+/*
+ * GLAZE — tinted glass: the most see-through of the text layers.
+ * The backdrop comes through blurred and saturated, so its colors read
+ * as color, at the 0.72 floor (body text 6.9:1 light, 5.1:1 dark at
+ * worst). For a floating panel or tooltip over a canvas you want felt.
+ */
+[data-theme="light"] .lt-glaze {
+  background: rgba(246, 245, 242, 0.72);
+  backdrop-filter: blur(8px) saturate(1.6);
+  -webkit-backdrop-filter: blur(8px) saturate(1.6);
+}
+[data-theme="dark"] .lt-glaze {
+  background: rgba(21, 24, 32, 0.72);
+  backdrop-filter: blur(8px) saturate(1.6);
+  -webkit-backdrop-filter: blur(8px) saturate(1.6);
+}
+
+/*
+ * VELLUM — tracing paper: what is behind is there but muted.
+ * Body text 9.0:1 light, 7.4:1 dark at worst. For labels over a canvas
+ * (Patchwork's patch names over the quilt), sidebars over content.
+ */
+[data-theme="light"] .lt-vellum {
+  background: rgba(246, 245, 242, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+[data-theme="dark"] .lt-vellum {
+  background: rgba(21, 24, 32, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/*
+ * APPLIQUÉ — a piece sewn on top: nearly opaque, a little bleed.
+ * Body text 11.4:1 light, 10.4:1 dark at worst. For cards and stacked
+ * panels over a canvas.
+ */
+[data-theme="light"] .lt-applique {
+  background: rgba(246, 245, 242, 0.92);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+[data-theme="dark"] .lt-applique {
+  background: rgba(21, 24, 32, 0.92);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+/*
+ * DYE — a stain that soaks into what is below (multiply in light,
+ * screen in dark). A mark, never a surface: the blend stains anything
+ * inside it, text included, so a dye holds no words. Use it for a
+ * highlight band, a selection behind a tile, a mark on a canvas, and
+ * put the words on a layer above it or use a tone (.lt-tone-*).
+ * The color is --lt-dye-color, the accent by default.
+ */
+.lt-dye {
+  background-color: var(--lt-dye-color, var(--lt-color-accent));
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+[data-theme="light"] .lt-dye { mix-blend-mode: multiply; }
+[data-theme="dark"]  .lt-dye { mix-blend-mode: screen; }
