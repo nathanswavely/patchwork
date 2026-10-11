@@ -1,7 +1,7 @@
 .PHONY: build run dev seed seed-force export import test test-e2e smoke-recreate gazetteer \
         release-notes-check sim sim-personas sim-advance sim-sweep sim-status sim-now sim-reset \
         copy-sync copy-stats copy-review copy-draft copy-pull copy-apply copy-check \
-        copy-test copy-report script-test errcheck errcheck-baseline
+        copy-report script-test errcheck errcheck-baseline
 
 # Where `make build` writes the server binary. Override via the environment to
 # build every worktree to one stable path — on Windows the firewall keys its
@@ -110,41 +110,43 @@ release-notes-check:
 	go run ./cmd/releasenotes $(if $(TAG),-tag $(TAG),)
 
 # --- Copy ledger -----------------------------------------------------------
-# Who wrote the words a visitor reads. See tools/copy-ledger/README.md.
+# Who wrote the words a visitor reads, recorded by SlopChop
+# (https://www.npmjs.com/package/slopchop), which grew out of this repo's
+# tools/copy-ledger. Scope and frozen constants live in .slopchop.json.
 # `copy-check` runs in CI; the rest are for writing.
+#
+# Pinned to an exact version, the npm equivalent of pinning an action to a
+# SHA: a published version cannot change underneath us.
+SLOPCHOP ?= npx --yes slopchop@0.2.1
 
 copy-sync:
-	node tools/copy-ledger/cli.js sync
+	$(SLOPCHOP) sync
 
 copy-stats:
-	node tools/copy-ledger/cli.js stats
+	$(SLOPCHOP) stats
 
 copy-review:
-	node tools/copy-ledger/cli.js review
+	$(SLOPCHOP) review
 
 # Review as Markdown instead, for anywhere the local UI can't reach —
 # GitHub's web editor, a laptop on a train, a phone. `FILE=` scopes it to
 # one source file so you get a page of work rather than all of it.
+# SLOPCHOP_DRAFTS_DIR points the drafts at a separate (private) checkout.
 copy-draft:
-	node tools/copy-ledger/cli.js draft $(if $(FILE),--file $(FILE),) $(if $(TIER),--tier $(TIER),)
+	$(SLOPCHOP) draft $(if $(FILE),--file $(FILE),) $(if $(TIER),--tier $(TIER),)
 
 # `REDRAFT=1` re-cuts any draft whose markers no longer match the source,
 # saving writing that has nowhere to land first.
 copy-pull:
-	node tools/copy-ledger/cli.js pull $(if $(REDRAFT),--redraft,)
+	$(SLOPCHOP) pull $(if $(REDRAFT),--redraft,)
 
 # Dry run by default — writeback edits source, so it shows you the plan
 # first. `make copy-apply APPLY=1` writes.
 copy-apply:
-	node tools/copy-ledger/cli.js apply $(if $(APPLY),--apply,)
+	$(SLOPCHOP) apply $(if $(APPLY),--apply,)
 
 copy-check:
-	node tools/copy-ledger/cli.js check
-
-# Guards the rule that makes two review surfaces safe: an untouched draft
-# block never writes back over a decision made in the UI since.
-copy-test:
-	node --test tools/copy-ledger/drafts.test.js tools/copy-ledger/errors.test.js
+	$(SLOPCHOP) check
 
 # scripts/audit-signatures.sh is allowed to exit 0 on one kind of red, so the
 # branch that decides which kind is tested against a stubbed npm.
@@ -152,4 +154,4 @@ script-test:
 	node --test scripts/audit-signatures.test.js
 
 copy-report:
-	node tools/copy-ledger/cli.js report
+	$(SLOPCHOP) report

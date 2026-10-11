@@ -61,20 +61,6 @@ jobs:
       - name: Frontend unit tests
         run: cd web && npx vitest run
 
-      # The copy ratchet (tools/copy-ledger). Fails when a string a visitor
-      # can read entered the source without anyone recording who wrote it.
-      # The existing backlog is grandfathered via the ledger's baseline, so
-      # this gates new copy only — it is not a wall in front of the cleanup.
-      # Needs no dependencies: the tool is plain Node with no imports.
-      - name: Copy provenance ledger
-        run: make copy-check
-
-      # The ledger has two review surfaces (the local UI and Markdown drafts),
-      # and the rule keeping them from overwriting each other is not visible in
-      # any output — so it is tested rather than remembered.
-      - name: Copy ledger draft safety
-        run: make copy-test
-
       - name: Script tests
         run: make script-test
 
@@ -114,6 +100,41 @@ jobs:
       # only fails on a discard that isn't already in that file.
       - name: errcheck (new discards only)
         run: scripts/errcheck-check.sh
+
+  copy:
+    # The copy ratchet, run by SlopChop (https://www.npmjs.com/package/slopchop),
+    # which grew out of the tools/copy-ledger that used to live here. Fails
+    # when a string a visitor can read entered the source without anyone
+    # recording who wrote it. The existing backlog is grandfathered via the
+    # ledger's baseline, so this gates new copy only — it is not a wall in
+    # front of the cleanup.
+    #
+    # Its own job because it is the only one that needs to write to a pull
+    # request: SlopChop comments on new strings and offers unapplied rewrites
+    # as suggestions. Granting that here keeps `test`, which installs and runs
+    # the whole dependency tree, on a read-only token. A fork's token is
+    # read-only regardless, so a fork gets the check and no comment.
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+
+      # Explains the verdict on the pull request. Never fails the job; that
+      # is the check's.
+      - name: Copy comments
+        if: github.event_name == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx --yes slopchop@0.2.1 comment || true
+
+      - name: Copy provenance ledger
+        run: make copy-check
 
   npm-audit-signatures:
     # Split out of `test` (#324): this step queries the live npm registry for

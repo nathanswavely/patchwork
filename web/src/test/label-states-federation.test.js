@@ -17,7 +17,7 @@ describe('the Label states whether the quilt federates (docs/adr/061)', () => {
   const src = source('pages/Label.svelte');
 
   // The wording of every string below belongs to whoever holds the copy
-  // ledger (tools/copy-ledger), and it has already been rewritten once.
+  // ledger (SlopChop, make copy-*), and it has already been rewritten once.
   // So these assert the *decision* — that both directions are stated, and
   // that neither capability is derived from the other — rather than the
   // sentences, which are free to change without breaking the suite.

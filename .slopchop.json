@@ -1,0 +1,37 @@
+{
+  "ledger": "copy/ledger.json",
+  "report": "copy/REPORT.md",
+  "badge": "copy/badge.json",
+  "include": [
+    "web/src/**/*.{svelte,js}",
+    "internal/handler/**/*.go",
+    "internal/governance/lining.go",
+    "internal/governance/defaults.go",
+    "internal/notifications/types.go",
+    "internal/notifications/email.go",
+    "internal/notifications/reminders.go",
+    "internal/notifications/inactivity.go",
+    "README.md",
+    "docs/START-A-QUILT.md",
+    "CONTRIBUTING.md"
+  ],
+  "exclude": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/*.test.js",
+    "**/*.spec.js",
+    "**/e2e/**",
+    "**/*_test.go"
+  ],
+  "languages": {
+    "internal/handler/legal_defaults.go": "go",
+    "internal/handler/follower_charters_default.go": "go",
+    "internal/handler/**/*.go": "go-errors"
+  },
+  "frozen": ["legacyLiningOriginal", "legacyLiningHumanized"],
+  "outOfScope": [
+    { "path": "docs/adr/", "reason": "Engineering records: the project's reasoning, not its voice. Rewriting 50k words of decision history by hand would buy nothing." },
+    { "path": "CODE_OF_CONDUCT.md", "reason": "The Contributor Covenant, a standard text authored by neither a person here nor a model. Rewriting it to sound like us would defeat the point of adopting it." },
+    { "path": "internal/**/*.go", "reason": "Only the files listed in include ship prose, and every handler is read for its {\"error\":\"...\"} bodies alone, so log lines and SQL stay out." }
+  ]
+}
