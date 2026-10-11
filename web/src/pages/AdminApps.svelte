@@ -108,7 +108,7 @@
     <p class="urls-title">What gets published</p>
     <code>{urls.apple || '/.well-known/apple-app-site-association'}</code>
     <code>{urls.android || '/.well-known/assetlinks.json'}</code>
-    <p class="muted">
+    <p class="lt-muted">
       Each address answers "not found" until you list an app for that
       platform. Apple caches the file for up to a day, so a change can take
       that long to reach a phone.
@@ -116,16 +116,16 @@
   </div>
 
   {#if loading}
-    <p class="muted">Loading…</p>
+    <p class="lt-muted">Loading…</p>
   {:else if apps.length === 0}
     <div class="empty-state">
       <p>No apps listed.</p>
-      <p class="muted">This quilt vouches for nobody, and publishes neither file.</p>
+      <p class="lt-muted">This quilt vouches for nobody, and publishes neither file.</p>
     </div>
   {:else}
     <div class="app-list">
       {#each apps as app (app.id)}
-        <div class="app-item card">
+        <div class="app-item lt-card">
           <div class="app-info">
             <span class="app-platform">{platformLabel(app.platform)}</span>
             {#if app.label}<span class="app-label">{app.label}</span>{/if}
@@ -138,10 +138,10 @@
               </ul>
             {/if}
             {#if addedOn(app.created_at)}
-              <span class="muted added">Listed {addedOn(app.created_at)}</span>
+              <span class="lt-muted added">Listed {addedOn(app.created_at)}</span>
             {/if}
           </div>
-          <button class="btn btn-danger btn-sm" onclick={() => handleRemove(app)}>Remove</button>
+          <button class="lt-btn lt-btn-danger lt-btn-sm" onclick={() => handleRemove(app)}>Remove</button>
         </div>
       {/each}
     </div>
@@ -191,12 +191,12 @@
       />
     </label>
 
-    <button type="submit" class="btn btn-primary" disabled={busy || !identifier.trim()}>
+    <button type="submit" class="lt-btn lt-btn-primary" disabled={busy || !identifier.trim()}>
       {busy ? 'Listing…' : 'Add'}
     </button>
   </form>
   {#if error}
-    <p class="error-text">{error}</p>
+    <p class="lt-error-text">{error}</p>
   {/if}
 </div>
 
@@ -240,7 +240,7 @@
     margin-bottom: 0.35rem;
   }
 
-  .urls .muted {
+  .urls .lt-muted {
     margin: 0.6rem 0 0;
     font-size: 0.85rem;
     line-height: 1.5;
@@ -336,7 +336,7 @@
     color: var(--color-text-muted);
   }
 
-  .error-text {
+  .lt-error-text {
     color: var(--color-error);
     font-size: 0.85rem;
   }

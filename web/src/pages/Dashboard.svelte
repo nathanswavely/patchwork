@@ -111,7 +111,7 @@
   <div class="page-header">
     <h1>Dashboard</h1>
     {#if user}
-      <p class="muted">Welcome back, {user.display_name || user.username}.</p>
+      <p class="lt-muted">Welcome back, {user.display_name || user.username}.</p>
     {/if}
   </div>
 
@@ -197,7 +197,7 @@
                 {/if}
               </div>
               <div class="patch-card-actions">
-                <a href="/patches/{m.node_slug}/governance" class="btn btn-sm btn-secondary manage-btn" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}/governance`); }}>Manage</a>
+                <a href="/patches/{m.node_slug}/governance" class="lt-btn lt-btn-sm lt-btn-secondary manage-btn" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}/governance`); }}>Manage</a>
                 <a href="/patches/{m.node_slug}/members" class="quick-link" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}/members`); }}>Members</a>
                 <a href="/patches/{m.node_slug}/governance/proposals" class="quick-link" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}/governance/proposals`); }}>Proposals</a>
               </div>
@@ -257,8 +257,8 @@
     {#if memberships.length === 0}
       <div class="empty-state">
         <p>You haven't joined any patches yet.</p>
-        <p class="muted">The groups near you are on the quilt.</p>
-        <a href="/" class="btn btn-primary" onclick={(e) => { e.preventDefault(); navigate('/'); }}>
+        <p class="lt-muted">The groups near you are on the quilt.</p>
+        <a href="/" class="lt-btn lt-btn-primary" onclick={(e) => { e.preventDefault(); navigate('/'); }}>
           Explore Quilt
         </a>
       </div>
@@ -448,7 +448,7 @@
     margin-bottom: 0.5rem;
   }
 
-  .empty-state .btn {
+  .empty-state .lt-btn {
     margin-top: 1rem;
   }
 

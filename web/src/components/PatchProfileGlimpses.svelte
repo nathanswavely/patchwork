@@ -294,7 +294,7 @@
         </div>
       {/if}
       {#if node.address}
-        <p class="about-address muted">{node.address}</p>
+        <p class="about-address lt-muted">{node.address}</p>
       {/if}
       <!-- The handle is written past tense on purpose (docs/adr/062):
            the binding was checked once, when the claim was verified, and
@@ -303,7 +303,7 @@
       {#if atprotoHandle}
         <p class="about-handle">
           <span class="handle">@{atprotoHandle}</span>
-          <span class="handle-note muted">atproto handle, proved when this patch was claimed</span>
+          <span class="handle-note lt-muted">atproto handle, proved when this patch was claimed</span>
         </p>
       {/if}
     </section>
@@ -345,7 +345,7 @@
                   <!-- Clamped to one line. A location is name-first
                        (docs/adr/046), so the ellipsis eats the postal
                        tail and keeps the venue. -->
-                  <span class="event-location muted">{event.location}</span>
+                  <span class="event-location lt-muted">{event.location}</span>
                 {/if}
               </span>
             </a>
@@ -367,7 +367,7 @@
           >{moreEvents} more upcoming</a>
         {/if}
       {:else if loaded}
-        <p class="glimpse-empty muted">No upcoming events.</p>
+        <p class="glimpse-empty lt-muted">No upcoming events.</p>
       {/if}
     </section>
   {/if}
@@ -381,7 +381,7 @@
         <!-- The total belongs to a section headed Members. Beside "Admins"
              it would count people the list below deliberately omits. -->
         {#if !rosterAdminsOnly && members.length > 0 && memberTotal > members.length}
-          <span class="section-meta muted">{memberTotal}</span>
+          <span class="section-meta lt-muted">{memberTotal}</span>
         {/if}
       </div>
       {#if members.length > 0}
@@ -400,7 +400,7 @@
           {/each}
         </div>
       {:else if loaded}
-        <p class="glimpse-empty muted">No members yet.</p>
+        <p class="glimpse-empty lt-muted">No members yet.</p>
       {/if}
     </section>
   {/if}
@@ -431,7 +431,7 @@
               onclick={go(`/patches/${slug}/governance/docs/${doc.id}`)}
             >
               <span class="row-title">{doc.title}</span>
-              {#if doc.version}<span class="row-meta muted">v{doc.version}</span>{/if}
+              {#if doc.version}<span class="row-meta lt-muted">v{doc.version}</span>{/if}
             </a>
           {/each}
           {#each recentProposals as proposal (proposal.id)}
@@ -442,7 +442,7 @@
               onclick={go(`/patches/${slug}/governance/${proposal.id}`)}
             >
               <span class="row-title">{proposal.title}</span>
-              <span class="row-meta muted">{proposalWhen(proposal)}</span>
+              <span class="row-meta lt-muted">{proposalWhen(proposal)}</span>
               <!-- Red is for a decision the patch made. Lapsed and unsettled
                    are absences, so they keep the pill's muted default. -->
               <span
@@ -465,7 +465,7 @@
         <!-- Two kinds of empty, two sentences. A viewer who is shown only
              what the patch published must not read "nothing recorded" and
              take it for the patch's whole record. -->
-        <p class="glimpse-empty muted">
+        <p class="glimpse-empty lt-muted">
           {#if recordWithheld}
             Proposals and decisions here are not public.
           {:else if governancePublishedOnly}

@@ -65,7 +65,7 @@ describe('GovernanceOverview — one sentence per chair', () => {
     // not shown is held, and inferring it from an absent name would file a
     // seated council under Vacant.
     expect(src).toMatch(/\{#if seat\.vacant\}Vacant\{:else if seat\.holder_withheld\}Held\{:else\}\{seat\.display_name \|\| seat\.username\}\{\/if\}/);
-    expect(src).toMatch(/<span class="seat-fate muted">\{seatLine\(seat\)\}<\/span>/);
+    expect(src).toMatch(/<span class="seat-fate lt-muted">\{seatLine\(seat\)\}<\/span>/);
   });
 
   it('stops reciting the general elected description above the chairs', () => {
@@ -125,7 +125,7 @@ describe('GovernanceOverview — the term-end box, next to the chairs', () => {
   });
 
   it('still refuses to remove a chair anybody is sitting in', () => {
-    expect(src).toMatch(/\{#if seat\.vacant\}\s*\n\s*<button class="btn btn-sm" disabled=\{seatBusy\} onclick=\{\(\) => removeSeat\(seat\.id\)\}>/);
+    expect(src).toMatch(/\{#if seat\.vacant\}\s*\n\s*<button class="lt-btn lt-btn-sm" disabled=\{seatBusy\} onclick=\{\(\) => removeSeat\(seat\.id\)\}>/);
   });
 });
 

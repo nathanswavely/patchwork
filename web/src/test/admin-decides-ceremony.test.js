@@ -142,7 +142,7 @@ describe('VoteSection — no quorum on advice', () => {
 
   it('explains an advisory tally as advice', () => {
     expect(src).toMatch(/if \(advisory\) return explanations\.admin/);
-    expect(src).toMatch(/\{#if advisory\}\s*<span class="quorum-none muted">No quorum\. This vote advises; it does not decide\./);
+    expect(src).toMatch(/\{#if advisory\}\s*<span class="quorum-none lt-muted">No quorum\. This vote advises; it does not decide\./);
   });
 });
 

@@ -192,7 +192,7 @@
       {/each}
     </select>
     {#if decisionHint}
-      <p class="venue-hint muted">{decisionHint}</p>
+      <p class="venue-hint lt-muted">{decisionHint}</p>
     {/if}
   </div>
 
@@ -201,7 +201,7 @@
       <label for="re-quorum">Quorum (%)</label>
       <input id="re-quorum" type="number" min="0" max="100" bind:value={quorumPercent} />
       {#if quorumHint}
-        <p class="venue-hint muted">{quorumHint}</p>
+        <p class="venue-hint lt-muted">{quorumHint}</p>
       {/if}
     </div>
 
@@ -242,7 +242,7 @@
            before choosing, three of them pushed this form past two screens
            on a phone. -->
       {#if subjectRecusal}
-        <p class="recusal-hint muted">
+        <p class="recusal-hint lt-muted">
           Someone nominated for admin sits their own vote out. They stay in the
           electorate for everything else.
         </p>
@@ -257,7 +257,7 @@
       <option value="elsewhere">Somewhere else, recorded here</option>
     </select>
     {#if leadershipVenue === 'elsewhere'}
-      <p class="venue-hint muted">
+      <p class="venue-hint lt-muted">
         Pick the second if your board is elected at a meeting, on paper, or in
         another tool. Patchwork will stop conducting leadership changes and let
         an admin record what was decided.
@@ -272,7 +272,7 @@
       <option value="elsewhere">Somewhere else, recorded here</option>
     </select>
     {#if proposalVenue === 'elsewhere'}
-      <p class="venue-hint muted">
+      <p class="venue-hint lt-muted">
         Pick the second if your members decide at meetings. Proposals stay open
         for discussion and lose the vote buttons, and an admin records the
         adopted text on the charter afterwards. Rules changes stay a direct
@@ -289,7 +289,7 @@
       {/each}
     </select>
     {#if successionHint}
-      <p class="venue-hint muted">{successionHint}</p>
+      <p class="venue-hint lt-muted">{successionHint}</p>
     {/if}
   </div>
 
@@ -302,7 +302,7 @@
         {/each}
       </select>
       {#if tenureHint}
-        <p class="venue-hint muted">{tenureHint}</p>
+        <p class="venue-hint lt-muted">{tenureHint}</p>
       {/if}
     </div>
   {/if}
@@ -320,7 +320,7 @@
     <label class="section-label">Follower Permissions</label>
     <div class="checkbox-group">
       <label><input type="checkbox" bind:checked={followerEvents} /> Events</label>
-      <p class="follower-hint muted">Off: followers see this patch's public events only.</p>
+      <p class="follower-hint lt-muted">Off: followers see this patch's public events only.</p>
       <label><input type="checkbox" bind:checked={followerProposals} /> Proposals</label>
       <label><input type="checkbox" bind:checked={followerCharters} /> Charters</label>
       <label><input type="checkbox" bind:checked={followerMembers} /> Members</label>

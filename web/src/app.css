@@ -154,14 +154,6 @@
     --btn-sm-pad-x: 0.85rem;
     --btn-sm-font: 0.85rem;
   }
-
-  /* A text-shaped button keeps its size in the line and gains a finger's
-     worth of target above and below it: padding the negative margin gives
-     straight back, so nothing around it moves. */
-  .btn-link {
-    padding-block: 0.6rem;
-    margin-block: -0.6rem;
-  }
 }
 
 /* ---- Colors: Liquid Textile's, per theme ----
@@ -322,102 +314,6 @@ button:disabled {
   cursor: not-allowed;
 }
 
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: var(--btn-pad-y) var(--btn-pad-x);
-  /* A themed surface, not the browser's. `.btn` set no background and no
-     colour of its own, so a button wearing it without a variant fell through
-     to the user agent's ButtonFace — a pale grey pill with near-invisible
-     text in dark mode, ignoring the theme entirely. Sixteen buttons across
-     eight components are written that way ("Stand for election", "Record a
-     decision", "Link", "Review"), all of them meaning "the ordinary action
-     here". This is what that looks like; the variants below still override
-     it. */
-  background: var(--color-surface);
-  color: var(--color-text);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  font-size: var(--btn-font);
-  /* Explicit: <a class="btn"> inherits the body's 1.5 while <button> uses
-     `normal`, so without this a link-button is taller than its sibling. */
-  line-height: 1.2;
-  font-weight: 500;
-  transition: background 150ms ease, border-color 150ms ease;
-}
-
-.btn:hover:not(:disabled) {
-  border-color: var(--color-primary);
-}
-
-.btn-sm {
-  padding: var(--btn-sm-pad-y) var(--btn-sm-pad-x);
-  font-size: var(--btn-sm-font);
-  gap: 0.35rem;
-}
-
-.btn-primary {
-  background: var(--color-primary);
-  color: var(--color-btn-on-primary);
-  border-color: var(--color-primary);
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: var(--color-primary-hover);
-  border-color: var(--color-primary-hover);
-}
-
-.btn-secondary {
-  background: transparent;
-  color: var(--color-primary);
-  border-color: var(--color-border);
-}
-
-.btn-secondary:hover:not(:disabled) {
-  background: var(--color-bg);
-  border-color: var(--color-primary);
-}
-
-.btn-danger {
-  background: transparent;
-  color: var(--color-error);
-  border-color: var(--color-error);
-}
-
-.btn-danger:hover:not(:disabled) {
-  background: var(--color-danger-bg);
-}
-
-.btn-ghost {
-  background: transparent;
-  color: var(--color-text-muted);
-  border-color: transparent;
-}
-
-.btn-ghost:hover:not(:disabled) {
-  background: var(--color-overlay);
-  color: var(--color-text);
-}
-
-/* Text-shaped button — used alone, without .btn. */
-.btn-link {
-  background: none;
-  border: none;
-  padding: 0;
-  color: var(--color-primary);
-  font-size: 0.85rem;
-  cursor: pointer;
-}
-
-.btn-link:hover:not(:disabled) {
-  text-decoration: underline;
-}
-
-.btn-link.danger {
-  color: var(--color-error);
-}
-
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -448,34 +344,6 @@ button:disabled {
   max-width: 800px;
 }
 
-/* A card holds something that could MOVE — an item that would still make
-   sense on another page (docs/adr/038). Ask "could this move?" before
-   reaching for it: a page's own sections can't, and get .section below.
-   The one other thing that earns a border is an interruption — a danger
-   zone, a warning, an unsaved-changes banner. That list is closed. */
-.card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: var(--pw-pad);
-}
-
-/* A page section: the non-card way to separate content. A section is part
-   of its page, so it separates with a rule and vertical space rather than
-   a box — which on a phone is the difference between reading at ~285px
-   and reading at ~350px. The rule sits between siblings only, so the
-   first section never opens with a stray line.
-
-   Prefixed because a plain `.section` is already a scoped class in four
-   components (AdminLabel, AdminQuiltSettings, AdminDashboard,
-   TemplatePreviewDrawer), where it means that page's own wrapper — an
-   unprefixed global would fire on all of them. */
-.pw-section + .pw-section {
-  margin-top: var(--pw-stack);
-  padding-top: var(--pw-stack);
-  border-top: 1px solid var(--color-border);
-}
-
 .badge {
   display: inline-block;
   font-size: 0.75rem;
@@ -486,155 +354,7 @@ button:disabled {
   border: 1px solid var(--color-border);
 }
 
-/* ---- Data tables ----
-   `.table-wrapper` wrapping a `.data-table` is the table component; neither
-   half works alone. Every list of rows with controls in them uses the pair.
-
-   A table is the one layout that can't reflow, and the browser's fallback
-   when the columns don't fit is to squeeze whatever looks squeezable. On a
-   phone that is exactly the interactive columns: a <select> collapses to its
-   arrow, a button's label breaks a word per line, and the row stops being
-   tappable while the prose columns keep their width. So the table is sized by
-   what its columns need and the wrapper scrolls instead — legible columns you
-   swipe past beat seven columns you can't use. */
-.table-wrapper {
-  /* Cards and panels set this to their own background when a table sits on
-     one, so the edge fade blends instead of banding. */
-  --table-fade: var(--color-bg);
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  -webkit-overflow-scrolling: touch;
-  /* Shadows at the edges say "there's more this way" while the table is
-     still, which a scrollbar that appears mid-swipe says too late. The cover
-     gradients scroll with the content (`local`) and hide the shadow when that
-     edge is reached; the shadows stay pinned to the box (`scroll`). */
-  background:
-    linear-gradient(to right, var(--table-fade), transparent) 0 0 / 2rem 100% no-repeat local,
-    linear-gradient(to left, var(--table-fade), transparent) 100% 0 / 2rem 100% no-repeat local,
-    radial-gradient(farthest-side at 0 50%, var(--color-scrim), transparent) 0 0 / 1rem 100% no-repeat scroll,
-    radial-gradient(farthest-side at 100% 50%, var(--color-scrim), transparent) 100% 0 / 1rem 100% no-repeat scroll;
-}
-
-.data-table {
-  /* min-width: max-content, not width alone. A width of 100% is an
-     instruction to fit the viewport at any cost; max-content is the width the
-     columns actually need, and the 100% keeps the table filling a wide
-     screen rather than huddling at the left. */
-  width: 100%;
-  min-width: max-content;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-}
-
-.data-table th,
-.data-table td {
-  padding: 0.6rem 0.75rem;
-  text-align: left;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.data-table th {
-  font-size: 0.8rem;
-  color: var(--color-text-muted);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  /* A header wrapping to two lines is the column asking to be wider. */
-  white-space: nowrap;
-}
-
-/* Prose still wraps: one runaway display name would otherwise push every
-   control off the far end of the scroll. */
-.data-table td {
-  max-width: 22rem;
-}
-
-/* A cell holding controls is as wide as its controls, never narrower. */
-.data-table td:has(button, select, input) {
-  white-space: nowrap;
-}
-
-/* Controls keep their own size. The mobile rule below sets `select` and text
-   inputs to width: 100%, which in a cell means the cell's width — that is how
-   a role picker becomes a bare arrow. */
-.data-table select,
-.data-table input {
-  width: auto;
-  max-width: none;
-}
-
-.data-table select {
-  min-width: 7.5rem;
-}
-
-.error-text {
-  color: var(--color-error);
-  font-size: 0.85rem;
-}
-
-.success-text {
-  color: var(--color-success);
-  font-size: 0.85rem;
-}
-
-.muted {
-  color: var(--color-text-muted);
-}
-
-/* A quiet scrollbar for a scroll area inside a card. The default one is
-   drawn by the browser at its own width and in its own greys, and inside a
-   rounded glass panel it reads as a strip of somebody else's chrome. Thin,
-   no track, a rounded thumb in the muted text colour that darkens under the
-   pointer.
-
-   Two recipes on purpose. WebKit and Blink draw ::-webkit-scrollbar; the
-   standard scrollbar-* properties are for engines without it. Blink
-   supports both and, once scrollbar-color is set, ignores the pseudo-
-   elements — so the standard pair is fenced to engines that lack the
-   selector, or Chrome would drop the rounded thumb for its plain one. */
-.scroll-thin::-webkit-scrollbar {
-  width: 10px;
-}
-
-.scroll-thin::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.scroll-thin::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, var(--color-text-muted) 40%, transparent);
-  border-radius: 999px;
-  /* A transparent border clipped away from the fill: the thumb floats 3px
-     off the panel's edge instead of touching it. */
-  border: 3px solid transparent;
-  background-clip: padding-box;
-}
-
-.scroll-thin::-webkit-scrollbar-thumb:hover {
-  background: color-mix(in srgb, var(--color-text-muted) 65%, transparent);
-  background-clip: padding-box;
-}
-
-@supports not selector(::-webkit-scrollbar) {
-  .scroll-thin {
-    scrollbar-width: thin;
-    scrollbar-color: color-mix(in srgb, var(--color-text-muted) 40%, transparent) transparent;
-  }
-}
-
-.page-fade {
-  animation: fadeIn 150ms ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 @media (max-width: 640px) {
-  .hide-mobile {
-    display: none !important;
-  }
-
   /* clip, not hidden: overflow-x: hidden makes body a scroll container
      that never scrolls, and every position: sticky below it then sticks to
      that instead of the viewport, which is to say never. hidden stays as
@@ -677,12 +397,6 @@ button:disabled {
     font-size: 16px !important;
   }
 
-  .btn {
-    min-height: 44px;
-    min-width: 44px;
-    justify-content: center;
-  }
-
   /* The top of a workspace page on a phone (the admin panel, a patch's
      workspace). Three insets stacked there, each reasonable alone: the
      content area's 1.5rem, every page header's own 1.5rem, and a 2em
@@ -702,16 +416,5 @@ button:disabled {
     padding-top: 0.25rem;
     padding-bottom: 0.75rem;
   }
-
-  /* Tighter gutters buy back width the scroll would otherwise cost. */
-  .data-table th,
-  .data-table td {
-    padding: 0.5rem 0.6rem;
-  }
 }
 
-@media (min-width: 641px) {
-  .show-mobile-only {
-    display: none !important;
-  }
-}

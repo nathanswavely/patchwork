@@ -49,36 +49,36 @@
   }
 </script>
 
-<div class="verify-email-page page-fade">
+<div class="verify-email-page lt-fade-in">
   <h1>Confirm your claim</h1>
 
   {#if loading}
     <Skeleton lines={3} height="1rem" />
   {:else if error && !info}
     <div class="state-block">
-      <p class="error-text">{error}</p>
-      <p class="muted">The link may have been used already, or the claim was withdrawn or resolved.</p>
+      <p class="lt-error-text">{error}</p>
+      <p class="lt-muted">The link may have been used already, or the claim was withdrawn or resolved.</p>
     </div>
   {:else if info?.expired}
     <div class="state-block">
       <p>This verification link has expired.</p>
-      <p class="muted">Request a new email from the claim page for <strong>{info.node_name}</strong>.</p>
+      <p class="lt-muted">Request a new email from the claim page for <strong>{info.node_name}</strong>.</p>
       <a
         href="/patches/{info.slug}/claim"
-        class="btn btn-secondary"
+        class="lt-btn lt-btn-secondary"
         onclick={(e) => { e.preventDefault(); navigate(`/patches/${info.slug}/claim`); }}
       >Go to claim page</a>
     </div>
   {:else if info}
     <div class="state-block">
       <p>You're confirming the claim of <strong>{info.node_name}</strong>.</p>
-      <p class="muted">This proves the account that opened the claim controls this email address. You'll complete setup next to activate the patch.</p>
-      <button class="btn btn-primary" onclick={handleConfirm} disabled={confirming || done}>
+      <p class="lt-muted">This proves the account that opened the claim controls this email address. You'll complete setup next to activate the patch.</p>
+      <button class="lt-btn lt-btn-primary" onclick={handleConfirm} disabled={confirming || done}>
         {confirming ? 'Confirming...' : 'Confirm claim'}
       </button>
     </div>
     {#if error}
-      <p class="error-text" style="margin-top: 0.75rem;">{error}</p>
+      <p class="lt-error-text" style="margin-top: 0.75rem;">{error}</p>
     {/if}
   {/if}
 </div>
@@ -98,7 +98,7 @@
     margin-bottom: 0.75rem;
   }
 
-  .state-block .btn {
+  .state-block .lt-btn {
     margin-top: 0.25rem;
   }
 </style>

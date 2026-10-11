@@ -75,10 +75,10 @@
 
 <GovernanceShell activeSection="rules">
   {#snippet children()}
-    <div class="rules-page page-fade">
+    <div class="rules-page lt-fade-in">
       <div class="rules-head">
         <h1>Rules</h1>
-        <p class="muted">
+        <p class="lt-muted">
           What this patch has agreed, as it stands today. Nothing on this
           page changes anything.
         </p>
@@ -89,7 +89,7 @@
       {:else if error}
         <ErrorState message={error} retry={load} />
       {:else if lines.length === 0}
-        <p class="muted empty">This patch has set no governance rules.</p>
+        <p class="lt-muted empty">This patch has set no governance rules.</p>
       {:else}
         <dl class="rule-list">
           {#each lines as line}
@@ -97,7 +97,7 @@
               <dt>{line.label}</dt>
               <dd>
                 {line.value}
-                {#if line.hint}<span class="rule-hint muted">{line.hint}</span>{/if}
+                {#if line.hint}<span class="rule-hint lt-muted">{line.hint}</span>{/if}
               </dd>
             </div>
           {/each}
@@ -106,12 +106,12 @@
         {#if isAdmin || canPropose}
           <div class="rules-actions">
             <a
-              class="btn btn-secondary"
+              class="lt-btn lt-btn-secondary"
               href="/patches/{slug}/governance/rules/propose"
               onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/rules/propose`); }}
             >{directChange ? 'Change these rules' : 'Propose a change'}</a>
             <!-- What pressing it will do, before it is pressed. -->
-            <span class="muted action-note">
+            <span class="lt-muted action-note">
               {#if directChange}
                 Your change takes effect when you save it.
               {:else}

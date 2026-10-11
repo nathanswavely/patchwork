@@ -95,21 +95,21 @@
 
 </script>
 
-<div class="page-fade">
+<div class="lt-fade-in">
   <h1>Patch Submissions</h1>
-  <p class="muted" style="margin-bottom: 1.5rem;">Patches people have suggested.</p>
+  <p class="lt-muted" style="margin-bottom: 1.5rem;">Patches people have suggested.</p>
 
   {#if loading}
     <Skeleton lines={4} height="1rem" />
   {:else if submissions.length === 0}
-    <p class="muted">No pending submissions.</p>
+    <p class="lt-muted">No pending submissions.</p>
   {:else}
     <div class="submission-list">
       {#each submissions as sub (sub.id)}
-        <div class="submission-card card">
+        <div class="submission-card lt-card">
           <div class="sub-header">
             <h3>{sub.name}</h3>
-            <span class="muted">{formatDate(sub.created_at)}</span>
+            <span class="lt-muted">{formatDate(sub.created_at)}</span>
           </div>
           {#if sub.description}
             <p class="sub-desc">{sub.description}</p>
@@ -120,7 +120,7 @@
           {#if sub.feed_url}
             <p class="sub-feed">
               <a href={sub.feed_url} target="_blank" rel="noopener">{sub.feed_url}</a>
-              <span class="muted">{sub.feed_upcoming_count} {sub.feed_upcoming_count === 1 ? 'upcoming event' : 'upcoming events'} found when it was suggested</span>
+              <span class="lt-muted">{sub.feed_upcoming_count} {sub.feed_upcoming_count === 1 ? 'upcoming event' : 'upcoming events'} found when it was suggested</span>
             </p>
           {/if}
           <div class="sub-tags">
@@ -130,14 +130,14 @@
                 {#each tagInputs[sub.id] || [] as name (name)}
                   <span class="badge">{name}</span>
                 {/each}
-                <button class="btn btn-secondary btn-sm" onclick={() => { editingTags[sub.id] = true; }}>Edit</button>
+                <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => { editingTags[sub.id] = true; }}>Edit</button>
               </div>
             {:else}
               <TagPicker bind:selected={tagInputs[sub.id]} />
             {/if}
-            <span class="muted">The submitter's picks.</span>
+            <span class="lt-muted">The submitter's picks.</span>
           </div>
-          <div class="sub-meta muted">
+          <div class="sub-meta lt-muted">
             Submitted by {sub.submitter_display_name || sub.submitter_username || 'unknown'}
           </div>
           <div class="sub-domain">
@@ -148,14 +148,14 @@
               placeholder="none (admin review only)"
               bind:value={domainInputs[sub.id]}
             />
-            <span class="muted">Owners prove control of this domain to claim the patch. Leave empty if you can't vouch for it.</span>
+            <span class="lt-muted">Owners prove control of this domain to claim the patch. Leave empty if you can't vouch for it.</span>
           </div>
           <div class="sub-grants">
             <label class="grant-line">
               <input type="checkbox" bind:checked={grantTrustInputs[sub.id]} />
               Let {submitterName(sub)} add events here without review until it is claimed
             </label>
-            <p class="muted grant-hint">A per-patch trusted-contributor grant. Revocable from Users.</p>
+            <p class="lt-muted grant-hint">A per-patch trusted-contributor grant. Revocable from Users.</p>
             {#if sub.feed_url}
               <label class="grant-line">
                 <input type="checkbox" bind:checked={attachFeedInputs[sub.id]} />
@@ -173,17 +173,17 @@
                   placeholder="Why this one isn't joining the quilt"
                   bind:value={noteInputs[sub.id]}
                 ></textarea>
-                <span class="muted">Sent with a rejection. Approvals don't carry it.</span>
+                <span class="lt-muted">Sent with a rejection. Approvals don't carry it.</span>
               </div>
               <div class="sub-actions">
-                <button class="btn btn-danger btn-sm" onclick={() => handleAction(sub, 'reject')}>Reject</button>
-                <button class="btn btn-secondary btn-sm" onclick={() => { decliningId = ''; }}>Cancel</button>
+                <button class="lt-btn lt-btn-danger lt-btn-sm" onclick={() => handleAction(sub, 'reject')}>Reject</button>
+                <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => { decliningId = ''; }}>Cancel</button>
               </div>
             </div>
           {:else}
             <div class="sub-actions">
-              <button class="btn btn-primary btn-sm" onclick={() => handleAction(sub, 'approve')}>Approve</button>
-              <button class="btn btn-danger btn-sm" onclick={() => { decliningId = sub.id; }}>Reject</button>
+              <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={() => handleAction(sub, 'approve')}>Approve</button>
+              <button class="lt-btn lt-btn-danger lt-btn-sm" onclick={() => { decliningId = sub.id; }}>Reject</button>
             </div>
           {/if}
         </div>
@@ -238,7 +238,7 @@
     font-weight: 500;
   }
 
-  .sub-tags .muted {
+  .sub-tags .lt-muted {
     font-size: 0.72rem;
   }
 
@@ -263,7 +263,7 @@
     max-width: 320px;
   }
 
-  .sub-domain .muted {
+  .sub-domain .lt-muted {
     font-size: 0.72rem;
   }
 
@@ -276,7 +276,7 @@
     align-items: baseline;
   }
 
-  .sub-feed .muted {
+  .sub-feed .lt-muted {
     font-size: 0.72rem;
   }
 
@@ -322,7 +322,7 @@
     font-size: 0.85rem;
   }
 
-  .sub-note .muted {
+  .sub-note .lt-muted {
     font-size: 0.72rem;
   }
 

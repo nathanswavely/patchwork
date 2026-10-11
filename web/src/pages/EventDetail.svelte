@@ -129,12 +129,12 @@
 
 <div class="event-detail">
   {#if loading}
-    <p class="muted state-msg">Loading event...</p>
+    <p class="lt-muted state-msg">Loading event...</p>
   {:else if error || !event}
     <div class="state-msg">
       <h2>Event not found</h2>
-      <p class="muted">{error || "This event doesn't exist or was removed."}</p>
-      <a href="/events" class="btn btn-secondary" onclick={(e) => { e.preventDefault(); navigate('/events'); }}>Back to Events</a>
+      <p class="lt-muted">{error || "This event doesn't exist or was removed."}</p>
+      <a href="/events" class="lt-btn lt-btn-secondary" onclick={(e) => { e.preventDefault(); navigate('/events'); }}>Back to Events</a>
     </div>
   {:else}
     <a href="/events" class="back-link" onclick={(e) => { e.preventDefault(); navigate('/events'); }}>&larr; All events</a>
@@ -159,7 +159,7 @@
           {#if canEdit}
             <a
               href="/events/{event.id}/edit"
-              class="btn btn-sm btn-secondary edit-btn"
+              class="lt-btn lt-btn-sm lt-btn-secondary edit-btn"
               onclick={(e) => { e.preventDefault(); navigate(`/events/${event.id}/edit`); }}
             >
               <PencilSimple size={13} weight="duotone" />
@@ -184,7 +184,7 @@
     </div>
 
     {#if imported && canManage}
-      <p class="imported-note muted">
+      <p class="imported-note lt-muted">
         This event comes from one of
         {#if event.node_slug}
           <a
@@ -262,7 +262,7 @@
          review queue, where the endpoint 404s and nothing exists to add. -->
     {#if event.status !== 'pending_review'}
       <div class="calendar-actions">
-        <a class="btn btn-sm btn-secondary" href="/api/v1/events/{event.id}/event.ics">
+        <a class="lt-btn lt-btn-sm lt-btn-secondary" href="/api/v1/events/{event.id}/event.ics">
           <CalendarPlus size={14} weight="duotone" />
           Add to calendar
         </a>
@@ -287,7 +287,7 @@
     margin-bottom: 0.5rem;
   }
 
-  .state-msg .muted {
+  .state-msg .lt-muted {
     margin-bottom: 1rem;
   }
 
@@ -327,7 +327,7 @@
     margin-top: 1rem;
   }
 
-  .calendar-actions .btn {
+  .calendar-actions .lt-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;

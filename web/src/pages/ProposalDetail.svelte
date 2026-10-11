@@ -227,7 +227,7 @@
   }
 </script>
 
-<div class="proposal-page page-fade">
+<div class="proposal-page lt-fade-in">
   {#if loading}
     <div style="padding: 2rem 0;">
       <Skeleton lines={1} height="2rem" width="60%" />
@@ -277,11 +277,11 @@
              election itself rather than on the author id, so contests raised
              before the calendar started signing them read right too. -->
         {#if proposal.election_phase}
-          <span class="muted">Opened by this patch&rsquo;s election calendar</span>
+          <span class="lt-muted">Opened by this patch&rsquo;s election calendar</span>
         {:else}
-          <span class="muted">{isDirectChange ? 'Applied by' : 'Proposed by'} {proposal.author_name || 'unknown'}</span>
+          <span class="lt-muted">{isDirectChange ? 'Applied by' : 'Proposed by'} {proposal.author_name || 'unknown'}</span>
         {/if}
-        <span class="muted">{formatDay(proposal.created_at)}</span>
+        <span class="lt-muted">{formatDay(proposal.created_at)}</span>
       </div>
     </div>
 
@@ -331,8 +331,8 @@
         {#if hasAmendment}
           <section class="proposal-section">
             <div class="changes-summary">
-              <span class="muted">This {isDirectChange ? 'change' : 'proposal'} modifies <strong>{docLabel(proposal.target_doc)}</strong></span>
-              <button class="btn-link" onclick={() => activeTab = 'changes'}>View changes</button>
+              <span class="lt-muted">This {isDirectChange ? 'change' : 'proposal'} modifies <strong>{docLabel(proposal.target_doc)}</strong></span>
+              <button class="lt-btn-link" onclick={() => activeTab = 'changes'}>View changes</button>
             </div>
           </section>
         {:else if proposal.doc_text_hidden}
@@ -341,7 +341,7 @@
                rendering a proposal that looks like it changes nothing. -->
           <section class="proposal-section">
             <div class="changes-summary">
-              <span class="muted">
+              <span class="lt-muted">
                 This proposal modifies a members-only document. The text of the
                 change is visible to members.
               </span>
@@ -400,7 +400,7 @@
               proposedRules={JSON.parse(proposal.proposed_body)}
             />
           {:else}
-            <div class="doc-version-label muted">
+            <div class="doc-version-label lt-muted">
               {docLabel(proposal.target_doc)}
             </div>
             <DiffView
@@ -632,7 +632,7 @@
     gap: 0.25rem 0.75rem;
   }
 
-  .changes-summary .btn-link {
+  .changes-summary .lt-btn-link {
     white-space: nowrap;
   }
 </style>

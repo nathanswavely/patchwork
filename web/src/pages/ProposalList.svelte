@@ -131,24 +131,24 @@
 {#if permissionDenied}
   <div class="permission-notice">
     <p>This content is only visible to members.</p>
-    <p class="muted">Become a member to access proposals.</p>
+    <p class="lt-muted">Become a member to access proposals.</p>
   </div>
 {:else}
-<div class="page-fade">
+<div class="lt-fade-in">
   <div>
       <div class="page-header">
         {#if isMember && membershipRole !== 'follower'}
           <a
             href="/patches/{slug}/governance/new"
-            class="btn btn-primary"
+            class="lt-btn lt-btn-primary"
             onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/new`); }}
           >
             {newLabel}
           </a>
         {:else if membershipRole === 'follower'}
-          <p class="role-prompt muted">Become a member to create proposals and vote.</p>
+          <p class="role-prompt lt-muted">Become a member to create proposals and vote.</p>
         {:else}
-          <p class="role-prompt muted">Follow or join this patch to get started.</p>
+          <p class="role-prompt lt-muted">Follow or join this patch to get started.</p>
         {/if}
       </div>
 
@@ -171,9 +171,9 @@
       </div>
 
       {#if loading}
-        <p class="muted" style="padding: 2rem 0; text-align: center;">Loading...</p>
+        <p class="lt-muted" style="padding: 2rem 0; text-align: center;">Loading...</p>
       {:else if proposals.length === 0}
-        <p class="muted" style="padding: 2rem 0; text-align: center;">
+        <p class="lt-muted" style="padding: 2rem 0; text-align: center;">
           {#if statusFilter === 'not_decided'}
             Nothing here has lapsed or settled nothing.
           {:else if statusFilter && statusFilter !== 'all'}
@@ -187,7 +187,7 @@
           {#each proposals as proposal (proposal.id)}
             <a
               href="/patches/{slug}/governance/{proposal.id}"
-              class="proposal-card card"
+              class="proposal-card lt-card"
               onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/${proposal.id}`); }}
             >
               <div class="proposal-info">
@@ -201,17 +201,17 @@
                 </div>
                 <div class="proposal-meta">
                   {#if proposal.author_name}
-                    <span class="muted">{isDirectRow(proposal) ? 'applied by' : 'by'} {proposal.author_name}</span>
+                    <span class="lt-muted">{isDirectRow(proposal) ? 'applied by' : 'by'} {proposal.author_name}</span>
                   {/if}
                   {#if proposal.state === 'awaiting_admin'}
                     <!-- No ballot and no clock (docs/adr/092): the row says
                          what it is waiting for instead of a time that is
                          not running. -->
-                    <span class="muted">waiting on the maintainer</span>
+                    <span class="lt-muted">waiting on the maintainer</span>
                   {:else if proposal.status === 'open' && proposal.voting_ends_at}
                     <span class="time-remaining">{timeRemaining(proposal.voting_ends_at)}</span>
                   {:else if proposal.status !== 'open' && !isDirectRow(proposal)}
-                    <span class="muted">{rowLabel(proposal)}</span>
+                    <span class="lt-muted">{rowLabel(proposal)}</span>
                   {/if}
                 </div>
                 {#if (proposal.approve_count || 0) + (proposal.reject_count || 0) > 0}

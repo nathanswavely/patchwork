@@ -166,26 +166,26 @@
      the form's line length, and a centered notice inheriting it would center
      on the column instead of the page. -->
 {#if !canPropose}
-  <div class="permission-notice page-fade">
+  <div class="permission-notice lt-fade-in">
     <p>Only members can propose a change to this charter.</p>
-    <p class="muted">Become a member to take part in how this patch governs itself.</p>
+    <p class="lt-muted">Become a member to take part in how this patch governs itself.</p>
   </div>
 {:else}
-<div class="amendment-editor page-fade">
+<div class="amendment-editor lt-fade-in">
   {#if loading}
     <Skeleton lines={1} height="2rem" width="60%" />
     <Skeleton lines={6} height="0.9rem" />
   {:else if error}
     <div class="error-state">
-      <p class="error-text">{error}</p>
-      <button class="btn btn-secondary" onclick={loadDoc}>Retry</button>
+      <p class="lt-error-text">{error}</p>
+      <button class="lt-btn lt-btn-secondary" onclick={loadDoc}>Retry</button>
     </div>
   {:else if doc}
 
     <div class="editor-header">
-      <span class="editor-context muted">Proposing changes to</span>
+      <span class="editor-context lt-muted">Proposing changes to</span>
       <h1>{doc.title}</h1>
-      <span class="muted">Current version: v{doc.version}</span>
+      <span class="lt-muted">Current version: v{doc.version}</span>
     </div>
 
     {#if step === 'editing'}
@@ -194,8 +194,8 @@
         <div class="draft-banner">
           <span>Restored unsaved changes from {formatRelative(draftTimestamp)}</span>
           <div class="draft-actions">
-            <button class="btn-link" onclick={dismissDraft}>Dismiss</button>
-            <button class="btn-link danger" onclick={discardDraft}>Discard changes</button>
+            <button class="lt-btn-link" onclick={dismissDraft}>Dismiss</button>
+            <button class="lt-btn-link lt-tone-error" onclick={discardDraft}>Discard changes</button>
           </div>
         </div>
       {/if}
@@ -212,10 +212,10 @@
 
         <div class="editor-footer">
           <div class="editor-actions">
-            <button class="btn btn-primary" onclick={goToReview} disabled={!hasChanges}>
+            <button class="lt-btn lt-btn-primary" onclick={goToReview} disabled={!hasChanges}>
               {directChange ? 'Review & apply' : 'Review & submit'}
             </button>
-            <button class="btn btn-secondary" onclick={() => navigate(`/patches/${slug}/governance/docs/${docId}`)}>
+            <button class="lt-btn lt-btn-secondary" onclick={() => navigate(`/patches/${slug}/governance/docs/${docId}`)}>
               Cancel
             </button>
           </div>
@@ -243,7 +243,7 @@
       <!-- Review step: diff card + metadata card -->
       <div class="review-step">
         <div class="review-card">
-          <div class="review-card-header muted">Your changes</div>
+          <div class="review-card-header lt-muted">Your changes</div>
           <DiffView
             oldText={doc.body}
             newText={proposedContent}
@@ -261,19 +261,19 @@
             </div>
 
             <div class="field">
-              <label for="amendment-desc">{directChange ? 'Why this change?' : 'Why are you proposing this?'} <span class="muted">(optional)</span></label>
+              <label for="amendment-desc">{directChange ? 'Why this change?' : 'Why are you proposing this?'} <span class="lt-muted">(optional)</span></label>
               <textarea id="amendment-desc" bind:value={description} rows="4" disabled={submitting} placeholder="Help others understand why this change matters."></textarea>
             </div>
 
             <div class="review-actions">
-              <button class="btn btn-primary" onclick={handleSubmit} disabled={submitting || !title.trim()}>
+              <button class="lt-btn lt-btn-primary" onclick={handleSubmit} disabled={submitting || !title.trim()}>
                 {#if directChange}
                   {submitting ? 'Applying...' : 'Apply change'}
                 {:else}
                   {submitting ? 'Submitting...' : 'Submit proposal'}
                 {/if}
               </button>
-              <button class="btn btn-secondary" onclick={backToEditing} disabled={submitting}>
+              <button class="lt-btn lt-btn-secondary" onclick={backToEditing} disabled={submitting}>
                 Back to editing
               </button>
             </div>

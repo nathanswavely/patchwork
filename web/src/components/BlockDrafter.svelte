@@ -240,7 +240,7 @@
     </span>
   </div>
 
-  <p class="muted drafter-hint">
+  <p class="lt-muted drafter-hint">
     {#if tool === 'sew'}
       Click two anchors to sew a seam. Seams split every piece they cross.
     {:else if tool === 'color'}
@@ -314,7 +314,7 @@
         <svg viewBox="0 0 {CANVAS} {CANVAS}" width="40" height="40" role="img" aria-label="Block {previewLabel}">
           {@render pieces(false)}
         </svg>
-        <span class="muted">{previewLabel}</span>
+        <span class="lt-muted">{previewLabel}</span>
       </div>
 
       <BundlePicker
@@ -453,7 +453,7 @@
     border: 1px solid var(--color-border);
   }
 
-  .mini-preview .muted {
+  .mini-preview .lt-muted {
     font-size: 0.72rem;
   }
 

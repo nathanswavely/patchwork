@@ -98,7 +98,7 @@
 </script>
 
 {#if !canViewSettings}
-  <p class="muted">You do not have permission to view settings.</p>
+  <p class="lt-muted">You do not have permission to view settings.</p>
 {:else}
   <!-- On a phone, said once where Patch Settings opens rather than above
        every section; the drill-down passes through the list to get there.

@@ -5,7 +5,7 @@
 <div class="error-state">
   <p class="error-message">{message}</p>
   {#if retry}
-    <button class="btn btn-secondary" onclick={retry}>Try Again</button>
+    <button class="lt-btn lt-btn-secondary" onclick={retry}>Try Again</button>
   {/if}
 </div>
 

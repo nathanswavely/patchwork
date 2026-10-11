@@ -212,7 +212,7 @@
         role="img"
         aria-label="Tile preview"
       ></svg>
-      <button class="btn btn-secondary btn-sm rotate-btn" onclick={rotate} title="Rotate 90°">
+      <button class="lt-btn lt-btn-secondary lt-btn-sm rotate-btn" onclick={rotate} title="Rotate 90°">
         Rotate ({draft.rotation}°)
       </button>
     </div>
@@ -225,17 +225,17 @@
         {/if}
       </p>
       <div class="preview-actions">
-        <button class="btn btn-primary" onclick={save} disabled={saving || !dirty}>
+        <button class="lt-btn lt-btn-primary" onclick={save} disabled={saving || !dirty}>
           {saving ? 'Saving...' : 'Save appearance'}
         </button>
         {#if isPinned}
-          <button class="btn btn-secondary" onclick={reset} disabled={saving}>
+          <button class="lt-btn lt-btn-secondary" onclick={reset} disabled={saving}>
             Reset appearance
           </button>
         {/if}
       </div>
       {#if isPinned}
-        <p class="muted reset-hint">
+        <p class="lt-muted reset-hint">
           After a reset, the tile gets an automatically assigned look, which
           may change as the quilt grows.
         </p>
@@ -265,7 +265,7 @@
   {#if draft.mode === 'traditional'}
     <div class="picker-group">
       <span class="picker-label">Palette</span>
-      <p class="picker-hint muted">
+      <p class="picker-hint lt-muted">
         Pre-cut bundles. Picking one fills your fabrics below.
       </p>
       <div class="palette-grid">
@@ -328,7 +328,7 @@
 
   <div class="picker-group">
     <span class="picker-label">Motif</span>
-    <p class="picker-hint muted">
+    <p class="picker-hint lt-muted">
       The mark beside this patch's name on the quilt and on cards.
     </p>
     <div class="motif-grid">
@@ -365,7 +365,7 @@
         role="img"
         aria-label="Tile preview"
       ></svg>
-      <button class="btn btn-primary" onclick={save} disabled={saving || !dirty}>
+      <button class="lt-btn lt-btn-primary" onclick={save} disabled={saving || !dirty}>
         {saving ? 'Saving...' : 'Save appearance'}
       </button>
     </div>

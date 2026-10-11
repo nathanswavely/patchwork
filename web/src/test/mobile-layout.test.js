@@ -72,8 +72,10 @@ describe('a finger gets a finger-sized target', () => {
   });
 
   it('for a text-shaped button, without moving the line it sits in', () => {
-    const css = source('app.css');
-    expect(css).toMatch(/\.btn-link \{\s*padding-block: 0\.6rem;\s*margin-block: -0\.6rem;/);
+    // Liquid Textile's .lt-btn-link grows its target to --lt-target (44px on
+    // a coarse pointer) with padding the negative margin gives straight back.
+    const css = source('vendor/liquid-textile/foundation.css');
+    expect(css).toMatch(/\.lt-btn-link \{\s*--lt-link-reach:[^;]*;\s*padding-block: var\(--lt-link-reach\);\s*margin-block: calc\(-1 \* var\(--lt-link-reach\)\);/);
   });
 });
 
@@ -93,7 +95,7 @@ describe('admin tables have a phone form', () => {
     const src = source('pages/AdminUsers.svelte');
     // One invite section, rendered above the search on a wide screen and
     // below the list on a phone.
-    expect(src.split('<section class="invite-section card">').length - 1).toBe(1);
+    expect(src.split('<section class="invite-section lt-card">').length - 1).toBe(1);
     const renders = [...src.matchAll(/\{@render inviteSection\(\)\}/g)].map((m) => m.index);
     expect(renders.length).toBe(2);
     expect(renders[0]).toBeLessThan(src.indexOf('<div class="search-bar">'));
@@ -120,7 +122,7 @@ describe('pickers a finger can use', () => {
 
   it('the drafter says what to do above the canvas, not below the wall', () => {
     const src = source('components/BlockDrafter.svelte');
-    expect(src.indexOf('class="muted drafter-hint"')).toBeLessThan(src.indexOf('<div class="drafter-body">'));
+    expect(src.indexOf('class="lt-muted drafter-hint"')).toBeLessThan(src.indexOf('<div class="drafter-body">'));
   });
 
   it('the fabric wall and slots are finger-sized, and remove sits apart from add', () => {
@@ -236,7 +238,7 @@ describe('buttons that stopped folding their own labels', () => {
   });
 
   it('the patch events header keeps its buttons on one line each', () => {
-    expect(source('pages/PatchEvents.svelte')).toMatch(/\.header-buttons \.btn \{\s*white-space: nowrap;/);
+    expect(source('pages/PatchEvents.svelte')).toMatch(/\.header-buttons \.lt-btn \{\s*white-space: nowrap;/);
   });
 
   it('proposal filters scroll as one row on a phone', () => {
@@ -244,6 +246,6 @@ describe('buttons that stopped folding their own labels', () => {
   });
 
   it('every charter card puts Propose change first on a phone', () => {
-    expect(source('pages/GovernanceList.svelte')).toMatch(/\.doc-actions > \.btn\[href\$='\/propose'\] \{\s*order: -1;/);
+    expect(source('pages/GovernanceList.svelte')).toMatch(/\.doc-actions > \.lt-btn\[href\$='\/propose'\] \{\s*order: -1;/);
   });
 });

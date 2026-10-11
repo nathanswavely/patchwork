@@ -46,19 +46,19 @@
   }
 </script>
 
-<div class="page-fade">
+<div class="lt-fade-in">
   <h2>Notification Settings</h2>
-  <p class="muted subtitle">Choose which notifications this patch sends its members.</p>
+  <p class="lt-muted subtitle">Choose which notifications this patch sends its members.</p>
 
   {#if loading}
-    <p class="muted" style="padding: 2rem 0;">Loading...</p>
+    <p class="lt-muted" style="padding: 2rem 0;">Loading...</p>
   {:else}
     <div class="category-list">
       {#each categories as cat}
         <div class="category-row">
           <div class="category-info">
             <span class="category-label">{cat.label}</span>
-            <span class="category-desc muted">{cat.description}</span>
+            <span class="category-desc lt-muted">{cat.description}</span>
           </div>
           <ToggleSwitch checked={cat.enabled} label={cat.label} onchange={() => toggle(cat.id)} />
         </div>

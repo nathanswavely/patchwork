@@ -151,8 +151,8 @@
 {:else if loadFailed}
   <div class="profile-error">
     <h2>{archivedName ? `${archivedName} is archived` : 'Patch not found'}</h2>
-    {#if error}<p class="muted">{error}</p>{/if}
-    <a href="/" class="btn btn-secondary" onclick={go('/')}>Back to Quilt</a>
+    {#if error}<p class="lt-muted">{error}</p>{/if}
+    <a href="/" class="lt-btn lt-btn-secondary" onclick={go('/')}>Back to Quilt</a>
   </div>
 {:else if node}
   <div class="profile-head" class:docked={layout === 'docked'}>
@@ -508,7 +508,7 @@
   }
 
   .profile-head.docked .profile-actions :global(.standing),
-  .profile-head.docked .profile-actions :global(.btn) {
+  .profile-head.docked .profile-actions :global(.lt-btn) {
     width: 100%;
     justify-content: center;
     min-height: 44px;

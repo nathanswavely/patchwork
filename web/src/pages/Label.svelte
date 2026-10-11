@@ -36,13 +36,13 @@
   <title>The Label &mdash; {instanceName}</title>
 </svelte:head>
 
-<div class="label-page page-fade">
+<div class="label-page lt-fade-in">
   {#if loading}
     <Skeleton lines={8} />
   {:else if !label?.published}
     <div class="label-empty">
       <h1>No Label yet</h1>
-      <p class="muted">
+      <p class="lt-muted">
         Nobody has written this quilt's Label yet.
       </p>
     </div>
@@ -50,7 +50,7 @@
     <header class="label-header">
       <p class="label-kicker">The Label</p>
       <h1>How {instanceName} is run</h1>
-      <p class="label-sub muted">
+      <p class="label-sub lt-muted">
         Quilts carry a label on the back that says who made them and when.
         This is ours.
       </p>
@@ -73,7 +73,7 @@
           </span>
           <span class="steward-meta">
             <span class="steward-name">{s.display_name || `@${s.username}`}</span>
-            <span class="steward-handle muted">@{s.username}</span>
+            <span class="steward-handle lt-muted">@{s.username}</span>
             {#if s.blurb}<span class="steward-blurb">{s.blurb}</span>{/if}
           </span>
         </a>
@@ -105,7 +105,7 @@
             <li class="cost-item">
               <div class="cost-line">
                 <span class="cost-service">{item.service}</span>
-                {#if item.purpose}<span class="cost-purpose muted">{item.purpose}</span>{/if}
+                {#if item.purpose}<span class="cost-purpose lt-muted">{item.purpose}</span>{/if}
                 <span class="cost-amount">
                   {formatMoney(item.amount_minor, label.currency)}{periodWord(item.period)}
                 </span>
@@ -116,18 +116,18 @@
         </ul>
         <div class="cost-total">
           <span>About {formatMoney(label.total_monthly_minor, label.currency)}/month to keep running</span>
-          <span class="cost-honesty muted">The stewards typed these numbers in themselves. Nobody audits this.</span>
+          <span class="cost-honesty lt-muted">The stewards typed these numbers in themselves. Nobody audits this.</span>
         </div>
       {/if}
       {#if label.version}
-        <p class="runs-on-version muted">Running Patchwork {label.version}.</p>
+        <p class="runs-on-version lt-muted">Running Patchwork {label.version}.</p>
       {/if}
       <!-- The two cross-quilt capabilities, each stated in both directions
            (docs/adr/061). Derived from config on the server, like the
            version above them — materials, not settings. Federation is
            whether this quilt can be followed; multi-quilt is whether it can
            be read. They are independent, so each gets its own line. -->
-      <p class="runs-on-version muted">
+      <p class="runs-on-version lt-muted">
         {#if label.federation}
           Federating. Public patches here can be followed from Mastodon and
           other ActivityPub sites.
@@ -135,7 +135,7 @@
           Not federating. Patches here can't be followed from other sites.
         {/if}
       </p>
-      <p class="runs-on-version muted">
+      <p class="runs-on-version lt-muted">
         {#if label.multi_quilt}
           Readable by other quilts. Their sites can show this quilt's public
           patches and events alongside their own.
@@ -150,12 +150,12 @@
     {#if label.support_url || label.feedback_url}
       <section class="label-links">
         {#if label.support_url}
-          <a class="btn btn-primary" href={label.support_url} target="_blank" rel="noopener">
+          <a class="lt-btn lt-btn-primary" href={label.support_url} target="_blank" rel="noopener">
             <Coffee size={16} weight="duotone" /> Support this quilt
           </a>
         {/if}
         {#if label.feedback_url}
-          <a class="btn btn-secondary" href={label.feedback_url} target="_blank" rel="noopener">
+          <a class="lt-btn lt-btn-secondary" href={label.feedback_url} target="_blank" rel="noopener">
             <ChatCircleText size={16} weight="duotone" /> Send feedback
           </a>
         {/if}
@@ -163,7 +163,7 @@
     {/if}
 
     {#if label.seamripped_from_name}
-      <p class="seamripped-from muted">
+      <p class="seamripped-from lt-muted">
         Seamripped from
         {#if label.seamripped_from_url}
           <a href={label.seamripped_from_url} target="_blank" rel="noopener">{label.seamripped_from_name}</a>{:else}{label.seamripped_from_name}{/if}.
@@ -182,7 +182,7 @@
         <!-- docs/adr/060: ap_followers and ap_id stay behind on a seamrip,
              so the community travels and its audience does not. Only worth
              saying where there is an audience to lose. -->
-        <p class="door-cost muted">
+        <p class="door-cost lt-muted">
           Only the community travels: members, events, charters, and the threads between patches. This quilt's addresses do not. A patch that leaves keeps its people and starts over with the followers it had on other sites.
         </p>
       {/if}
@@ -381,7 +381,7 @@
     gap: 10px;
     margin-bottom: 24px;
   }
-  .label-links .btn {
+  .label-links .lt-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;

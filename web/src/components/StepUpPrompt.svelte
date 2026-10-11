@@ -163,7 +163,7 @@
       your sign-in.
     </p>
     <div class="su-actions">
-      <button class="btn btn-primary" onclick={() => finish(lowCodesLeft.usedCode)}>
+      <button class="lt-btn lt-btn-primary" onclick={() => finish(lowCodesLeft.usedCode)}>
         Continue
       </button>
     </div>
@@ -180,7 +180,7 @@
 
     {#if hasPasskey}
       <div class="su-actions su-passkey">
-        <button class="btn btn-primary" onclick={tryPasskey} disabled={busy}>
+        <button class="lt-btn lt-btn-primary" onclick={tryPasskey} disabled={busy}>
           {busy ? 'Waiting...' : 'Use a passkey'}
         </button>
       </div>
@@ -221,10 +221,10 @@
       {/if}
 
       <div class="su-actions">
-        <button class="btn btn-primary" type="submit" disabled={busy || !code.trim()}>
+        <button class="lt-btn lt-btn-primary" type="submit" disabled={busy || !code.trim()}>
           {busy ? 'Checking...' : 'Confirm'}
         </button>
-        <button class="btn btn-secondary" type="button" onclick={dismiss} disabled={busy}>
+        <button class="lt-btn lt-btn-secondary" type="button" onclick={dismiss} disabled={busy}>
           Cancel
         </button>
       </div>

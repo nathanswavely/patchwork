@@ -170,15 +170,15 @@
 <!-- Outside .container-narrow on purpose: a centered notice inheriting that
      column would center on the column instead of the page. -->
 {#if !canPropose}
-  <div class="permission-notice page-fade">
+  <div class="permission-notice lt-fade-in">
     <p>Only members can create proposals.</p>
-    <p class="muted">Become a member to take part in how this patch governs itself.</p>
+    <p class="lt-muted">Become a member to take part in how this patch governs itself.</p>
   </div>
 {:else}
-<div class="page-fade">
+<div class="lt-fade-in">
   <div class="container-narrow">
     <div style="padding-top: 2rem;">
-      <p class="amendment-hint muted">Want to change a governance document or rules? Go to the <a href="/patches/{slug}/governance/docs" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/docs`); }}>Documents</a> page and click "Propose change" on the document you want to edit.</p>
+      <p class="amendment-hint lt-muted">Want to change a governance document or rules? Go to the <a href="/patches/{slug}/governance/docs" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/docs`); }}>Documents</a> page and click "Propose change" on the document you want to edit.</p>
 
       <form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
         <div class="field">
@@ -199,7 +199,7 @@
               {#if body.trim()}
                 <MarkdownRenderer content={body} />
               {:else}
-                <span class="muted">Nothing to preview</span>
+                <span class="lt-muted">Nothing to preview</span>
               {/if}
             </div>
           {:else}
@@ -246,7 +246,7 @@
                     <option value={m.user_id}>{m.display_name || m.username}</option>
                   {/each}
                 </select>
-                <p class="nominee-hint muted">
+                <p class="nominee-hint lt-muted">
                   {#if isElected}
                     If this passes, they take the vacant seat and serve out its term. Nobody has to approve it afterwards.
                   {:else}
@@ -254,7 +254,7 @@
                   {/if}
                 </p>
               {:else}
-                <p class="nominee-hint muted">There is nobody to nominate yet.</p>
+                <p class="nominee-hint lt-muted">There is nobody to nominate yet.</p>
               {/if}
             </div>
           {/if}
@@ -263,7 +263,7 @@
                council actually is, rather than leaving someone to invent
                one (docs/adr/100). -->
           {#if isElected && !canNominate}
-            <p class="nominee-hint muted">
+            <p class="nominee-hint lt-muted">
               {#if !isPatchAdmin}
                 Admins here hold seats on the council. A vacant seat is filled by nomination, which an admin raises; otherwise a seat comes up at an election any member may stand in.
               {:else if nextContestOpens}
@@ -300,7 +300,7 @@
             </div>
           </div>
         {:else if toMaintainer}
-          <p class="ceremony-note muted">
+          <p class="ceremony-note lt-muted">
             This patch's maintainer decides proposals. Yours goes to them, and they may ask the members before deciding.
           </p>
         {/if}
@@ -318,11 +318,11 @@
         {/if}
 
         {#if error}
-          <p class="error-text">{error}</p>
+          <p class="lt-error-text">{error}</p>
         {/if}
 
         <div class="field-actions">
-          <button type="submit" class="btn btn-primary" disabled={submitting}>
+          <button type="submit" class="lt-btn lt-btn-primary" disabled={submitting}>
             {#if directChange}
               {submitting ? 'Applying...' : 'Apply change'}
             {:else if advisoryVote}
@@ -335,7 +335,7 @@
           </button>
           <button
             type="button"
-            class="btn btn-secondary"
+            class="lt-btn lt-btn-secondary"
             onclick={() => navigate(`/patches/${slug}/governance`)}
           >
             Cancel

@@ -77,10 +77,10 @@
   }
 </script>
 
-<div class="admin-legal page-fade">
+<div class="admin-legal lt-fade-in">
   <header class="page-head">
     <h1>Legal documents</h1>
-    <p class="muted">
+    <p class="lt-muted">
       The privacy policy and user agreement, public at /privacy and /terms and linked from every signup form. Patchwork ships honest defaults that describe what the software actually does. Anything you write here replaces the default entirely.
     </p>
   </header>
@@ -110,11 +110,11 @@
     {#if current}
       <div class="doc-meta">
         {#if current.customized}
-          <span class="muted">
+          <span class="lt-muted">
             Custom text, last saved {current.updated_at?.slice(0, 10) || 'recently'}.
           </span>
         {:else}
-          <span class="muted">
+          <span class="lt-muted">
             The default that ships with Patchwork. It fills in this quilt's
             name by itself and starts with a note saying it's the default.
             Saving any edit removes that note along with it.
@@ -132,20 +132,20 @@
         spellcheck="true"
         aria-label={`${current.title} markdown`}
       ></textarea>
-      <p class="hint muted">Markdown. Links like [the Label](/label) work.</p>
+      <p class="hint lt-muted">Markdown. Links like [the Label](/label) work.</p>
 
       <div class="doc-actions">
-        <button class="btn btn-primary" onclick={save} disabled={saving || !dirty}>
+        <button class="lt-btn lt-btn-primary" onclick={save} disabled={saving || !dirty}>
           {saving ? 'Saving…' : 'Save'}
         </button>
         {#if current.customized}
-          <button class="btn btn-secondary" onclick={restoreDefault} disabled={resetting}>
+          <button class="lt-btn lt-btn-secondary" onclick={restoreDefault} disabled={resetting}>
             <ArrowCounterClockwise size={14} weight="bold" />
             {resetting ? 'Restoring…' : 'Restore shipped default'}
           </button>
         {/if}
         {#if dirty}
-          <span class="muted unsaved">Unsaved changes</span>
+          <span class="lt-muted unsaved">Unsaved changes</span>
         {/if}
       </div>
     {/if}
@@ -247,7 +247,7 @@
     align-items: center;
     gap: 10px;
   }
-  .doc-actions .btn {
+  .doc-actions .lt-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;

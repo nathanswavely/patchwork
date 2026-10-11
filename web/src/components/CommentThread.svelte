@@ -160,12 +160,12 @@
 
 <div class="comment-thread">
   {#if loading}
-    <p class="muted">Loading comments...</p>
+    <p class="lt-muted">Loading comments...</p>
   {:else if error}
-    <p class="error-text">{error}</p>
+    <p class="lt-error-text">{error}</p>
   {:else}
     {#if comments.length === 0}
-      <p class="muted">No comments yet.</p>
+      <p class="lt-muted">No comments yet.</p>
     {/if}
 
     {#each comments as comment}
@@ -179,8 +179,8 @@
           <div class="comment-edit">
             <textarea bind:value={editText} rows="3" disabled={submitting}></textarea>
             <div class="comment-edit-actions">
-              <button class="btn btn-primary btn-sm" onclick={() => saveEdit(comment.id)} disabled={submitting}>Save</button>
-              <button class="btn btn-secondary btn-sm" onclick={() => { editingId = null; editText = ''; }}>Cancel</button>
+              <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={() => saveEdit(comment.id)} disabled={submitting}>Save</button>
+              <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => { editingId = null; editText = ''; }}>Cancel</button>
             </div>
           </div>
         {:else}
@@ -231,8 +231,8 @@
               disabled={submitting}
             ></textarea>
             <div class="reply-form-actions">
-              <button class="btn btn-primary btn-sm" onclick={() => postReply(comment.id)} disabled={submitting || !replyText.trim()}>Reply</button>
-              <button class="btn btn-secondary btn-sm" onclick={() => { replyingTo = null; replyText = ''; }}>Cancel</button>
+              <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={() => postReply(comment.id)} disabled={submitting || !replyText.trim()}>Reply</button>
+              <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => { replyingTo = null; replyText = ''; }}>Cancel</button>
             </div>
           </div>
         {/if}
@@ -250,8 +250,8 @@
                 <div class="comment-edit">
                   <textarea bind:value={editText} rows="2" disabled={submitting}></textarea>
                   <div class="comment-edit-actions">
-                    <button class="btn btn-primary btn-sm" onclick={() => saveEdit(reply.id)} disabled={submitting}>Save</button>
-                    <button class="btn btn-secondary btn-sm" onclick={() => { editingId = null; editText = ''; }}>Cancel</button>
+                    <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={() => saveEdit(reply.id)} disabled={submitting}>Save</button>
+                    <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => { editingId = null; editText = ''; }}>Cancel</button>
                   </div>
                 </div>
               {:else}
@@ -336,7 +336,7 @@
           placeholder="Add a comment..."
           disabled={submitting}
         ></textarea>
-        <button class="btn btn-primary" onclick={postComment} disabled={submitting || !newComment.trim()}>
+        <button class="lt-btn lt-btn-primary" onclick={postComment} disabled={submitting || !newComment.trim()}>
           {submitting ? 'Posting...' : 'Comment'}
         </button>
       </div>

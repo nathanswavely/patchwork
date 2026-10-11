@@ -142,17 +142,17 @@
   }
 </script>
 
-<div class="page-fade">
+<div class="lt-fade-in">
   <div class="invite-page">
     {#if validating}
       <div class="state-block">
-        <p class="muted">Checking your invite...</p>
+        <p class="lt-muted">Checking your invite...</p>
       </div>
     {:else if !valid}
       <div class="state-block">
         <h1>This invite didn't work</h1>
-        <p class="error-text">{validationError}</p>
-        <p class="muted" style="margin-top: 1rem;">
+        <p class="lt-error-text">{validationError}</p>
+        <p class="lt-muted" style="margin-top: 1rem;">
           This invite link may have expired or already been used.
           Ask your community admin for a new one.
         </p>
@@ -161,16 +161,16 @@
       <div class="state-block">
         <h1>You're in</h1>
         {#if passkeyDone}
-          <p class="success-text">Passkey saved.</p>
-          <p class="muted" style="margin-top: 0.5rem;">
+          <p class="lt-success-text">Passkey saved.</p>
+          <p class="lt-muted" style="margin-top: 0.5rem;">
             This device can sign you in from now on.
           </p>
-          <button class="btn btn-primary" style="margin-top: 1.5rem;" onclick={goToDashboard}>
+          <button class="lt-btn lt-btn-primary" style="margin-top: 1.5rem;" onclick={goToDashboard}>
             Take a look around
           </button>
         {:else if recoveryCodes}
           <p>Write these down before you go.</p>
-          <p class="muted" style="margin-top: 0.5rem;">
+          <p class="lt-muted" style="margin-top: 0.5rem;">
             This quilt cannot send email, so these codes are the only way back
             into your account if you lose this device. Each one works once.
           </p>
@@ -179,7 +179,7 @@
               <li>{code}</li>
             {/each}
           </ul>
-          <button class="btn btn-secondary" style="margin-top: 0.75rem;" onclick={copyRecoveryCodes}>
+          <button class="lt-btn lt-btn-secondary" style="margin-top: 0.75rem;" onclick={copyRecoveryCodes}>
             Copy codes
           </button>
           <label class="ack">
@@ -187,7 +187,7 @@
             I have saved these somewhere safe
           </label>
           <button
-            class="btn btn-primary"
+            class="lt-btn lt-btn-primary"
             style="margin-top: 1rem;"
             onclick={goToDashboard}
             disabled={!recoverySaved}
@@ -197,11 +197,11 @@
         {:else}
           {#if canUsePasskeys}
             <p>Create a passkey and this device signs you in with one tap.</p>
-            <p class="muted" style="margin-top: 0.5rem;">
+            <p class="lt-muted" style="margin-top: 0.5rem;">
               The key stays on your device, and we never hold a password for you.
             </p>
             <button
-              class="btn btn-primary"
+              class="lt-btn lt-btn-primary"
               style="margin-top: 1rem;"
               onclick={enrollPasskey}
               disabled={enrollingPasskey}
@@ -209,23 +209,23 @@
               {enrollingPasskey ? 'Waiting for your browser...' : 'Create a passkey'}
             </button>
             {#if passkeyError}
-              <p class="error-text">{passkeyError}</p>
+              <p class="lt-error-text">{passkeyError}</p>
             {/if}
           {:else}
             <p>This browser cannot create a passkey.</p>
           {/if}
 
           {#if hasWayBackIn}
-            <button class="btn btn-secondary" style="margin-top: 0.5rem;" onclick={goToDashboard}>
+            <button class="lt-btn lt-btn-secondary" style="margin-top: 0.5rem;" onclick={goToDashboard}>
               Skip for now
             </button>
-            <p class="hint muted" style="margin-top: 0.5rem;">
+            <p class="hint lt-muted" style="margin-top: 0.5rem;">
               You can sign in with an email link any time, and add a passkey
               later from Settings → Security.
             </p>
           {:else}
             <button
-              class="btn btn-secondary"
+              class="lt-btn lt-btn-secondary"
               style="margin-top: 0.5rem;"
               onclick={generateRecoveryCodes}
               disabled={loadingRecovery}
@@ -233,9 +233,9 @@
               {loadingRecovery ? 'Generating...' : 'Use recovery codes instead'}
             </button>
             {#if recoveryError}
-              <p class="error-text">{recoveryError}</p>
+              <p class="lt-error-text">{recoveryError}</p>
             {/if}
-            <p class="hint muted" style="margin-top: 0.5rem;">
+            <p class="hint lt-muted" style="margin-top: 0.5rem;">
               This quilt cannot send email, so a passkey or recovery codes are
               the only ways back into your account.
             </p>
@@ -245,7 +245,7 @@
     {:else}
       <div class="state-block">
         <h1>You're invited</h1>
-        <p class="muted" style="margin-bottom: 1.5rem;">
+        <p class="lt-muted" style="margin-bottom: 1.5rem;">
           A patchwork user sent you this link. Pick a username to join.
         </p>
 
@@ -268,7 +268,7 @@
           {#if usernameHint}
             <p class="hint">{usernameHint}</p>
           {:else}
-            <p class="hint muted">3-30 characters: lowercase letters, numbers, hyphens. This becomes your profile address and can't be changed later.</p>
+            <p class="hint lt-muted">3-30 characters: lowercase letters, numbers, hyphens. This becomes your profile address and can't be changed later.</p>
           {/if}
 
           <label for="display-name">Display Name</label>
@@ -293,7 +293,7 @@
               required
               disabled={submitting}
             />
-            <p class="hint muted">
+            <p class="hint lt-muted">
               How you sign in if you ever lose your passkey. We send sign-in
               links to it and nothing else.
             </p>
@@ -301,13 +301,13 @@
 
           <button
             type="submit"
-            class="btn btn-primary"
+            class="lt-btn lt-btn-primary"
             disabled={submitting || !username.trim() || (emailIsFloor && !email.trim())}
           >
             {submitting ? 'Creating Account...' : 'Create Account'}
           </button>
 
-          <p class="agree-line muted">
+          <p class="agree-line lt-muted">
             By creating an account you agree to the
             <a href="/terms" target="_blank" rel="noopener">User Agreement</a>
             and <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>.
@@ -315,7 +315,7 @@
         </form>
 
         {#if submitError}
-          <p class="error-text">{submitError}</p>
+          <p class="lt-error-text">{submitError}</p>
         {/if}
       </div>
     {/if}

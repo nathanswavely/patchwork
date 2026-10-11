@@ -53,20 +53,20 @@
 
 </script>
 
-<div class="page-fade">
+<div class="lt-fade-in">
   <h1>Event Submissions</h1>
-  <p class="muted" style="margin-bottom: 1.5rem;">
+  <p class="lt-muted" style="margin-bottom: 1.5rem;">
     Community-submitted events on unclaimed patches awaiting review.
   </p>
 
   {#if loading}
     <Skeleton lines={4} height="1rem" />
   {:else if submissions.length === 0}
-    <p class="muted">No pending submissions.</p>
+    <p class="lt-muted">No pending submissions.</p>
   {:else}
     <div class="submission-list">
       {#each submissions as sub (sub.id)}
-        <div class="submission-card card">
+        <div class="submission-card lt-card">
           <div class="sub-header">
             <h3>
               <a
@@ -75,7 +75,7 @@
                 onclick={(e) => { e.preventDefault(); navigate(`/events/${sub.id}`); }}
               >{sub.title}</a>
             </h3>
-            <span class="muted">{formatDate(sub.starts_at, sub.timezone)} &middot; {formatTime(sub.starts_at, sub.timezone)}</span>
+            <span class="lt-muted">{formatDate(sub.starts_at, sub.timezone)} &middot; {formatTime(sub.starts_at, sub.timezone)}</span>
           </div>
           <p class="sub-patch">
             <a
@@ -87,9 +87,9 @@
             <p class="sub-desc">{sub.description}</p>
           {/if}
           {#if sub.location}
-            <p class="sub-location muted">{sub.location}</p>
+            <p class="sub-location lt-muted">{sub.location}</p>
           {/if}
-          <div class="sub-meta muted">
+          <div class="sub-meta lt-muted">
             Submitted by {sub.submitter_display_name || sub.submitter_username || 'unknown'}
           </div>
           {#if decliningId === sub.id}
@@ -101,14 +101,14 @@
                 disabled={reviewing}
               ></textarea>
               <div class="sub-actions">
-                <button class="btn btn-danger btn-sm" onclick={() => review(sub.id, 'reject', declineNote)} disabled={reviewing}>Reject</button>
-                <button class="btn btn-secondary btn-sm" onclick={() => { decliningId = ''; declineNote = ''; }} disabled={reviewing}>Cancel</button>
+                <button class="lt-btn lt-btn-danger lt-btn-sm" onclick={() => review(sub.id, 'reject', declineNote)} disabled={reviewing}>Reject</button>
+                <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => { decliningId = ''; declineNote = ''; }} disabled={reviewing}>Cancel</button>
               </div>
             </div>
           {:else}
             <div class="sub-actions">
-              <button class="btn btn-primary btn-sm" onclick={() => review(sub.id, 'approve')} disabled={reviewing}>Approve</button>
-              <button class="btn btn-danger btn-sm" onclick={() => { decliningId = sub.id; declineNote = ''; }} disabled={reviewing}>Reject</button>
+              <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={() => review(sub.id, 'approve')} disabled={reviewing}>Approve</button>
+              <button class="lt-btn lt-btn-danger lt-btn-sm" onclick={() => { decliningId = sub.id; declineNote = ''; }} disabled={reviewing}>Reject</button>
             </div>
           {/if}
         </div>
@@ -117,7 +117,7 @@
 
     {#if nextCursor}
       <div style="text-align: center; padding: 1rem 0;">
-        <button class="btn btn-secondary" onclick={() => loadSubmissions(true)}>Load more</button>
+        <button class="lt-btn lt-btn-secondary" onclick={() => loadSubmissions(true)}>Load more</button>
       </div>
     {/if}
   {/if}
@@ -147,7 +147,7 @@
     font-size: 1rem;
   }
 
-  .sub-header .muted {
+  .sub-header .lt-muted {
     font-size: 0.8rem;
     flex-shrink: 0;
   }

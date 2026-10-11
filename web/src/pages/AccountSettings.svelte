@@ -428,11 +428,11 @@
   }
 </script>
 
-<div class="page-fade">
+<div class="lt-fade-in">
   {#if user}
-    <section class="pw-section">
+    <section class="lt-section">
       <h2>Profile</h2>
-      <p class="muted profile-hint">
+      <p class="lt-muted profile-hint">
         Your <a href="/users/{user.username}" onclick={(e) => { e.preventDefault(); navigate(`/users/${user.username}`); }}>public profile</a>
         shows your name, bio, links, and the memberships you keep visible.
       </p>
@@ -440,7 +440,7 @@
         <div class="field">
           <label for="username-display">Username</label>
           <input id="username-display" type="text" value={user.username} disabled />
-          <small class="muted">Username cannot be changed.</small>
+          <small class="lt-muted">Username cannot be changed.</small>
         </div>
         <div class="field">
           <label for="display-name">Display Name</label>
@@ -456,19 +456,19 @@
             <div class="link-row">
               <input type="text" placeholder="Label" bind:value={link.label} disabled={saving} class="link-label" />
               <input type="url" placeholder="https://…" bind:value={link.url} disabled={saving} class="link-url" />
-              <button type="button" class="btn btn-sm link-remove" onclick={() => removeLink(i)} title="Remove link">✕</button>
+              <button type="button" class="lt-btn lt-btn-sm link-remove" onclick={() => removeLink(i)} title="Remove link">✕</button>
             </div>
           {/each}
-          <button type="button" class="btn btn-secondary btn-sm add-link" onclick={addLink} disabled={saving}>
+          <button type="button" class="lt-btn lt-btn-secondary lt-btn-sm add-link" onclick={addLink} disabled={saving}>
             Add link
           </button>
         </div>
         <div class="field-actions">
-          <button type="submit" class="btn btn-primary" disabled={saving}>
+          <button type="submit" class="lt-btn lt-btn-primary" disabled={saving}>
             {saving ? 'Saving...' : 'Save'}
           </button>
           {#if saveMessage}
-            <span class={saveMessage === 'Saved' ? 'success-text' : 'error-text'}>
+            <span class={saveMessage === 'Saved' ? 'lt-success-text' : 'lt-error-text'}>
               {saveMessage}
             </span>
           {/if}
@@ -476,10 +476,10 @@
       </form>
     </section>
 
-    <section class="pw-section">
+    <section class="lt-section">
       <details class="pw-fold" open={!narrow}>
         <summary><h2>I have moved</h2></summary>
-      <p class="muted profile-hint">
+      <p class="lt-muted profile-hint">
         Point your profile at wherever you are now. Your page here keeps
         working and says where you went. This is only about you, not about
         the patches you belong to. Clear the field to undo it.
@@ -494,10 +494,10 @@
             disabled={movedSaving}
             placeholder="https://their-quilt.example.com/users/you"
           />
-          {#if movedError}<small class="error-text">{movedError}</small>{/if}
+          {#if movedError}<small class="lt-error-text">{movedError}</small>{/if}
         </div>
         <div class="field-actions">
-          <button type="submit" class="btn btn-primary" disabled={movedSaving}>
+          <button type="submit" class="lt-btn lt-btn-primary" disabled={movedSaving}>
             {movedSaving ? 'Saving...' : 'Save'}
           </button>
         </div>
@@ -505,9 +505,9 @@
       </details>
     </section>
 
-    <section class="pw-section">
+    <section class="lt-section">
       <h2>Contact card</h2>
-      <p class="muted profile-hint">
+      <p class="lt-muted profile-hint">
         The ways you are willing to be reached. Nothing here is public and
         nothing is shared by adding it. You give each item to one patch at a
         time, in
@@ -516,7 +516,7 @@
       </p>
 
       {#if contactItems.length === 0 && !draft}
-        <p class="muted">Nothing on your card yet.</p>
+        <p class="lt-muted">Nothing on your card yet.</p>
       {/if}
 
       <ul class="contact-items">
@@ -546,7 +546,7 @@
               />
             </div>
             <div class="contact-item-meta">
-              <span class="muted">
+              <span class="lt-muted">
                 {#if item.shared_with === 1}
                   Shared with 1 patch
                 {:else if item.shared_with > 1}
@@ -557,14 +557,14 @@
               </span>
               <div class="contact-item-actions">
                 {#if isDirty(item)}
-                  <button type="button" class="btn btn-primary btn-sm" disabled={contactBusy} onclick={() => saveContactItem(item)}>Save</button>
+                  <button type="button" class="lt-btn lt-btn-primary lt-btn-sm" disabled={contactBusy} onclick={() => saveContactItem(item)}>Save</button>
                 {/if}
                 {#if item.shared_with > 0}
-                  <button type="button" class="btn btn-sm" disabled={contactBusy} onclick={() => stopSharingEverywhere(item)}>
+                  <button type="button" class="lt-btn lt-btn-sm" disabled={contactBusy} onclick={() => stopSharingEverywhere(item)}>
                     Stop sharing everywhere
                   </button>
                 {/if}
-                <button type="button" class="btn btn-sm btn-danger" disabled={contactBusy} onclick={() => removeContactItem(item)}>Remove</button>
+                <button type="button" class="lt-btn lt-btn-sm lt-btn-danger" disabled={contactBusy} onclick={() => removeContactItem(item)}>Remove</button>
               </div>
             </div>
           </li>
@@ -590,25 +590,25 @@
             <input type="text" bind:value={draft.label} disabled={contactBusy} maxlength="40" placeholder="Label (optional)" aria-label="Label" />
           </div>
           {#if draft.kind === 'email'}
-            <small class="muted">Separate from the address you sign in with. That one is never shared.</small>
+            <small class="lt-muted">Separate from the address you sign in with. That one is never shared.</small>
           {/if}
           <div class="field-actions">
-            <button type="submit" class="btn btn-primary" disabled={contactBusy || !draft.value.trim()}>Add item</button>
-            <button type="button" class="btn" disabled={contactBusy} onclick={() => (draft = null)}>Cancel</button>
+            <button type="submit" class="lt-btn lt-btn-primary" disabled={contactBusy || !draft.value.trim()}>Add item</button>
+            <button type="button" class="lt-btn" disabled={contactBusy} onclick={() => (draft = null)}>Cancel</button>
           </div>
         </form>
       {:else if contactItems.length < MAX_CONTACT_ITEMS}
         <div class="field-actions">
-          <button type="button" class="btn" disabled={contactBusy} onclick={startDraft}>Add contact item</button>
+          <button type="button" class="lt-btn" disabled={contactBusy} onclick={startDraft}>Add contact item</button>
         </div>
       {:else}
-        <p class="muted">A contact card holds {MAX_CONTACT_ITEMS} items at most.</p>
+        <p class="lt-muted">A contact card holds {MAX_CONTACT_ITEMS} items at most.</p>
       {/if}
     </section>
 
-    <section class="pw-section">
+    <section class="lt-section">
       <h2>When you open Patchwork</h2>
-      <p class="muted profile-hint">
+      <p class="lt-muted profile-hint">
         Patchwork opens on the whole quilt. Switch this on to start on My Quilt instead.
       </p>
       <label class="toggle-row">
@@ -622,7 +622,7 @@
       </label>
     </section>
 
-    <section class="pw-section">
+    <section class="lt-section">
       <h2>Discovery</h2>
       <label class="toggle-row">
         <input
@@ -633,45 +633,45 @@
         />
         <span>Hide patches that amended the lining</span>
       </label>
-      <p class="muted profile-hint">
+      <p class="lt-muted profile-hint">
         Keeps patches that changed the shared community standards out of your
         quilt, search, map, and event feed. Direct links still work.
       </p>
     </section>
 
-    <section class="pw-section">
+    <section class="lt-section">
       <h2>Personal feed</h2>
-      <p class="muted profile-hint">
+      <p class="lt-muted profile-hint">
         A calendar feed of every event on your My Quilt, for your calendar
         app. The address is a secret. Anyone who has it can read your feed.
       </p>
       {#if feedUrl}
         <div class="feed-url-row">
           <code class="feed-url">{feedUrl}</code>
-          <button class="btn btn-secondary" onclick={copyFeedUrl}>Copy</button>
+          <button class="lt-btn lt-btn-secondary" onclick={copyFeedUrl}>Copy</button>
         </div>
-        <p class="muted profile-hint">
+        <p class="lt-muted profile-hint">
           Copy it now. This address won't be shown again, and regenerating
           replaces it.
         </p>
       {/if}
       <div class="field-actions">
         {#if feedEnabled}
-          <button class="btn btn-secondary" onclick={generateFeed} disabled={feedBusy}>
+          <button class="lt-btn lt-btn-secondary" onclick={generateFeed} disabled={feedBusy}>
             Regenerate address
           </button>
-          <button class="btn btn-secondary" onclick={disableFeed} disabled={feedBusy}>
+          <button class="lt-btn lt-btn-secondary" onclick={disableFeed} disabled={feedBusy}>
             Disable
           </button>
         {:else}
-          <button class="btn btn-primary" onclick={generateFeed} disabled={feedBusy}>
+          <button class="lt-btn lt-btn-primary" onclick={generateFeed} disabled={feedBusy}>
             Create feed
           </button>
         {/if}
       </div>
     </section>
 
-    <section class="pw-section">
+    <section class="lt-section">
       <!-- Two downloads three inches apart, one saving a person and one
            saving the community, and the headings said neither: "if I'd
            taken the obvious-sounding one, the one called 'Download my
@@ -681,26 +681,26 @@
            other one (F-103). The fold around it is the phone pass's. -->
       <details class="pw-fold" open={!narrow}>
         <summary><h2>Your own data</h2></summary>
-      <p class="muted profile-hint">
+      <p class="lt-muted profile-hint">
         One file with everything this quilt holds about you: your profile and
         contact card, every membership including the ones you keep hidden, the
         proposals, votes, comments, notices and events you wrote, and your
         settings. Nothing anyone else wrote, and no sign-in secrets, so it is
         safe to keep, and it will not let anyone into your account.
       </p>
-      <p class="muted profile-hint">
+      <p class="lt-muted profile-hint">
         This is about you and nobody else. For your community's own
         records, take a copy of the quilt below.
       </p>
       <div class="field-actions">
-        <button class="btn btn-secondary" onclick={downloadMyData} disabled={downloadingData}>
+        <button class="lt-btn lt-btn-secondary" onclick={downloadMyData} disabled={downloadingData}>
           {downloadingData ? 'Preparing...' : 'Download my data'}
         </button>
       </div>
       </details>
     </section>
 
-    <section class="pw-section">
+    <section class="lt-section">
       <!-- "Member seamrip" as a heading did none of the work, sitting
            directly above Danger Zone: "I sat there for a good half-minute
            working out whether 'Member seamrip' meant 'rip out this member',
@@ -710,7 +710,7 @@
            fold around it is the phone pass's. -->
       <details class="pw-fold" open={!narrow}>
         <summary><h2>A copy of this quilt (seamrip)</h2></summary>
-      <p class="muted profile-hint">
+      <p class="lt-muted profile-hint">
         A copy of this quilt as you can see it, in the format a new Patchwork
         reads. It is here so a community can start again elsewhere without
         waiting for an admin. It holds every public patch on this quilt and
@@ -721,12 +721,12 @@
         picture, so the new quilt invites everyone back and each person sets
         their own visibility there.
       </p>
-      <p class="muted profile-hint">
+      <p class="lt-muted profile-hint">
         Nothing here removes you or changes this quilt. Any Patchwork can
         read the file, so it goes to whoever sets the new one up.
       </p>
       <div class="field-actions">
-        <button class="btn btn-secondary" onclick={takeMemberSeamrip} disabled={takingSeamrip}>
+        <button class="lt-btn lt-btn-secondary" onclick={takeMemberSeamrip} disabled={takingSeamrip}>
           {takingSeamrip ? 'Preparing...' : 'Take a copy'}
         </button>
       </div>
@@ -734,16 +734,16 @@
     </section>
 
     {#if steward?.steward}
-      <section class="pw-section">
+      <section class="lt-section">
         <h2>Steward listing</h2>
         {#if steward.listed}
-          <p class="muted profile-hint">
+          <p class="lt-muted profile-hint">
             You're named on this quilt's <a href="/label" onclick={(e) => { e.preventDefault(); navigate('/label'); }}>Label</a>
             as one of its stewards. That listing belongs to you, and you can
             unlist yourself any time.
           </p>
         {:else}
-          <p class="muted profile-hint">
+          <p class="lt-muted profile-hint">
             An instance admin wants to name you on this quilt's
             <a href="/label" onclick={(e) => { e.preventDefault(); navigate('/label'); }}>Label</a>
             as a steward. Nothing appears until you accept, and you can
@@ -758,17 +758,17 @@
         </div>
         <div class="field-actions">
           {#if steward.listed}
-            <button class="btn btn-primary" onclick={() => setStewardListed(true)} disabled={stewardSaving}>
+            <button class="lt-btn lt-btn-primary" onclick={() => setStewardListed(true)} disabled={stewardSaving}>
               Save
             </button>
-            <button class="btn btn-secondary" onclick={() => setStewardListed(false)} disabled={stewardSaving}>
+            <button class="lt-btn lt-btn-secondary" onclick={() => setStewardListed(false)} disabled={stewardSaving}>
               Unlist me
             </button>
           {:else}
-            <button class="btn btn-primary" onclick={() => setStewardListed(true)} disabled={stewardSaving}>
+            <button class="lt-btn lt-btn-primary" onclick={() => setStewardListed(true)} disabled={stewardSaving}>
               Accept and list me
             </button>
-            <button class="btn btn-secondary" onclick={declineSteward} disabled={stewardSaving}>
+            <button class="lt-btn lt-btn-secondary" onclick={declineSteward} disabled={stewardSaving}>
               Decline
             </button>
           {/if}
@@ -777,7 +777,7 @@
     {/if}
 
     <!-- ===== Danger zone (docs/adr/086) ===== -->
-    <section class="pw-section">
+    <section class="lt-section">
       <details class="pw-fold" open={!narrow}>
         <summary><h2 class="danger-heading">Danger Zone</h2></summary>
       <div class="danger-card">
@@ -836,7 +836,7 @@
         </label>
         {#if !deleteArmed}
           <button
-            class="btn btn-danger"
+            class="lt-btn lt-btn-danger"
             disabled={confirmUsername !== user.username}
             onclick={() => { deleteArmed = true; }}
           >
@@ -845,10 +845,10 @@
         {:else}
           <div class="delete-confirm">
             <span class="danger-warning">Really delete your account? You will be signed out.</span>
-            <button class="btn btn-danger" onclick={deleteAccount} disabled={deleting}>
+            <button class="lt-btn lt-btn-danger" onclick={deleteAccount} disabled={deleting}>
               {deleting ? 'Deleting…' : 'Yes, delete my account'}
             </button>
-            <button class="btn btn-secondary" onclick={() => { deleteArmed = false; }} disabled={deleting}>
+            <button class="lt-btn lt-btn-secondary" onclick={() => { deleteArmed = false; }} disabled={deleting}>
               Cancel
             </button>
           </div>

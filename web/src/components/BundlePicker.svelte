@@ -36,7 +36,7 @@
        otherwise lived only in a tooltip, which a finger never sees. -->
   <div class="bundle-head">
     <span class="bundle-label">Bundle</span>
-    <span class="muted fabric-name">{swatchName(bundle[selectedSlot])}</span>
+    <span class="lt-muted fabric-name">{swatchName(bundle[selectedSlot])}</span>
   </div>
   <div class="bundle-slots">
     {#each bundle as hex, i}
@@ -58,7 +58,7 @@
     {/if}
   </div>
   {#if hint}
-    <p class="muted bundle-hint">{hint}</p>
+    <p class="lt-muted bundle-hint">{hint}</p>
   {/if}
   <div class="wall">
     {#each WALL as sw (sw.key)}

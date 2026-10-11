@@ -395,7 +395,7 @@
   }
 </script>
 
-<div class="page-fade">
+<div class="lt-fade-in">
   <div class="container-narrow">
     <div>
       {#if mode === 'create' && !readyToCreate}
@@ -414,15 +414,15 @@
       {:else}
       {#if mode === 'setup'}
         <h1>Set up your patch</h1>
-        <p class="muted" style="margin-bottom: 0.35rem;">Complete this patch's details to activate it.</p>
+        <p class="lt-muted" style="margin-bottom: 0.35rem;">Complete this patch's details to activate it.</p>
         {#if expiresAt}
-          <p class="muted setup-expiry" style="margin-bottom: 1.5rem;">Approval expires {formatExpiry(expiresAt)}.</p>
+          <p class="lt-muted setup-expiry" style="margin-bottom: 1.5rem;">Approval expires {formatExpiry(expiresAt)}.</p>
         {/if}
       {:else}
         <h1>Create Patch</h1>
-        <p class="muted" style="margin-bottom: 1.5rem;">Start a new community, collective, venue, or group.</p>
+        <p class="lt-muted" style="margin-bottom: 1.5rem;">Start a new community, collective, venue, or group.</p>
         {#if getSubmissionsEnabled()}
-          <p class="muted" style="margin-bottom: 1.5rem;">Not yours to run? <a href="/submit" class="suggest-link" onclick={(e) => { e.preventDefault(); navigate('/submit'); }}>Suggest it instead</a></p>
+          <p class="lt-muted" style="margin-bottom: 1.5rem;">Not yours to run? <a href="/submit" class="suggest-link" onclick={(e) => { e.preventDefault(); navigate('/submit'); }}>Suggest it instead</a></p>
         {/if}
       {/if}
 
@@ -431,7 +431,7 @@
           <div class="field">
             <label for="setup-slug">Address</label>
             <input id="setup-slug" type="text" value={setupSlug} disabled readonly />
-            <span class="field-hint muted">This is the patch's existing address.</span>
+            <span class="field-hint lt-muted">This is the patch's existing address.</span>
           </div>
         {/if}
 
@@ -464,7 +464,7 @@
               On the map. <button type="button" class="link-btn" onclick={clearPlacement}>Remove</button>
             </p>
           {:else if lookingUp}
-            <p class="place-state muted">Looking for this address...</p>
+            <p class="place-state lt-muted">Looking for this address...</p>
           {/if}
 
           {#if showPicker && !placed}
@@ -486,7 +486,7 @@
 
         <div class="field">
           <label>Tags</label>
-          <p class="field-hint muted">
+          <p class="field-hint lt-muted">
             What kind of patch is this? Tags help people find you, and new
             patches are placed near others with the same tags on the quilt.
             The first tag decides your default motif. Missing a word? Suggest
@@ -503,7 +503,7 @@
           <summary>Appearance (optional)</summary>
           <div class="field">
             <label>Tile</label>
-            <p class="field-hint muted">
+            <p class="field-hint lt-muted">
               How this patch looks on the quilt. You can change it anytime
               in Patch Settings → Appearance, and draft your own block there too.
             </p>
@@ -520,7 +520,7 @@
                 ></svg>
                 <button
                   type="button"
-                  class="btn btn-secondary btn-sm"
+                  class="lt-btn lt-btn-secondary lt-btn-sm"
                   onclick={() => { rotation = (rotation + 90) % 360; }}
                   disabled={submitting}
                   title="Rotate 90°"
@@ -577,7 +577,7 @@
 
           <div class="field">
             <label>Motif</label>
-            <p class="field-hint muted">
+            <p class="field-hint lt-muted">
               Optional. The mark that appears beside the name on the quilt.
               Unset, it follows your first tag. You can change it later in
               Patch Settings.
@@ -605,7 +605,7 @@
 
         <div class="field">
           <label>The lining</label>
-          <p class="field-hint muted">
+          <p class="field-hint lt-muted">
             Every patch starts with a shared community standards called the lining. It is always public, and if your patch amends it, the changes are public and the patch is marked as having amended the lining.
           </p>
           <button type="button" class="lining-toggle" onclick={toggleLining}>
@@ -616,7 +616,7 @@
               {#if lining}
                 <MarkdownRenderer content={lining.body} />
               {:else}
-                <span class="muted">Loading...</span>
+                <span class="lt-muted">Loading...</span>
               {/if}
             </div>
           {/if}
@@ -632,7 +632,7 @@
              nobody is told about is how that happened the first time. -->
         <div class="field">
           <label>Members and governance</label>
-          <p class="field-hint muted">
+          <p class="field-hint lt-muted">
             Your member list and your proposals start out visible to members only. Events, your description and your tile are public. You can publish either one later in Patch Settings.
           </p>
         </div>
@@ -644,7 +644,7 @@
                what this setting governs — so somebody can pick Open reasoning
                that people need it to see the patch at all, which is the one
                thing it has nothing to do with. -->
-          <p class="field-hint muted">
+          <p class="field-hint lt-muted">
             Members vote on proposals and appear in the patch's member list.
             Following is separate and always open: anyone can follow a public
             patch and see its events.
@@ -654,7 +654,7 @@
                  template below and will keep following it until it is
                  answered here. Without the line, picking a template silently
                  moves an answer further up the page. -->
-            <p class="field-hint muted">Set by the {templates.find((t) => t.id === template)?.name || template} template. Change it if that is not this patch.</p>
+            <p class="field-hint lt-muted">Set by the {templates.find((t) => t.id === template)?.name || template} template. Change it if that is not this patch.</p>
           {/if}
           <div class="policy-grid">
             {#each membershipPolicies as p (p.id)}
@@ -671,7 +671,7 @@
 
         <div class="field">
           <label>Governance Template</label>
-          <p class="field-hint muted">How should this patch be organized? You can change this later.</p>
+          <p class="field-hint lt-muted">How should this patch be organized? You can change this later.</p>
           <div class="template-grid">
             {#each templates as t}
               <label class="template-card" class:selected={template === t.id}>
@@ -690,11 +690,11 @@
         </div>
 
         {#if error}
-          <p class="error-text">{error}</p>
+          <p class="lt-error-text">{error}</p>
         {/if}
 
         <div class="field-actions">
-          <button type="submit" class="btn btn-primary" disabled={submitting}>
+          <button type="submit" class="lt-btn lt-btn-primary" disabled={submitting}>
             {#if mode === 'setup'}
               {submitting ? 'Finishing...' : 'Finish setup'}
             {:else}
@@ -703,7 +703,7 @@
           </button>
           <button
             type="button"
-            class="btn btn-secondary"
+            class="lt-btn lt-btn-secondary"
             onclick={() => navigate(mode === 'setup' ? `/patches/${setupSlug}` : '/dashboard')}
           >
             Cancel

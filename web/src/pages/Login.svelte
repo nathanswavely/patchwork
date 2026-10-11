@@ -139,7 +139,7 @@
   }
 </script>
 
-<div class="page-fade">
+<div class="lt-fade-in">
   <div class="login-page">
 
     {#if emailSent}
@@ -147,7 +147,7 @@
       <div class="sent-state">
         <h1>Check your email</h1>
         <p>We sent a sign-in link to <strong>{email}</strong>.</p>
-        <p class="muted">It should arrive within a minute or two. Open the link to continue.</p>
+        <p class="lt-muted">It should arrive within a minute or two. Open the link to continue.</p>
 
         <form class="code-form" onsubmit={(e) => { e.preventDefault(); handleCodeSubmit(); }}>
           <label for="signin-code">Opened the link on another device? Enter the code it shows</label>
@@ -162,15 +162,15 @@
             required
             disabled={codeLoading}
           />
-          <button type="submit" class="btn btn-secondary submit-btn" disabled={codeLoading || !signInCode.trim()}>
+          <button type="submit" class="lt-btn lt-btn-secondary submit-btn" disabled={codeLoading || !signInCode.trim()}>
             {codeLoading ? 'Checking...' : 'Continue'}
           </button>
         </form>
         {#if codeError}
-          <p class="error-text">{codeError}</p>
+          <p class="lt-error-text">{codeError}</p>
         {/if}
 
-        <button class="btn-link" onclick={() => { emailSent = false; email = ''; signInCode = ''; codeError = ''; }}>
+        <button class="lt-btn-link" onclick={() => { emailSent = false; email = ''; signInCode = ''; codeError = ''; }}>
           Use a different email
         </button>
       </div>
@@ -195,17 +195,17 @@
           required
           disabled={emailLoading}
         />
-        <button type="submit" class="btn btn-primary submit-btn" disabled={emailLoading || !email.trim()}>
+        <button type="submit" class="lt-btn lt-btn-primary submit-btn" disabled={emailLoading || !email.trim()}>
           {emailLoading ? 'Sending...' : 'Continue with email'}
         </button>
       </form>
       {#if emailError}
-        <p class="error-text">{emailError}</p>
+        <p class="lt-error-text">{emailError}</p>
       {/if}
 
       <div class="signin-link">
-        <span class="muted">Already have an account?</span>
-        <button class="btn-link" onclick={() => showSignIn = true}>Sign in</button>
+        <span class="lt-muted">Already have an account?</span>
+        <button class="lt-btn-link" onclick={() => showSignIn = true}>Sign in</button>
       </div>
 
     {:else}
@@ -217,20 +217,20 @@
         <div class="signin-option">
           <h2>Passkey</h2>
           {#if !canUsePasskeys}
-            <p class="muted">
+            <p class="lt-muted">
               This browser cannot use passkeys. Sign in with an email link below.
             </p>
           {:else}
-            <p class="muted">The quickest way in. Your key stays on your device.</p>
+            <p class="lt-muted">The quickest way in. Your key stays on your device.</p>
             <button
-              class="btn btn-primary passkey-btn"
+              class="lt-btn lt-btn-primary passkey-btn"
               onclick={handlePasskeyLogin}
               disabled={passKeyLoading}
             >
               {passKeyLoading ? 'Authenticating...' : 'Sign in with passkey'}
             </button>
             {#if passKeyError}
-              <p class="error-text">{passKeyError}</p>
+              <p class="lt-error-text">{passKeyError}</p>
             {/if}
           {/if}
         </div>
@@ -241,7 +241,7 @@
 
         <div class="signin-option">
           <h2>Email</h2>
-          <p class="muted">On a device without your passkey? We'll send you a sign-in link.</p>
+          <p class="lt-muted">On a device without your passkey? We'll send you a sign-in link.</p>
           <form onsubmit={(e) => { e.preventDefault(); handleEmailSubmit(); }}>
             <input
               type="email"
@@ -250,12 +250,12 @@
               required
               disabled={emailLoading}
             />
-            <button type="submit" class="btn btn-secondary submit-btn" disabled={emailLoading || !email.trim()}>
+            <button type="submit" class="lt-btn lt-btn-secondary submit-btn" disabled={emailLoading || !email.trim()}>
               {emailLoading ? 'Sending...' : 'Send sign-in link'}
             </button>
           </form>
           {#if emailError}
-            <p class="error-text">{emailError}</p>
+            <p class="lt-error-text">{emailError}</p>
           {/if}
         </div>
       </div>
@@ -263,7 +263,7 @@
       {#if showRecovery}
         <div class="recovery-option">
           <h2>Recovery code</h2>
-          <p class="muted">
+          <p class="lt-muted">
             Enter your username and one of your saved recovery codes. Each
             code works once.
           </p>
@@ -288,27 +288,27 @@
             />
             <button
               type="submit"
-              class="btn btn-secondary submit-btn"
+              class="lt-btn lt-btn-secondary submit-btn"
               disabled={recoveryLoading || !recoveryUsername.trim() || !recoveryCode.trim()}
             >
               {recoveryLoading ? 'Checking...' : 'Sign in with recovery code'}
             </button>
           </form>
           {#if recoveryError}
-            <p class="error-text">{recoveryError}</p>
+            <p class="lt-error-text">{recoveryError}</p>
           {/if}
         </div>
       {:else}
         <div class="recovery-link">
-          <button class="btn-link muted-link" onclick={() => showRecovery = true}>
+          <button class="lt-btn-link muted-link" onclick={() => showRecovery = true}>
             Lost your passkey? Use a recovery code
           </button>
         </div>
       {/if}
 
       <div class="signin-link">
-        <span class="muted">New here?</span>
-        <button class="btn-link" onclick={() => showSignIn = false}>Create an account</button>
+        <span class="lt-muted">New here?</span>
+        <button class="lt-btn-link" onclick={() => showSignIn = false}>Create an account</button>
       </div>
     {/if}
 
@@ -389,7 +389,7 @@
     margin-bottom: 0.3rem;
   }
 
-  .signin-option .muted {
+  .signin-option .lt-muted {
     font-size: 0.85rem;
     margin-bottom: 0.75rem;
   }
@@ -437,7 +437,7 @@
     margin-bottom: 0.3rem;
   }
 
-  .recovery-option .muted {
+  .recovery-option .lt-muted {
     font-size: 0.85rem;
     margin-bottom: 0.75rem;
   }

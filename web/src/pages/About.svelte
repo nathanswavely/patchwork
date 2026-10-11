@@ -61,7 +61,7 @@
   <title>About &mdash; {instanceName}</title>
 </svelte:head>
 
-<div class="about-page page-fade">
+<div class="about-page lt-fade-in">
   <!-- Hero: a live miniature of this instance's real quilt (docs/adr/040)
        — no fake imagery standing in for identity. Falls back to the
        instance's own icon when there's nothing to place yet. -->
@@ -187,7 +187,7 @@
 
   {#if isAuthChecked() && !isLoggedIn()}
     <section class="about-join">
-      <a href="/login" class="btn btn-primary" onclick={goLogin}>Join {instanceName}</a>
+      <a href="/login" class="lt-btn lt-btn-primary" onclick={goLogin}>Join {instanceName}</a>
     </section>
   {/if}
 

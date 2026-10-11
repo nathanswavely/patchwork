@@ -91,11 +91,11 @@
 
 <div class="remote-patch" style="--sash-color: {sashColor}">
   {#if loading}
-    <p class="muted">Loading…</p>
+    <p class="lt-muted">Loading…</p>
   {:else if error}
     <div class="remote-error">
       <p>{error}</p>
-      <a class="btn btn-secondary" href="{origin}/patches/{slug}" target="_blank" rel="noopener">
+      <a class="lt-btn lt-btn-secondary" href="{origin}/patches/{slug}" target="_blank" rel="noopener">
         Try their site <ArrowSquareOut size={14} />
       </a>
     </div>
@@ -122,12 +122,12 @@
         </div>
         <div class="remote-actions">
           {#if isLoggedIn()}
-            <button class="btn {follow ? 'btn-secondary' : 'btn-primary'}" onclick={toggleFollow} disabled={busy}>
+            <button class="lt-btn {follow ? 'lt-btn-secondary' : 'lt-btn-primary'}" onclick={toggleFollow} disabled={busy}>
               <Heart size={15} weight={follow ? 'fill' : 'regular'} />
               {follow ? 'Following' : 'Follow'}
             </button>
           {/if}
-          <a class="btn btn-secondary" href="{origin}/patches/{slug}" target="_blank" rel="noopener">
+          <a class="lt-btn lt-btn-secondary" href="{origin}/patches/{slug}" target="_blank" rel="noopener">
             Visit on {quiltInfo?.name || host} <ArrowSquareOut size={14} />
           </a>
         </div>
@@ -141,14 +141,14 @@
               <li>
                 <span class="remote-event-date">{fmtDate(ev.starts_at)}</span>
                 <span class="remote-event-title">{ev.title}</span>
-                {#if ev.location}<span class="muted">· {ev.location}</span>{/if}
+                {#if ev.location}<span class="lt-muted">· {ev.location}</span>{/if}
               </li>
             {/each}
           </ul>
         </section>
       {/if}
 
-      <p class="remote-note muted">
+      <p class="remote-note lt-muted">
         You're viewing this patch's public face from your own quilt. Joining
         and everything deeper live on
         <a href={origin} target="_blank" rel="noopener">{quiltInfo?.name || host}</a>.
@@ -224,7 +224,7 @@
     margin-bottom: 0.6rem;
   }
 
-  .remote-actions .btn {
+  .remote-actions .lt-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -266,7 +266,7 @@
     color: var(--color-text-muted);
   }
 
-  .remote-error .btn {
+  .remote-error .lt-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;

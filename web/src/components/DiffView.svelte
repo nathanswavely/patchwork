@@ -183,7 +183,7 @@
 
 {#if oldText === newText}
   <div class="diff-view diff-empty">
-    <p class="muted" style="padding: 1rem; text-align: center; font-size: 0.85rem;">No changes</p>
+    <p class="lt-muted" style="padding: 1rem; text-align: center; font-size: 0.85rem;">No changes</p>
   </div>
 {:else}
 

@@ -204,7 +204,7 @@
 
 <div class="events-page">
   <div class="events-header">
-    <span class="muted">
+    <span class="lt-muted">
       {events.length} {events.length === 1 ? 'event' : 'events'}
       {#if isUnclaimed}
         <span class="badge">Community-submitted</span>
@@ -221,12 +221,12 @@
              viewer_trusted, so this just needs to point there. -->
         <a
           href="/patches/{slug}/settings/sources"
-          class="btn btn-secondary btn-sm"
+          class="lt-btn lt-btn-secondary lt-btn-sm"
           onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/settings/sources`); }}
         >Sources</a>
       {/if}
       {#if canBulkUpload}
-        <button class="btn btn-secondary btn-sm" onclick={() => (showUpload = !showUpload)}>Upload events</button>
+        <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => (showUpload = !showUpload)}>Upload events</button>
       {/if}
       {#if postingRight !== 'none'}
         <!-- Always carries ?node=: this is the door to this patch's calendar,
@@ -234,13 +234,13 @@
              which patch they meant. -->
         <a
           href="/events/new?node={slug}"
-          class="btn btn-primary btn-sm"
+          class="lt-btn lt-btn-primary lt-btn-sm"
           onclick={(e) => { e.preventDefault(); navigate(`/events/new?node=${slug}`); }}
         >{postingRight === 'direct' ? 'New event' : 'Suggest an event'}</a>
       {:else if membershipRole === 'follower'}
-        <span class="role-prompt muted">Become a member to create events.</span>
+        <span class="role-prompt lt-muted">Become a member to create events.</span>
       {:else}
-        <span class="role-prompt muted">Join this patch to create events.</span>
+        <span class="role-prompt lt-muted">Join this patch to create events.</span>
       {/if}
     </span>
   </div>
@@ -249,7 +249,7 @@
     <div class="upload-panel">
       <div class="upload-row">
         <input type="file" accept=".csv,text/csv" onchange={onUploadFile} disabled={uploading} />
-        <button class="btn-link" onclick={downloadTemplate}>Download template</button>
+        <button class="lt-btn-link" onclick={downloadTemplate}>Download template</button>
       </div>
 
       {#if uploadErrors.length > 0}
@@ -281,25 +281,25 @@
             </tbody>
           </table>
           {#if uploadEvents.length > 8}
-            <p class="muted upload-more">…and {uploadEvents.length - 8} more</p>
+            <p class="lt-muted upload-more">…and {uploadEvents.length - 8} more</p>
           {/if}
         </div>
         <div class="upload-actions">
           <button
-            class="btn btn-primary btn-sm"
+            class="lt-btn lt-btn-primary lt-btn-sm"
             onclick={confirmUpload}
             disabled={uploading || uploadErrors.length > 0}
           >{uploading ? 'Uploading…' : `Create ${uploadEvents.length} ${uploadEvents.length === 1 ? 'event' : 'events'}`}</button>
-          <button class="btn btn-secondary btn-sm" onclick={() => { resetUpload(); showUpload = false; }} disabled={uploading}>Cancel</button>
+          <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => { resetUpload(); showUpload = false; }} disabled={uploading}>Cancel</button>
           {#if uploadErrors.length > 0}
-            <span class="muted upload-fix-note">Fix the rows above and re-pick the file.</span>
+            <span class="lt-muted upload-fix-note">Fix the rows above and re-pick the file.</span>
           {/if}
         </div>
       {:else if uploadFileName && uploadErrors.length === 0}
-        <p class="muted">No events found in {uploadFileName}.</p>
+        <p class="lt-muted">No events found in {uploadFileName}.</p>
       {/if}
 
-      <p class="muted upload-hint">
+      <p class="lt-muted upload-hint">
         Times are read in your timezone. Rows matching an event already on the
         calendar are skipped, so re-uploading a corrected file is safe.
       </p>
@@ -319,14 +319,14 @@
         <div class="suggested-card">
           <div class="suggested-main">
             <span class="suggested-event-title">{sub.title}</span>
-            <span class="suggested-meta muted">
+            <span class="suggested-meta lt-muted">
               {formatDate(sub.starts_at, sub.timezone)} &middot; {formatTime(sub.starts_at, sub.timezone)}
               {#if sub.location} &middot; {sub.location}{/if}
             </span>
             {#if sub.description}
-              <p class="suggested-desc muted">{sub.description}</p>
+              <p class="suggested-desc lt-muted">{sub.description}</p>
             {/if}
-            <span class="suggested-meta muted">
+            <span class="suggested-meta lt-muted">
               Suggested by {sub.submitter_display_name || sub.submitter_username || 'unknown'}
             </span>
           </div>
@@ -339,14 +339,14 @@
                 disabled={reviewing}
               ></textarea>
               <div class="suggested-actions">
-                <button class="btn btn-danger btn-sm" onclick={() => review(sub.id, 'reject', declineNote)} disabled={reviewing}>Decline</button>
-                <button class="btn btn-secondary btn-sm" onclick={() => { decliningId = ''; declineNote = ''; }} disabled={reviewing}>Cancel</button>
+                <button class="lt-btn lt-btn-danger lt-btn-sm" onclick={() => review(sub.id, 'reject', declineNote)} disabled={reviewing}>Decline</button>
+                <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => { decliningId = ''; declineNote = ''; }} disabled={reviewing}>Cancel</button>
               </div>
             </div>
           {:else}
             <div class="suggested-actions">
-              <button class="btn btn-primary btn-sm" onclick={() => review(sub.id, 'approve')} disabled={reviewing}>Approve</button>
-              <button class="btn btn-secondary btn-sm" onclick={() => { decliningId = sub.id; declineNote = ''; }} disabled={reviewing}>Decline</button>
+              <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={() => review(sub.id, 'approve')} disabled={reviewing}>Approve</button>
+              <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => { decliningId = sub.id; declineNote = ''; }} disabled={reviewing}>Decline</button>
             </div>
           {/if}
         </div>
@@ -355,11 +355,11 @@
   {/if}
 
   {#if loading}
-    <p class="muted">Loading events...</p>
+    <p class="lt-muted">Loading events...</p>
   {:else if events.length === 0}
     <div class="empty-state">
       <p>No events scheduled.</p>
-      <p class="muted">Members can create events for meetups, shows, or gatherings.</p>
+      <p class="lt-muted">Members can create events for meetups, shows, or gatherings.</p>
     </div>
   {:else}
     <ul class="event-list">
@@ -639,7 +639,7 @@
     gap: 0.5rem 0.75rem;
   }
 
-  .events-header > .muted {
+  .events-header > .lt-muted {
     display: inline-flex;
     align-items: baseline;
     flex-wrap: wrap;
@@ -654,7 +654,7 @@
     margin-left: auto;
   }
 
-  .header-buttons .btn {
+  .header-buttons .lt-btn {
     white-space: nowrap;
   }
 

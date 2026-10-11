@@ -17,7 +17,7 @@ Patchwork is a platform for grassroots communities to organize, govern, and disc
 - **Maps:** Leaflet, with MapLibre GL drawing OpenFreeMap vector tiles (no API key — docs/adr/077, `web/src/lib/basemap.js`)
 - **Address suggestions:** an optional local **gazetteer** — an OpenStreetMap extract cropped to the instance radius, built offline by `cmd/gazetteer` and copied in as a SQLite file (docs/adr/082). No geocoding service, no key, nothing fetched at runtime. It only ever *proposes* a marker; a coordinate is saved when a person confirms it, so an instance without the file behaves exactly as before
 - **Visualization:** D3.js treemap (quilt view — the signature visual)
-- **Design system:** Liquid Textile, vendored in `web/src/vendor/liquid-textile/` (docs/adr/2026-10-11). Never edit those files: change Liquid Textile and run `scripts/sync-lt.sh`. Patchwork's `--color-*` and spacing tokens are aliases of its `--lt-*` ones
+- **Design system:** Liquid Textile, vendored in `web/src/vendor/liquid-textile/` (docs/adr/2026-10-11). Never edit those files: change Liquid Textile and run `scripts/sync-lt.sh`. Patchwork's `--color-*` and spacing tokens are aliases of its `--lt-*` ones. The shared classes are Liquid Textile's: `lt-btn` (`-primary`, `-secondary`, `-danger`, `-ghost`, `-link`, `-sm`), `lt-card`, `lt-section`, `lt-table-wrap` + `lt-table`, `lt-muted`, `lt-error-text`, `lt-success-text`, `lt-fade-in`, `lt-scroll-thin`; there is no `.btn` or `.card` any more (`.badge` is still Patchwork's until it moves to `lt-pill`/`lt-tag`)
 
 ## Project Structure
 

@@ -715,7 +715,7 @@
       </button>
     </div>
 
-    <div class="cards-scroll scroll-thin">
+    <div class="cards-scroll lt-scroll-thin">
       {#if loading}
         <div class="cards-loading">
           {#each Array(6) as _}
@@ -731,29 +731,29 @@
           {#if inViewActive && ordered.length > 0}
             <!-- The lens narrowed to nothing while the quilt still holds
                  patches: say how many, and offer the one step back. -->
-            <p class="muted">
+            <p class="lt-muted">
               No patches in view. {ordered.length} elsewhere on the quilt.
             </p>
             <div class="empty-actions">
-              <button class="btn btn-secondary" onclick={() => setInViewOnly(false)}>Show them all</button>
+              <button class="lt-btn lt-btn-secondary" onclick={() => setInViewOnly(false)}>Show them all</button>
             </div>
           {:else if getSelectedTags().length > 0 || getSearchQuery().trim()}
             <!-- Name the active lenses (docs/adr/033): composed narrowing
                  must explain itself where it produces nothing. -->
-            <p class="muted">
+            <p class="lt-muted">
               No patches match your filter{quiltScope === 'my' ? ' in My Quilt' : ''}.
             </p>
             <div class="empty-actions">
-              <button class="btn btn-secondary" onclick={resetFilters}>Clear filter</button>
+              <button class="lt-btn lt-btn-secondary" onclick={resetFilters}>Clear filter</button>
               {#if quiltScope === 'my'}
-                <button class="btn btn-secondary" onclick={() => navigate(scopedPath(surfaceForRoute(routeName) || 'quilt', 'local'))}>Search the whole quilt</button>
+                <button class="lt-btn lt-btn-secondary" onclick={() => navigate(scopedPath(surfaceForRoute(routeName) || 'quilt', 'local'))}>Search the whole quilt</button>
               {/if}
               {#if getSearchQuery().trim() && getSubmissionsEnabled()}
-                <button class="btn btn-secondary" onclick={() => navigate(`/submit?name=${encodeURIComponent(getSearchQuery().trim())}`)}>Suggest a patch</button>
+                <button class="lt-btn lt-btn-secondary" onclick={() => navigate(`/submit?name=${encodeURIComponent(getSearchQuery().trim())}`)}>Suggest a patch</button>
               {/if}
             </div>
           {:else}
-            <p class="muted">No patches here yet.</p>
+            <p class="lt-muted">No patches here yet.</p>
             {#if getSubmissionsEnabled()}
               <a href="/submit" class="suggest-link" onclick={(e) => { e.preventDefault(); navigate('/submit'); }}>Know a group that belongs here? Suggest a patch</a>
             {/if}

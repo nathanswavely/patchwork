@@ -62,7 +62,7 @@
 
 <div class="admin-tag-suggestions">
   <h1>Suggested tags</h1>
-  <p class="muted intro">
+  <p class="lt-muted intro">
     Words patch admins asked for. A suggestion sits privately on the
     patch that asked until you add it to the vocabulary. Approving
     publishes it on every patch waiting on it; declining removes it from
@@ -76,11 +76,11 @@
   {:else if error}
     <ErrorState message={error} onRetry={load} />
   {:else if suggestions.length === 0}
-    <p class="muted">No suggested tags waiting.</p>
+    <p class="lt-muted">No suggested tags waiting.</p>
   {:else}
     <ul class="suggestion-list">
       {#each suggestions as s (s.id)}
-        <li class="suggestion-row card">
+        <li class="suggestion-row lt-card">
           <div class="suggestion-main">
             <input
               class="suggestion-name"
@@ -90,7 +90,7 @@
               aria-label="Tag name, editable before approving"
               disabled={deciding === s.id}
             />
-            <span class="muted suggestion-meta">
+            <span class="lt-muted suggestion-meta">
               {#if s.suggested_by?.username}
                 by {s.suggested_by.display_name || s.suggested_by.username}
               {:else}
@@ -103,7 +103,7 @@
           </div>
           <div class="suggestion-actions">
             <button
-              class="btn btn-primary btn-sm"
+              class="lt-btn lt-btn-primary lt-btn-sm"
               onclick={() => decide(s, 'approve')}
               disabled={deciding === s.id}
             >Approve</button>

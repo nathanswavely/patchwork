@@ -178,7 +178,7 @@
     {#if canDecide || mayWithdraw}
       <div class="banner-actions">
         {#if canDecide}
-          <button class="btn btn-primary" onclick={() => handleDecide('approve')} disabled={deciding}>
+          <button class="lt-btn lt-btn-primary" onclick={() => handleDecide('approve')} disabled={deciding}>
             {deciding ? 'Working...' : 'Approve'}
           </button>
           <ConfirmAction
@@ -231,7 +231,7 @@
     {#if canDecide || mayWithdraw}
       <div class="banner-actions">
         {#if canDecide}
-          <button class="btn btn-primary" onclick={() => handleDecide('approve')} disabled={deciding}>
+          <button class="lt-btn lt-btn-primary" onclick={() => handleDecide('approve')} disabled={deciding}>
             {deciding ? 'Working...' : 'Approve'}
           </button>
           <ConfirmAction
@@ -241,7 +241,7 @@
             onConfirm={() => handleDecide('decline')}
           />
           {#if mayAskMembers}
-            <button class="btn btn-secondary" onclick={handleAskMembers} disabled={deciding}>
+            <button class="lt-btn lt-btn-secondary" onclick={handleAskMembers} disabled={deciding}>
               Ask the members
             </button>
           {/if}
@@ -285,7 +285,7 @@
     <p>The community approved this change. An admin needs to make it official.</p>
     {#if isAdmin}
       <div class="banner-actions">
-        <button class="btn btn-primary" onclick={handleApply} disabled={applying}>
+        <button class="lt-btn lt-btn-primary" onclick={handleApply} disabled={applying}>
           {applying ? 'Applying...' : 'Make this official'}
         </button>
       </div>

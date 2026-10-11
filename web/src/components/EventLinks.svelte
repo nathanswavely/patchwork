@@ -312,7 +312,7 @@
 
     {#each pending as l (l.id)}
       <div class="pending-row">
-        <span class="muted">
+        <span class="lt-muted">
           {#if l.initiated_by === 'owner'}
             Waiting for <strong>{l.node_name}</strong> to confirm this link
           {:else}
@@ -329,15 +329,15 @@
                 {/each}
               </select>
             {/if}
-            <button class="btn btn-sm" disabled={busy} onclick={() => confirmLink(l)}>
+            <button class="lt-btn lt-btn-sm" disabled={busy} onclick={() => confirmLink(l)}>
               <Check size={13} /> Confirm
             </button>
           {:else}
-            <button class="btn btn-sm" onclick={() => startConfirm(l)}>Review</button>
+            <button class="lt-btn lt-btn-sm" onclick={() => startConfirm(l)}>Review</button>
           {/if}
         {/if}
         {#if canRemove(l)}
-          <button class="btn btn-sm btn-secondary" onclick={() => removeLink(l)}>Remove</button>
+          <button class="lt-btn lt-btn-sm lt-btn-secondary" onclick={() => removeLink(l)}>Remove</button>
         {/if}
       </div>
     {/each}
@@ -366,7 +366,7 @@
                 {/each}
               </select>
             {/if}
-            <button class="btn btn-sm" disabled={busy} onclick={submitLink}>
+            <button class="lt-btn lt-btn-sm" disabled={busy} onclick={submitLink}>
               {staged.kind === 'mention' ? 'Add mention' : 'Request'}
             </button>
           {:else if reachesBeyondOwn}
@@ -390,7 +390,7 @@
                  whole choice behind a guess. -->
             {#each spokenForPatches as patch (patch.slug)}
               <button
-                class="btn btn-sm btn-secondary"
+                class="lt-btn lt-btn-sm lt-btn-secondary"
                 disabled={busy || takenSlugs.has(patch.slug)}
                 onclick={() => stagePatch(patch)}
               >
@@ -398,7 +398,7 @@
               </button>
             {/each}
           {/if}
-          <button class="btn btn-sm btn-secondary" onclick={resetAdd}>Cancel</button>
+          <button class="lt-btn lt-btn-sm lt-btn-secondary" onclick={resetAdd}>Cancel</button>
         </div>
       {:else}
         <button class="link-btn" onclick={() => (adding = true)}>
@@ -484,7 +484,7 @@
     font-size: 0.85rem;
   }
 
-  .pending-row .muted {
+  .pending-row .lt-muted {
     color: var(--color-text-muted);
   }
 

@@ -111,7 +111,7 @@
 
 </script>
 
-<div class="page-fade">
+<div class="lt-fade-in">
   <div class="page-header">
     <h1>Reports</h1>
   </div>
@@ -133,20 +133,20 @@
   {:else if error}
     <ErrorState message={error} retry={() => loadReports()} />
   {:else if reports.length === 0}
-    <p class="muted" style="text-align: center; padding: 2rem 0;">No {activeTab} reports.</p>
+    <p class="lt-muted" style="text-align: center; padding: 2rem 0;">No {activeTab} reports.</p>
   {:else}
     <div class="report-list">
       {#each reports as report (report.id)}
-        <div class="card report-card">
+        <div class="lt-card report-card">
           <div class="report-header">
             <span class="badge">{ENTITY_LABELS[report.entity_type] || report.entity_type}</span>
-            <span class="report-date muted">{formatDate(report.created_at)}</span>
+            <span class="report-date lt-muted">{formatDate(report.created_at)}</span>
           </div>
           <div class="report-body">
             <div class="report-meta">
               <span>Reported by <strong>{report.reporter_name || 'Unknown'}</strong></span>
               {#if report.target_name}
-                <span class="muted"> &middot; Target: {#if report.target_link}<a
+                <span class="lt-muted"> &middot; Target: {#if report.target_link}<a
                     href={report.target_link}
                     class="target-link"
                     onclick={(e) => { e.preventDefault(); navigate(report.target_link); }}
@@ -155,7 +155,7 @@
             </div>
             <p class="report-reason">{report.reason}</p>
             {#if report.details}
-              <p class="report-details muted">{report.details}</p>
+              <p class="report-details lt-muted">{report.details}</p>
             {/if}
           </div>
 
@@ -195,9 +195,9 @@
                       onConfirm={submitResolve}
                     />
                   {:else}
-                    <button class="btn btn-primary" onclick={submitResolve}>Confirm</button>
+                    <button class="lt-btn lt-btn-primary" onclick={submitResolve}>Confirm</button>
                   {/if}
-                  <button class="btn btn-secondary" onclick={cancelResolve}>Cancel</button>
+                  <button class="lt-btn lt-btn-secondary" onclick={cancelResolve}>Cancel</button>
                 </div>
               </div>
             {:else}
@@ -207,13 +207,13 @@
                   confirmLabel="Dismiss"
                   onConfirm={() => dismissReport(report.id)}
                 />
-                <button class="btn btn-secondary" onclick={() => openResolve(report.id)}>Resolve</button>
+                <button class="lt-btn lt-btn-secondary" onclick={() => openResolve(report.id)}>Resolve</button>
               </div>
             {/if}
           {/if}
 
           {#if report.resolution_note}
-            <div class="resolution-note muted">
+            <div class="resolution-note lt-muted">
               Resolution: {report.resolution_note}
             </div>
           {/if}
@@ -223,7 +223,7 @@
 
     {#if nextCursor}
       <div style="text-align: center; padding: 1rem 0;">
-        <button class="btn btn-secondary" onclick={() => loadReports(true)}>Load more</button>
+        <button class="lt-btn lt-btn-secondary" onclick={() => loadReports(true)}>Load more</button>
       </div>
     {/if}
   {/if}

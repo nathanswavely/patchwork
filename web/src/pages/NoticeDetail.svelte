@@ -147,12 +147,12 @@
 </script>
 
 <div class="notice-page">
-  <a href="/patches/{slug}/noticeboard" class="back muted" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/noticeboard`); }}>← Noticeboard</a>
+  <a href="/patches/{slug}/noticeboard" class="back lt-muted" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/noticeboard`); }}>← Noticeboard</a>
 
   {#if loading}
-    <p class="muted">Loading...</p>
+    <p class="lt-muted">Loading...</p>
   {:else if error || !notice}
-    <p class="error-text">{error || 'Notice not found'}</p>
+    <p class="lt-error-text">{error || 'Notice not found'}</p>
   {:else if editing}
     <form class="edit-form" onsubmit={(e) => { e.preventDefault(); saveEdit(); }}>
       <div class="field">
@@ -174,14 +174,14 @@
         </div>
       {/if}
       <div class="form-actions">
-        <button type="submit" class="btn btn-primary" disabled={saving}>{saving ? 'Saving…' : 'Save'}</button>
-        <button type="button" class="btn btn-secondary" onclick={() => editing = false} disabled={saving}>Cancel</button>
+        <button type="submit" class="lt-btn lt-btn-primary" disabled={saving}>{saving ? 'Saving…' : 'Save'}</button>
+        <button type="button" class="lt-btn lt-btn-secondary" onclick={() => editing = false} disabled={saving}>Cancel</button>
       </div>
     </form>
   {:else}
     <article class="notice">
       <h2 class="notice-title">{notice.title}</h2>
-      <div class="notice-meta muted">
+      <div class="notice-meta lt-muted">
         <span>{notice.author_display_name || notice.author_username}</span>
         <span>{formatRelative(notice.created_at)}</span>
         {#if notice.members_told}<span class="mark">members told</span>{/if}
@@ -217,7 +217,7 @@
     <section class="replies">
       <h3 class="replies-heading">
         {replies.length === 0 ? 'No replies' : replies.length === 1 ? '1 reply' : `${replies.length} replies`}
-        {#if !notice.replies_open}<span class="muted replies-note">{' · '}Replies are off on this notice.</span>{/if}
+        {#if !notice.replies_open}<span class="lt-muted replies-note">{' · '}Replies are off on this notice.</span>{/if}
       </h3>
 
       {#each replies as reply (reply.id)}
@@ -244,14 +244,14 @@
         </div>
       {/each}
       {#if nextCursor}
-        <button class="btn btn-secondary btn-sm" onclick={() => loadReplies(nextCursor)}>More replies</button>
+        <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => loadReplies(nextCursor)}>More replies</button>
       {/if}
 
       {#if notice.replies_open}
         <form class="reply-form" onsubmit={(e) => { e.preventDefault(); sendReply(); }}>
           <textarea bind:value={replyText} rows="3" placeholder="Reply to this notice" disabled={replying}></textarea>
           <div class="form-actions">
-            <button type="submit" class="btn btn-primary btn-sm" disabled={replying || !replyText.trim()}>{replying ? 'Sending…' : 'Reply'}</button>
+            <button type="submit" class="lt-btn lt-btn-primary lt-btn-sm" disabled={replying || !replyText.trim()}>{replying ? 'Sending…' : 'Reply'}</button>
           </div>
         </form>
       {/if}

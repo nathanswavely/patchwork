@@ -99,10 +99,10 @@
     </label>
 
     <div class="report-actions">
-      <button class="btn btn-secondary" onclick={() => { open = false; }} disabled={submitting}>
+      <button class="lt-btn lt-btn-secondary" onclick={() => { open = false; }} disabled={submitting}>
         Cancel
       </button>
-      <button class="btn btn-primary" onclick={submit} disabled={submitting}>
+      <button class="lt-btn lt-btn-primary" onclick={submit} disabled={submitting}>
         {submitting ? 'Submitting…' : 'Submit report'}
       </button>
     </div>

@@ -97,7 +97,7 @@
         autocomplete="off"
         disabled={signing}
       />
-      <button type="submit" class="btn btn-primary" disabled={signing || !nonce.trim()}>
+      <button type="submit" class="lt-btn lt-btn-primary" disabled={signing || !nonce.trim()}>
         {signing ? 'Signing…' : 'Sign'}
       </button>
     </div>
@@ -108,14 +108,14 @@
   </form>
 
   {#if error}
-    <p class="error-text">{error}</p>
+    <p class="lt-error-text">{error}</p>
   {/if}
 
   {#if result}
-    <section class="result card">
+    <section class="result lt-card">
       <div class="result-head">
         <h2>Send them this</h2>
-        <button class="btn btn-secondary btn-sm" onclick={copyBlob}>Copy</button>
+        <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={copyBlob}>Copy</button>
       </div>
       <code class="blob">{result.attestation}</code>
       <dl class="facts">
@@ -233,7 +233,7 @@
     word-break: break-all;
   }
 
-  .error-text {
+  .lt-error-text {
     margin-top: 0.75rem;
     color: var(--color-error);
     font-size: 0.85rem;

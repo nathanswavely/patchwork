@@ -67,12 +67,12 @@
 </script>
 
 <UserSettingsShell>
-  <div class="page-fade">
+  <div class="lt-fade-in">
     <h2>Notification Preferences</h2>
-    <p class="muted subtitle">Choose how you want to be notified about activity in your patches.</p>
+    <p class="lt-muted subtitle">Choose how you want to be notified about activity in your patches.</p>
 
     {#if loading}
-      <p class="muted" style="padding: 2rem 0;">Loading...</p>
+      <p class="lt-muted" style="padding: 2rem 0;">Loading...</p>
     {:else}
       <div class="prefs-table">
         <!-- Column headers -->
@@ -87,7 +87,7 @@
           <div class="prefs-category">
             <div class="category-heading">
               <span class="category-label">{cat.label}</span>
-              <span class="category-desc muted">{cat.description}</span>
+              <span class="category-desc lt-muted">{cat.description}</span>
             </div>
             {#each cat.types as t}
               <div class="prefs-row">

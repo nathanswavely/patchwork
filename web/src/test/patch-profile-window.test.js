@@ -69,7 +69,7 @@ describe('PatchProfile', () => {
 
   it('carries no door named for the container — Manage and Governance pills are gone', () => {
     expect(src).not.toMatch(/>\s*Manage\s*</);
-    expect(src).not.toMatch(/class="btn btn-secondary"[^>]*>\s*Governance\s*</);
+    expect(src).not.toMatch(/class="lt-btn lt-btn-secondary"[^>]*>\s*Governance\s*</);
   });
 
   it('holds exactly one control: the relationship row', () => {
@@ -119,7 +119,7 @@ describe('PatchProfile', () => {
     expect(src).toContain('No one runs this patch yet');
     expect(src).toContain('class="state-notice"');
     // Not a competing primary button any more.
-    expect(src).not.toMatch(/btn-primary[^>]*>\s*Claim this patch/);
+    expect(src).not.toMatch(/lt-btn-primary[^>]*>\s*Claim this patch/);
   });
 
   it('states where the listing came from, at the weight of the state and not the act', () => {
@@ -147,7 +147,7 @@ describe('PatchRelationship', () => {
 
   it('puts the exit inside the standing control, never beside it', () => {
     expect(src).toMatch(/standing-menu[\s\S]{0,200}handleLeave/);
-    expect(src).not.toMatch(/class="btn[^"]*"[^>]*onclick={handleLeave}/);
+    expect(src).not.toMatch(/class="lt-btn[^"]*"[^>]*onclick={handleLeave}/);
   });
 
   it('states standing at rest for follower, member and admin alike', () => {
@@ -157,8 +157,8 @@ describe('PatchRelationship', () => {
   });
 
   it('makes Follow the stranger primary and the membership rung secondary', () => {
-    expect(src).toMatch(/class="btn btn-primary \{btnSize\}" onclick={handleFollow}/);
-    expect(src).toMatch(/standing \? 'btn-primary' : 'btn-secondary'/);
+    expect(src).toMatch(/class="lt-btn lt-btn-primary \{btnSize\}" onclick={handleFollow}/);
+    expect(src).toMatch(/standing \? 'lt-btn-primary' : 'lt-btn-secondary'/);
   });
 
   it('drops the membership rung where the server would refuse it', () => {

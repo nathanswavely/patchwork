@@ -17,7 +17,7 @@ test.describe('Governance — Document List', () => {
     await goto(page, `${PATCH_URL}/governance/docs`);
     await expectNoError(page);
     // Should show at least one governance document
-    const docItems = page.locator('.card, [class*="doc"]').first();
+    const docItems = page.locator('.lt-card, [class*="doc"]').first();
     await expect(docItems).toBeVisible({ timeout: 5000 });
   });
 

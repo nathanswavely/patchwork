@@ -1,7 +1,7 @@
 # The design system is Liquid Textile, vendored
 
-Date: 2026-10-11. Status: **accepted**, partly implemented (steps 1 and 2
-of the migration plan). Applies docs/adr/077 to a stylesheet; keeps
+Date: 2026-10-11. Status: **accepted**, partly implemented (steps 1 to 3
+of the migration plan: vendored, tokens aliased, global classes renamed). Applies docs/adr/077 to a stylesheet; keeps
 docs/adr/038's spacing tokens and gives its reserved `[data-density]` a
 home.
 

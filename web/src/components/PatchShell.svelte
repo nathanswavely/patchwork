@@ -312,10 +312,10 @@
     <div class="workspace-body container">
       <div class="shell-error">
         <h2>{archivedName ? `${archivedName} is archived` : 'Patch not found'}</h2>
-        {#if error}<p class="muted">{error}</p>{/if}
+        {#if error}<p class="lt-muted">{error}</p>{/if}
         <div class="shell-error-actions">
-          <button class="btn btn-secondary" onclick={loadNode}>Retry</button>
-          <a href="/" class="btn btn-secondary" onclick={(e) => { e.preventDefault(); navigate('/'); }}>Back to Quilt</a>
+          <button class="lt-btn lt-btn-secondary" onclick={loadNode}>Retry</button>
+          <a href="/" class="lt-btn lt-btn-secondary" onclick={(e) => { e.preventDefault(); navigate('/'); }}>Back to Quilt</a>
         </div>
       </div>
     </div>

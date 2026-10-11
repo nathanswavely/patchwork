@@ -430,7 +430,7 @@
   {#if loading}
     <Skeleton lines={6} height="1rem" />
   {:else if !overview}
-    <p class="muted">Failed to load governance overview.</p>
+    <p class="lt-muted">Failed to load governance overview.</p>
   {:else}
     <!-- Action banner — needs your vote -->
     {#if overview.needs_vote > 0}
@@ -460,7 +460,7 @@
           <strong>
             Nominations are open for {election.seats} seat{election.seats === 1 ? '' : 's'}
           </strong>
-          <span class="banner-detail muted">
+          <span class="banner-detail lt-muted">
             {election.candidates === 0
               ? 'Nobody has stood yet.'
               : `${election.candidates} standing.`}
@@ -490,7 +490,7 @@
             Change these rules
           </a>
         {:else if canPropose}
-          <p class="venue-line muted">An admin changes these rules directly.</p>
+          <p class="venue-line lt-muted">An admin changes these rules directly.</p>
         {/if}
       {:else if membershipRole === 'admin' && rules?.decision_method === 'admin'}
         <a class="section-action" href="/patches/{slug}/governance/rules/propose" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/rules/propose`); }}>
@@ -557,7 +557,7 @@
                      date derived from their joining. The honest label is the
                      one about joining, and the seats below carry the governed
                      dates. -->
-                <span class="admin-since muted">Member since {formatDate(admin.joined_at)}</span>
+                <span class="admin-since lt-muted">Member since {formatDate(admin.joined_at)}</span>
               </div>
             </div>
           {/each}
@@ -600,7 +600,7 @@
                     <span class="seat-who" class:vacant={seat.vacant}>
                       {#if seat.vacant}Vacant{:else if seat.holder_withheld}Held{:else}{seat.display_name || seat.username}{/if}
                     </span>
-                    <span class="seat-fate muted">{seatLine(seat)}</span>
+                    <span class="seat-fate lt-muted">{seatLine(seat)}</span>
                     {#if seat.fill === 'contest_open' && seat.contest_id}
                       <a
                         class="seat-contest"
@@ -615,12 +615,12 @@
                     <div class="seat-controls">
                       {#if editingSeat === seat.id}
                         <input type="date" bind:value={termDraft} disabled={seatBusy} aria-label="Term end" />
-                        <button class="btn btn-sm btn-primary" disabled={seatBusy || !termDraft} onclick={() => saveTerm(seat.id)}>
+                        <button class="lt-btn lt-btn-sm lt-btn-primary" disabled={seatBusy || !termDraft} onclick={() => saveTerm(seat.id)}>
                           Save
                         </button>
-                        <button class="btn btn-sm" disabled={seatBusy} onclick={() => { editingSeat = ''; }}>Cancel</button>
+                        <button class="lt-btn lt-btn-sm" disabled={seatBusy} onclick={() => { editingSeat = ''; }}>Cancel</button>
                       {:else}
-                        <button class="btn btn-sm" disabled={seatBusy} onclick={() => editTerm(seat)}>
+                        <button class="lt-btn lt-btn-sm" disabled={seatBusy} onclick={() => editTerm(seat)}>
                           {seat.term_ends_at ? 'Change term end' : 'Set term end'}
                         </button>
                         <!-- The act this row has been describing. The page
@@ -635,7 +635,7 @@
                              chair between contests. -->
                         {#if seat.vacant && seat.fill === 'nomination'}
                           <a
-                            class="btn btn-sm btn-primary"
+                            class="lt-btn lt-btn-sm lt-btn-primary"
                             href="/patches/{slug}/governance/new?type=membership"
                             onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/new?type=membership`); }}
                           >
@@ -643,7 +643,7 @@
                           </a>
                         {/if}
                         {#if seat.vacant}
-                          <button class="btn btn-sm" disabled={seatBusy} onclick={() => removeSeat(seat.id)}>
+                          <button class="lt-btn lt-btn-sm" disabled={seatBusy} onclick={() => removeSeat(seat.id)}>
                             Remove seat
                           </button>
                         {/if}
@@ -665,12 +665,12 @@
 
           {#if isPatchAdmin}
             <div class="council-controls">
-              <button class="btn btn-sm" disabled={seatBusy} onclick={addSeat}>Add a seat</button>
-              <span class="council-hint muted">
+              <button class="lt-btn lt-btn-sm" disabled={seatBusy} onclick={addSeat}>Add a seat</button>
+              <span class="council-hint lt-muted">
                 Adding a seat does not make anybody an admin. The community fills it.
               </span>
             </div>
-            <p class="council-hint muted">
+            <p class="council-hint lt-muted">
               A seat's term end is this patch's election calendar. A vacant seat takes any future date; a held one can only be brought
               forward, because pushing it back would extend a term nobody voted for. A term ending takes nobody's seat away: the
               holder serves until a successor is elected.{#if inactivityDays > 0}{' '}Inactivity is the only thing that empties a held
@@ -715,7 +715,7 @@
            changes here, so they sit with the admin list rather than on a
            page of their own. -->
       {#if leadershipElsewhere}
-        <p class="venue-line muted">
+        <p class="venue-line lt-muted">
           Admins are chosen outside Patchwork. What the community decided is
           recorded below.
         </p>
@@ -733,7 +733,7 @@
               Successor: <strong>{overview.successor.display_name || overview.successor.username}</strong>. If the current admin steps away, the patch passes to them.
             </p>
           {:else}
-            <p class="successor-line muted">No successor named.</p>
+            <p class="successor-line lt-muted">No successor named.</p>
           {/if}
 
           {#if isAdmin}
@@ -744,7 +744,7 @@
                   <option value={m.user_id}>{m.display_name || m.username}</option>
                 {/each}
               </select>
-              <button class="btn btn-sm" onclick={saveSuccessor} disabled={savingSuccessor || successorChoice === (overview.successor?.user_id || '')}>
+              <button class="lt-btn lt-btn-sm" onclick={saveSuccessor} disabled={savingSuccessor || successorChoice === (overview.successor?.user_id || '')}>
                 {savingSuccessor ? 'Saving...' : 'Save'}
               </button>
             </div>
@@ -752,7 +752,7 @@
             {#if successorError}
               <p class="successor-error">{successorError}</p>
             {/if}
-            <p class="successor-hint muted">
+            <p class="successor-hint lt-muted">
               Naming a successor is also what lets you leave a patch you run alone.
             </p>
           {/if}
@@ -772,14 +772,14 @@
            closed instead of linking a number at a page that will not show
            it. -->
       {#if overview.proposals_withheld}
-        <span class="muted">Proposals are members-only</span>
+        <span class="lt-muted">Proposals are members-only</span>
       {:else}
         <a class="stat-link" href="/patches/{slug}/governance/proposals" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/proposals`); }}>
           {overview.open_proposals} open proposal{overview.open_proposals !== 1 ? 's' : ''}
         </a>
       {/if}
       <span class="stat-sep">&middot;</span>
-      <span class="muted">{overview.member_count} member{overview.member_count !== 1 ? 's' : ''}</span>
+      <span class="lt-muted">{overview.member_count} member{overview.member_count !== 1 ? 's' : ''}</span>
     </section>
   {/if}
 </div>

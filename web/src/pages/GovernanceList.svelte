@@ -91,13 +91,13 @@
 
 <GovernanceShell activeSection="documents">
   {#snippet children()}
-<div class="page-fade">
+<div class="lt-fade-in">
   <div>
       <div class="page-header">
         <div>
           <h2>Documents</h2>
           {#if isAdmin}
-            <p class="muted section-hint">
+            <p class="lt-muted section-hint">
               New documents start members only. Publish one to let visitors and
               other quilts read it.
             </p>
@@ -107,7 +107,7 @@
                  adopted text replaces a charter with the version a meeting
                  passed. Neither button can say that on its face. -->
             {#if decidesElsewhere}
-              <p class="muted section-hint">
+              <p class="lt-muted section-hint">
                 Minutes of a meeting go in a document. Recording an adopted
                 text, below, replaces a charter with the version a meeting
                 adopted.
@@ -116,7 +116,7 @@
           {:else if publishedOnly}
             <!-- What this listing is, said once, so the empty state below
                  only has to say which kind of empty it is. -->
-            <p class="muted section-hint">
+            <p class="lt-muted section-hint">
               Members-only documents are not listed here.
             </p>
           {/if}
@@ -125,34 +125,34 @@
           {#if isLoggedIn() && isAdmin}
             <a
               href="/patches/{slug}/governance/docs/new"
-              class="btn btn-primary"
+              class="lt-btn lt-btn-primary"
               onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/docs/new`); }}
             >
               New Document
             </a>
           {:else if !isMember || membershipRole === 'follower'}
-            <p class="role-prompt muted">These documents define how this community makes decisions.</p>
+            <p class="role-prompt lt-muted">These documents define how this community makes decisions.</p>
           {/if}
         </div>
       </div>
 
       {#if loading}
-        <p class="muted" style="padding: 2rem 0; text-align: center;">Loading...</p>
+        <p class="lt-muted" style="padding: 2rem 0; text-align: center;">Loading...</p>
       {:else if error}
-        <p class="error-text" style="padding: 2rem 0; text-align: center;">{error}</p>
+        <p class="lt-error-text" style="padding: 2rem 0; text-align: center;">{error}</p>
       {:else if docs.length === 0}
         <!-- "This patch has published nothing" and "you are not being shown
              what it has" are different facts and a reader must be able to
              tell which they are looking at. Neither sentence says whether
              anything is being withheld — that would be the disclosure the
              per-document choice exists to prevent (docs/adr/036). -->
-        <p class="muted" style="padding: 2rem 0; text-align: center;">
+        <p class="lt-muted" style="padding: 2rem 0; text-align: center;">
           {publishedOnly ? 'Nothing published yet.' : 'No governance documents yet.'}
         </p>
       {:else}
         <div class="doc-list">
           {#each docs as doc (doc.id)}
-            <div class="doc-card card">
+            <div class="doc-card lt-card">
               <a
                 href="/patches/{slug}/governance/docs/{doc.id}"
                 class="doc-link"
@@ -160,8 +160,8 @@
               >
                 <h3>{doc.title}</h3>
                 <div class="doc-meta">
-                  <span class="muted">v{doc.version}</span>
-                  <span class="muted">Updated {formatDay(doc.updated_at)}</span>
+                  <span class="lt-muted">v{doc.version}</span>
+                  <span class="lt-muted">Updated {formatDay(doc.updated_at)}</span>
                   {#if doc.kind === 'lining'}
                     <span
                       class="vis-chip lining"
@@ -177,7 +177,7 @@
               <div class="doc-actions">
                 {#if isLoggedIn() && isAdmin && doc.kind !== 'lining'}
                   <button
-                    class="btn btn-secondary btn-sm"
+                    class="lt-btn lt-btn-secondary lt-btn-sm"
                     disabled={savingVisibility === doc.id}
                     onclick={() => setVisibility(doc, doc.visibility === 'public' ? 'members' : 'public')}
                   >
@@ -194,7 +194,7 @@
                 {#if isLoggedIn() && isMember && membershipRole !== 'follower'}
                   <a
                     href="/patches/{slug}/governance/docs/{doc.id}/propose"
-                    class="btn btn-secondary btn-sm"
+                    class="lt-btn lt-btn-secondary lt-btn-sm"
                     onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/docs/${doc.id}/propose`); }}
                   >
                     Propose change
@@ -340,7 +340,7 @@
       flex: 1 1 100%;
     }
 
-    .doc-actions > .btn[href$='/propose'] {
+    .doc-actions > .lt-btn[href$='/propose'] {
       order: -1;
       flex: 1 1 100%;
       justify-content: center;

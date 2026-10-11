@@ -338,10 +338,10 @@
   }
 </script>
 
-<div class="page-fade">
+<div class="lt-fade-in">
   <div class="page-header">
     <h1>Quilt Settings</h1>
-    <p class="muted">How this quilt presents itself, here and on other quilts.</p>
+    <p class="lt-muted">How this quilt presents itself, here and on other quilts.</p>
   </div>
 
   {#if loading}
@@ -383,7 +383,7 @@
           <span class="field-hint">The domain is deployment configuration (patchwork.yaml) and cannot be changed here. Federation identities minted with it are permanent.</span>
         </div>
         <div class="field-actions">
-          <button class="btn btn-primary" onclick={saveIdentity} disabled={savingIdentity || !name.trim()}>
+          <button class="lt-btn lt-btn-primary" onclick={saveIdentity} disabled={savingIdentity || !name.trim()}>
             {savingIdentity ? 'Saving…' : 'Save Identity'}
           </button>
         </div>
@@ -418,11 +418,11 @@
               {/if}
             </span>
             <div class="icon-actions">
-              <button class="btn btn-primary btn-sm" onclick={saveIcon} disabled={savingIcon || !iconDirty}>
+              <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={saveIcon} disabled={savingIcon || !iconDirty}>
                 {savingIcon ? 'Saving…' : 'Save icon'}
               </button>
               {#if data.icon.chosen}
-                <button class="btn btn-secondary btn-sm" onclick={resetIcon} disabled={savingIcon}>
+                <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={resetIcon} disabled={savingIcon}>
                   Reset icon
                 </button>
               {/if}
@@ -456,7 +456,7 @@
              Once there is a change, the same button follows the drafting. -->
         {#if isNarrow() && iconDirty}
           <div class="icon-save-bar">
-            <button class="btn btn-primary" onclick={saveIcon} disabled={savingIcon || !iconDirty}>
+            <button class="lt-btn lt-btn-primary" onclick={saveIcon} disabled={savingIcon || !iconDirty}>
               {savingIcon ? 'Saving…' : 'Save icon'}
             </button>
           </div>
@@ -492,7 +492,7 @@
             <span class="zone-invalid">Not a place this quilt can keep time in.</span>
           {/if}
         </p>
-        <button class="btn btn-primary" onclick={saveTimezone} disabled={savingTimezone || !!zoneChoice}>
+        <button class="lt-btn lt-btn-primary" onclick={saveTimezone} disabled={savingTimezone || !!zoneChoice}>
           {savingTimezone ? 'Saving...' : 'Save timezone'}
         </button>
 
@@ -515,7 +515,7 @@
             <div class="zone-choice-actions">
               <button
                 type="button"
-                class="btn btn-primary"
+                class="lt-btn lt-btn-primary"
                 disabled={!!zoneSaving}
                 onclick={() => resolveZoneChange('keep_clock')}
               >{zoneSaving === 'keep_clock'
@@ -525,7 +525,7 @@
                     : 'Keep the listed times'}</button>
               <button
                 type="button"
-                class="btn btn-secondary"
+                class="lt-btn lt-btn-secondary"
                 disabled={!!zoneSaving}
                 onclick={() => resolveZoneChange('keep_instant')}
               >{zoneSaving === 'keep_instant'
@@ -535,7 +535,7 @@
                     : 'Leave the events where they are'}</button>
               <button
                 type="button"
-                class="btn btn-secondary"
+                class="lt-btn lt-btn-secondary"
                 disabled={!!zoneSaving}
                 onclick={() => (zoneChoice = null)}
               >Cancel</button>
@@ -582,7 +582,7 @@
           Download this quilt's portable community data as a zip: patches, people, memberships, events, proposals with votes, and governance records. Credentials, sessions, and federation keys deliberately stay behind, as do followers from other sites, since the addresses they follow belong to this quilt rather than to the patches. For a full backup of the deployment itself, back up the server's data directory.
         </p>
         <PasskeyNotice show={!hasPasskey} action="export this quilt's data" />
-        <button class="btn btn-primary" onclick={downloadExport} disabled={exporting}>
+        <button class="lt-btn lt-btn-primary" onclick={downloadExport} disabled={exporting}>
           {exporting ? 'Preparing…' : 'Download Export'}
         </button>
       </div>
@@ -612,7 +612,7 @@
         </label>
         {#if !wipeArmed}
           <button
-            class="btn btn-danger"
+            class="lt-btn lt-btn-danger"
             disabled={confirmName !== data.name}
             onclick={() => { wipeArmed = true; }}
           >
@@ -621,10 +621,10 @@
         {:else}
           <div class="wipe-confirm">
             <span class="danger-warning">Really erase everything? You will be signed out.</span>
-            <button class="btn btn-danger" onclick={wipeQuilt} disabled={wiping}>
+            <button class="lt-btn lt-btn-danger" onclick={wipeQuilt} disabled={wiping}>
               {wiping ? 'Wiping…' : 'Yes, erase all community data'}
             </button>
-            <button class="btn btn-secondary" onclick={() => { wipeArmed = false; }} disabled={wiping}>
+            <button class="lt-btn lt-btn-secondary" onclick={() => { wipeArmed = false; }} disabled={wiping}>
               Cancel
             </button>
           </div>
@@ -666,7 +666,7 @@
     padding: 1.5rem 0 1rem;
   }
 
-  .page-header .muted {
+  .page-header .lt-muted {
     margin-top: 0.25rem;
     color: var(--color-text-muted);
     font-size: 0.9rem;

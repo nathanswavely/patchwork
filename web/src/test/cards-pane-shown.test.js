@@ -102,7 +102,7 @@ describe('the control has one home', () => {
   // control at all: the pane is open for the profile, not by the reader's
   // choice, and the profile's dismiss is what ends that.
   it('ends the list header, and falls back to the canvas without one', () => {
-    const header = home.slice(home.indexOf('<div class="cards-header">'), home.indexOf('<div class="cards-scroll scroll-thin">'));
+    const header = home.slice(home.indexOf('<div class="cards-header">'), home.indexOf('<div class="cards-scroll lt-scroll-thin">'));
     expect(header).toContain('class="pane-toggle in-card"');
     expect(header.indexOf('pane-toggle in-card')).toBeGreaterThan(header.indexOf('<div class="list-controls">'));
     expect(home).toContain('class="pane-toggle"');

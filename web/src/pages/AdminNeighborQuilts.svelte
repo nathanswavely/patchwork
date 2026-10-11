@@ -73,25 +73,25 @@
       placeholder="https://other-patchwork.example.com"
       disabled={busy}
     />
-    <button type="submit" class="btn btn-primary" disabled={busy || !newUrl.trim()}>
+    <button type="submit" class="lt-btn lt-btn-primary" disabled={busy || !newUrl.trim()}>
       {busy ? 'Adding…' : 'Add Neighbor'}
     </button>
   </form>
   {#if error}
-    <p class="error-text">{error}</p>
+    <p class="lt-error-text">{error}</p>
   {/if}
 
   {#if loading}
-    <p class="muted">Loading…</p>
+    <p class="lt-muted">Loading…</p>
   {:else if quilts.length === 0}
     <div class="empty-state">
       <p>No neighbor quilts yet.</p>
-      <p class="muted">Add another Patchwork's URL to publicly connect your communities.</p>
+      <p class="lt-muted">Add another Patchwork's URL to publicly connect your communities.</p>
     </div>
   {:else}
     <div class="quilt-list">
       {#each quilts as quilt (quilt.id)}
-        <div class="quilt-item card">
+        <div class="quilt-item lt-card">
           <img
             class="quilt-icon"
             src={`${quilt.url}/api/v1/instance/icon`}
@@ -105,7 +105,7 @@
             {#if quilt.name}<span class="quilt-name">{quilt.name}</span>{/if}
             <span class="quilt-url">{quilt.url}</span>
           </div>
-          <button class="btn btn-danger btn-sm" onclick={() => handleRemove(quilt)}>Remove</button>
+          <button class="lt-btn lt-btn-danger lt-btn-sm" onclick={() => handleRemove(quilt)}>Remove</button>
         </div>
       {/each}
     </div>
@@ -182,7 +182,7 @@
     color: var(--color-text-muted);
   }
 
-  .error-text {
+  .lt-error-text {
     color: var(--color-error);
     font-size: 0.85rem;
   }

@@ -78,31 +78,31 @@
   let spacedCode = $derived(code.length === 6 ? code.slice(0, 3) + ' ' + code.slice(3) : code);
 </script>
 
-<div class="page-fade">
+<div class="lt-fade-in">
   <div class="link-page">
     {#if phase === 'loading'}
-      <p class="muted">Signing in...</p>
+      <p class="lt-muted">Signing in...</p>
 
     {:else if phase === 'code'}
       {#if code}
         <h1>Your sign-in code</h1>
         <p>Enter this code where you asked to sign in{#if email}{' as '}<strong>{email}</strong>{/if}.</p>
         <p class="code" aria-label="Sign-in code {code.split('').join(' ')}">{spacedCode}</p>
-        <p class="muted">It works once and expires 15 minutes after you asked. Do not share it with anyone.</p>
+        <p class="lt-muted">It works once and expires 15 minutes after you asked. Do not share it with anyone.</p>
       {:else}
         <h1>Sign in</h1>
         <p>This link was sent before sign-in codes were shown here.</p>
       {/if}
 
       <div class="here">
-        <button class="btn btn-secondary" onclick={signInHere} disabled={signingInHere}>
+        <button class="lt-btn lt-btn-secondary" onclick={signInHere} disabled={signingInHere}>
           {signingInHere ? 'Signing in...' : 'Sign in on this device'}
         </button>
         {#if code}
-          <p class="muted small">The code stops working if you sign in here.</p>
+          <p class="lt-muted small">The code stops working if you sign in here.</p>
         {/if}
         {#if hereError}
-          <p class="error-text">{hereError}</p>
+          <p class="lt-error-text">{hereError}</p>
         {/if}
       </div>
 
@@ -111,7 +111,7 @@
       <p>This sign-in link has expired or has already been used.</p>
       <a
         href="/login?mode=signin"
-        class="btn btn-secondary"
+        class="lt-btn lt-btn-secondary"
         onclick={(e) => { e.preventDefault(); navigate('/login?mode=signin'); }}
       >Get a new link</a>
     {/if}

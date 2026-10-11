@@ -46,7 +46,7 @@
   </p>
 
   {#if loading}
-    <p class="muted">Loading…</p>
+    <p class="lt-muted">Loading…</p>
   {:else if nodes.length === 0}
     <div class="empty-state">
       <p>No archived patches.</p>
@@ -54,7 +54,7 @@
   {:else}
     <div class="node-list">
       {#each nodes as node (node.id)}
-        <div class="node-item card">
+        <div class="node-item lt-card">
           <div class="node-info">
             <span class="node-name">{node.name}</span>
             <span class="node-meta">
