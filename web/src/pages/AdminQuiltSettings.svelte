@@ -577,7 +577,7 @@
              travels and its audience does not. Kept outside the <p>: the copy
              ledger blanks comments when extracting but matches raw source when
              writing back, so a comment inside a text run makes that string
-             permanently unwritable (tools/copy-ledger/writeback.js). -->
+             permanently unwritable (SlopChop's writeback, make copy-apply). -->
         <p class="section-desc">
           Download this quilt's portable community data as a zip: patches, people, memberships, events, proposals with votes, and governance records. Credentials, sessions, and federation keys deliberately stay behind, as do followers from other sites, since the addresses they follow belong to this quilt rather than to the patches. For a full backup of the deployment itself, back up the server's data directory.
         </p>

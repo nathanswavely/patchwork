@@ -5,12 +5,12 @@
 # their own source files back and match on exact text, and CRLF breaks all
 # of them in ways that look like tool bugs rather than config:
 #
-#   - tools/copy-ledger writeback is exact-match-or-refuse: each occurrence
+#   - SlopChop's writeback (make copy-apply) is exact-match-or-refuse: each occurrence
 #     stores the verbatim source substring and copy-apply finds that text or
 #     changes nothing. Every multi-line string misses on a CRLF checkout.
 #     Seen for real on 2026-08-13 — 30 of 37 rewrites blocked with "source
 #     drifted", and the 7 that landed were the single-line ones.
-#   - tools/copy-ledger/drafts.js parses draft blocks with a marker regex
+#   - SlopChop's drafts (make copy-pull) parse draft blocks with a marker regex
 #     anchored on a bare LF. A CRLF draft matches zero blocks, so copy-pull
 #     says "No changes found" and drops a whole writing session silently.
 #   - The frontend suite asserts against source text (there is no Svelte
@@ -21,7 +21,7 @@
 # already LF, and the repo has no binary files and no .bat/.cmd/.ps1 that
 # would want CRLF. All this changes is what lands in the working copy.
 #
-# Prefer this over listing the file types copy-ledger happens to touch
+# Prefer this over listing the file types the copy ledger happens to touch
 # today. The ledger already spans .svelte, .go, .md and .js, and the day
 # copy moves into a type nobody remembered to list, the failure comes back
 # wearing the same misleading costume.
@@ -36,7 +36,7 @@
 # through WSL).
 *.sh text eol=lf
 
-# The copy ledger is written by tools/copy-ledger, which emits LF. On a
+# The copy ledger is written by SlopChop, which emits LF. On a
 # core.autocrlf=true checkout git hands it back CRLF, so every run leaves
 # the file "modified" with an empty diff — noise at exactly the moment
 # copy-apply asks you to read a diff.
