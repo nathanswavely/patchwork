@@ -353,11 +353,11 @@
     <section class="section">
       <h2>Identity</h2>
       <div class="settings-card">
-        <label class="field">
-          <span class="field-label">Quilt name</span>
-          <input type="text" bind:value={name} maxlength="100" />
+        <label class="lt-label">
+          <span>Quilt name</span>
+          <input class="lt-field" type="text" bind:value={name} maxlength="100" />
           {#if data.name_overridden}
-            <span class="field-hint">
+            <span class="lt-hint">
               Set here in the admin panel. Overrides the name in patchwork.yaml.
               <button class="link-btn" onclick={() => resetField('name')} disabled={!!resetting}>
                 {resetting === 'name' ? 'Resetting…' : 'Reset to default'}
@@ -365,11 +365,11 @@
             </span>
           {/if}
         </label>
-        <label class="field">
-          <span class="field-label">Description</span>
-          <textarea bind:value={description} rows="3" maxlength="500"></textarea>
+        <label class="lt-label">
+          <span>Description</span>
+          <textarea class="lt-field" bind:value={description} rows="3" maxlength="500"></textarea>
           {#if data.description_overridden}
-            <span class="field-hint">
+            <span class="lt-hint">
               Set here in the admin panel. Overrides the description in patchwork.yaml.
               <button class="link-btn" onclick={() => resetField('description')} disabled={!!resetting}>
                 {resetting === 'description' ? 'Resetting…' : 'Reset to default'}
@@ -377,12 +377,12 @@
             </span>
           {/if}
         </label>
-        <div class="field">
-          <span class="field-label">Domain</span>
+        <div class="lt-label">
+          <span>Domain</span>
           <span class="field-static">{data.domain || '(not set)'}</span>
-          <span class="field-hint">The domain is deployment configuration (patchwork.yaml) and cannot be changed here. Federation identities minted with it are permanent.</span>
+          <span class="lt-hint">The domain is deployment configuration (patchwork.yaml) and cannot be changed here. Federation identities minted with it are permanent.</span>
         </div>
-        <div class="field-actions">
+        <div class="lt-actions field-actions">
           <button class="lt-btn lt-btn-primary" onclick={saveIdentity} disabled={savingIdentity || !name.trim()}>
             {savingIdentity ? 'Saving…' : 'Save Identity'}
           </button>
@@ -431,7 +431,7 @@
         </div>
 
         <div class="starter-picker">
-          <span class="field-label">Start from a block</span>
+          <span class="lt-label">Start from a block</span>
           <div class="starter-grid">
             {#each data.icon_starters as starter (starter.key)}
               <button class="starter-option" onclick={() => startFrom(starter)} title={starter.name}>
@@ -447,7 +447,7 @@
               </button>
             {/each}
           </div>
-          <span class="field-hint">Starting over replaces what's on the canvas. Nothing is saved until you save.</span>
+          <span class="lt-hint">Starting over replaces what's on the canvas. Nothing is saved until you save.</span>
         </div>
 
         <BlockDrafter bind:draft={iconDraft} bind:bundle={iconBundle} previewLabel="in the switcher" />
@@ -475,8 +475,9 @@
         own clock, with the zone named next to it.
       </p>
       <div class="settings-card">
-        <label class="field-label" for="quilt-timezone">Timezone</label>
+        <label class="lt-label" for="quilt-timezone">Timezone</label>
         <input
+          class="lt-field"
           id="quilt-timezone"
           type="text"
           bind:value={timezone}
@@ -559,7 +560,7 @@
         out of the quilt, search, the map, and public feeds for everyone.
         Direct links still work.
       </p>
-      <label class="policy-toggle">
+      <label class="lt-check policy-toggle">
         <input
           type="checkbox"
           checked={hideAmendedLinings}
@@ -600,9 +601,10 @@
           The server, domain, and configuration survive. The community's data
           does not. This cannot be undone. Download an export first.
         </p>
-        <label class="field">
-          <span class="field-label">Type the quilt name to confirm: <strong>{data.name}</strong></span>
+        <label class="lt-label">
+          <span>Type the quilt name to confirm: <strong>{data.name}</strong></span>
           <input
+            class="lt-field"
             type="text"
             bind:value={confirmName}
             placeholder={data.name}
@@ -689,34 +691,13 @@
   }
 
   .policy-toggle {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
     font-size: 0.9rem;
-    cursor: pointer;
   }
 
   .section-desc {
     font-size: 0.88rem;
     color: var(--color-text-muted);
     line-height: 1.5;
-  }
-
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-  }
-
-  .field-label {
-    font-size: 0.82rem;
-    font-weight: 600;
-  }
-
-  .field-hint {
-    font-size: 0.78rem;
-    color: var(--color-text-muted);
-    line-height: 1.4;
   }
 
   /* Reset sits inside the hint that explains the override, at the hint's
@@ -740,10 +721,11 @@
   .field-static {
     font-family: monospace;
     font-size: 0.88rem;
+    font-weight: 400;
+    color: var(--color-text);
   }
 
   .field-actions {
-    display: flex;
     justify-content: flex-end;
   }
 

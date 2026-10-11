@@ -86,9 +86,10 @@
   <PasskeyNotice show={!hasPasskey} action="sign an attestation" />
 
   <form class="sign-form" onsubmit={(e) => { e.preventDefault(); sign(); }}>
-    <label for="nonce">Their nonce</label>
+    <label class="lt-label" for="nonce">Their nonce</label>
     <div class="field-row">
       <input
+        class="lt-field"
         id="nonce"
         type="text"
         bind:value={nonce}
@@ -101,7 +102,7 @@
         {signing ? 'Signing…' : 'Sign'}
       </button>
     </div>
-    <p class="hint">
+    <p class="lt-hint">
       8 to 64 printable characters on one line. Paste it exactly as they sent
       it. A changed character is a different nonce, and their check will fail.
     </p>
@@ -151,11 +152,12 @@
     margin-top: 1.5rem;
   }
 
-  .sign-form label {
-    display: block;
-    font-weight: 600;
-    font-size: 0.88rem;
+  .sign-form .lt-label {
     margin-bottom: 0.35rem;
+  }
+
+  .sign-form .lt-hint {
+    margin-top: 0.5rem;
   }
 
   .field-row {

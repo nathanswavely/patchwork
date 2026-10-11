@@ -225,6 +225,7 @@
         {/each}
         <div class="steward-add">
           <input
+            class="lt-field"
             type="text"
             placeholder="username"
             bind:value={newStewardUsername}
@@ -244,21 +245,21 @@
         <p class="section-desc">
           Introduce yourself. Say why this quilt exists and feel free to include your spend for transparency. Format with markdown.
         </p>
-        <textarea class="prose-input" bind:value={prose} rows="10"
+        <textarea class="lt-field prose-input" bind:value={prose} rows="10"
           placeholder="Hi, I run this quilt. Here's why…"></textarea>
-        <div class="field-grid">
-          <label class="field">
-            <span class="field-label">Support link</span>
-            <input type="url" bind:value={supportUrl} placeholder="https://ko-fi.com/… (optional)" />
+        <div class="lt-field-row">
+          <label class="lt-label">
+            <span>Support link</span>
+            <input class="lt-field" type="url" bind:value={supportUrl} placeholder="https://ko-fi.com/… (optional)" />
           </label>
-          <label class="field">
-            <span class="field-label">Feedback link</span>
-            <input type="url" bind:value={feedbackUrl} placeholder="https://… (optional)" />
+          <label class="lt-label">
+            <span>Feedback link</span>
+            <input class="lt-field" type="url" bind:value={feedbackUrl} placeholder="https://… (optional)" />
           </label>
         </div>
         {#if seamrippedFromName}
-          <div class="field">
-            <span class="field-label">Seamripped from</span>
+          <div class="seamrip">
+            <span class="lt-label">Seamripped from</span>
             <div class="seamrip-line">
               <span>{seamrippedFromName} {#if seamrippedFromUrl}<span class="lt-muted small">({seamrippedFromUrl})</span>{/if}</span>
               <button class="lt-btn lt-btn-secondary lt-btn-sm"
@@ -266,13 +267,13 @@
                 Remove
               </button>
             </div>
-            <span class="field-hint">
+            <span class="lt-hint">
               Worth keeping if the history is friendly. Remove it if it
               isn't.
             </span>
           </div>
         {/if}
-        <div class="field-actions">
+        <div class="lt-actions field-actions">
           <button class="lt-btn lt-btn-primary" onclick={saveContent} disabled={saving}>
             {saving ? 'Saving…' : 'Save'}
           </button>
@@ -287,31 +288,31 @@
         <p class="section-desc">
           List what you pay and when you last checked each number, and the page can show readers a monthly total and warn them when a figure gets old.
         </p>
-        <label class="field currency-field">
-          <span class="field-label">Currency</span>
-          <input type="text" bind:value={currency} maxlength="3" placeholder="USD" />
+        <label class="lt-label currency-field">
+          <span>Currency</span>
+          <input class="lt-field" type="text" bind:value={currency} maxlength="3" placeholder="USD" />
         </label>
         {#each costs as c, i}
           <div class="cost-row">
             <div class="cost-row-main">
-              <input class="cost-service" type="text" placeholder="Service (e.g. Hetzner CX22)" bind:value={c.service} />
-              <input class="cost-purpose" type="text" placeholder="What for (e.g. the server)" bind:value={c.purpose} />
-              <input class="cost-amount" type="number" min="0" step="0.01" placeholder="0.00" bind:value={c.amount} />
-              <select bind:value={c.period}>
+              <input class="lt-field cost-service" type="text" placeholder="Service (e.g. Hetzner CX22)" bind:value={c.service} />
+              <input class="lt-field cost-purpose" type="text" placeholder="What for (e.g. the server)" bind:value={c.purpose} />
+              <input class="lt-field cost-amount" type="number" min="0" step="0.01" placeholder="0.00" bind:value={c.amount} />
+              <select class="lt-field" bind:value={c.period}>
                 <option value="monthly">/month</option>
                 <option value="yearly">/year</option>
               </select>
-              <input class="cost-date" type="date" bind:value={c.stated_on} title="When this figure was stated or last reviewed" />
+              <input class="lt-field cost-date" type="date" bind:value={c.stated_on} title="When this figure was stated or last reviewed" />
               <button class="icon-btn" title="Remove" onclick={() => removeCostRow(i)}>
                 <Trash size={16} />
               </button>
             </div>
-            <input class="cost-why" type="text"
+            <input class="lt-field cost-why" type="text"
               placeholder="Why this one? (cheap, EU-based, no contract)"
               bind:value={c.why} />
           </div>
         {/each}
-        <div class="field-actions cost-actions">
+        <div class="lt-actions field-actions cost-actions">
           <button class="lt-btn lt-btn-secondary" onclick={addCostRow}><Plus size={14} /> Add line</button>
           <button class="lt-btn lt-btn-primary" onclick={saveCosts} disabled={savingCosts}>
             {savingCosts ? 'Saving…' : 'Save costs'}
@@ -379,34 +380,18 @@
     resize: vertical;
     margin-bottom: 14px;
   }
-  .field {
+  /* Padding, not margin: the Save row's top margin would collapse into it. */
+  .lt-field-row {
+    padding-bottom: 12px;
+  }
+  .seamrip {
     display: flex;
     flex-direction: column;
     gap: 4px;
     margin-bottom: 12px;
   }
-  .field-label {
-    font-size: 0.8rem;
-    font-weight: 600;
-  }
-  .field-hint {
-    font-size: 0.75rem;
-    opacity: 0.7;
-  }
-  .field-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-  @media (max-width: 640px) {
-    .field-grid {
-      grid-template-columns: 1fr;
-    }
-  }
   .field-actions {
-    display: flex;
     justify-content: flex-end;
-    gap: 8px;
     margin-top: 8px;
   }
   .seamrip-line {
@@ -418,6 +403,7 @@
 
   .currency-field {
     max-width: 120px;
+    margin-bottom: 12px;
   }
   .cost-row {
     padding: 10px 0;
