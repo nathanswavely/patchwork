@@ -150,6 +150,8 @@
       voting = false;
     }
   }
+  // A vote's word carries its tone; the text stays body color (AA).
+  const VOTE_TONES = { approve: 'lt-tone-success', reject: 'lt-tone-error', abstain: 'lt-tone-muted' };
 </script>
 
 <div class="vote-section">
@@ -245,7 +247,7 @@
             {#if voter.counted === false}
               <span class="voter-note lt-muted">not counted</span>
             {/if}
-            <span class="voter-value badge {voter.value}">{voter.value}</span>
+            <span class="voter-value lt-pill {VOTE_TONES[voter.value] || ''}">{voter.value}</span>
           </li>
         {/each}
       </ul>
@@ -432,9 +434,6 @@
     font-size: 0.78rem;
   }
 
-  .voter-value.approve { color: var(--color-success); }
-  .voter-value.reject { color: var(--color-error); }
-  .voter-value.abstain { color: var(--color-text-muted); }
 
   .spinner-inline {
     display: inline-block;

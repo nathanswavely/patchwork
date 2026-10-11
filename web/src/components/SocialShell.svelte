@@ -410,7 +410,7 @@
           <span class="rail-icon">
             <Bell size={22} weight="duotone" />
             {#if getUnread() > 0}
-              <span class="rail-badge">{getUnread() > 99 ? '99+' : getUnread()}</span>
+              <span class="lt-count lt-count-corner lt-tone-error rail-badge">{getUnread() > 99 ? '99+' : getUnread()}</span>
             {/if}
           </span>
           <span class="rail-label">Notifications</span>
@@ -450,7 +450,7 @@
     >
       <FunnelSimple size={16} weight="bold" />
       {#if getActiveFilterCount() > 0}
-        <span class="filter-fab-badge">{getActiveFilterCount()}</span>
+        <span class="lt-count lt-count-corner lt-tone-primary filter-fab-badge">{getActiveFilterCount()}</span>
       {/if}
     </button>
   {/if}
@@ -974,19 +974,8 @@
   }
 
   .rail-badge {
-    position: absolute;
     top: -4px;
     right: -8px;
-    background: var(--color-error);
-    color: var(--color-on-error);
-    font-size: 0.6rem;
-    font-weight: 700;
-    min-width: 16px;
-    height: 16px;
-    line-height: 16px;
-    text-align: center;
-    border-radius: 8px;
-    padding: 0 3px;
   }
 
   /* ================================================================
@@ -1083,19 +1072,8 @@
     }
 
     .filter-fab-badge {
-      position: absolute;
       top: -4px;
       right: -4px;
-      background: var(--color-primary);
-      color: var(--color-btn-on-primary);
-      font-size: 0.6rem;
-      font-weight: 700;
-      min-width: 16px;
-      height: 16px;
-      line-height: 16px;
-      text-align: center;
-      border-radius: 8px;
-      padding: 0 3px;
     }
 
     /* The filter sheet: rises from the FAB, clearing the floating row so

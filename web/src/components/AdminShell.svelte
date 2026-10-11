@@ -115,7 +115,7 @@
           <span class="tab-icon"><Icon size={16} weight="duotone" /></span>
           {tab.label}
           {#if tab.id === 'review' && reviewTotal > 0}
-            <span class="tab-count" aria-label="{reviewTotal} waiting">{reviewTotal}</span>
+            <span class="lt-count tab-count" aria-label="{reviewTotal} waiting">{reviewTotal}</span>
           {/if}
         </a>
       {/each}
@@ -131,7 +131,7 @@
             <span class="tab-icon"><Icon size={20} weight="duotone" /></span>
             <span class="admin-menu-label">{tab.label}</span>
             {#if tab.id === 'review' && reviewTotal > 0}
-              <span class="tab-count" aria-label="{reviewTotal} waiting">{reviewTotal}</span>
+              <span class="lt-count tab-count" aria-label="{reviewTotal} waiting">{reviewTotal}</span>
             {/if}
             <span class="admin-menu-caret"><CaretRight size={14} weight="bold" /></span>
           </a>
@@ -290,17 +290,5 @@
   .admin-back:hover {
     color: var(--color-text);
     text-decoration: none;
-  }
-
-  .tab-count {
-    min-width: 1.25rem;
-    padding: 0 0.35rem;
-    border-radius: 999px;
-    background: var(--color-accent);
-    color: var(--color-surface);
-    font-size: 0.72rem;
-    font-weight: 600;
-    line-height: 1.25rem;
-    text-align: center;
   }
 </style>

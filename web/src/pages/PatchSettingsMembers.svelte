@@ -339,7 +339,7 @@
             <div class="member-row-main">
               <div class="member-info">
                 <span class="member-name">{member.display_name || member.username}</span>
-                <span class="badge badge-pending">pending</span>
+                <span class="lt-pill lt-tone-warning">pending</span>
               </div>
               <div class="member-actions">
                 <ConfirmAction
@@ -396,7 +396,7 @@
           <li class="member-row">
             <div class="member-info">
               <span class="member-name">{person.display_name || person.username}</span>
-              <span class="badge badge-invited">invited</span>
+              <span class="lt-pill lt-tone-muted">invited</span>
             </div>
             <div class="member-actions">
               <ConfirmAction
@@ -438,7 +438,7 @@
           <li class="member-row">
             <div class="member-info">
               <span class="member-name">{member.display_name || member.username}</span>
-              <span class="badge">{member.role}</span>
+              <span class="lt-pill">{member.role}</span>
             </div>
             <div class="member-actions">
               <select
@@ -527,7 +527,7 @@
               <li class="member-row">
                 <div class="member-info">
                   <span class="member-name">{member.display_name || member.username}</span>
-                  <span class="badge badge-banned">removed</span>
+                  <span class="lt-pill lt-tone-error">removed</span>
                 </div>
                 <div class="member-actions">
                   <ConfirmAction
@@ -647,11 +647,6 @@
     font-family: inherit;
   }
 
-  .badge-pending {
-    background: var(--color-warning);
-    color: var(--color-on-warning);
-  }
-
   /* Invitations: the field and its button on one line, the list below. */
   .invite-form {
     display: flex;
@@ -680,15 +675,6 @@
   }
 
   /* Invited is a wait, not a standing: the muted overlay, not a colour. */
-  .badge-invited {
-    background: var(--color-overlay);
-    color: var(--color-text-muted);
-  }
-
-  .badge-banned {
-    background: var(--color-error);
-    color: var(--color-on-error);
-  }
 
   .section-toggle {
     border: none;

@@ -161,7 +161,7 @@
               <PersonCard person={member} role={member.role} />
             </span>
             <span class="member-marks">
-              <span class="badge">{member.role}</span>
+              <span class="lt-pill">{member.role}</span>
               {#if (member.contact || []).length > 0}
                 <span class="reachable" title="Shares contact details with this patch">reachable</span>
               {/if}

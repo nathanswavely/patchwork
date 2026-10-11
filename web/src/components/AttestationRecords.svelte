@@ -198,7 +198,7 @@
           <li class:unrealized={!n.realized}>
             <span class="name">{n.display_name}</span>
             {#if !n.realized}
-              <span class="tag">hasn't joined</span>
+              <span class="lt-pill">hasn't joined</span>
               {#if isAdmin}
                 {#if linking === n.id}
                   <span class="link-row">
@@ -355,14 +355,6 @@
   }
 
   .unrealized .name { color: var(--color-text-muted); }
-
-  .tag {
-    font-size: 0.72rem;
-    padding: 0.05rem 0.35rem;
-    border-radius: var(--radius);
-    background: var(--color-overlay);
-    color: var(--color-text-muted);
-  }
 
   .link-row {
     display: flex;

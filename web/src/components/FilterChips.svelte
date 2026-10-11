@@ -47,7 +47,7 @@
         aria-expanded="false"
       >
         <FunnelSimple size={16} weight="bold" />
-        {#if count > 0}<span class="chips-badge">{count}</span>{/if}
+        {#if count > 0}<span class="lt-count lt-count-corner lt-tone-primary chips-badge">{count}</span>{/if}
       </button>
     {:else}
       <div class="chips-row" role="group" aria-label="Filter by tag">
@@ -181,19 +181,8 @@
   }
 
   .chips-badge {
-    position: absolute;
     top: -5px;
     right: -7px;
-    background: var(--color-primary);
-    color: var(--color-btn-on-primary);
-    font-size: 0.6rem;
-    font-weight: 700;
-    min-width: 16px;
-    height: 16px;
-    line-height: 16px;
-    text-align: center;
-    border-radius: 8px;
-    padding: 0 3px;
   }
 
   /* Overlay: chips float on the canvas — each carries its own glass

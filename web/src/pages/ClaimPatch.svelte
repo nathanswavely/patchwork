@@ -184,7 +184,7 @@
     <div class="lt-card verify-card">
       <div class="verify-header">
         <h2>Your claim is open</h2>
-        <span class="badge">{methodLabels[claim.method] || claim.method}</span>
+        <span class="lt-pill">{methodLabels[claim.method] || claim.method}</span>
       </div>
 
       {#if claim.method === 'dns'}

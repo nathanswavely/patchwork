@@ -128,7 +128,7 @@
             {#if narrow && !editingTags[sub.id]}
               <div class="tag-summary">
                 {#each tagInputs[sub.id] || [] as name (name)}
-                  <span class="badge">{name}</span>
+                  <span class="lt-pill">{name}</span>
                 {/each}
                 <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => { editingTags[sub.id] = true; }}>Edit</button>
               </div>

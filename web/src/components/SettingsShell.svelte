@@ -78,7 +78,7 @@
           >
             {section.label}
             {#if section.count > 0}
-              <span class="settings-nav-count">{section.count}</span>
+              <span class="lt-count settings-nav-count">{section.count}</span>
             {/if}
             {#if indexHref}
               <span class="settings-nav-caret"><CaretRight size={14} weight="bold" /></span>
@@ -154,17 +154,6 @@
   /* How many items a section is holding for the reader. Only the admin
      panel's Review sidebar passes one; a section without a count renders
      exactly as before. */
-  .settings-nav-count {
-    min-width: 1.25rem;
-    padding: 0 0.35rem;
-    border-radius: 999px;
-    background: var(--color-accent);
-    color: var(--color-surface);
-    font-size: 0.72rem;
-    font-weight: 600;
-    line-height: 1.25rem;
-    text-align: center;
-  }
 
   .settings-content {
     flex: 1;

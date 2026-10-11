@@ -417,7 +417,7 @@
 
 {#snippet trustControl(u)}
   {#if u.trusted_contributor}
-    <span class="badge badge-trusted">Trusted</span>
+    <span class="lt-pill lt-tone-primary badge-trusted">Trusted</span>
     <ConfirmAction
       label="Revoke"
       confirmLabel="Yes, revoke"
@@ -474,9 +474,9 @@
 
 {#snippet statusBadge(u)}
   {#if u.suspended_at}
-    <span class="badge badge-suspended">Suspended</span>
+    <span class="lt-pill lt-tone-error">Suspended</span>
   {:else}
-    <span class="badge badge-active">Active</span>
+    <span class="lt-pill lt-tone-success">Active</span>
   {/if}
 {/snippet}
 
@@ -596,13 +596,13 @@
             </span>
             <span class="user-row-chips">
               {#if u.role === 'admin'}
-                <span class="badge">{u.role}</span>
+                <span class="lt-pill">{u.role}</span>
               {/if}
               {#if u.trusted_contributor || (u.trusted_nodes || []).length > 0}
-                <span class="badge badge-trusted">Trusted</span>
+                <span class="lt-pill lt-tone-primary badge-trusted">Trusted</span>
               {/if}
               {#if u.suspended_at}
-                <span class="badge badge-suspended">Suspended</span>
+                <span class="lt-pill lt-tone-error">Suspended</span>
               {/if}
             </span>
             <span class="user-row-caret">
@@ -909,22 +909,7 @@
   }
 
   .badge-trusted {
-    color: var(--color-primary);
-    border-color: var(--color-primary);
-    background: none;
     margin-right: 0.35rem;
-  }
-
-  .badge-suspended {
-    background: var(--color-danger-bg);
-    color: var(--color-error);
-    border-color: var(--color-error);
-  }
-
-  .badge-active {
-    background: var(--color-success-bg);
-    color: var(--color-success);
-    border-color: var(--color-success);
   }
 
   .user-link {

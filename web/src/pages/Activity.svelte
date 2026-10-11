@@ -97,7 +97,7 @@
                 <div class="item-content">
                   <div class="item-title">{item.title}</div>
                   <div class="item-meta">
-                    <span class="badge badge-type">{typeLabel(item.type)}</span>
+                    <span class="lt-pill lt-tone-primary">{typeLabel(item.type)}</span>
                     <span class="lt-muted">{item.patch_name}</span>
                     {#if item.actor_name}
                       <span class="lt-muted">by {item.actor_name}</span>
@@ -188,15 +188,6 @@
     align-items: center;
     font-size: 0.78rem;
     flex-wrap: wrap;
-  }
-
-  .badge-type {
-    font-size: 0.68rem;
-    padding: 0.1rem 0.4rem;
-    border-radius: 3px;
-    background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
-    color: var(--color-primary);
-    font-weight: 500;
   }
 
   .item-time {

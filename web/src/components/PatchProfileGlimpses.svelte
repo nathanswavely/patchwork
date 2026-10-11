@@ -324,7 +324,7 @@
       {#if isUnclaimed && recentEvents.length > 0}
         <!-- Every event on an unclaimed patch is community-submitted —
              derived from the patch's status, shown once (docs/adr/026). -->
-        <p class="community-note"><span class="badge">Community-submitted</span></p>
+        <p class="community-note"><span class="lt-pill">Community-submitted</span></p>
       {/if}
       {#if recentEvents.length > 0}
         <div class="event-list">
@@ -446,10 +446,13 @@
               <!-- Red is for a decision the patch made. Lapsed and unsettled
                    are absences, so they keep the pill's muted default. -->
               <span
-                class="proposal-status"
+                class="lt-pill proposal-status"
                 class:status-open={outcome === 'open'}
                 class:status-accepted={outcome === 'accepted'}
                 class:status-rejected={outcome === 'rejected'}
+                class:lt-tone-primary={outcome === 'open'}
+                class:lt-tone-success={outcome === 'accepted'}
+                class:lt-tone-error={outcome === 'rejected'}
               >{outcome}</span>
             </a>
           {/each}
@@ -751,29 +754,6 @@
 
   /* Proposals */
   .proposal-status {
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    padding: 0.15rem 0.5rem;
-    border-radius: 999px;
-    color: var(--color-text-muted);
-    background: var(--color-overlay);
     flex-shrink: 0;
-  }
-
-  .proposal-status.status-open {
-    color: var(--color-primary);
-    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
-  }
-
-  .proposal-status.status-accepted {
-    color: var(--color-success);
-    background: color-mix(in srgb, var(--color-success) 12%, transparent);
-  }
-
-  .proposal-status.status-rejected {
-    color: var(--color-error);
-    background: color-mix(in srgb, var(--color-error) 12%, transparent);
   }
 </style>

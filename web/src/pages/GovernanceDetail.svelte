@@ -65,7 +65,7 @@
           <div>
             <h1>{doc.title}</h1>
             <div class="doc-meta">
-              <span class="badge">v{doc.version}</span>
+              <span class="lt-tag">v{doc.version}</span>
               <span class="lt-muted">Last updated {formatDay(doc.updated_at)}</span>
               {#if isMember && doc.visibility !== 'public'}
                 <!-- Only members see this doc at all; the chip tells them the

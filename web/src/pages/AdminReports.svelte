@@ -139,7 +139,7 @@
       {#each reports as report (report.id)}
         <div class="lt-card report-card">
           <div class="report-header">
-            <span class="badge">{ENTITY_LABELS[report.entity_type] || report.entity_type}</span>
+            <span class="lt-pill">{ENTITY_LABELS[report.entity_type] || report.entity_type}</span>
             <span class="report-date lt-muted">{formatDate(report.created_at)}</span>
           </div>
           <div class="report-body">

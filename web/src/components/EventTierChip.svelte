@@ -19,5 +19,5 @@
 </script>
 
 {#if label}
-  <span class="badge">{label}</span>
+  <span class="lt-pill">{label}</span>
 {/if}
