@@ -152,6 +152,10 @@
   --lt-btn-sm-font: 0.78rem;
   --lt-field-pad-y: 0.45rem;
   --lt-field-pad-x: 0.7rem;
+  /* What a person types is read at body size, in an input, a select or a
+     textarea alike. rem, not inherit: a field inside .lt-label would
+     otherwise take the label's small type. */
+  --lt-field-font: 1rem;
   /* Table cells ease tighter on a small screen without a breakpoint. */
   --lt-cell-pad-y: clamp(0.5rem, 1.5vw, 0.6rem);
   --lt-cell-pad-x: clamp(0.6rem, 2vw, 0.75rem);
@@ -176,6 +180,7 @@
   --lt-btn-sm-font: var(--lt-text-xs);
   --lt-field-pad-y: 0.3rem;
   --lt-field-pad-x: 0.55rem;
+  --lt-field-font: var(--lt-text-sm);
   --lt-cell-pad-y: 0.35rem;
   --lt-cell-pad-x: 0.55rem;
   --lt-item-pad-y: 3px;
@@ -441,7 +446,10 @@
   background: var(--lt-color-surface);
   color: var(--lt-color-text);
   font: inherit;
-  font-size: var(--lt-text-sm);
+  /* Typed text is regular weight even inside .lt-label, whose words are
+     medium and would otherwise come through font: inherit. */
+  font-size: var(--lt-field-font);
+  font-weight: 400;
   line-height: 1.4;
   transition: border-color var(--lt-quick) ease;
 }
@@ -451,7 +459,7 @@
   outline-offset: 1px;
   border-color: var(--lt-color-primary);
 }
-textarea.lt-field { font-size: inherit; line-height: 1.55; resize: vertical; }
+textarea.lt-field { line-height: 1.55; resize: vertical; }
 
 /* ================================================================
    TAGS, KEYS
