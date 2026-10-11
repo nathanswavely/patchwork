@@ -55,7 +55,7 @@
           <!-- The search chip: the query's standing form, set only by the
                search dropdown's action row. Clears like any tag chip. -->
           <button
-            class="chip search-chip lt-resin lt-resin-frosted"
+            class="lt-chip search-chip lt-resin"
             onclick={() => setSearchQuery('')}
             title={`Showing matches for “${query}”. Click to clear.`}
           >
@@ -66,7 +66,7 @@
         {#each getRankedTags() as tag (tag)}
           {@const active = getSelectedTags().includes(tag)}
           <button
-            class="chip lt-resin lt-resin-frosted"
+            class="lt-chip lt-resin"
             style="--lt-resin-color: {colorForTag(tag)}; {active ? `background: ${colorForTag(tag)}; border-color: ${colorForTag(tag)}; color: ${textOnColor(colorForTag(tag))};` : `border-color: ${colorForTag(tag)}40;`}"
             aria-pressed={active}
             onclick={() => toggleTag(tag)}
@@ -99,7 +99,7 @@
     gap: 6px;
   }
 
-  .chip {
+  .lt-chip {
     padding: 5px 12px;
     font-size: 0.75rem;
     font-weight: 600;
@@ -187,7 +187,7 @@
 
   /* Overlay: chips float on the canvas — each carries its own glass
      backdrop, like the collapsed rail's items. */
-  .chips-overlay .chip,
+  .chips-overlay .lt-chip,
   .chips-overlay .chips-collapse,
   .chips-overlay .chips-toggle {
     backdrop-filter: blur(12px);
@@ -224,8 +224,5 @@
   }
 
   @media (pointer: coarse) {
-    .chip {
-      min-height: 36px;
-    }
   }
 </style>

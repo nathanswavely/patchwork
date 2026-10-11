@@ -164,7 +164,7 @@
           onclick={() => { userMenuOpen = !userMenuOpen; }}
           title={getUser()?.display_name || getUser()?.username}
         >
-          <div class="bar-avatar">
+          <div class="lt-avatar bar-avatar">
             {#if getUser()?.avatar_url}
               <img src={getUser().avatar_url} alt="" />
             {:else}
@@ -366,23 +366,7 @@
   }
 
   .bar-avatar {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: var(--color-primary);
-    color: var(--color-btn-on-primary);
-    font-size: 0.75rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-  }
-
-  .bar-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    --lt-avatar-size: 30px;
   }
 
   .bar-login {

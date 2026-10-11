@@ -30,7 +30,7 @@ test.describe('Discovery — Quilt View', () => {
     const filterBtn = page.locator('.filter-btn');
     if (await filterBtn.isVisible()) {
       await filterBtn.click();
-      await expect(page.locator('.filter-chips .chip').first()).toBeVisible();
+      await expect(page.locator('.filter-chips .lt-chip').first()).toBeVisible();
     }
   });
 

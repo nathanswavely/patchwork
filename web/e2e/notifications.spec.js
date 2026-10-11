@@ -147,12 +147,12 @@ test.describe('Notifications — Full Page', () => {
     await expectNoError(page);
     await expect(page.locator('h1', { hasText: 'Notifications' })).toBeVisible();
     // Filter chips should be present
-    await expect(page.locator('.chip', { hasText: 'All' })).toBeVisible();
+    await expect(page.locator('.lt-chip', { hasText: 'All' })).toBeVisible();
   });
 
   test('category filter chips work', async ({ page }) => {
     await goto(page, '/notifications');
-    const proposalsChip = page.locator('.chip', { hasText: 'Proposals' });
+    const proposalsChip = page.locator('.lt-chip', { hasText: 'Proposals' });
     if (await proposalsChip.isVisible()) {
       await proposalsChip.click();
       await page.waitForLoadState('networkidle');
@@ -162,7 +162,7 @@ test.describe('Notifications — Full Page', () => {
 
   test('unread toggle works', async ({ page }) => {
     await goto(page, '/notifications');
-    const unreadChip = page.locator('.chip', { hasText: 'Unread only' });
+    const unreadChip = page.locator('.lt-chip', { hasText: 'Unread only' });
     if (await unreadChip.isVisible()) {
       await unreadChip.click();
       await page.waitForLoadState('networkidle');
@@ -233,7 +233,7 @@ test.describe('Notifications — Preferences', () => {
     await expect(page.locator('h2', { hasText: 'Notification Preferences' })).toBeVisible();
     // Should show category groups with toggle switches
     await expect(page.locator('.category-label').first()).toBeVisible({ timeout: 5000 });
-    await expect(page.locator('.prefs-toggle .switch').first()).toBeVisible();
+    await expect(page.locator('.prefs-toggle .lt-switch').first()).toBeVisible();
   });
 
   test('toggling a preference saves without error', async ({ page }) => {

@@ -104,11 +104,11 @@
 
 <div class="tag-picker">
   {#if selected.length > 0}
-    <div class="chips selected-chips" role="list" aria-label="Selected tags, in priority order">
+    <div class="lt-chips selected-chips" role="list" aria-label="Selected tags, in priority order">
       {#each selected as name (name)}
         {@const color = colorForTag(name)}
         {@const motif = motifFor(name)}
-        <span class="chip" role="listitem" style="background: {color}; color: {textOnColor(color)};">
+        <span class="lt-chip" role="listitem" style="background: {color}; color: {textOnColor(color)};">
           {#if motif}
             {@const MotifIcon = motif.component}
             <MotifIcon size={12} weight="fill" />
@@ -116,7 +116,7 @@
           {name}
           <button
             type="button"
-            class="chip-btn"
+            class="lt-chip-remove"
             onclick={() => remove(name)}
             {disabled}
             title="Remove"
@@ -128,15 +128,15 @@
   {/if}
 
   {#if pending.length > 0 || suggested.length > 0}
-    <div class="chips" role="list" aria-label="Suggested tags awaiting review">
+    <div class="lt-chips" role="list" aria-label="Suggested tags awaiting review">
       {#each pending as name (name)}
-        <span class="chip chip-pending" role="listitem">
+        <span class="lt-chip lt-chip-pending" role="listitem">
           {name}
           <span class="pending-note">waiting</span>
           {#if onWithdraw}
             <button
               type="button"
-              class="chip-btn"
+              class="lt-chip-remove"
               onclick={() => onWithdraw(name)}
               {disabled}
               title="Withdraw"
@@ -146,12 +146,12 @@
         </span>
       {/each}
       {#each suggested as name (name)}
-        <span class="chip chip-pending" role="listitem">
+        <span class="lt-chip lt-chip-pending" role="listitem">
           {name}
           <span class="pending-note">to suggest</span>
           <button
             type="button"
-            class="chip-btn"
+            class="lt-chip-remove"
             onclick={() => removeSuggestion(name)}
             {disabled}
             title="Remove"
@@ -163,11 +163,11 @@
   {/if}
 
   {#if available.length > 0}
-    <div class="chips" role="list" aria-label="Available tags">
+    <div class="lt-chips" role="list" aria-label="Available tags">
       {#each available as tag (tag.name)}
         <button
           type="button"
-          class="chip chip-available"
+          class="lt-chip"
           role="listitem"
           onclick={() => add(tag.name)}
           {disabled}
@@ -214,10 +214,10 @@
     gap: 0.5rem;
   }
 
-  .chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
+  .selected-chips .lt-chip {
+    border-color: transparent;
+    cursor: default;
+    font-weight: 500;
   }
 
   .selected-chips {
@@ -225,56 +225,13 @@
     border-bottom: 1px dashed var(--color-border);
   }
 
-  .chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    padding: 0.22rem 0.55rem;
-    border-radius: 999px;
-    font-size: 0.78rem;
-    font-weight: 500;
-    border: none;
-  }
-
   /* Dashed and unfilled, the same way an unconfirmed map marker is drawn:
      provisional, not yet a fact about the patch. */
-  .chip-pending {
-    background: transparent;
-    color: var(--color-text-muted, var(--color-text));
-    border: 1px dashed var(--color-border);
-  }
 
   .pending-note {
     font-size: 0.68rem;
     opacity: 0.75;
     font-style: italic;
-  }
-
-  .chip-available {
-    background: var(--color-surface);
-    color: var(--color-text);
-    border: 1px solid var(--color-border);
-    cursor: pointer;
-    transition: border-color 120ms ease;
-  }
-
-  .chip-available:hover:not(:disabled) {
-    border-color: var(--color-primary);
-  }
-
-  .chip-btn {
-    display: inline-flex;
-    align-items: center;
-    border: none;
-    background: none;
-    color: inherit;
-    padding: 0;
-    cursor: pointer;
-    opacity: 0.75;
-  }
-
-  .chip-btn:hover:not(:disabled) {
-    opacity: 1;
   }
 
   .empty-hint {
@@ -299,25 +256,5 @@
 
   .error-hint {
     color: var(--color-error);
-  }
-
-  /* A finger: chips are tall enough to hit and far enough apart to miss
-     the neighbour, and a selected chip's remove control runs its full
-     height instead of being a 12px glyph. */
-  @media (pointer: coarse) {
-    .chips {
-      gap: 0.5rem;
-    }
-
-    .chip {
-      min-height: 36px;
-      padding: 0.35rem 0.75rem;
-    }
-
-    .chip-btn {
-      align-self: stretch;
-      padding: 0 0.6rem;
-      margin: -0.35rem -0.75rem -0.35rem 0;
-    }
   }
 </style>

@@ -239,7 +239,7 @@
               <rect x="13" y="13" width="9" height="9" rx="1" stroke="currentColor" stroke-width="2"/>
             </svg>
           {/if}
-          <span class="logo-label">{activeScopeLabel}</span>
+          <span class="lt-type-name logo-label">{activeScopeLabel}</span>
           <span class="logo-chevron" class:open={scopeMenuOpen}>
             <CaretDown size={12} weight="bold" />
           </span>
@@ -586,9 +586,6 @@
   }
 
   .logo-label {
-    font-family: var(--font-display);
-    font-variation-settings: 'BNCE' 20;
-    font-weight: 700;
     font-size: 1.05rem;
     color: var(--color-text);
     line-height: 1;

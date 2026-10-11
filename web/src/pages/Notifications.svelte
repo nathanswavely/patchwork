@@ -139,14 +139,14 @@
     <div class="filters">
       {#each categories as cat}
         <button
-          class="chip"
-          class:selected={categoryFilter === cat.value}
+          class="lt-chip"
+          aria-pressed={categoryFilter === cat.value}
           onclick={() => setFilter(cat.value)}
         >{cat.label}</button>
       {/each}
       <button
-        class="chip"
-        class:selected={unreadOnly}
+        class="lt-chip"
+        aria-pressed={unreadOnly}
         onclick={toggleUnread}
       >Unread only</button>
     </div>
@@ -208,23 +208,6 @@
     gap: 0.4rem;
     margin-bottom: 1.5rem;
     flex-wrap: wrap;
-  }
-
-  .chip {
-    padding: 0.25rem 0.75rem;
-    border: 1px solid var(--color-border);
-    border-radius: 999px;
-    background: var(--color-surface);
-    font-size: 0.8rem;
-    color: var(--color-text-muted);
-    cursor: pointer;
-  }
-
-  .chip:hover { border-color: var(--color-primary); }
-  .chip.selected {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
-    color: var(--color-btn-on-primary);
   }
 
   .notif-list {

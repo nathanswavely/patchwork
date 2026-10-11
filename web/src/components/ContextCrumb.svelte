@@ -35,7 +35,7 @@
     {/if}
   </a>
   <span class="crumb-sep">/</span>
-  <a href={href} class="crumb-label" onclick={(e) => handleNav(e, href)}>{label}</a>
+  <a href={href} class="lt-type-name crumb-label" onclick={(e) => handleNav(e, href)}>{label}</a>
 </div>
 
 <style>
@@ -70,17 +70,10 @@
   }
 
   .crumb-label {
-    font-family: var(--font-display);
-    font-variation-settings: 'BNCE' 20;
-    font-weight: 700;
     font-size: 1.05rem;
     color: var(--color-text);
     text-decoration: none;
     line-height: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-width: 0;
     padding: 6px 8px;
     border-radius: var(--radius);
     transition: background 150ms ease;

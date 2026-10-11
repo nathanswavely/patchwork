@@ -163,8 +163,8 @@
       <div class="status-filters">
         {#each [['open', 'Open'], ['approved', 'Approved'], ['rejected', 'Rejected'], ['not_decided', 'Not decided'], ['all', 'All']] as [value, label]}
           <button
-            class="chip"
-            class:selected={statusFilter === value}
+            class="lt-chip"
+            aria-pressed={statusFilter === value}
             onclick={() => filterByStatus(value)}
           >
             {label}
@@ -255,27 +255,6 @@
     display: flex;
     gap: 0.4rem;
     margin-bottom: 1.5rem;
-  }
-
-  .chip {
-    padding: 0.25rem 0.75rem;
-    border: 1px solid var(--color-border);
-    border-radius: 999px;
-    background: var(--color-surface);
-    font-size: 0.8rem;
-    color: var(--color-text-muted);
-    cursor: pointer;
-    transition: all 150ms ease;
-  }
-
-  .chip:hover {
-    border-color: var(--color-primary);
-  }
-
-  .chip.selected {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
-    color: var(--color-btn-on-primary);
   }
 
   .proposal-list {
@@ -392,15 +371,12 @@
       scrollbar-width: none;
     }
 
-    .status-filters .chip {
-      flex-shrink: 0;
-      white-space: nowrap;
-    }
+    .status-filters .lt-chip {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
   }
 
   @media (pointer: coarse) {
-    .status-filters .chip {
-      min-height: 36px;
-    }
   }
 </style>

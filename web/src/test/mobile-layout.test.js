@@ -62,13 +62,22 @@ describe('a finger gets a finger-sized target', () => {
   };
 
   it('in the shared controls', () => {
-    expect(coarse('components/TagPicker.svelte')).toContain('min-height: 36px');
     expect(coarse('components/SegmentedControl.svelte')).toContain('min-height: 40px');
     expect(coarse('components/Modal.svelte')).toContain('width: 44px');
-    expect(coarse('components/ToggleSwitch.svelte')).toContain('padding: 11px 4px');
     expect(coarse('components/GlobalBar.svelte')).toContain('min-height: 44px');
     expect(coarse('components/PatchOverflow.svelte')).toContain('min-height: 44px');
     expect(coarse('components/PatchRelationship.svelte')).toContain('min-height: 44px');
+  });
+
+  // The switch and the tag chips are Liquid Textile's, which sizes them by
+  // --lt-target: 44px on a coarse pointer (up from the chips' 36px).
+  it('in the controls Liquid Textile draws', () => {
+    const lt = source('vendor/liquid-textile/foundation.css');
+    expect(lt).toMatch(/@media \(pointer: coarse\) \{\s*:root,\s*\[data-density\] \{\s*--lt-target: 44px;/);
+    expect(source('components/ToggleSwitch.svelte')).toContain('class="lt-switch"');
+    expect(lt).toMatch(/\.lt-switch::after \{[^}]*inset: calc\(\(22px - max\(22px, var\(--lt-target\)\)\) \/ 2\) -4px;/);
+    expect(source('components/TagPicker.svelte')).toContain('class="lt-chip"');
+    expect(lt).toMatch(/\.lt-chip \{[^}]*min-height: var\(--lt-target\);/);
   });
 
   it('for a text-shaped button, without moving the line it sits in', () => {

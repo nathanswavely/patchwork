@@ -537,7 +537,7 @@
         <div class="admin-list">
           {#each overview.admins as admin}
             <div class="admin-item">
-              <div class="admin-avatar">
+              <div class="lt-avatar admin-avatar">
                 {#if admin.avatar_url}
                   <img src={admin.avatar_url} alt="" />
                 {:else}
@@ -858,24 +858,7 @@
   }
 
   .admin-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: var(--color-primary);
-    color: var(--color-btn-on-primary);
-    font-size: 0.78rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-
-  .admin-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    --lt-avatar-size: 32px;
   }
 
   .admin-info {
