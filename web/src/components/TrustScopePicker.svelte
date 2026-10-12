@@ -147,6 +147,7 @@
         <label class="scope-search">
           <span>Add a patch</span>
           <input
+            class="lt-field" data-density="compact"
             type="search"
             placeholder="Search unclaimed patches"
             value={query}
@@ -280,8 +281,6 @@
   .scope-search input {
     width: 100%;
     max-width: 22rem;
-    font-size: 0.85rem;
-    padding: 0.3rem 0.45rem;
   }
 
   .scope-note {

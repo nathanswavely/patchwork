@@ -160,7 +160,7 @@
           <p class="lt-muted small">Recording an adoption of <strong>{docTitle}</strong>.</p>
         {:else}
           <label for="ad-title">Which document</label>
-          <input id="ad-title" type="text" bind:value={title} disabled={saving}
+          <input class="lt-field" id="ad-title" type="text" bind:value={title} disabled={saving}
                  placeholder="Bylaws" />
           <p class="lt-muted small">
             If this patch has no document by that name, one is created.
@@ -168,14 +168,14 @@
         {/if}
 
         <label for="ad-date">When it was adopted</label>
-        <input id="ad-date" type="date" bind:value={decidedAt} disabled={saving} />
+        <input class="lt-field" id="ad-date" type="date" bind:value={decidedAt} disabled={saving} />
 
         <label for="ad-summary">What happened</label>
-        <input id="ad-summary" type="text" bind:value={summary} disabled={saving}
+        <input class="lt-field" id="ad-summary" type="text" bind:value={summary} disabled={saving}
                placeholder="Amended at the annual meeting" />
 
         <label for="ad-body">The text as adopted</label>
-        <textarea id="ad-body" rows="12" bind:value={adoptedBody} disabled={saving}
+        <textarea class="lt-field" id="ad-body" rows="12" bind:value={adoptedBody} disabled={saving}
                   placeholder="Paste the whole document as it now reads"></textarea>
 
         <p class="form-note lt-muted">

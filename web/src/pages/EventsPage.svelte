@@ -249,11 +249,11 @@
           <div class="custom-range">
             <label class="range-field">
               <span>From</span>
-              <input type="date" bind:value={customFrom} />
+              <input class="lt-field" data-density="compact" type="date" bind:value={customFrom} />
             </label>
             <label class="range-field">
               <span>To</span>
-              <input type="date" bind:value={customTo} />
+              <input class="lt-field" data-density="compact" type="date" bind:value={customTo} />
             </label>
             <button class="apply-btn" onclick={applyCustomRange} disabled={!customFrom}>Apply</button>
           </div>
@@ -512,15 +512,6 @@
     color: var(--color-text-muted);
     text-transform: uppercase;
     letter-spacing: 0.04em;
-  }
-
-  .range-field input {
-    padding: 8px 10px;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    background: var(--color-bg);
-    color: var(--color-text);
-    font-size: 0.85rem;
   }
 
   .apply-btn {

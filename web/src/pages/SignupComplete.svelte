@@ -183,6 +183,7 @@
         <form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
           <label for="username">Username <span class="required">*</span></label>
           <input
+            class="lt-field"
             id="username"
             type="text"
             bind:value={username}
@@ -204,6 +205,7 @@
 
           <label for="display-name">Display Name</label>
           <input
+            class="lt-field"
             id="display-name"
             type="text"
             bind:value={displayName}
@@ -217,6 +219,7 @@
                  rather than whoever found the address first (docs/adr/070). -->
             <label for="bootstrap-token">Bootstrap token <span class="required">*</span></label>
             <input
+              class="lt-field"
               id="bootstrap-token"
               type="text"
               bind:value={bootstrapToken}

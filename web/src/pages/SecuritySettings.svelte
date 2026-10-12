@@ -309,6 +309,7 @@
               >
                 <!-- svelte-ignore a11y_autofocus -->
                 <input
+                  class="lt-field"
                   type="text"
                   bind:value={renameValue}
                   maxlength={MAX_NAME}
@@ -494,6 +495,7 @@
     }}
   >
     <input
+      class="lt-field"
       type="text"
       bind:value={namingValue}
       maxlength={MAX_NAME}

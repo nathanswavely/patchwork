@@ -202,7 +202,7 @@
               {#if isAdmin}
                 {#if linking === n.id}
                   <span class="link-row">
-                    <select bind:value={linkChoice}>
+                    <select class="lt-field" bind:value={linkChoice}>
                       <option value="">Choose a member</option>
                       {#each members as m}
                         <option value={m.user_id}>{m.display_name || m.username}</option>
@@ -248,28 +248,28 @@
         <p class="form-head">{correcting ? 'Correct the record' : 'Record a decision'}</p>
 
         <label for="att-date">When it was decided</label>
-        <input id="att-date" type="date" bind:value={decidedAt} disabled={saving} />
+        <input class="lt-field" id="att-date" type="date" bind:value={decidedAt} disabled={saving} />
 
         {#if hasTerms}
           <label for="att-term">When this council's term ends</label>
-          <input id="att-term" type="date" bind:value={termEndsAt} disabled={saving} />
+          <input class="lt-field" id="att-term" type="date" bind:value={termEndsAt} disabled={saving} />
         {/if}
 
         <label for="att-summary">What happened</label>
-        <input id="att-summary" type="text" bind:value={summary} disabled={saving}
+        <input class="lt-field" id="att-summary" type="text" bind:value={summary} disabled={saving}
                placeholder="Annual meeting elected the council" />
 
         <span class="names-label">Who it put in place</span>
         {#each rows as row, i}
           <div class="name-row">
-            <select bind:value={row.userId} disabled={saving}>
+            <select class="lt-field" bind:value={row.userId} disabled={saving}>
               <option value="">Someone not here yet</option>
               {#each members as m}
                 <option value={m.user_id}>{m.display_name || m.username}</option>
               {/each}
             </select>
             {#if !row.userId}
-              <input type="text" bind:value={row.name} disabled={saving} placeholder="Their name" />
+              <input class="lt-field" type="text" bind:value={row.name} disabled={saving} placeholder="Their name" />
             {/if}
             <button class="lt-btn lt-btn-sm lt-btn-ghost" onclick={() => removeRow(i)} disabled={saving}>Remove</button>
           </div>

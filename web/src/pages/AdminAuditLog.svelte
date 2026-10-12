@@ -117,7 +117,7 @@
     <div class="filter-row">
       <label class="filter-field">
         <span class="filter-label">Action</span>
-        <select bind:value={actionFilter}>
+        <select class="lt-field" data-density="compact" bind:value={actionFilter}>
           <option value="">All</option>
           <option value="node.create">node.create</option>
           <option value="node.update">node.update</option>
@@ -135,15 +135,15 @@
       </label>
       <label class="filter-field">
         <span class="filter-label">User</span>
-        <input type="text" placeholder="Search by user ID..." bind:value={userSearch} />
+        <input class="lt-field" data-density="compact" type="text" placeholder="Search by user ID..." bind:value={userSearch} />
       </label>
       <label class="filter-field">
         <span class="filter-label">From</span>
-        <input type="date" bind:value={dateFrom} />
+        <input class="lt-field" data-density="compact" type="date" bind:value={dateFrom} />
       </label>
       <label class="filter-field">
         <span class="filter-label">To</span>
-        <input type="date" bind:value={dateTo} />
+        <input class="lt-field" data-density="compact" type="date" bind:value={dateTo} />
       </label>
     </div>
     {#if dateRangeWarning}
@@ -245,12 +245,6 @@
     color: var(--color-text-muted);
     text-transform: uppercase;
     letter-spacing: 0.02em;
-  }
-
-  .filter-field select,
-  .filter-field input {
-    padding: 0.35rem 0.5rem;
-    font-size: 0.85rem;
   }
 
   .date-warning {

@@ -108,7 +108,7 @@ describe('GovernanceOverview — the term-end box, next to the chairs', () => {
 
   it('offers a date control per seat to this patch’s admin only', () => {
     expect(src).toMatch(/\{#if isPatchAdmin\}\s*\n\s*<div class="seat-controls">/);
-    expect(src).toMatch(/<input type="date" bind:value=\{termDraft\}/);
+    expect(src).toMatch(/<input class="lt-field" data-density="compact" type="date" bind:value=\{termDraft\}/);
     expect(src).toMatch(/\{seat\.term_ends_at \? 'Change term end' : 'Set term end'\}/);
   });
 

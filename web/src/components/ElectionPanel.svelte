@@ -308,6 +308,7 @@
           <div class="stand-row">
             <label for="why-standing">Why you are standing <span class="lt-muted">(optional)</span></label>
             <textarea
+              class="lt-field"
               id="why-standing"
               bind:value={statement}
               disabled={busy}
@@ -332,7 +333,7 @@
           <div class="nominate-other">
             <label for="nominate-who">Put another member forward</label>
             <div class="nominate-row">
-              <select id="nominate-who" bind:value={nomineeId} disabled={busy}>
+              <select class="lt-field" id="nominate-who" bind:value={nomineeId} disabled={busy}>
                 <option value="">Choose a member</option>
                 {#each nominatable as m (m.user_id)}
                   <option value={m.user_id}>{m.display_name || m.username}</option>

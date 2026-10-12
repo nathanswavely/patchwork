@@ -152,7 +152,7 @@
   <form class="add-form" onsubmit={(e) => { e.preventDefault(); handleAdd(); }}>
     <label>
       Platform
-      <select bind:value={platform} disabled={busy}>
+      <select class="lt-field" bind:value={platform} disabled={busy}>
         <option value="apple">Apple</option>
         <option value="android">Android</option>
       </select>
@@ -161,6 +161,7 @@
     <label>
       Identifier
       <input
+        class="lt-field"
         type="text"
         bind:value={identifier}
         placeholder={PLACEHOLDERS[platform]}
@@ -172,6 +173,7 @@
       <label>
         Signing-certificate fingerprints
         <textarea
+          class="lt-field"
           bind:value={fingerprints}
           rows="4"
           placeholder="AA:BB:CC:…, one per line"
@@ -183,6 +185,7 @@
     <label>
       Label
       <input
+        class="lt-field"
         type="text"
         bind:value={label}
         maxlength="64"

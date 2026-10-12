@@ -95,6 +95,7 @@
           {#if decliningId === sub.id}
             <div class="decline-form">
               <textarea
+                class="lt-field"
                 rows="2"
                 placeholder="Note to the submitter (optional)"
                 bind:value={declineNote}
@@ -185,10 +186,6 @@
     gap: 0.5rem;
   }
 
-  .decline-form textarea {
-    resize: vertical;
-    font-size: 0.85rem;
-  }
 
 
   .sub-event {

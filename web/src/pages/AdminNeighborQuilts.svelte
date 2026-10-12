@@ -68,6 +68,7 @@
 
   <form class="add-form" onsubmit={(e) => { e.preventDefault(); handleAdd(); }}>
     <input
+      class="lt-field"
       type="url"
       bind:value={newUrl}
       placeholder="https://other-patchwork.example.com"

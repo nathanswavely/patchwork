@@ -373,7 +373,7 @@
     <h3 class="section-heading">Invite a member</h3>
     <form class="invite-form" onsubmit={inviteMember}>
       <input
-        class="invite-input"
+        data-density="compact" class="lt-field invite-input"
         type="text"
         placeholder="Username"
         aria-label="Username to invite"
@@ -442,7 +442,7 @@
             </div>
             <div class="member-actions">
               <select
-                class="role-select"
+                data-density="compact" class="lt-field role-select"
                 value={roleEdits[member.user_id] ?? member.role}
                 onchange={(e) => setRoleEdit(member.user_id, e.target.value)}
               >
@@ -637,16 +637,6 @@
     margin: 0 0 0.75rem;
   }
 
-  .role-select {
-    font-size: 0.82rem;
-    padding: 0.25rem 0.5rem;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    background: var(--color-surface);
-    color: var(--color-text);
-    font-family: inherit;
-  }
-
   /* Invitations: the field and its button on one line, the list below. */
   .invite-form {
     display: flex;
@@ -658,13 +648,6 @@
   .invite-input {
     flex: 1;
     min-width: 0;
-    font-size: 0.85rem;
-    padding: 0.35rem 0.55rem;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    background: var(--color-surface);
-    color: var(--color-text);
-    font-family: inherit;
   }
 
   .subheading {

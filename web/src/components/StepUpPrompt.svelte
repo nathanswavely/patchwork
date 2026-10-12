@@ -191,7 +191,7 @@
       <label class="su-label" for="stepup-code">Recovery code</label>
       <input
         id="stepup-code"
-        class="su-input"
+        class="lt-field su-input"
         type="text"
         bind:value={code}
         bind:this={fieldEl}

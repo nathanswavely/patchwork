@@ -99,6 +99,7 @@
       <p class="lt-muted follow-link-desc">Found a patch while visiting another quilt? Paste its link (or drop it in the search bar) and it opens here, with a Follow button. Followed patches join your My Quilt.</p>
       <form class="add-form" onsubmit={(e) => { e.preventDefault(); handleFollowLink(); }}>
         <input
+          class="lt-field"
           type="url"
           bind:value={followUrl}
           placeholder="https://their-quilt.example.com/patches/gallery-row"
@@ -112,6 +113,7 @@
 
     <form class="add-form" onsubmit={(e) => { e.preventDefault(); handleAdd(); }}>
       <input
+        class="lt-field"
         type="url"
         bind:value={newUrl}
         placeholder="https://other-patchwork.example.com"
