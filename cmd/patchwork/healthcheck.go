@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"os"
 	"time"
@@ -18,8 +19,8 @@ import (
 // `CMD curl -f .../health` is unrunnable — but the app's own binary is
 // already in the image and can be invoked in exec form.
 //
-// The port comes from the same config file the server reads, so the probe
-// cannot drift from where the server actually listens. A config that fails
+// The host and port come from the same config file the server reads, so the
+// probe cannot drift from where the server actually listens. A config that fails
 // to load is reported unhealthy: the server could not have started either.
 func runHealthcheck(configPath string) {
 	cfg, err := config.Load(configPath)
@@ -28,7 +29,7 @@ func runHealthcheck(configPath string) {
 		os.Exit(1)
 	}
 
-	url := "http://127.0.0.1:" + cfg.Server.Port + "/api/v1/health"
+	url := "http://" + net.JoinHostPort(cfg.Server.ProbeHost(), cfg.Server.Port) + "/api/v1/health"
 	client := &http.Client{Timeout: 3 * time.Second}
 
 	resp, err := client.Get(url)

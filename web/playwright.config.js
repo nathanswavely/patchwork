@@ -61,7 +61,10 @@ export default defineConfig({
       // Windows (cmd.exe) and Linux/macOS; `./patchwork` was a POSIX-only invocation.
       command: `go run ./cmd/patchwork/ -config ${CONFIG_FILE}`,
       cwd: REPO_ROOT,
-      env: { PATCHWORK_PORT: String(API_PORT), PATCHWORK_DB_PATH: DB_PATH },
+      // Loopback only: nothing off this machine should reach a test stack, and
+      // Windows Firewall prompts for every all-interface listen from a new
+      // executable path, which `go run` produces on every run.
+      env: { PATCHWORK_HOST: '127.0.0.1', PATCHWORK_PORT: String(API_PORT), PATCHWORK_DB_PATH: DB_PATH },
       url: `${API_URL}/api/v1/health`,
       reuseExistingServer: false,
       // 60s: `go run` compiles before running and this project uses cgo (go-sqlite3),
