@@ -153,6 +153,12 @@ else. Hand-merging the hunks is how a reviewed string quietly reverts to
 
 There is no Svelte render library in this project — every frontend test asserts against **source text**, so the suite cannot catch a rendering bug. Run the app and read the page for anything user-visible. In one session four of five browser checks found real defects the green suite had missed, including a page reciting a voting mechanic its patch does not run.
 
+Every development run binds loopback: `make run`, `make dev` and both e2e
+harnesses set `PATCHWORK_HOST=127.0.0.1`, and a hand-written `patchwork.yaml`
+should carry `server.host: "127.0.0.1"`. Windows Firewall prompts for each
+new executable path that listens on all interfaces, which a worktree build or
+a `go run` is every time, and never for a loopback listen.
+
 Two gotchas that recurred: Svelte trims whitespace at the head of an `{#if}` body, so `{formatDay(d)}{#if x} · more{/if}` renders as "2026· more" — use `{' · '}` as an expression. And an endpoint whose payload a form spreads back into a submission must send **every** field, or the ones it drops get silently reset.
 
 ## Data Model
