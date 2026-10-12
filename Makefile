@@ -3,22 +3,27 @@
         copy-sync copy-stats copy-review copy-draft copy-pull copy-apply copy-check \
         copy-report script-test errcheck errcheck-baseline
 
-# Where `make build` writes the server binary. Override via the environment to
-# build every worktree to one stable path — on Windows the firewall keys its
-# allow/block rule to the executable's full path, so per-worktree binaries
-# each prompt as a brand-new program. One path, one prompt.
+# Where `make build` writes the server binary. Override via the environment
+# to build every worktree to one stable path.
 PATCHWORK_BIN ?= ./patchwork
+
+# `make run` and `make dev` listen on loopback. A development server is for
+# this machine, and on Windows a loopback listen is the one the firewall
+# never asks about: it prompts for each new executable path that binds all
+# interfaces, and every worktree build is a new path. Override with
+# PATCHWORK_HOST=0.0.0.0 to reach a dev server from another device.
+PATCHWORK_HOST ?= 127.0.0.1
 
 build:
 	go build -o $(PATCHWORK_BIN) ./cmd/patchwork/
 
 run: build
-	$(PATCHWORK_BIN)
+	PATCHWORK_HOST=$(PATCHWORK_HOST) $(PATCHWORK_BIN)
 
 dev: build
 	@echo "Starting Go backend (server.port from patchwork.yaml; the Vite proxy expects 8090) and Vite dev server on :5173..."
 	@trap 'kill 0' EXIT; \
-	$(PATCHWORK_BIN) & \
+	PATCHWORK_HOST=$(PATCHWORK_HOST) $(PATCHWORK_BIN) & \
 	cd web && npm run dev & \
 	wait
 
