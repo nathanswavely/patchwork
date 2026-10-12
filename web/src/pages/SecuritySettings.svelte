@@ -593,7 +593,7 @@
     padding: 0.1rem 0.4rem;
     border-radius: 999px;
     color: var(--color-primary);
-    background: var(--color-bg-subtle, rgba(0, 0, 0, 0.05));
+    background: var(--color-overlay);
   }
 
   .sign-out-others {
@@ -637,7 +637,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
     gap: 0.4rem 1.5rem;
-    background: var(--color-bg-subtle, rgba(0, 0, 0, 0.04));
+    background: var(--color-overlay);
     border: 1px solid var(--color-border);
     border-radius: 6px;
   }

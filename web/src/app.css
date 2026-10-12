@@ -1,18 +1,26 @@
+/* ---- Patchwork's tokens are Liquid Textile's ----
+   Every --color-*, spacing, measure and --btn-* token here reads its value
+   from Liquid Textile (web/src/vendor/liquid-textile/foundation.css, where
+   the colors' measured contrast is recorded), so the files that say
+   var(--color-text) keep working while the values live in one place. What
+   is still defined here is Patchwork's own: ink on fabric, the quilt's name
+   badges and hover dim, the canvas chrome, the tab bar's footprint. */
 :root {
-  --radius: 6px;
+  --radius: var(--lt-radius-control);
   /* Body/UI: grotesque for low-fatigue reading. Display: the hand-lettered
      voice, reserved for big headings where it's personality, not strain. */
-  --font: 'Space Grotesk Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-display: 'Shantell Sans Variable', var(--font);
+  --font: var(--lt-font);
+  --font-display: var(--lt-font-display);
+  --font-mono: var(--lt-font-mono);
 
   /* Button sizing lives here, not in components, so a media query can
      retune every button at once (see the coarse-pointer block below). */
-  --btn-pad-y: 0.5rem;
-  --btn-pad-x: 1.25rem;
-  --btn-font: 0.9rem;
-  --btn-sm-pad-y: 0.25rem;
-  --btn-sm-pad-x: 0.6rem;
-  --btn-sm-font: 0.78rem;
+  --btn-pad-y: var(--lt-btn-pad-y);
+  --btn-pad-x: var(--lt-btn-pad-x);
+  --btn-font: var(--lt-btn-font);
+  --btn-sm-pad-y: var(--lt-btn-sm-pad-y);
+  --btn-sm-pad-x: var(--lt-btn-sm-pad-x);
+  --btn-sm-font: var(--lt-btn-sm-font);
 
   /* ---- Layout spacing (docs/adr/038) ----
      Fluid, so there are no spacing breakpoints to fight: a future
@@ -25,7 +33,7 @@
 
   /* Viewport edge to content. Set once, by the shell. Never re-applied
      by a page or by a surface inside one. */
-  --pw-gutter: clamp(0.75rem, 3vw, 1.5rem);
+  --pw-gutter: var(--lt-gutter);
 
   /* What the shell's own chrome occupies at the FOOT of the screen, safe
      area included. Zero here: above SocialShell's 768px breakpoint the rail
@@ -50,15 +58,15 @@
   /* A card or interruption's own edge to its own content. Deliberately
      a separate scale from the gutter — collapsing the page's edges for
      a phone must not squeeze what's inside the boxes. */
-  --pw-pad: clamp(1rem, 2.5vw, 1.25rem);
+  --pw-pad: var(--lt-pad);
 
   /* Between sibling blocks in flow. Near-constant on purpose: with card
      borders gone, vertical separation is the only thing left saying a
      section ended, so it must not collapse along with the gutter. */
-  --pw-stack: clamp(1.25rem, 2.5vw, 1.5rem);
+  --pw-stack: var(--lt-stack);
 
   /* Between inline siblings — chips, button rows. */
-  --pw-gap: clamp(0.5rem, 1.5vw, 0.75rem);
+  --pw-gap: var(--lt-gap);
 
   /* Line length for prose. Replaces the 640/520/800/1000px measures. */
   /* Line length for content columns. Three tiers, because the pages had
@@ -82,9 +90,9 @@
      design-system floors put label text on a busy ground. */
   --pw-label-font: 0.6875rem;
 
-  --pw-measure-narrow: 54ch;
-  --pw-measure: 66ch;
-  --pw-measure-wide: 90ch;
+  --pw-measure-narrow: var(--lt-measure-narrow);
+  --pw-measure: var(--lt-measure);
+  --pw-measure-wide: var(--lt-measure-wide);
 
   /* ---- Ink on fabric ----
      Ink and marks that sit on a patch's OWN fabric — cover art, quilt
@@ -156,84 +164,72 @@
   }
 }
 
-/* ---- Light theme — textile canvas + punk palette ----
-   Contrast notes (WCAG AA, vs --color-bg unless stated):
-   text 13.4:1 · muted 5.1:1 · primary-as-text 4.5:1 ·
-   white-on-primary 5.2:1 · success-as-text 5.1:1 · accent-as-text 4.6:1 */
-[data-theme="light"] {
-  /* Native widgets the page cannot paint — the option list a <select>
-     opens, scrollbars, date pickers — are drawn by the browser, and this
-     is the only thing that tells it which theme to draw them in. Without
-     it every one of them renders light while our text tokens flip. */
-  color-scheme: light;
-  --color-bg: #f4f0e8;
-  --color-surface: #faf6ee;
-  --color-text: #2a2520;
-  --color-text-muted: #6b655c;
-  --color-primary: #0272b5;
-  --color-primary-hover: #025e94;
-  --color-accent: #c43d07;
-  --color-border: #ddd8cc;
-  --color-error: #C02624;
-  --color-success: #4e6e49;
-  --color-glass: rgba(244, 240, 232, 0.92);
-  --color-glass-heavy: rgba(244, 240, 232, 0.95);
-  --color-overlay: rgba(0, 0, 0, 0.06);
-  --color-overlay-hover: rgba(0, 0, 0, 0.18);
-  --color-quilt-dim: rgba(244, 240, 232, 0.62);
-  --color-shadow: rgba(0, 0, 0, 0.08);
-  --color-scrim: rgba(0, 0, 0, 0.4);
-  --color-btn-on-primary: #ffffff;
-  --color-on-success: #ffffff;
-  --color-on-error: #ffffff;
-  --color-on-accent: #ffffff;
-  --color-on-muted: #ffffff;
-  --color-warning: #e6a817;
-  --color-on-warning: #151820;
-  --color-success-bg: #e3ede1;
-  --color-info-bg: #eaf1f8;
-  --color-danger-bg: #f5e8ea;
-  --color-label-bg: rgba(250, 246, 238, 0.45);
-  --color-label-bg-selected: rgba(250, 246, 238, 0.65);
-  --color-label-text: #2a2520;
-  --color-label-text-selected: #1a1510;
-  --color-badge-outline: rgba(250, 246, 238, 0.9);
+/* ---- Colors: Liquid Textile's, per theme ----
+   One block for both themes: each name reads the Liquid Textile token of
+   the same meaning, and Liquid Textile flips them with [data-theme]. The
+   light theme is warm white (#f6f5f2), the dark one raw denim; their
+   contrast notes are in Liquid Textile's foundation.css. */
+[data-theme] {
+  --color-bg: var(--lt-color-bg);
+  --color-surface: var(--lt-color-surface);
+  --color-text: var(--lt-color-text);
+  --color-text-muted: var(--lt-color-text-muted);
+  --color-border: var(--lt-color-border);
+  --color-primary: var(--lt-color-primary);
+  --color-primary-hover: var(--lt-color-primary-hover);
+  --color-accent: var(--lt-color-accent);
+  --color-error: var(--lt-color-error);
+  --color-success: var(--lt-color-success);
+  --color-warning: var(--lt-color-warning);
+  --color-on-warning: var(--lt-color-on-warning);
+  --color-btn-on-primary: var(--lt-color-on-primary);
+  --color-on-success: var(--lt-color-on-success);
+  --color-on-error: var(--lt-color-on-error);
+  --color-on-accent: var(--lt-color-on-accent);
+  --color-on-muted: var(--lt-color-on-muted);
+  --color-success-bg: var(--lt-color-success-bg);
+  --color-info-bg: var(--lt-color-info-bg);
+  --color-warning-bg: var(--lt-color-warning-bg);
+  --color-danger-bg: var(--lt-color-danger-bg);
+  --color-glass: var(--lt-color-glass);
+  --color-glass-heavy: var(--lt-color-glass-heavy);
+  --color-overlay: var(--lt-color-overlay);
+  --color-overlay-hover: var(--lt-color-overlay-hover);
+  --color-shadow: var(--lt-color-shadow);
+  --color-scrim: var(--lt-color-scrim);
 }
 
-/* ---- Dark theme — raw denim + punk palette ----
-   Contrast notes (WCAG AA, vs --color-bg unless stated):
-   text 12.9:1 · muted 5.5:1 (on surface) · primary-as-text 7.6:1 ·
-   ink-on-primary 7.6:1 — bright fills take INK text in dark, not white
-   (white on the dark-theme primary/success/accent fails AA badly). */
+/* ---- Light theme: Patchwork's own ----
+   Native widgets the page cannot paint (a <select>'s option list,
+   scrollbars, date pickers) are drawn by the browser, and color-scheme is
+   the only thing that tells it which theme to draw them in. */
+[data-theme="light"] {
+  color-scheme: light;
+  /* Three values where Patchwork and Liquid Textile have differed, kept
+     at Patchwork's until that is decided: a stronger hover, a lighter
+     shadow. Set on Liquid Textile's names, so its components agree. */
+  --lt-color-overlay-hover: rgba(0, 0, 0, 0.18);
+  --lt-color-shadow: rgba(0, 0, 0, 0.08);
+
+  --color-quilt-dim: rgba(246, 245, 242, 0.62);
+  --color-label-bg: rgba(252, 251, 249, 0.45);
+  --color-label-bg-selected: rgba(252, 251, 249, 0.65);
+  --color-label-text: #2a2725;
+  --color-label-text-selected: #1a1715;
+  --color-badge-outline: rgba(252, 251, 249, 0.9);
+}
+
+/* ---- Dark theme: Patchwork's own ----
+   Bright fills take INK text in dark, not white (Liquid Textile's on-*
+   tokens carry that). */
 [data-theme="dark"] {
   color-scheme: dark;
-  --color-bg: #151820;
-  --color-surface: #1c2028;
-  --color-text: #e0dbd4;
-  --color-text-muted: #9b958c;
-  --color-primary: #39b4f6;
-  --color-primary-hover: #60c4ff;
-  --color-accent: #E8734A;
-  --color-border: #2a2e38;
-  --color-error: #e05555;
-  --color-success: #81AE7F;
-  --color-glass: rgba(21, 24, 32, 0.92);
-  --color-glass-heavy: rgba(21, 24, 32, 0.95);
-  --color-overlay: rgba(255, 255, 255, 0.04);
-  --color-overlay-hover: rgba(255, 255, 255, 0.1);
+  /* As in light: Patchwork's values where the two have differed. */
+  --lt-color-overlay-hover: rgba(255, 255, 255, 0.1);
+  --lt-color-shadow: rgba(0, 0, 0, 0.3);
+  --lt-color-scrim: rgba(0, 0, 0, 0.6);
+
   --color-quilt-dim: rgba(21, 24, 32, 0.62);
-  --color-shadow: rgba(0, 0, 0, 0.3);
-  --color-scrim: rgba(0, 0, 0, 0.6);
-  --color-btn-on-primary: #151820;
-  --color-on-success: #151820;
-  --color-on-error: #151820;
-  --color-on-accent: #151820;
-  --color-on-muted: #151820;
-  --color-warning: #e6a817;
-  --color-on-warning: #151820;
-  --color-success-bg: #1d2a1d;
-  --color-info-bg: #16222e;
-  --color-danger-bg: #241318;
   --color-label-bg: rgba(0, 0, 0, 0.5);
   --color-label-bg-selected: rgba(0, 0, 0, 0.7);
   --color-label-text: #e8e6e3;

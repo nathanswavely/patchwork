@@ -1,0 +1,1766 @@
+/**
+ * Liquid Textile — Foundation
+ *
+ * The plain half of the system: semantic color, spacing, type, and the
+ * everyday controls (buttons, fields and form rows, tags, chips, pills,
+ * counts, avatars, cards, banners, empty states, tables, tabs, segmented
+ * controls, switches, menus, dialogs, drawers, sheets, toasts, prose).
+ * Everything else in Liquid Textile is the expressive half, the stitching
+ * and resin and raw edges; this is what an app needs before any of that,
+ * and it works without it.
+ *
+ * Lifted from Patchwork's app.css and components, where it was proven
+ * over a large Svelte app, and renamed to the --lt- prefix. Nothing here
+ * assumes a framework or a build step. docs/audit-2026-10.md says where
+ * each piece came from and what was changed on the way.
+ *
+ * Theming: set data-theme="light" or data-theme="dark" on <html>, the same
+ * contract as the rest of Liquid Textile. behaviors.js has a three-line
+ * helper (initTheme) that picks from a saved choice or the OS setting.
+ *
+ * Overriding: every color is a custom property, so an app re-skins by
+ * redefining tokens under its own [data-theme] rules. Component selectors
+ * are single classes, so an app's own one-class rule wins on order alone.
+ */
+
+/* ================================================================
+   TOKENS — theme-independent
+   ================================================================ */
+
+:root {
+  /* Type follows one rule, learned in Patchwork (2026-06-09, after
+     Shantell Sans as the only face caused reading fatigue): the
+     hand-lettered face is a voice, not a reading face.
+
+     - Everything a person reads or operates is in the grotesque: body,
+       labels, buttons, fields, chips, tags, tables, tooltips, lists.
+     - The display face goes on two things only: page headings (h1, h2)
+       and a name that stands for the place you are in (an app's or a
+       workspace's name in the bar). Never below 1rem, never a paragraph.
+     - h3 and smaller stay in the grotesque.
+
+     Both stacks fall back to the system UI face, so a page that loads no
+     web fonts still looks deliberate. */
+  --lt-font: 'Space Grotesk Variable', 'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --lt-font-display: 'Shantell Sans Variable', 'Shantell Sans', var(--lt-font);
+  --lt-font-mono: 'Space Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* Shantell's BNCE axis runs -100 (structured) to 100 (bouncy). 20 is the
+     one value the display face is used at, anywhere. */
+  --lt-bounce: 20;
+
+  /* A small type scale. Body is the browser default (1rem); everything
+     below it is for dense UI, never for reading. */
+  --lt-text-xs: 0.75rem;
+  --lt-text-sm: 0.8125rem;
+  --lt-text-md: 0.9rem;
+  --lt-text-lg: 1.125rem;
+
+  /* Controls get a soft corner. The textile surfaces keep their own
+     --lt-radius (square, like cut cloth); the two are separate on purpose. */
+  --lt-radius-control: 6px;
+  --lt-radius-panel: 10px;
+
+  /* Line length. narrow for a single-column form, measure for reading,
+     wide for editors and diffs, which are not prose and want the room. */
+  --lt-measure-narrow: 54ch;
+  --lt-measure: 66ch;
+  --lt-measure-wide: 90ch;
+
+  --lt-ease: cubic-bezier(0.2, 0, 0, 1);
+  --lt-quick: 150ms;
+
+  /* The smallest thing a pointer has to hit. Every control's min-height
+     reads it, so one number decides touch sizing for the whole kit
+     (Patchwork had 36, 40 and 44px, re-decided per component). 24px is
+     WCAG 2.5.8's floor for a mouse; coarse pointers get 44px below. It
+     follows the pointer, not the width: a phone is coarse, a narrow
+     desktop window is not. Density never lowers it. */
+  --lt-target: 24px;
+
+  /* The phone tab bar's height above the safe area (.lt-tabbar). */
+  --lt-tabbar-h: 51px;
+
+  /* What an app's own chrome occupies at the FOOT of the screen, safe area
+     included: a phone's bottom tab bar, say. 0px until the app sets it.
+     Everything fixed to the bottom (toasts, the action bar) sits above it,
+     so the app states the number once instead of every overlay guessing.
+     It is a measurement of chrome, not spacing, so an app may redefine it
+     in a media query; the spacing tokens above stay free of breakpoints. */
+  --lt-chrome-bottom: 0px;
+
+  /* One stacking order, so nothing sits on top by luck. Native modal
+     dialogs (lt-dialog, lt-drawer, lt-sheet) use the top layer and are
+     above all of these without a number. */
+  --lt-z-menu: 30;      /* menus and listboxes opened from the page */
+  --lt-z-sticky: 40;    /* sticky tab rows, the action bar */
+  --lt-z-chrome: 50;    /* the app's fixed bars */
+  --lt-z-overlay: 60;   /* non-modal floating panels */
+  --lt-z-toast: 70;     /* above everything that is not modal */
+}
+
+/* ================================================================
+   RESPONSIVE CONTRACT
+   Three separate questions, which Patchwork answered together in 67
+   files and which come apart cleanly:
+
+   WIDTH decides a page's layout. Two breakpoints, and only two:
+     narrow    (max-width: 640px)  a phone: stack, drill down, tables
+                                   become lists
+     handheld  (max-width: 768px)  the app's chrome goes mobile: a side
+                                   rail becomes a bottom tab bar
+   Media queries cannot read custom properties, so these are written out
+   where they are used, and behaviors.js exports the same strings as
+   `media` (with viewport()) so script and stylesheet never disagree.
+   Components do not use them: a component reflows by its own width
+   (flex-basis wrapping, or a container query), so a row in a narrow side
+   panel on a desktop behaves like the same row on a phone.
+
+   INPUT decides target size: --lt-target, by (pointer: coarse).
+
+   DENSITY decides spacing: data-density="compact" on <html>, or on any
+   element to make just that part denser (a data table, an editor). The
+   default is comfortable; [data-density="comfortable"] restores it
+   inside a compact page. Spacing never changes at a width breakpoint
+   (Patchwork ADR 038): the layout tokens are fluid clamps instead, so a
+   density layer stays purely additive.
+   ================================================================ */
+
+:root,
+[data-density="comfortable"] {
+  /* ---- Layout spacing ----
+     Fluid, so there are no spacing breakpoints to fight. These govern the
+     space BETWEEN things a page composes. */
+
+  /* Viewport edge to content. Set once, by the app shell. */
+  --lt-gutter: clamp(0.75rem, 3vw, 1.5rem);
+  /* A card or panel's own edge to its own content. Separate from the
+     gutter: tightening a phone's page edges must not squeeze the boxes. */
+  --lt-pad: clamp(1rem, 2.5vw, 1.25rem);
+  /* Between sibling blocks in flow. Near-constant on purpose: without
+     borders, vertical space is what says a section ended. */
+  --lt-stack: clamp(1.25rem, 2.5vw, 1.5rem);
+  /* Between inline siblings: chips, button rows. */
+  --lt-gap: clamp(0.5rem, 1.5vw, 0.75rem);
+
+  /* ---- Control padding ----
+     Here, not in each rule, so density retunes every control at once. */
+  --lt-btn-pad-y: 0.5rem;
+  --lt-btn-pad-x: 1.25rem;
+  --lt-btn-font: var(--lt-text-md);
+  --lt-btn-sm-pad-y: 0.25rem;
+  --lt-btn-sm-pad-x: 0.6rem;
+  --lt-btn-sm-font: 0.78rem;
+  --lt-field-pad-y: 0.45rem;
+  --lt-field-pad-x: 0.7rem;
+  /* Table cells ease tighter on a small screen without a breakpoint. */
+  --lt-cell-pad-y: clamp(0.5rem, 1.5vw, 0.6rem);
+  --lt-cell-pad-x: clamp(0.6rem, 2vw, 0.75rem);
+  --lt-item-pad-y: 5px;   /* a menu row */
+  --lt-item-pad-x: 8px;
+  --lt-row-h: 52px;       /* a phone menu or sheet row (.lt-list-row) */
+}
+
+/* Compact: for tools people sit in for hours, where seeing more rows
+   beats roomy ones (a review queue, an admin table). Spacing tightens by
+   about a third; type drops one step on controls; targets do not move. */
+[data-density="compact"] {
+  --lt-gutter: clamp(0.5rem, 2vw, 1rem);
+  --lt-pad: clamp(0.65rem, 1.5vw, 0.9rem);
+  --lt-stack: clamp(0.9rem, 1.8vw, 1.1rem);
+  --lt-gap: clamp(0.35rem, 1vw, 0.5rem);
+  --lt-btn-pad-y: 0.3rem;
+  --lt-btn-pad-x: 0.8rem;
+  --lt-btn-font: var(--lt-text-sm);
+  --lt-btn-sm-pad-y: 0.15rem;
+  --lt-btn-sm-pad-x: 0.45rem;
+  --lt-btn-sm-font: var(--lt-text-xs);
+  --lt-field-pad-y: 0.3rem;
+  --lt-field-pad-x: 0.55rem;
+  --lt-cell-pad-y: 0.35rem;
+  --lt-cell-pad-x: 0.55rem;
+  --lt-item-pad-y: 3px;
+  --lt-item-pad-x: 6px;
+  --lt-row-h: 40px;
+}
+
+/* Touch: finger-sized targets, and small buttons a step larger and wider
+   so the label still sits well in a 44px box. After the density blocks,
+   so a compact page on a phone still gets these. */
+@media (pointer: coarse) {
+  :root,
+  [data-density] {
+    --lt-target: 44px;
+    --lt-btn-sm-pad-x: 0.85rem;
+    --lt-btn-sm-font: 0.85rem;
+  }
+}
+
+/* ================================================================
+   TOKENS — color, per theme
+   ================================================================ */
+
+/* Light: warm white (2026-10-11; was a cream, #f4f0e8, that read as old).
+   Contrast (WCAG AA, against --lt-color-bg unless stated):
+   text 13.6:1 · muted 5.5:1 · primary-as-text 4.7:1 · on-primary 5.2:1 ·
+   success-as-text 5.3:1 · accent-as-text 4.8:1 · error-as-text 5.4:1 ·
+   warning-text 5.4:1 (5.0:1 on warning-bg) ·
+   on-muted on a muted fill 6.0:1 · white on accent 5.2:1, on error 5.9:1,
+   on success 5.8:1 · muted on surface 5.8:1, on raised 6.0:1.
+   Tinted grounds (banner, toast, pill: a tone at --lt-tone-tint over the
+   surface) keep body text, 12.4:1 at worst; tone-colored text on a tint
+   fails (light primary 4.3:1 at 10%), which is why they never use it. */
+[data-theme="light"] {
+  color-scheme: light;
+  --lt-color-bg: #f6f5f2;
+  --lt-color-surface: #fcfbf9;
+  --lt-color-raised: #ffffff;
+  --lt-color-text: #2a2725;
+  --lt-color-text-muted: #67635e;
+  --lt-color-border: #e2dfd9;
+  --lt-color-border-strong: #cbc7bf;
+
+  --lt-color-primary: #0272b5;
+  --lt-color-primary-hover: #025e94;
+  --lt-color-on-primary: #ffffff;
+  --lt-color-accent: #c43d07;
+  --lt-color-on-accent: #ffffff;
+  --lt-color-error: #c02624;
+  --lt-color-on-error: #ffffff;
+  --lt-color-success: #4e6e49;
+  --lt-color-on-success: #ffffff;
+  /* The amber is a fill. As text on the page it fails, so text gets its own. */
+  --lt-color-warning: #e6a817;
+  --lt-color-on-warning: #151820;
+  --lt-color-warning-text: #855d00;
+
+  --lt-color-success-bg: #e3ede1;
+  --lt-color-info-bg: #eaf1f8;
+  --lt-color-warning-bg: #f6ecd2;
+  --lt-color-danger-bg: #f5e8ea;
+
+  /* For text on a solid muted fill: an abstain vote, a quiet avatar. */
+  --lt-color-on-muted: #ffffff;
+
+  --lt-color-overlay: rgba(0, 0, 0, 0.06);
+  --lt-color-overlay-hover: rgba(0, 0, 0, 0.1);
+  --lt-color-selected: rgba(2, 114, 181, 0.1);
+  --lt-color-shadow: rgba(0, 0, 0, 0.12);
+  --lt-color-scrim: rgba(0, 0, 0, 0.4);
+  --lt-color-glass: rgba(246, 245, 242, 0.92);
+  --lt-color-glass-heavy: rgba(246, 245, 242, 0.95);
+
+  /* How much of a tone a tinted ground takes, and its edge. Dark needs
+     more of both to read as tinted at all. */
+  --lt-tone-tint: 9%;
+  --lt-tone-edge: 40%;
+}
+
+/* Dark: raw denim.
+   Contrast (WCAG AA, against --lt-color-bg unless stated):
+   text 12.9:1 · muted 5.5:1 (on surface), 5.0:1 (on raised) ·
+   primary-as-text 7.6:1 · ink-on-primary 7.6:1 · error-as-text 4.7:1 ·
+   success 7.0:1 · accent 5.9:1 · warning 8.4:1 ·
+   ink on muted fill 6.0:1, on accent 5.9:1, on error 4.7:1 ·
+   tinted grounds keep body text, 8.2:1 at worst (dark error as text on
+   its own tint is 3.6:1, so again: never tone-colored text on a tint).
+   Bright fills take INK text in dark, not white:
+   white on the dark-theme primary, success, or accent fails AA badly. */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --lt-color-bg: #151820;
+  --lt-color-surface: #1c2028;
+  --lt-color-raised: #232833;
+  --lt-color-text: #e0dbd4;
+  --lt-color-text-muted: #9b958c;
+  --lt-color-border: #2a2e38;
+  --lt-color-border-strong: #3a4050;
+
+  --lt-color-primary: #39b4f6;
+  --lt-color-primary-hover: #60c4ff;
+  --lt-color-on-primary: #151820;
+  --lt-color-accent: #e8734a;
+  --lt-color-on-accent: #151820;
+  --lt-color-error: #e05555;
+  --lt-color-on-error: #151820;
+  --lt-color-success: #81ae7f;
+  --lt-color-on-success: #151820;
+  --lt-color-warning: #e6a817;
+  --lt-color-on-warning: #151820;
+  --lt-color-warning-text: #e6a817;
+
+  --lt-color-success-bg: #1d2a1d;
+  --lt-color-info-bg: #16222e;
+  --lt-color-warning-bg: #2a2416;
+  --lt-color-danger-bg: #241318;
+
+  --lt-color-on-muted: #151820;
+
+  --lt-color-overlay: rgba(255, 255, 255, 0.04);
+  --lt-color-overlay-hover: rgba(255, 255, 255, 0.08);
+  --lt-color-selected: rgba(57, 180, 246, 0.12);
+  --lt-color-shadow: rgba(0, 0, 0, 0.45);
+  --lt-color-scrim: rgba(8, 9, 11, 0.6);
+  --lt-color-glass: rgba(21, 24, 32, 0.92);
+  --lt-color-glass-heavy: rgba(21, 24, 32, 0.95);
+
+  --lt-tone-tint: 14%;
+  --lt-tone-edge: 55%;
+}
+
+/* The hidden attribute means hidden. Without this, any class below that
+   sets display (a button is inline-flex) quietly wins over it. Matched on
+   a class that starts with lt-, not one that merely contains it: a bare
+   [class*="lt-"] also caught an app's "quilt-mode" and "result-row". */
+:is([class^="lt-"], [class*=" lt-"])[hidden] { display: none !important; }
+
+/* ================================================================
+   BUTTONS
+   ================================================================ */
+
+.lt-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: var(--lt-target);
+  padding: var(--lt-btn-pad-y) var(--lt-btn-pad-x);
+  border: 1px solid var(--lt-color-border);
+  border-radius: var(--lt-radius-control);
+  background: var(--lt-color-surface);
+  color: var(--lt-color-text);
+  font: inherit;
+  font-size: var(--lt-btn-font);
+  font-weight: 500;
+  /* Explicit, so <a class="lt-btn"> is the same height as a <button>. */
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--lt-quick) ease, border-color var(--lt-quick) ease, color var(--lt-quick) ease;
+}
+.lt-btn:hover:not(:disabled) { border-color: var(--lt-color-primary); }
+.lt-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.lt-btn-sm {
+  padding: var(--lt-btn-sm-pad-y) var(--lt-btn-sm-pad-x);
+  font-size: var(--lt-btn-sm-font);
+  gap: 0.35rem;
+}
+
+.lt-btn-primary {
+  background: var(--lt-color-primary);
+  border-color: var(--lt-color-primary);
+  color: var(--lt-color-on-primary);
+  font-weight: 600;
+}
+.lt-btn-primary:hover:not(:disabled) {
+  background: var(--lt-color-primary-hover);
+  border-color: var(--lt-color-primary-hover);
+}
+
+.lt-btn-secondary {
+  background: transparent;
+  color: var(--lt-color-primary);
+}
+.lt-btn-secondary:hover:not(:disabled) { background: var(--lt-color-bg); }
+
+.lt-btn-danger {
+  background: transparent;
+  color: var(--lt-color-error);
+  border-color: var(--lt-color-error);
+}
+.lt-btn-danger:hover:not(:disabled) {
+  background: var(--lt-color-danger-bg);
+  border-color: var(--lt-color-error);
+}
+
+/* Consequential but not destructive: approve-and-apply, override, force.
+   A solid accent fill (on-accent 5.2:1 light, 5.9:1 dark). */
+.lt-btn-warning {
+  background: var(--lt-color-accent);
+  border-color: var(--lt-color-accent);
+  color: var(--lt-color-on-accent);
+  font-weight: 600;
+}
+.lt-btn-warning:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--lt-color-accent) 88%, var(--lt-color-text));
+  border-color: color-mix(in srgb, var(--lt-color-accent) 88%, var(--lt-color-text));
+}
+
+.lt-btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--lt-color-text-muted);
+}
+.lt-btn-ghost:hover:not(:disabled) {
+  background: var(--lt-color-overlay);
+  border-color: transparent;
+  color: var(--lt-color-text);
+}
+
+/* Text-shaped. Used alone, without .lt-btn. */
+.lt-btn-link {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--lt-color-primary);
+  font: inherit;
+  font-size: var(--lt-text-sm);
+  cursor: pointer;
+}
+.lt-btn-link:hover:not(:disabled) { text-decoration: underline; }
+/* Pair with .lt-tone-error for a destructive text action ("Delete").
+   It keeps its size in the line and grows its target to --lt-target
+   above and below, given straight back by the negative margin, so
+   nothing around the link moves. */
+.lt-btn-link {
+  --lt-link-reach: max(0px, calc((var(--lt-target) - 1.25em) / 2));
+  padding-block: var(--lt-link-reach);
+  margin-block: calc(-1 * var(--lt-link-reach));
+}
+
+/* Square, for a single glyph. */
+.lt-btn-icon {
+  padding: 0;
+  width: max(2rem, var(--lt-target));
+  height: max(2rem, var(--lt-target));
+}
+.lt-btn-icon.lt-btn-sm { width: max(1.6rem, var(--lt-target)); height: max(1.6rem, var(--lt-target)); }
+
+/* ================================================================
+   FIELDS
+   Opt-in by class, so the library never restyles an app's inputs
+   behind its back. base.css applies the same look to bare elements
+   for apps that want it.
+   ================================================================ */
+
+.lt-field {
+  min-height: var(--lt-target);
+  padding: var(--lt-field-pad-y) var(--lt-field-pad-x);
+  border: 1px solid var(--lt-color-border);
+  border-radius: var(--lt-radius-control);
+  background: var(--lt-color-surface);
+  color: var(--lt-color-text);
+  font: inherit;
+  font-size: var(--lt-text-sm);
+  line-height: 1.4;
+  transition: border-color var(--lt-quick) ease;
+}
+.lt-field::placeholder { color: var(--lt-color-text-muted); opacity: 0.8; }
+.lt-field:focus {
+  outline: 2px solid var(--lt-color-primary);
+  outline-offset: 1px;
+  border-color: var(--lt-color-primary);
+}
+textarea.lt-field { font-size: inherit; line-height: 1.55; resize: vertical; }
+
+/* ================================================================
+   TAGS, KEYS
+   A status word a person reads is a pill (.lt-pill); a number is a
+   count (.lt-count). .lt-badge was retired 2026-10-05: it overlapped both.
+   ================================================================ */
+
+/* An outlined label in mono, for machine words: statuses, kinds, file types. */
+.lt-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.45rem;
+  border: 1px solid var(--lt-color-border);
+  border-radius: 999px;
+  color: var(--lt-color-text-muted);
+  font-family: var(--lt-font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+/* Tones recolor any tag, or text. Each one passes AA as text in
+   both themes; warning uses its text token, not the fill. */
+.lt-tone-primary { color: var(--lt-color-primary); border-color: currentColor; }
+.lt-tone-accent { color: var(--lt-color-accent); border-color: currentColor; }
+.lt-tone-success { color: var(--lt-color-success); border-color: currentColor; }
+.lt-tone-warning { color: var(--lt-color-warning-text); border-color: currentColor; }
+.lt-tone-error { color: var(--lt-color-error); border-color: currentColor; }
+.lt-tone-muted { color: var(--lt-color-text-muted); }
+
+/* Each tone also names its hue as --lt-tone, for the tinted components
+   (banner, pill, toast, count) that keep body text and take the hue as a
+   ground. Warning's hue is the amber fill, its text token is darker. */
+.lt-tone-primary { --lt-tone: var(--lt-color-primary); --lt-tone-on: var(--lt-color-on-primary); }
+.lt-tone-accent { --lt-tone: var(--lt-color-accent); --lt-tone-on: var(--lt-color-on-accent); }
+.lt-tone-success { --lt-tone: var(--lt-color-success); --lt-tone-on: var(--lt-color-on-success); }
+.lt-tone-warning { --lt-tone: var(--lt-color-warning); --lt-tone-on: var(--lt-color-on-warning); }
+.lt-tone-error { --lt-tone: var(--lt-color-error); --lt-tone-on: var(--lt-color-on-error); }
+.lt-tone-muted { --lt-tone: var(--lt-color-text-muted); --lt-tone-on: var(--lt-color-on-muted); }
+
+.lt-kbd {
+  display: inline-block;
+  min-width: 1.4em;
+  padding: 0 0.3em;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  font-family: var(--lt-font-mono);
+  font-size: 0.625rem;
+  line-height: 1.5;
+  text-align: center;
+  opacity: 0.7;
+}
+.lt-btn .lt-kbd { margin-left: 0.15rem; }
+
+/* ================================================================
+   SURFACES
+   ================================================================ */
+
+/* A card holds something that could MOVE: an item that would still make
+   sense on another page. A page's own sections are not cards; they get
+   .lt-section. The one other thing that earns a border is an
+   interruption: a warning, a danger zone, an unsaved-changes banner. */
+.lt-card {
+  background: var(--lt-color-surface);
+  border: 1px solid var(--lt-color-border);
+  border-radius: var(--lt-radius-control);
+  padding: var(--lt-pad);
+}
+
+/* A page section: separates with a rule and space rather than a box,
+   which on a phone is the difference between ~285px and ~350px of text.
+   The rule sits between siblings only. */
+.lt-section + .lt-section {
+  margin-top: var(--lt-stack);
+  padding-top: var(--lt-stack);
+  border-top: 1px solid var(--lt-color-border);
+}
+
+/* A quoted block of content: what was written, set apart from the UI. */
+.lt-quote {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  background: var(--lt-color-surface);
+  border-left: 3px solid var(--lt-color-border-strong);
+  border-radius: 0 var(--lt-radius-control) var(--lt-radius-control) 0;
+  white-space: pre-wrap;
+}
+
+/* An interruption that sits in the flow. Pair with a tone. */
+.lt-callout {
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--lt-color-border);
+  border-left-width: 3px;
+  border-radius: 0 var(--lt-radius-control) var(--lt-radius-control) 0;
+  background: var(--lt-color-surface);
+  font-size: var(--lt-text-sm);
+}
+.lt-callout.lt-tone-warning { background: var(--lt-color-warning-bg); }
+.lt-callout.lt-tone-error { background: var(--lt-color-danger-bg); }
+.lt-callout.lt-tone-success { background: var(--lt-color-success-bg); }
+.lt-callout.lt-tone-primary { background: var(--lt-color-info-bg); }
+
+/* Something that floats above the page: a menu, a toolbar, a toast. */
+.lt-popover {
+  background: var(--lt-color-raised);
+  border: 1px solid var(--lt-color-border);
+  border-radius: var(--lt-radius-panel);
+  box-shadow: 0 8px 28px var(--lt-color-shadow);
+  color: var(--lt-color-text);
+}
+
+/* ================================================================
+   MENUS — the list inside a popover (combobox, dropdown, picker)
+   ================================================================ */
+
+.lt-menu {
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  max-height: 320px;
+  overflow: auto;
+}
+.lt-menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: var(--lt-target);
+  padding: var(--lt-item-pad-y) var(--lt-item-pad-x);
+  border-radius: 5px;
+  font-size: var(--lt-text-sm);
+  white-space: nowrap;
+  cursor: pointer;
+}
+/* Menu items are also buttons and links (menu() in behaviors.js), so the
+   item resets what a button or an anchor brings with it. */
+.lt-menu-item {
+  width: 100%;
+  border: 0;
+  background: none;
+  color: var(--lt-color-text);
+  font: inherit;
+  font-size: var(--lt-text-sm);
+  text-align: left;
+  text-decoration: none;
+}
+.lt-menu-item:hover { background: var(--lt-color-overlay); text-decoration: none; }
+.lt-menu-item[aria-selected="true"],
+.lt-menu-item:focus-visible { background: var(--lt-color-selected); outline: none; }
+.lt-menu-item[aria-disabled="true"] { opacity: 0.5; cursor: default; }
+.lt-menu-item[aria-current="true"] { color: var(--lt-color-primary); font-weight: 600; }
+.lt-menu-item mark { background: none; color: var(--lt-color-primary); font-weight: 600; }
+.lt-menu-item .lt-menu-meta { color: var(--lt-color-text-muted); font-size: var(--lt-text-xs); }
+/* Muted on the dark selected tint is 4.2:1; the meta takes body text
+   while its row is selected (8.6:1). */
+.lt-menu-item[aria-selected="true"] .lt-menu-meta { color: var(--lt-color-text); }
+.lt-menu-empty { padding: var(--lt-item-pad-y) var(--lt-item-pad-x); color: var(--lt-color-text-muted); font-size: var(--lt-text-sm); }
+/* A group heading inside a menu, and a rule between groups. */
+.lt-menu-label {
+  padding: 8px 8px 3px;
+  color: var(--lt-color-text-muted);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.lt-menu-divider { height: 1px; margin: 4px 0; border: 0; background: var(--lt-color-border); }
+
+/* ================================================================
+   DIALOG — use with <dialog> and behaviors.js dialog()
+   ================================================================ */
+
+.lt-dialog {
+  max-width: min(32rem, calc(100vw - 2rem));
+  max-height: calc(100vh - 2rem);
+  padding: var(--lt-pad);
+  border: 1px solid var(--lt-color-border);
+  border-radius: var(--lt-radius-panel);
+  background: var(--lt-color-raised);
+  color: var(--lt-color-text);
+  box-shadow: 0 16px 48px var(--lt-color-shadow);
+  overflow: auto;
+}
+.lt-dialog::backdrop { background: var(--lt-color-scrim); }
+
+/* The corner close button for a dialog, drawer, or sheet. dialog() wires
+   any [data-close] inside the element, so <button class="lt-dialog-close"
+   data-close aria-label="Close"> needs no script of its own. Give the
+   dialog's title some right padding so it clears the button. */
+.lt-dialog-close {
+  position: absolute;
+  top: max(0px, calc(22px - var(--lt-target) / 2));
+  right: max(0px, calc(22px - var(--lt-target) / 2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: max(28px, var(--lt-target));
+  height: max(28px, var(--lt-target));
+  padding: 0;
+  border: 0;
+  border-radius: var(--lt-radius-control);
+  background: none;
+  color: var(--lt-color-text-muted);
+  font: inherit;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.lt-dialog-close:hover { background: var(--lt-color-overlay); color: var(--lt-color-text); }
+
+/* A modal holds the page still behind it. */
+html:has(.lt-dialog:modal, .lt-drawer:modal, .lt-sheet:modal) { overflow: hidden; }
+
+/* ================================================================
+   DRAWER — a full-height panel from the side, on a <dialog>
+   Same behaviour as the dialog (dialog() in behaviors.js): showModal,
+   Escape, a click on the scrim, focus handed back. For something you
+   consult and dismiss: notifications, a preview, a long form beside the
+   page. Opens from the end edge; add .lt-drawer-start for the other.
+   ================================================================ */
+
+.lt-drawer {
+  width: min(28rem, 90vw);
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0 0 0 auto;
+  padding: 0;
+  border: 0;
+  border-left: 1px solid var(--lt-color-border);
+  background: var(--lt-color-raised);
+  color: var(--lt-color-text);
+  box-shadow: -8px 0 32px var(--lt-color-shadow);
+}
+/* Only when open: display on a closed <dialog> would show it. */
+.lt-drawer[open] {
+  display: flex;
+  flex-direction: column;
+  animation: lt-drawer-in 220ms var(--lt-ease);
+}
+.lt-drawer::backdrop { background: var(--lt-color-scrim); }
+.lt-drawer-start {
+  margin: 0 auto 0 0;
+  border-left: 0;
+  border-right: 1px solid var(--lt-color-border);
+  box-shadow: 8px 0 32px var(--lt-color-shadow);
+  --lt-drawer-from: -100%;
+}
+@keyframes lt-drawer-in {
+  from { transform: translateX(var(--lt-drawer-from, 100%)); }
+  to { transform: none; }
+}
+/* The drawer's head and body. The head holds the title and the close
+   button (in flow here, not absolute); the body scrolls. */
+.lt-drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lt-gap);
+  flex-shrink: 0;
+  padding: 0.75rem var(--lt-pad);
+  border-bottom: 1px solid var(--lt-color-border);
+}
+.lt-drawer-head .lt-dialog-close { position: static; margin-right: -6px; }
+.lt-drawer-body { flex: 1; min-height: 0; padding: var(--lt-pad); overflow-y: auto; overscroll-behavior: contain; }
+@media (max-width: 640px) {
+  .lt-drawer { width: 100vw; border: 0; }
+}
+
+/* ================================================================
+   SHEET — a panel from the bottom edge, on a <dialog>
+   The phone's menu: a short list of actions under a grip. Same
+   behaviour as the dialog. On a wide screen it stays a bottom panel,
+   centered and capped, rather than stretching edge to edge.
+   ================================================================ */
+
+.lt-sheet {
+  width: 100%;
+  max-width: min(36rem, 100vw);
+  max-height: 85dvh;
+  margin: auto auto 0;
+  padding: 8px 0 calc(12px + env(safe-area-inset-bottom, 0px));
+  border: 0;
+  border-radius: 14px 14px 0 0;
+  background: var(--lt-color-raised);
+  color: var(--lt-color-text);
+  box-shadow: 0 -8px 24px var(--lt-color-shadow);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.lt-sheet[open] { animation: lt-sheet-in 180ms var(--lt-ease); }
+.lt-sheet::backdrop { background: var(--lt-color-scrim); }
+@keyframes lt-sheet-in {
+  from { transform: translateY(100%); }
+  to { transform: none; }
+}
+/* The grip says "this came up from the bottom". Decoration, not a
+   handle: drag-to-dismiss is not built (see docs/audit-2026-10.md). */
+.lt-sheet-grip {
+  width: 36px;
+  height: 4px;
+  margin: 0 auto 10px;
+  border-radius: 2px;
+  background: var(--lt-color-border-strong);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lt-drawer[open], .lt-sheet[open] { animation: none; }
+}
+
+/* ================================================================
+   TOAST — behaviors.js toast() places and times it
+   ================================================================ */
+
+.lt-toast-region {
+  position: fixed;
+  left: 50%;
+  /* --lt-toast-lift (set on <body>) still wins, for an app that set it. */
+  bottom: calc(18px + var(--lt-toast-lift, var(--lt-chrome-bottom, 0px)));
+  transform: translateX(-50%);
+  z-index: var(--lt-z-toast, 70);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+}
+.lt-toast {
+  padding: 0.55rem 1rem;
+  font-size: var(--lt-text-sm);
+  max-width: min(36rem, calc(100vw - 2rem));
+  animation: lt-toast-in var(--lt-quick) var(--lt-ease);
+}
+.lt-toast.is-leaving { opacity: 0; transition: opacity 200ms ease; }
+/* A toned toast tints the whole slip and keeps the text in body color
+   (Patchwork's toast, 2026-08). No left bar: a left rule means "quoted"
+   (.lt-quote) or "an interruption in the flow" (.lt-callout). */
+.lt-toast.lt-tone-primary,
+.lt-toast.lt-tone-accent,
+.lt-toast.lt-tone-success,
+.lt-toast.lt-tone-warning,
+.lt-toast.lt-tone-error {
+  color: var(--lt-color-text);
+  background: color-mix(in srgb, var(--lt-tone) var(--lt-tone-tint), var(--lt-color-raised));
+  border-color: color-mix(in srgb, var(--lt-tone) var(--lt-tone-edge), var(--lt-color-border));
+}
+@keyframes lt-toast-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ================================================================
+   TABLES — .lt-table-wrap around .lt-table; neither works alone
+   A table cannot reflow, and the browser's fallback is to squeeze the
+   interactive columns first. So the table is as wide as its columns
+   need and the wrapper scrolls sideways. The cue that there is more is
+   the scrollbar (thin, as .lt-scroll-thin) and the column cut off at
+   the edge, as Bootstrap, Tailwind UI, Primer and Carbon do. (Edge
+   gradients were dropped, 2026-10-11: on a card their covers showed as
+   bands at both ends whether or not anything scrolled.)
+   --lt-table-ground is what the table sits on: the page, a card's
+   surface, an overlay's raised ground. A pinned column (below) paints
+   it to cover what scrolls beneath; set it where a table sits on
+   anything else.
+   ================================================================ */
+
+.lt-table-wrap {
+  --lt-table-ground: var(--lt-color-bg);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+:where(.lt-card) .lt-table-wrap { --lt-table-ground: var(--lt-color-surface); }
+:where(.lt-dialog, .lt-drawer, .lt-sheet, .lt-popover) .lt-table-wrap { --lt-table-ground: var(--lt-color-raised); }
+.lt-table {
+  width: 100%;
+  min-width: max-content;
+  border-collapse: collapse;
+  font-size: var(--lt-text-md);
+}
+.lt-table th,
+.lt-table td {
+  padding: var(--lt-cell-pad-y) var(--lt-cell-pad-x);
+  text-align: left;
+  border-bottom: 1px solid var(--lt-color-border);
+}
+.lt-table th {
+  font-size: 0.8rem;
+  color: var(--lt-color-text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.lt-table td { max-width: 22rem; }
+.lt-table td:has(button, select, input) { white-space: nowrap; }
+/* Controls in a cell keep their own size: a full-width phone rule for
+   fields would otherwise make a role picker a bare arrow. */
+.lt-table :where(select, input) { width: auto; max-width: none; }
+.lt-table :where(select) { min-width: 7.5rem; }
+
+/* A pinned first column: <table class="lt-table lt-table-pin">, for a
+   wide table whose first column names the row (a person, a file). It
+   stays in place while the rest scrolls under it, as Ant Design and
+   Polaris do. With scrollFade(wrap) from behaviors.js, which keeps
+   data-overflow on the wrapper: a 1px line on its edge while the table
+   is wider than its box, and a soft shadow once it has scrolled, so
+   something is passing beneath. Without the script it still pins. A
+   table that fits looks like any other; the stacked layout unpins. */
+.lt-table-pin :is(th, td):first-child {
+  position: sticky;
+  inset-inline-start: 0;
+  z-index: 1;
+  background: var(--lt-table-ground);
+  transition: box-shadow var(--lt-quick, 150ms) ease;
+}
+.lt-table-wrap[data-overflow] > .lt-table-pin :is(th, td):first-child {
+  box-shadow: inset -1px 0 0 var(--lt-color-border);
+}
+.lt-table-wrap:is([data-overflow="start"], [data-overflow="both"]) > .lt-table-pin :is(th, td):first-child {
+  box-shadow: inset -1px 0 0 var(--lt-color-border), 6px 0 8px -6px var(--lt-color-shadow);
+}
+
+/* ================================================================
+   TABS — .lt-tabs holding .lt-tab
+   Two kinds share one look. Tabs that switch a panel in place are
+   role="tab" with aria-selected, and tabs() in behaviors.js gives them
+   arrow keys. Tabs that are links to sections of a page are plain <a>
+   with aria-current="page". The strip scrolls sideways rather than
+   wrapping, and fades at an edge with more beyond it (tabs() sets
+   data-overflow). The underline is the accent, as Patchwork's workspace
+   tabs settled on (5.1:1 light, 5.4:1 dark against the surface).
+   ================================================================ */
+
+.lt-tabs {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--lt-color-border);
+}
+.lt-tabs::-webkit-scrollbar { display: none; }
+:is(.lt-tabs, .lt-chips-scroll)[data-overflow="end"] { mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); }
+:is(.lt-tabs, .lt-chips-scroll)[data-overflow="start"] { mask-image: linear-gradient(to right, transparent, #000 28px); }
+:is(.lt-tabs, .lt-chips-scroll)[data-overflow="both"] {
+  mask-image: linear-gradient(to right, transparent, #000 28px, #000 calc(100% - 28px), transparent);
+}
+.lt-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  min-height: var(--lt-target);
+  margin-bottom: -1px;
+  padding: 0.7rem 0.75rem;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--lt-color-text-muted);
+  font: inherit;
+  font-size: var(--lt-text-md);
+  font-weight: 500;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--lt-quick) ease;
+}
+.lt-tab:hover { color: var(--lt-color-text); text-decoration: none; }
+.lt-tab:focus-visible { outline: 2px solid var(--lt-color-primary); outline-offset: -2px; }
+.lt-tab[aria-selected="true"],
+.lt-tab[aria-current="page"] {
+  color: var(--lt-color-text);
+  font-weight: 600;
+  border-bottom-color: var(--lt-color-accent);
+}
+
+/* ================================================================
+   SEGMENTED — a few mutually exclusive choices, side by side
+   .lt-segmented holding .lt-segment buttons. With segmented() from
+   behaviors.js it is a radio group: arrow keys move and choose, one tab
+   stop. Without it, set aria-pressed yourself.
+   ================================================================ */
+
+.lt-segmented {
+  display: inline-flex;
+  border: 1px solid var(--lt-color-border);
+  border-radius: var(--lt-radius-control);
+  background: var(--lt-color-surface);
+  overflow: hidden;
+}
+.lt-segment {
+  flex: 1 1 auto;
+  min-height: var(--lt-target);
+  padding: 0.3rem 0.75rem;
+  border: 0;
+  background: none;
+  color: var(--lt-color-text-muted);
+  font: inherit;
+  font-size: var(--lt-text-sm);
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.lt-segment + .lt-segment { border-left: 1px solid var(--lt-color-border); }
+.lt-segment:hover { color: var(--lt-color-text); }
+.lt-segment:focus-visible { outline: 2px solid var(--lt-color-primary); outline-offset: -2px; }
+.lt-segment[aria-checked="true"],
+.lt-segment[aria-pressed="true"] {
+  background: var(--lt-color-primary);
+  color: var(--lt-color-on-primary);
+}
+
+/* ================================================================
+   SWITCH — an on/off setting that applies at once
+   <input type="checkbox" role="switch" class="lt-switch">. No script:
+   the checkbox is the state. Use a checkbox, not a switch, for a choice
+   that waits for a Save button.
+   Track muted 5.8:1 and primary 5.0:1 against the surface (light),
+   5.5:1 and 7.0:1 (dark); the thumb clears both tracks by 5.0:1.
+   ================================================================ */
+
+.lt-switch {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  width: 38px;
+  height: 22px;
+  margin: 0;
+  border: 0;
+  border-radius: 11px;
+  background: var(--lt-color-text-muted);
+  vertical-align: middle;
+  cursor: pointer;
+  transition: background var(--lt-quick) ease;
+}
+.lt-switch::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--lt-color-surface);
+  transition: transform var(--lt-quick) var(--lt-ease);
+}
+.lt-switch:checked { background: var(--lt-color-primary); }
+.lt-switch:checked::before { transform: translateX(16px); }
+.lt-switch:focus-visible { outline: 2px solid var(--lt-color-primary); outline-offset: 2px; }
+.lt-switch:disabled { opacity: 0.5; cursor: not-allowed; }
+/* The hit area reaches --lt-target around the drawn 22px track. */
+.lt-switch::after {
+  content: '';
+  position: absolute;
+  inset: calc((22px - max(22px, var(--lt-target))) / 2) -4px;
+}
+
+/* ================================================================
+   CHIPS — small round buttons: filters you toggle, values you remove
+   .lt-chip with aria-pressed is a toggle. .lt-chip-remove is the ×
+   inside a chip. .lt-chip-pending (dashed) is a value proposed but not
+   yet accepted. .lt-chips is the wrapping row; chip rows wrap, they do
+   not scroll (Patchwork ADR 033).
+   ================================================================ */
+
+.lt-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; }
+.lt-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: var(--lt-target);
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--lt-color-border);
+  border-radius: 999px;
+  background: var(--lt-color-surface);
+  color: var(--lt-color-text-muted);
+  font: inherit;
+  font-size: var(--lt-text-sm);
+  line-height: 1.4;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--lt-quick) ease, border-color var(--lt-quick) ease, color var(--lt-quick) ease;
+}
+.lt-chip:hover:not(:disabled) { border-color: var(--lt-color-primary); color: var(--lt-color-text); }
+.lt-chip[aria-pressed="true"] {
+  background: var(--lt-color-primary);
+  border-color: var(--lt-color-primary);
+  color: var(--lt-color-on-primary);
+}
+.lt-chip-pending { border-style: dashed; background: transparent; cursor: default; }
+.lt-chip-remove {
+  display: inline-flex;
+  align-items: center;
+  margin-right: -0.35rem;
+  padding: 0 0.2rem;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  line-height: 1;
+  opacity: 0.7;
+  cursor: pointer;
+}
+.lt-chip-remove:hover { opacity: 1; }
+@media (pointer: coarse) {
+  .lt-chips { gap: 0.5rem; }
+  .lt-chip-remove { align-self: stretch; padding: 0 0.6rem; margin-block: -0.35rem; margin-right: -0.75rem; }
+}
+
+/* ================================================================
+   PILL — a soft-filled status word ("open", "seated", "moved")
+   Tinted with a tone, text stays body color: tone-colored text on its
+   own tint fails AA (light primary 4.0:1, dark error 3.6:1), so the hue
+   lives in the ground and the edge. Without a tone it is neutral.
+   ================================================================ */
+
+.lt-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: var(--lt-color-overlay);
+  color: var(--lt-color-text);
+  font-size: var(--lt-text-xs);
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.lt-pill.lt-tone-primary,
+.lt-pill.lt-tone-accent,
+.lt-pill.lt-tone-success,
+.lt-pill.lt-tone-warning,
+.lt-pill.lt-tone-error,
+.lt-pill.lt-tone-muted {
+  color: var(--lt-color-text);
+  background: color-mix(in srgb, var(--lt-tone) calc(var(--lt-tone-tint) + 4%), transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lt-tone) var(--lt-tone-edge), transparent);
+}
+
+/* ================================================================
+   COUNT — a solid number: unread, waiting for review
+   Accent by default; any tone recolors the fill and its ink (on-accent
+   5.2:1 light, 5.9:1 dark; on-error 5.9:1 and 4.7:1). .lt-count-corner
+   pins it to the corner of a positioned parent, like an icon button.
+   ================================================================ */
+
+.lt-count {
+  display: inline-block;
+  min-width: 1.25rem;
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  background: var(--lt-color-accent);
+  color: var(--lt-color-on-accent);
+  font-size: var(--lt-text-xs);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25rem;
+  text-align: center;
+}
+.lt-count.lt-tone-primary,
+.lt-count.lt-tone-accent,
+.lt-count.lt-tone-success,
+.lt-count.lt-tone-warning,
+.lt-count.lt-tone-error,
+.lt-count.lt-tone-muted { background: var(--lt-tone); color: var(--lt-tone-on); }
+.lt-count-corner {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  font-size: 0.625rem;
+  line-height: 16px;
+  pointer-events: none;
+}
+
+/* ================================================================
+   AVATAR — a person's picture, or their initial when there is none
+   Size with --lt-avatar-size; the initial scales with it.
+   ================================================================ */
+
+.lt-avatar {
+  --lt-avatar-size: 2rem;
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: var(--lt-avatar-size);
+  height: var(--lt-avatar-size);
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--lt-color-primary);
+  color: var(--lt-color-on-primary);
+  font-size: calc(var(--lt-avatar-size) * 0.4);
+  font-weight: 600;
+  line-height: 1;
+  text-transform: uppercase;
+  user-select: none;
+}
+.lt-avatar > :where(img) { width: 100%; height: 100%; object-fit: cover; }
+/* For a crowd of them, where a primary disc each would shout. */
+.lt-avatar-quiet { background: var(--lt-color-overlay-hover); color: var(--lt-color-text); }
+
+/* ================================================================
+   BANNER — a full-width notice with a tinted ground
+   State that belongs at the top of what it describes ("voting is open",
+   "this patch has moved"), and the danger zone. A banner is an
+   interruption in Patchwork's sense (ADR 038): loud on purpose, and
+   rare. For an aside in the flow, use .lt-callout.
+   Body text on every tint: 12.0:1 or better (light), 8.2:1 (dark).
+   ================================================================ */
+
+.lt-banner {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--lt-color-border);
+  border-radius: var(--lt-radius-control);
+  background: var(--lt-color-surface);
+  color: var(--lt-color-text);
+  font-size: var(--lt-text-sm);
+  line-height: 1.5;
+}
+.lt-banner.lt-tone-primary,
+.lt-banner.lt-tone-accent,
+.lt-banner.lt-tone-success,
+.lt-banner.lt-tone-warning,
+.lt-banner.lt-tone-error {
+  color: var(--lt-color-text);
+  background: color-mix(in srgb, var(--lt-tone) var(--lt-tone-tint), var(--lt-color-surface));
+  border-color: var(--lt-tone);
+}
+/* The amber fill is 2.0:1 against the surface; its edge uses the text token. */
+.lt-banner.lt-tone-warning { border-color: var(--lt-color-warning-text); }
+/* A settled, quiet state: over, withdrawn, lapsed. */
+.lt-banner.lt-tone-muted { background: var(--lt-color-overlay); color: var(--lt-color-text); }
+.lt-banner > :where(:first-child) { margin-top: 0; }
+.lt-banner > :where(:last-child) { margin-bottom: 0; }
+
+/* ================================================================
+   EMPTY — what a list or page says when there is nothing, or when it
+   could not load, or when the reader may not see it
+   One block for all three; Patchwork had it under four names. A failed
+   load puts .lt-tone-error on the title only: a whole paragraph in red
+   reads as an alarm, not an explanation.
+   ================================================================ */
+
+.lt-empty {
+  padding: 3rem 1rem;
+  color: var(--lt-color-text-muted);
+  text-align: center;
+}
+.lt-empty-title { margin: 0 0 0.25rem; color: var(--lt-color-text); font-size: 1rem; font-weight: 600; }
+.lt-empty-title.lt-tone-error { color: var(--lt-color-error); }
+.lt-empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--lt-gap);
+  margin-top: 1rem;
+}
+
+/* ================================================================
+   SKELETON — a placeholder line while something loads
+   One element per line; a run of them ends on a short line, the way
+   a paragraph does. Holds still under reduced motion.
+   ================================================================ */
+
+.lt-skeleton {
+  display: block;
+  height: 1em;
+  border-radius: var(--lt-radius-control);
+  background: linear-gradient(90deg,
+    var(--lt-color-border) 25%,
+    color-mix(in srgb, var(--lt-color-border) 40%, var(--lt-color-surface)) 50%,
+    var(--lt-color-border) 75%);
+  background-size: 200% 100%;
+  animation: lt-shimmer 1.5s ease-in-out infinite;
+}
+.lt-skeleton + .lt-skeleton { margin-top: 0.6rem; }
+.lt-skeleton:last-child:not(:first-child) { width: 60%; }
+@keyframes lt-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+/* A spinner for a wait with no shape yet: sized by font-size, so it sits
+   in a button at text height. Under reduced motion it turns slowly
+   rather than stopping, since a still spinner says nothing is happening. */
+.lt-spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+  border: 0.15em solid var(--lt-color-border);
+  border-top-color: var(--lt-color-primary);
+  border-radius: 50%;
+  vertical-align: -0.125em;
+  animation: lt-spin 0.7s linear infinite;
+}
+@keyframes lt-spin { to { transform: rotate(360deg); } }
+
+/* ================================================================
+   FORMS — the rows around .lt-field
+   .lt-label wraps a field with its words above it; keep the words in one
+   element (<span>Name <span class="lt-required">*</span></span>) so a
+   marker stays on their line. .lt-hint is the
+   sentence under a field. .lt-required and .lt-optional mark the label.
+   .lt-field-row puts fields side by side and stacks them when narrow.
+   .lt-check is a checkbox, radio, or switch with its words beside it.
+   .lt-setting is a row of words on the left and a control on the right.
+   .lt-actions is a row of buttons. Patchwork wrote these fourteen ways.
+   ================================================================ */
+
+.lt-form { display: flex; flex-direction: column; gap: 1rem; max-width: var(--lt-measure-narrow); }
+.lt-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  color: var(--lt-color-text-muted);
+  font-size: var(--lt-text-sm);
+  font-weight: 500;
+}
+.lt-hint { margin: 0; color: var(--lt-color-text-muted); font-size: var(--lt-text-xs); font-weight: 400; line-height: 1.45; }
+.lt-required { color: var(--lt-color-error); }
+.lt-optional { color: var(--lt-color-text-muted); font-weight: 400; }
+/* Side by side while each field keeps 12rem, stacked when it cannot: by
+   the row's own width, so it also stacks in a narrow drawer. */
+.lt-field-row { display: flex; flex-wrap: wrap; gap: 1rem; }
+.lt-field-row > :where(*) { flex: 1 1 12rem; min-width: 0; }
+.lt-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: var(--lt-target);
+  color: var(--lt-color-text);
+  cursor: pointer;
+}
+.lt-setting {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  padding: 0.75rem 0;
+}
+.lt-setting + .lt-setting { border-top: 1px solid var(--lt-color-border); }
+.lt-setting > :where(:first-child) { flex: 1 1 14rem; min-width: 0; }
+.lt-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--lt-gap); }
+
+/* ================================================================
+   INLINE EDIT — a value with an Edit button that becomes its field
+   inlineEdit() in behaviors.js builds the field and the buttons.
+   ================================================================ */
+
+.lt-inline-edit { padding: 0.6rem 0; }
+.lt-inline-edit + .lt-inline-edit { border-top: 1px solid var(--lt-color-border); }
+.lt-inline-edit-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lt-gap);
+  margin-bottom: 0.3rem;
+}
+.lt-inline-edit-form { display: flex; flex-direction: column; gap: 0.5rem; }
+
+/* Two-step confirm: confirmAction() swaps the button for a prompt, a
+   confirm, and a cancel. On a phone the prompt is read aloud but not
+   shown, to keep the row on one line. */
+.lt-confirm { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; }
+.lt-confirm-prompt { color: var(--lt-color-text-muted); font-size: var(--lt-text-sm); font-weight: 500; }
+
+/* ================================================================
+   FOLD — a <details> section: <details class="lt-fold"><summary>
+   fold() in behaviors.js can hold it open above a width, so a long
+   settings page folds on a phone and lies flat on a desktop.
+   ================================================================ */
+
+.lt-fold > :where(summary) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-height: max(2.25rem, var(--lt-target));
+  list-style: none;
+  cursor: pointer;
+}
+.lt-fold > :where(summary)::-webkit-details-marker { display: none; }
+.lt-fold > :where(summary) > :where(h2, h3, h4) { margin: 0; }
+.lt-fold > :where(summary)::after {
+  content: '';
+  flex-shrink: 0;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-right: 0.35rem;
+  border-right: 2px solid var(--lt-color-text-muted);
+  border-bottom: 2px solid var(--lt-color-text-muted);
+  transform: rotate(45deg);
+  transition: transform var(--lt-quick) ease;
+}
+.lt-fold[open] > :where(summary) { margin-bottom: 0.5rem; }
+.lt-fold[open] > :where(summary)::after { transform: rotate(-135deg); }
+/* Held open by fold(): nothing to click. */
+.lt-fold[data-held] > :where(summary) { cursor: default; }
+.lt-fold[data-held] > :where(summary)::after { display: none; }
+
+/* ================================================================
+   NAVIGATION LISTS
+   .lt-sidenav: a column of section links beside a settings page.
+   .lt-list-row: a full-width row of a phone menu or a sheet, 52px tall,
+   ruled underneath, an icon (muted) then words then a trailing mark.
+   .lt-row: a compact clickable row in a list on a page.
+   .lt-crumb: where you are, as "mark / name", with .lt-type-name on the
+   name. A separator is .lt-crumb-sep.
+   ================================================================ */
+
+.lt-sidenav { display: flex; flex-direction: column; gap: 2px; margin: 0; padding: 0; list-style: none; }
+.lt-sidenav-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-height: var(--lt-target);
+  padding: 0.45rem 0.6rem;
+  border-radius: var(--lt-radius-control);
+  color: var(--lt-color-text-muted);
+  font-size: var(--lt-text-sm);
+  text-decoration: none;
+  transition: background var(--lt-quick) ease, color var(--lt-quick) ease;
+}
+.lt-sidenav-link:hover { background: var(--lt-color-overlay); color: var(--lt-color-text); text-decoration: none; }
+.lt-sidenav-link[aria-current="page"] { background: var(--lt-color-overlay); color: var(--lt-color-text); font-weight: 500; }
+
+.lt-list-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: max(var(--lt-row-h), var(--lt-target));
+  padding: 0 var(--lt-gutter);
+  border: 0;
+  border-bottom: 1px solid var(--lt-color-border);
+  background: none;
+  color: var(--lt-color-text);
+  font: inherit;
+  font-size: 0.95rem;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.lt-list-row:hover { background: var(--lt-color-overlay); text-decoration: none; }
+.lt-list-row > :where(svg) { flex-shrink: 0; color: var(--lt-color-text-muted); }
+
+.lt-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: var(--lt-target);
+  padding: 0.5rem;
+  border-radius: var(--lt-radius-control);
+  color: var(--lt-color-text);
+  text-decoration: none;
+  transition: background var(--lt-quick) ease;
+}
+.lt-row:hover { background: var(--lt-color-overlay); text-decoration: none; }
+
+.lt-crumb { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.lt-crumb > :where(a) { color: var(--lt-color-text); text-decoration: none; border-radius: var(--lt-radius-control); }
+.lt-crumb > :where(a):hover { background: var(--lt-color-overlay); }
+.lt-crumb-sep { flex-shrink: 0; color: var(--lt-color-text-muted); }
+
+/* ================================================================
+   SMALL SCREENS
+   What Patchwork rewrote page by page in its 2026-09-28 phone audit
+   (8b9f66d, 9fbed2d, ee20ad7, e073b7c), done once.
+   ================================================================ */
+
+/* An item in a list with actions: a name and its meta, then buttons.
+   The actions sit beside the name while the name keeps 14rem, and wrap
+   under it when it cannot, so a name is never squeezed to nothing and a
+   confirm never pushes Cancel off the edge. By the item's own width. */
+.lt-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem var(--lt-gap);
+  padding: 0.6rem 0;
+}
+.lt-item + .lt-item { border-top: 1px solid var(--lt-color-border); }
+.lt-item-main { flex: 1 1 14rem; min-width: 0; }
+.lt-item-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--lt-gap); }
+
+/* A section list beside its content, which on a phone drills down: one
+   level on screen at a time, instead of a list stacked over a page.
+     <div class="lt-split" data-at="index|detail">
+       <nav class="lt-split-nav"><ul class="lt-sidenav">…</ul></nav>
+       <div class="lt-split-main"><a class="lt-split-back">…</a>…</div>
+     </div>
+   The app says where you are with data-at (from its route: the bare
+   section URL is the index). Wide screens ignore it and show both. */
+.lt-split { display: flex; align-items: flex-start; gap: 2rem; }
+.lt-split-nav { flex: 0 0 13rem; min-width: 0; }
+.lt-split-main { flex: 1 1 0; min-width: 0; }
+.lt-split-back {
+  display: none;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: var(--lt-target);
+  margin-bottom: 0.5rem;
+  color: var(--lt-color-text-muted);
+  font-size: var(--lt-text-md);
+  text-decoration: none;
+}
+.lt-split-back:hover { color: var(--lt-color-text); text-decoration: none; }
+@media (max-width: 640px) {
+  .lt-split { display: block; }
+  .lt-split[data-at="detail"] .lt-split-nav,
+  .lt-split[data-at="index"] .lt-split-main { display: none; }
+  .lt-split[data-at="detail"] .lt-split-back { display: inline-flex; }
+  /* At the index the sections are the page: full-width rows. */
+  .lt-split .lt-sidenav { gap: 0; border-top: 1px solid var(--lt-color-border); }
+  .lt-split .lt-sidenav-link {
+    min-height: max(var(--lt-row-h), var(--lt-target));
+    padding: 0 0.25rem;
+    border-bottom: 1px solid var(--lt-color-border);
+    border-radius: 0;
+    color: var(--lt-color-text);
+    font-size: 1rem;
+  }
+  .lt-split .lt-sidenav-link[aria-current="page"] { background: none; font-weight: 400; }
+}
+
+/* A row of tabs that becomes the phone's bottom tab bar:
+   <nav class="lt-tabs lt-tabbar">. Above 768px it is the ordinary tab
+   row. At or below, it docks to the foot of the screen in glass, each
+   tab an icon over a short word, and the page's --lt-chrome-bottom
+   becomes its height so toasts and the action bar sit above it. Five
+   tabs at most; with one, leave it out. Pad the page's foot by
+   --lt-chrome-bottom so the last line clears it. */
+@media (max-width: 768px) {
+  .lt-tabbar,
+  .lt-tabbar[data-overflow] {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: var(--lt-z-chrome, 50);
+    gap: 0;
+    height: calc(var(--lt-tabbar-h) + env(safe-area-inset-bottom, 0px));
+    padding: 4px 4px env(safe-area-inset-bottom, 0px);
+    overflow: visible;
+    border-bottom: 0;
+    border-top: 1px solid var(--lt-color-border);
+    background: var(--lt-color-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    mask-image: none;
+  }
+  .lt-tabbar > .lt-tab {
+    flex: 1 1 0;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    min-width: 0;
+    margin: 0;
+    padding: 2px 4px;
+    border-bottom: 0;
+    border-radius: var(--lt-radius-control);
+    font-size: 0.6875rem;
+  }
+  .lt-tabbar > .lt-tab[aria-current="page"],
+  .lt-tabbar > .lt-tab[aria-selected="true"] { color: var(--lt-color-primary); }
+  html:has(.lt-tabbar:not([hidden])) {
+    --lt-chrome-bottom: calc(var(--lt-tabbar-h) + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* Chips in one sideways-scrolling row instead of wrapping, for a filter
+   row that would otherwise strand its last chip on a line of its own.
+   scrollFade() in behaviors.js fades whichever edge has more. Patchwork
+   wraps filter chips over a canvas (ADR 033) and scrolls them in a list
+   header (9fbed2d); both are right in their place. */
+.lt-chips-scroll {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.lt-chips-scroll::-webkit-scrollbar { display: none; }
+.lt-chips-scroll > :where(*) { flex-shrink: 0; }
+
+/* A table that becomes a list of cards when its box is narrower than
+   40rem: <div class="lt-table-wrap"><table class="lt-table lt-table-stack">,
+   with data-label on each cell naming its column. The header row is
+   kept for screen readers but not shown; each cell shows its label.
+   For a table whose phone form needs different content (Patchwork's
+   Users page opens a row into a panel), render a list instead. */
+/* width: in a column flexbox, a size container without a definite width
+   took its height from the stacked layout (a 130px table in a 467px
+   box); a definite width gives the browser the real one. */
+.lt-table-wrap:has(> .lt-table-stack) { container-type: inline-size; width: 100%; }
+@container (max-width: 40rem) {
+  .lt-table-stack { min-width: 0; }
+  .lt-table-stack.lt-table-pin :is(th, td):first-child { position: static; background: none; box-shadow: none; }
+  .lt-table-stack :where(thead) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .lt-table-stack :where(tbody, tr, td) { display: block; }
+  .lt-table-stack :where(tr) { padding: 0.6rem 0; border-bottom: 1px solid var(--lt-color-border); }
+  .lt-table-stack :where(td) {
+    display: grid;
+    grid-template-columns: minmax(6rem, 35%) minmax(0, 1fr);
+    gap: 0.75rem;
+    max-width: none;
+    padding: 0.2rem 0;
+    border: 0;
+    white-space: normal;
+  }
+  .lt-table-stack :where(td)::before {
+    content: attr(data-label);
+    color: var(--lt-color-text-muted);
+    font-size: var(--lt-text-xs);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  /* A cell with no label holds actions: they keep their own width. */
+  .lt-table-stack :where(td:not([data-label])) { grid-template-columns: minmax(0, 1fr); justify-items: start; }
+  .lt-table-stack :where(td:not([data-label]))::before { display: none; }
+}
+
+/* ================================================================
+   ACTION BAR — buttons fixed to the foot of the screen while a form
+   or a decision is in view. Sits on --lt-chrome-bottom, so it clears a
+   phone's tab bar; give the page bottom padding to scroll past it.
+   ================================================================ */
+
+.lt-action-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: var(--lt-chrome-bottom, 0px);
+  z-index: var(--lt-z-sticky, 40);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lt-gap);
+  padding: 0.6rem var(--lt-gutter);
+  border-top: 1px solid var(--lt-color-border);
+  background: var(--lt-color-surface);
+  box-shadow: 0 -2px 8px var(--lt-color-shadow);
+  animation: lt-action-bar-in 200ms var(--lt-ease);
+}
+@keyframes lt-action-bar-in {
+  from { transform: translateY(100%); }
+  to { transform: none; }
+}
+
+/* ================================================================
+   PROSE — rendered Markdown, or any long text a person wrote
+   Body size, on purpose: governance prose is meant to be read
+   (Patchwork, 2026-07-24). Headings follow the type rule: h1 and h2 in
+   the display face (from base.css), the rest in the grotesque.
+   ================================================================ */
+
+.lt-prose { font-size: 1rem; line-height: 1.7; color: var(--lt-color-text); }
+.lt-prose :where(h1) { margin: 1.5rem 0 0.5rem; font-size: 1.4rem; font-weight: 700; }
+.lt-prose :where(h2) { margin: 1.25rem 0 0.4rem; font-size: 1.2rem; font-weight: 600; }
+.lt-prose :where(h3, h4) { margin: 1rem 0 0.3rem; font-size: 1.05rem; font-weight: 600; }
+.lt-prose :where(:first-child) { margin-top: 0; }
+.lt-prose :where(p) { margin: 0 0 0.75rem; }
+.lt-prose :where(ul, ol) { margin: 0 0 0.75rem; padding-left: 1.5rem; }
+.lt-prose :where(li) { margin-bottom: 0.25rem; }
+.lt-prose :where(a) { color: var(--lt-color-primary); text-decoration: underline; text-underline-offset: 2px; }
+.lt-prose :where(code) {
+  padding: 0.15rem 0.35rem;
+  border-radius: 3px;
+  background: var(--lt-color-overlay);
+  font-family: var(--lt-font-mono);
+  font-size: 0.85em;
+}
+.lt-prose :where(pre) {
+  margin: 0 0 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--lt-radius-control);
+  background: var(--lt-color-overlay);
+  overflow-x: auto;
+}
+.lt-prose :where(pre code) { padding: 0; background: none; }
+.lt-prose :where(blockquote) {
+  margin: 0 0 0.75rem;
+  padding-left: 1rem;
+  border-left: 3px solid var(--lt-color-border-strong);
+  color: var(--lt-color-text-muted);
+}
+.lt-prose :where(table) { width: 100%; margin: 0 0 0.75rem; border-collapse: collapse; }
+.lt-prose :where(th, td) { padding: 0.4rem 0.6rem; border: 1px solid var(--lt-color-border); font-size: var(--lt-text-sm); text-align: left; }
+.lt-prose :where(th) { background: var(--lt-color-overlay); font-weight: 600; }
+.lt-prose :where(hr) { margin: 1.5rem 0; border: 0; border-top: 1px solid var(--lt-color-border); }
+.lt-prose :where(img) { max-width: 100%; height: auto; }
+
+/* ================================================================
+   TEXT AND SMALL UTILITIES
+   ================================================================ */
+
+.lt-muted { color: var(--lt-color-text-muted); }
+.lt-error-text { color: var(--lt-color-error); font-size: var(--lt-text-sm); }
+.lt-success-text { color: var(--lt-color-success); font-size: var(--lt-text-sm); }
+.lt-mono { font-family: var(--lt-font-mono); }
+
+/* An all-caps label above a group. */
+.lt-eyebrow {
+  margin: 0;
+  font-size: var(--lt-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--lt-color-text-muted);
+}
+
+/* Visually hidden, still read aloud. */
+.lt-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.lt-fade-in { animation: lt-fade-in var(--lt-quick) ease; }
+@keyframes lt-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* One focus ring for every control here, at one-class weight (:where),
+   so an app's own focus rule still wins. Full-width rows draw it inside
+   their box, where a ring outside would be clipped by the list. */
+:where(.lt-btn, .lt-btn-link, .lt-chip, .lt-chip-remove, .lt-dialog-close,
+  .lt-sidenav-link, .lt-crumb > a):focus-visible {
+  outline: 2px solid var(--lt-color-primary);
+  outline-offset: 2px;
+}
+:where(.lt-list-row, .lt-row, .lt-fold > summary):focus-visible {
+  outline: 2px solid var(--lt-color-primary);
+  outline-offset: -2px;
+}
+
+/* A scroll area inside a card or panel gets a thin, quiet scrollbar
+   instead of the browser's own strip of grey. Blink drops the
+   ::-webkit-scrollbar pseudo-elements once scrollbar-color is set, so
+   the standard pair is fenced to engines without them. */
+/* A table wrapper always takes it. */
+:is(.lt-scroll-thin, .lt-table-wrap)::-webkit-scrollbar { width: 10px; height: 10px; }
+:is(.lt-scroll-thin, .lt-table-wrap)::-webkit-scrollbar-track { background: transparent; }
+:is(.lt-scroll-thin, .lt-table-wrap)::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--lt-color-text-muted) 40%, transparent);
+  background-clip: padding-box;
+}
+:is(.lt-scroll-thin, .lt-table-wrap)::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--lt-color-text-muted) 65%, transparent);
+  background-clip: padding-box;
+}
+@supports not selector(::-webkit-scrollbar) {
+  .lt-scroll-thin,
+  .lt-table-wrap {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--lt-color-text-muted) 40%, transparent) transparent;
+  }
+}
+
+/* Show and hide by the two breakpoints. */
+@media (max-width: 640px) { .lt-hide-narrow { display: none !important; } }
+@media (min-width: 641px) { .lt-only-narrow { display: none !important; } }
+@media (max-width: 768px) { .lt-hide-handheld { display: none !important; } }
+@media (min-width: 769px) { .lt-only-handheld { display: none !important; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .lt-fade-in, .lt-toast, .lt-action-bar { animation: none; }
+  .lt-skeleton { animation: none; }
+  .lt-spinner { animation-duration: 2s; }
+}
+
+/* iOS zooms the page when a focused field is under 16px. By pointer, not
+   width: an iPad zooms too, and a narrow desktop window does not. */
+@media (pointer: coarse) {
+  .lt-field { font-size: 16px; }
+}
+
+@media (max-width: 640px) {
+  .lt-confirm-prompt {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}

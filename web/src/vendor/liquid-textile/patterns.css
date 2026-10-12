@@ -1,0 +1,79 @@
+/**
+ * Liquid Textile — Fill Patterns
+ *
+ * Tiling SVG background patterns encoded as data URIs.
+ * Each pattern is ~100-300 bytes, rendered as vector — infinitely
+ * scalable, zero HTTP requests, GPU-composited.
+ *
+ * Light theme uses dark strokes; dark theme uses light strokes.
+ * Patterns are applied via background-image and tile by default.
+ *
+ * Grounds, not finishes: for a page, a canvas or a large panel behind
+ * cards (Patchwork lays canvas + grain under its quilt). Never on a
+ * control, where a pattern competes with the label.
+ */
+
+/* ---- Light theme patterns (dark marks on light ground) ---- */
+
+[data-theme="light"] .lt-fill-dots {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Ccircle cx='5' cy='5' r='1' fill='%232d2a26' opacity='0.15'/%3E%3C/svg%3E");
+}
+[data-theme="light"] .lt-fill-dots-dense {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='5' height='5'%3E%3Ccircle cx='2.5' cy='2.5' r='0.8' fill='%232d2a26' opacity='0.15'/%3E%3C/svg%3E");
+}
+[data-theme="light"] .lt-fill-hatch {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M-1 9L9-1' stroke='%232d2a26' stroke-width='0.7' opacity='0.12'/%3E%3C/svg%3E");
+}
+[data-theme="light"] .lt-fill-crosshatch {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M-1 9L9-1M-1-1L9 9' stroke='%232d2a26' stroke-width='0.6' opacity='0.1'/%3E%3C/svg%3E");
+}
+[data-theme="light"] .lt-fill-woven {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='4' height='4' fill='%232d2a26' opacity='0.06'/%3E%3Crect x='4' y='4' width='4' height='4' fill='%232d2a26' opacity='0.06'/%3E%3C/svg%3E");
+}
+[data-theme="light"] .lt-fill-herringbone {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath d='M0 6L6 0L12 6M0 12L6 6L12 12' stroke='%232d2a26' stroke-width='0.6' fill='none' opacity='0.12'/%3E%3C/svg%3E");
+}
+[data-theme="light"] .lt-fill-canvas {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Cpath d='M0 3h6M3 0v6' stroke='%232d2a26' stroke-width='0.4' opacity='0.08'/%3E%3C/svg%3E");
+}
+[data-theme="light"] .lt-fill-grid {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath d='M16 0H0v16' stroke='%232d2a26' stroke-width='0.5' fill='none' opacity='0.1'/%3E%3C/svg%3E");
+}
+[data-theme="light"] .lt-fill-stitch {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='6'%3E%3Cpath d='M0 3h5M9 3h5' stroke='%232d2a26' stroke-width='1' opacity='0.12'/%3E%3C/svg%3E");
+}
+
+/* ---- Dark theme patterns (light marks on dark ground) ---- */
+
+[data-theme="dark"] .lt-fill-dots {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Ccircle cx='5' cy='5' r='1' fill='%23e8e6e3' opacity='0.12'/%3E%3C/svg%3E");
+}
+[data-theme="dark"] .lt-fill-dots-dense {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='5' height='5'%3E%3Ccircle cx='2.5' cy='2.5' r='0.8' fill='%23e8e6e3' opacity='0.12'/%3E%3C/svg%3E");
+}
+[data-theme="dark"] .lt-fill-hatch {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M-1 9L9-1' stroke='%23e8e6e3' stroke-width='0.7' opacity='0.1'/%3E%3C/svg%3E");
+}
+[data-theme="dark"] .lt-fill-crosshatch {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M-1 9L9-1M-1-1L9 9' stroke='%23e8e6e3' stroke-width='0.6' opacity='0.08'/%3E%3C/svg%3E");
+}
+[data-theme="dark"] .lt-fill-woven {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='4' height='4' fill='%23e8e6e3' opacity='0.04'/%3E%3Crect x='4' y='4' width='4' height='4' fill='%23e8e6e3' opacity='0.04'/%3E%3C/svg%3E");
+}
+[data-theme="dark"] .lt-fill-herringbone {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath d='M0 6L6 0L12 6M0 12L6 6L12 12' stroke='%23e8e6e3' stroke-width='0.6' fill='none' opacity='0.1'/%3E%3C/svg%3E");
+}
+[data-theme="dark"] .lt-fill-canvas {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Cpath d='M0 3h6M3 0v6' stroke='%23e8e6e3' stroke-width='0.4' opacity='0.06'/%3E%3C/svg%3E");
+}
+[data-theme="dark"] .lt-fill-grid {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath d='M16 0H0v16' stroke='%23e8e6e3' stroke-width='0.5' fill='none' opacity='0.08'/%3E%3C/svg%3E");
+}
+[data-theme="dark"] .lt-fill-stitch {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='6'%3E%3Cpath d='M0 3h5M9 3h5' stroke='%23e8e6e3' stroke-width='1' opacity='0.1'/%3E%3C/svg%3E");
+}
+
+/* ---- Modifiers ---- */
+.lt-fill-none {
+  background-image: none;
+}

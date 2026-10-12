@@ -331,9 +331,8 @@
     grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
     gap: 0.35rem 1rem;
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    background: var(--color-surface-alt, transparent);
-    font-family: var(--font-mono, monospace);
+    border-radius: var(--radius);
+    font-family: var(--font-mono);
     font-size: 0.95rem;
     text-align: left;
   }

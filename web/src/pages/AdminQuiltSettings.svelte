@@ -638,9 +638,9 @@
   .zone-choice {
     margin-top: 1rem;
     padding: 0.875rem 1rem;
-    border: 1px solid var(--border);
+    border: 1px solid var(--color-border);
     border-radius: 8px;
-    background: var(--bg-subtle, rgba(0, 0, 0, 0.02));
+    background: var(--color-overlay);
   }
 
   .zone-choice-lead {
@@ -659,7 +659,7 @@
   }
 
   .zone-invalid {
-    color: var(--color-danger, #e05252);
+    color: var(--color-error);
   }
 
   .page-header {

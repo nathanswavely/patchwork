@@ -4,8 +4,14 @@
 import '@fontsource-variable/shantell-sans/bnce.css';
 import '@fontsource-variable/space-grotesk/index.css';
 
+// Liquid Textile, the design system (vendored; scripts/sync-lt.sh). Before
+// app.css, so Patchwork's own rules win on order while both exist, and so
+// app.css can set an --lt- token over Liquid Textile's.
+import './vendor/liquid-textile/foundation.css';
+import './vendor/liquid-textile/liquid-textile.css';
+import './vendor/liquid-textile/patterns.css';
+import './vendor/liquid-textile/textures.css';
 import './app.css';
-import './lib/textile.css';
 import './stores/theme.svelte.js'; // Initialize theme before render.
 import App from './App.svelte';
 import { mount } from 'svelte';

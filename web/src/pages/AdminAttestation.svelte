@@ -196,7 +196,7 @@
     display: block;
     padding: 0.75rem;
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm, 4px);
+    border-radius: var(--radius);
     background: var(--color-bg);
     font-family: monospace;
     font-size: 0.78rem;

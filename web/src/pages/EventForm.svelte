@@ -792,7 +792,7 @@
     font-size: 0.9rem;
   }
   .zone-invalid {
-    color: var(--color-danger, #e05252);
+    color: var(--color-error);
   }
   .link-button {
     background: none;

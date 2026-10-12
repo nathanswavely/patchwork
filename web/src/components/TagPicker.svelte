@@ -298,7 +298,7 @@
   }
 
   .error-hint {
-    color: var(--color-danger, #b00);
+    color: var(--color-error);
   }
 
   /* A finger: chips are tall enough to hit and far enough apart to miss

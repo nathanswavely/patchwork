@@ -426,7 +426,7 @@
     margin: 0;
     padding-left: 1.1rem;
     font-size: 0.8rem;
-    color: var(--color-danger, #c0392b);
+    color: var(--color-error);
   }
 
   .upload-preview {

@@ -695,7 +695,7 @@
   }
 
   .status-error {
-    color: var(--color-danger, #c0392b);
+    color: var(--color-error);
   }
 
   .source-actions {

@@ -360,7 +360,7 @@
   }
 
   .seam-budget.spent {
-    color: var(--color-danger, #c0392b);
+    color: var(--color-error);
     font-weight: 600;
   }
 
@@ -412,7 +412,7 @@
   }
 
   .seam-hit.unpickable:hover + .seam-line {
-    stroke: var(--color-danger, #c0392b);
+    stroke: var(--color-error);
     stroke-width: 2.5;
   }
 

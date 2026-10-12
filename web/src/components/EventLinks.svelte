@@ -470,7 +470,7 @@
   }
 
   .chip-x:hover {
-    color: var(--color-danger, #b3261e);
+    color: var(--color-error);
   }
 
   .pending-row {

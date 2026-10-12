@@ -222,7 +222,7 @@
 
   .doc-editor {
     width: 100%;
-    font-family: var(--font-mono, ui-monospace, monospace);
+    font-family: var(--font-mono);
     font-size: 0.85rem;
     line-height: 1.5;
     padding: 12px;

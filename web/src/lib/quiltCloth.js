@@ -73,7 +73,7 @@ export const CLOTH = {
    * Inner lip hugging each seam. Constant per seam, not per tile size. The
    * doming offset and every bevel width are sized from it, so this one
    * number is the seam's width; 0.02 read as a trench around each tile.
-   * Its colour is the theme's (--lt-seam-shade in textile.css), not black.
+   * Its colour is the theme's (--lt-seam-shade, Liquid Textile), not black.
    */
   bevel: 0.01,
   /** Batting puff — widens and deepens the soft falloff either side. */

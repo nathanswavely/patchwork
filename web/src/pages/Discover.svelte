@@ -555,9 +555,16 @@
     cursor: pointer;
     transition: all 150ms ease;
     color: var(--color-text);
-    background: var(--color-surface);
+    /* The tag's own color, tinted into the chip's ground. Liquid Textile's
+       resin tints its background too, but this rule sets the background
+       and wins, so the tint is made here: 35% in light, 25% in dark, the
+       strength the old blended resin had. A picked chip sets its solid
+       color inline. */
+    --tag-tint: 35%;
+    background: color-mix(in srgb, var(--lt-resin-color, transparent) var(--tag-tint), var(--color-surface));
     min-height: 44px;
   }
+  :global([data-theme="dark"]) .tag-chip { --tag-tint: 25%; }
 
   .tag-chip:hover {
     border-color: var(--lt-resin-color, var(--color-border));

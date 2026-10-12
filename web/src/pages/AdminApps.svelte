@@ -222,7 +222,7 @@
 
   .urls {
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm, 4px);
+    border-radius: var(--radius);
     padding: 0.9rem 1rem;
     margin-bottom: 1.5rem;
   }

@@ -590,7 +590,6 @@
     border-radius: 8px;
     padding: 0.9rem 1rem 1rem;
     margin-bottom: 2.25rem;
-    background: var(--color-bg-subtle, transparent);
   }
   .feeds h2 {
     font-size: 0.78rem;
@@ -613,7 +612,7 @@
   .feed-info { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
   .feed-name { font-weight: 600; }
   .feed-status { font-size: 0.82rem; }
-  .status-error { color: var(--color-danger); }
+  .status-error { color: var(--color-error); }
   .paused-chip { font-style: italic; }
   .feed-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
 
@@ -627,7 +626,7 @@
     background: var(--color-bg);
     color: var(--color-text);
   }
-  .form-error { color: var(--color-danger); margin: 0.5rem 0 0; }
+  .form-error { color: var(--color-error); margin: 0.5rem 0 0; }
 
   .names-head {
     display: flex;
@@ -647,7 +646,7 @@
     border: none;
     padding: 0;
     font: inherit;
-    color: var(--color-link, var(--color-accent));
+    color: var(--color-accent);
     cursor: pointer;
     text-decoration: underline;
     text-underline-offset: 2px;
