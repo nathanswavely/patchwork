@@ -100,7 +100,7 @@
     onclick={() => { sheetOpen = !sheetOpen; }}
   >
     <span class="patch-bar-tile" style="background: {tileColor}" aria-hidden="true"></span>
-    <span class="patch-bar-label">{node?.name || slug}</span>
+    <span class="lt-type-name patch-bar-label">{node?.name || slug}</span>
     <span class="patch-bar-caret" aria-hidden="true"><CaretDown size={12} weight="bold" /></span>
   </button>
 
@@ -113,7 +113,7 @@
     <div class="patch-sheet-grip" aria-hidden="true"></div>
     <div class="patch-sheet-head">
       <span class="patch-sheet-tile" style="background: {tileColor}" aria-hidden="true"></span>
-      <span class="patch-sheet-name">{node?.name || slug}</span>
+      <span class="lt-type-name patch-sheet-name">{node?.name || slug}</span>
     </div>
     <div class="patch-sheet-standing">
       <PatchRelationship
@@ -233,16 +233,6 @@
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
   }
 
-  .patch-bar-label {
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-family: var(--font-display);
-    font-size: 1rem;
-    font-weight: 600;
-  }
-
   .patch-bar-caret {
     display: flex;
     flex-shrink: 0;
@@ -304,9 +294,7 @@
   }
 
   .patch-sheet-name {
-    font-family: var(--font-display);
     font-size: 1.15rem;
-    font-weight: 600;
     line-height: 1.25;
   }
 

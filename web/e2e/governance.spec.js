@@ -45,14 +45,14 @@ test.describe('Governance — Proposal List', () => {
     await expectNoError(page);
     // Should have status filter chips (scoped — statuses also appear on
     // the proposal cards themselves).
-    await expect(page.locator('.chip', { hasText: 'Open' }).first()).toBeVisible();
-    await expect(page.locator('.chip', { hasText: 'Approved' }).first()).toBeVisible();
-    await expect(page.locator('.chip', { hasText: 'All' }).first()).toBeVisible();
+    await expect(page.locator('.lt-chip', { hasText: 'Open' }).first()).toBeVisible();
+    await expect(page.locator('.lt-chip', { hasText: 'Approved' }).first()).toBeVisible();
+    await expect(page.locator('.lt-chip', { hasText: 'All' }).first()).toBeVisible();
   });
 
   test('clicking filter chip changes displayed proposals', async ({ page }) => {
     await goto(page, `${PATCH_URL}/governance/proposals`);
-    const allChip = page.locator('.chip', { hasText: 'All' });
+    const allChip = page.locator('.lt-chip', { hasText: 'All' });
     await allChip.click();
     await page.waitForLoadState('networkidle');
     // Should not error
@@ -236,7 +236,7 @@ test.describe('Governance — Voting', () => {
     await loginAs(page, 'active');
     await goto(page, `${PATCH_URL}/governance/proposals`);
     // Find an open proposal
-    const openChip = page.locator('.chip', { hasText: 'Open' });
+    const openChip = page.locator('.lt-chip', { hasText: 'Open' });
     await openChip.click();
     await page.waitForLoadState('networkidle');
     const firstProposal = page.locator('.proposal-card').first();

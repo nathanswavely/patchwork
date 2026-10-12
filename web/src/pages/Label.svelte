@@ -64,7 +64,7 @@
           href={`/users/${s.username}`}
           onclick={(e) => { e.preventDefault(); navigate(`/users/${s.username}`); }}
         >
-          <span class="steward-avatar">
+          <span class="lt-avatar steward-avatar">
             {#if s.avatar_url}
               <img src={s.avatar_url} alt="" />
             {:else}
@@ -253,26 +253,13 @@
     padding: 16px 18px;
   }
   .steward-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+    --lt-avatar-size: 40px;
     background: var(--color-overlay);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    color: var(--color-text);
     font-weight: 700;
-    overflow: hidden;
-    flex-shrink: 0;
   }
   .stewards.solo .steward-avatar {
-    width: 56px;
-    height: 56px;
-    font-size: 1.3rem;
-  }
-  .steward-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    --lt-avatar-size: 56px;
   }
   .steward-meta {
     display: flex;

@@ -64,7 +64,7 @@
   {:else if profile}
     <!-- Header -->
     <div class="profile-header">
-      <div class="profile-avatar">
+      <div class="lt-avatar profile-avatar">
         {#if profile.avatar_url}
           <img src={profile.avatar_url} alt="" />
         {:else}
@@ -201,24 +201,12 @@
   }
 
   .profile-avatar {
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    margin: 0 auto 0.75rem;
+    --lt-avatar-size: 72px;
     background: var(--color-overlay);
     color: var(--color-text);
-    font-size: 1.6rem;
     font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-  }
-
-  .profile-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    display: grid;
+    margin: 0 auto 0.75rem;
   }
 
   .profile-name {

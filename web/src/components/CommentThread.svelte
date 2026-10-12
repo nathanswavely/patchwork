@@ -197,8 +197,8 @@
               {@const me = reaction?.me || false}
               {#if count > 0 || isMember}
                 <button
-                  class="reaction-btn"
-                  class:active={me}
+                  class="lt-chip reaction-btn"
+                  aria-pressed={me}
                   onclick={() => toggleReaction(comment.id, emoji, me)}
                   disabled={!isMember}
                 >
@@ -268,8 +268,8 @@
                     {@const me = reaction?.me || false}
                     {#if count > 0 || isMember}
                       <button
-                        class="reaction-btn"
-                        class:active={me}
+                        class="lt-chip reaction-btn"
+                        aria-pressed={me}
                         onclick={() => toggleReaction(reply.id, emoji, me)}
                         disabled={!isMember}
                       >
@@ -308,8 +308,8 @@
                           {@const me = reaction?.me || false}
                           {#if count > 0 || isMember}
                             <button
-                              class="reaction-btn"
-                              class:active={me}
+                              class="lt-chip reaction-btn"
+                              aria-pressed={me}
                               onclick={() => toggleReaction(nestedReply.id, emoji, me)}
                               disabled={!isMember}
                             >
@@ -396,23 +396,14 @@
   }
 
   .reaction-btn {
-    display: inline-flex;
-    align-items: center;
     gap: 0.2rem;
     padding: 0.15rem 0.4rem;
-    border: 1px solid var(--color-border);
-    border-radius: 999px;
     background: var(--color-bg);
+    color: var(--color-text);
     font-size: 0.8rem;
-    cursor: pointer;
-    transition: border-color 150ms ease, background 150ms ease;
   }
 
-  .reaction-btn:hover:not(:disabled) {
-    border-color: var(--color-primary);
-  }
-
-  .reaction-btn.active {
+  .reaction-btn[aria-pressed="true"] {
     background: color-mix(in srgb, var(--color-primary) 10%, transparent);
     border-color: var(--color-primary);
   }

@@ -388,7 +388,7 @@
         <div class="member-list">
           {#each members as m (m.id)}
             <a href="/users/{m.username}" class="member-chip" onclick={go(`/users/${m.username}`)} title="{m.display_name || m.username} · {m.role}">
-              <span class="member-avatar">
+              <span class="lt-avatar member-avatar">
                 {#if m.avatar_url}
                   <img src={m.avatar_url} alt="" />
                 {:else}
@@ -723,24 +723,13 @@
   }
 
   .member-avatar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    overflow: hidden;
-    flex-shrink: 0;
+    --lt-avatar-size: 22px;
+    /* A crowd of them: a whisper of ground, and an initial kept legible
+       at 22px (Liquid Textile's 0.4 of the size would be under 9px). */
+    background: var(--color-overlay);
+    color: var(--color-text-muted);
     font-size: 0.7rem;
     font-weight: 700;
-    color: var(--color-text-muted);
-    background: var(--color-overlay);
-  }
-
-  .member-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
   }
 
   .member-name {

@@ -278,30 +278,30 @@
 {#if confirmed.length || mentions.length || canAct}
   <div class="event-links">
     {#if confirmed.length || mentions.length}
-      <div class="chips">
+      <div class="lt-chips">
         <span class="with-label">with</span>
         {#each confirmed as l (l.id)}
-          <span class="chip">
+          <span class="lt-chip">
             <a
               href="/patches/{l.node_slug}"
               onclick={(e) => { e.preventDefault(); navigate(`/patches/${l.node_slug}`); }}
             >{l.node_name}</a>
             {#if canRemove(l)}
-              <button class="chip-x" title="Remove link" onclick={() => removeLink(l)}>
+              <button class="lt-chip-remove" title="Remove link" onclick={() => removeLink(l)}>
                 <X size={11} />
               </button>
             {/if}
           </span>
         {/each}
         {#each mentions as m (m.id)}
-          <span class="chip mention">
+          <span class="lt-chip mention">
             <a href="https://{m.host}/patches/{m.slug}" target="_blank" rel="noopener noreferrer">
               {m.name || m.slug}
               <ArrowSquareOut size={11} />
             </a>
             <span class="mention-host">{m.host}</span>
             {#if ownerAdmin}
-              <button class="chip-x" title="Remove mention" onclick={() => removeMention(m)}>
+              <button class="lt-chip-remove" title="Remove mention" onclick={() => removeMention(m)}>
                 <X size={11} />
               </button>
             {/if}
@@ -346,7 +346,7 @@
       {#if adding}
         <div class="add-row">
           {#if staged}
-            <span class="staged">
+            <span class="lt-chip lt-chip-pending staged">
               {#if staged.kind === 'mention'}
                 <ArrowSquareOut size={12} />
                 {staged.slug}
@@ -354,7 +354,7 @@
               {:else}
                 {staged.name}
               {/if}
-              <button class="chip-x" title="Choose a different patch" onclick={() => { staged = null; duplicates = []; absorbId = ''; }}>
+              <button class="lt-chip-remove" title="Choose a different patch" onclick={() => { staged = null; duplicates = []; absorbId = ''; }}>
                 <X size={11} />
               </button>
             </span>
@@ -418,30 +418,17 @@
     margin-bottom: 1.25rem;
   }
 
-  .chips {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-  }
-
   .with-label {
     font-size: 0.85rem;
     color: var(--color-text-muted);
   }
 
-  .chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    padding: 0.15rem 0.55rem;
-    border: 1px solid var(--color-border);
-    border-radius: 999px;
-    background: var(--color-surface);
-    font-size: 0.85rem;
+  .lt-chip {
+    cursor: default;
+    color: var(--color-text);
   }
 
-  .chip a {
+  .lt-chip a {
     display: inline-flex;
     align-items: center;
     gap: 0.2rem;
@@ -450,7 +437,7 @@
     text-decoration: none;
   }
 
-  .chip a:hover {
+  .lt-chip a:hover {
     text-decoration: underline;
   }
 
@@ -459,17 +446,7 @@
     color: var(--color-text-muted);
   }
 
-  .chip-x {
-    display: inline-flex;
-    align-items: center;
-    border: none;
-    background: none;
-    padding: 0;
-    color: var(--color-text-muted);
-    cursor: pointer;
-  }
-
-  .chip-x:hover {
+  .lt-chip-remove:hover {
     color: var(--color-error);
   }
 
@@ -508,14 +485,7 @@
   /* A staged target reads as the chip it is about to become, so the
      confirm step shows the shape of its own outcome. */
   .staged {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    padding: 0.15rem 0.55rem;
-    border: 1px dashed var(--color-border);
-    border-radius: 999px;
-    background: var(--color-surface);
-    font-size: 0.85rem;
+    color: var(--color-text);
     font-weight: 600;
   }
 

@@ -100,7 +100,7 @@
   {#if open}
     <div class="person-card" style="top: {pos.top}px; left: {pos.left}px;" role="dialog" aria-label="About {person.display_name || person.username}">
       <div class="person-head">
-        <span class="person-avatar" aria-hidden="true">
+        <span class="lt-avatar person-avatar" aria-hidden="true">
           {#if person.avatar_url}
             <img src={person.avatar_url} alt="" />
           {:else}
@@ -138,6 +138,11 @@
 </span>
 
 <style>
+  .person-avatar {
+    background: var(--color-border);
+    color: var(--color-text);
+  }
+
   .person-anchor {
     position: relative;
     display: inline-block;
@@ -176,22 +181,6 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-  }
-  .person-avatar {
-    width: 2rem;
-    height: 2rem;
-    flex: 0 0 auto;
-    border-radius: 50%;
-    background: var(--color-border);
-    display: grid;
-    place-items: center;
-    font-weight: 600;
-    overflow: hidden;
-  }
-  .person-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
   }
   .person-names {
     display: flex;
