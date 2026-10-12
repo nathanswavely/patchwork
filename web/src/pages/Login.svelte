@@ -152,6 +152,7 @@
         <form class="code-form" onsubmit={(e) => { e.preventDefault(); handleCodeSubmit(); }}>
           <label for="signin-code">Opened the link on another device? Enter the code it shows</label>
           <input
+            class="lt-field"
             id="signin-code"
             type="text"
             inputmode="numeric"
@@ -188,6 +189,7 @@
       <form onsubmit={(e) => { e.preventDefault(); handleEmailSubmit(); }}>
         <label for="email">Email address</label>
         <input
+          class="lt-field"
           id="email"
           type="email"
           bind:value={email}
@@ -244,6 +246,7 @@
           <p class="lt-muted">On a device without your passkey? We'll send you a sign-in link.</p>
           <form onsubmit={(e) => { e.preventDefault(); handleEmailSubmit(); }}>
             <input
+              class="lt-field"
               type="email"
               bind:value={email}
               placeholder="you@example.com"
@@ -269,6 +272,7 @@
           </p>
           <form onsubmit={(e) => { e.preventDefault(); handleRecoveryLogin(); }}>
             <input
+              class="lt-field"
               type="text"
               bind:value={recoveryUsername}
               placeholder="username"
@@ -278,6 +282,7 @@
               disabled={recoveryLoading}
             />
             <input
+              class="lt-field"
               type="text"
               bind:value={recoveryCode}
               placeholder="xxxx-xxxx-xxxx"

@@ -114,7 +114,7 @@
       <label class="join-message-label" for="join-message">Introduce yourself to the admins (optional)</label>
       <textarea
         id="join-message"
-        class="join-message-input"
+        class="lt-field join-message-input"
         bind:value={message}
         maxlength="500"
         rows="3"
@@ -194,14 +194,6 @@
 
   .join-message-input {
     width: 100%;
-    padding: 0.5rem 0.6rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    background: var(--color-surface);
-    color: var(--color-text);
-    font-family: inherit;
-    font-size: 0.85rem;
-    resize: vertical;
   }
 
   .join-actions {

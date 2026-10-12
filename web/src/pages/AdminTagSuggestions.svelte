@@ -83,7 +83,7 @@
         <li class="suggestion-row lt-card">
           <div class="suggestion-main">
             <input
-              class="suggestion-name"
+              class="lt-field suggestion-name"
               type="text"
               bind:value={editedNames[s.id]}
               maxlength="32"

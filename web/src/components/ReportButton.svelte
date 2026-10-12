@@ -84,7 +84,7 @@
 
     <label class="form-label">
       Reason
-      <select bind:value={reason}>
+      <select class="lt-field" bind:value={reason}>
         {#each REASONS as r}<option value={r}>{r}</option>{/each}
       </select>
     </label>
@@ -92,6 +92,7 @@
     <label class="form-label">
       Details <span class="optional">(optional)</span>
       <textarea
+        class="lt-field"
         bind:value={details}
         rows="4"
         placeholder="Anything that helps an admin understand what happened."
@@ -161,17 +162,6 @@
     display: block;
     width: 100%;
     margin-top: 0.4rem;
-    padding: 0.5rem 0.6rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    background: var(--color-bg);
-    color: var(--color-text);
-    font-size: 0.88rem;
-    font-family: inherit;
-  }
-
-  .form-label textarea {
-    resize: vertical;
   }
 
   .report-actions {

@@ -614,7 +614,7 @@
                   {#if isPatchAdmin}
                     <div class="seat-controls">
                       {#if editingSeat === seat.id}
-                        <input type="date" bind:value={termDraft} disabled={seatBusy} aria-label="Term end" />
+                        <input class="lt-field" data-density="compact" type="date" bind:value={termDraft} disabled={seatBusy} aria-label="Term end" />
                         <button class="lt-btn lt-btn-sm lt-btn-primary" disabled={seatBusy || !termDraft} onclick={() => saveTerm(seat.id)}>
                           Save
                         </button>
@@ -738,7 +738,7 @@
 
           {#if isAdmin}
             <div class="successor-controls">
-              <select bind:value={successorChoice} disabled={savingSuccessor}>
+              <select class="lt-field" bind:value={successorChoice} disabled={savingSuccessor}>
                 <option value="">Nobody</option>
                 {#each eligibleSuccessors as m}
                   <option value={m.user_id}>{m.display_name || m.username}</option>
@@ -951,7 +951,6 @@
   }
 
   .seat-controls input[type='date'] {
-    font-size: 0.78rem;
     min-width: 0;
   }
 

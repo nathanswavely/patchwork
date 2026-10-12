@@ -177,7 +177,7 @@
 
         {#if editingId === comment.id}
           <div class="comment-edit">
-            <textarea bind:value={editText} rows="3" disabled={submitting}></textarea>
+            <textarea class="lt-field" bind:value={editText} rows="3" disabled={submitting}></textarea>
             <div class="comment-edit-actions">
               <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={() => saveEdit(comment.id)} disabled={submitting}>Save</button>
               <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => { editingId = null; editText = ''; }}>Cancel</button>
@@ -225,6 +225,7 @@
         {#if replyingTo === comment.id}
           <div class="reply-form">
             <textarea
+              class="lt-field"
               bind:value={replyText}
               rows="2"
               placeholder="Write a reply..."
@@ -248,7 +249,7 @@
 
               {#if editingId === reply.id}
                 <div class="comment-edit">
-                  <textarea bind:value={editText} rows="2" disabled={submitting}></textarea>
+                  <textarea class="lt-field" bind:value={editText} rows="2" disabled={submitting}></textarea>
                   <div class="comment-edit-actions">
                     <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={() => saveEdit(reply.id)} disabled={submitting}>Save</button>
                     <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => { editingId = null; editText = ''; }}>Cancel</button>
@@ -331,6 +332,7 @@
     {#if isMember}
       <div class="new-comment">
         <textarea
+          class="lt-field"
           bind:value={newComment}
           rows="3"
           placeholder="Add a comment..."

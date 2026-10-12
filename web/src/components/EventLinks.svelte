@@ -322,7 +322,7 @@
         {#if canConfirm(l)}
           {#if confirmingNode === l.node_id}
             {#if duplicates.length}
-              <select bind:value={absorbId} class="absorb-select">
+              <select bind:value={absorbId} data-density="compact" class="lt-field absorb-select">
                 <option value="">Keep all my events</option>
                 {#each duplicates as d (d.id)}
                   <option value={d.id}>Replace "{d.title}"</option>
@@ -359,7 +359,7 @@
               </button>
             </span>
             {#if duplicates.length}
-              <select bind:value={absorbId} class="absorb-select">
+              <select bind:value={absorbId} data-density="compact" class="lt-field absorb-select">
                 <option value="">Keep all my events</option>
                 {#each duplicates as d (d.id)}
                   <option value={d.id}>Replace "{d.title}"</option>
@@ -490,12 +490,6 @@
   }
 
   .absorb-select {
-    padding: 0.3rem 0.5rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    background: var(--color-surface);
-    color: var(--color-text);
-    font-size: 0.8rem;
     max-width: 240px;
   }
 

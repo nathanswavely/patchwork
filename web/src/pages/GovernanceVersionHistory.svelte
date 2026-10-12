@@ -192,14 +192,14 @@
             <div class="compare-section">
               <h2>Compare versions</h2>
               <div class="compare-controls">
-                <select bind:value={compareFrom}>
+                <select class="lt-field" bind:value={compareFrom}>
                   <option value="">From...</option>
                   {#each versions as ver}
                     <option value={ver.sha}>v{ver.version_number}</option>
                   {/each}
                 </select>
                 <span class="compare-arrow">to</span>
-                <select bind:value={compareTo}>
+                <select class="lt-field" bind:value={compareTo}>
                   <option value="">To...</option>
                   {#each versions as ver}
                     <option value={ver.sha}>v{ver.version_number}</option>

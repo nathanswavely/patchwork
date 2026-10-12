@@ -280,15 +280,20 @@ input, textarea, select, button {
   color: inherit;
 }
 
-input[type="text"],
-input[type="email"],
-input[type="url"],
-input[type="number"],
-input[type="search"],
-input[type="datetime-local"],
-input[type="date"],
-textarea,
-select {
+/* A fallback for a field nothing else draws. Every form field is
+   Liquid Textile's .lt-field now, so this sits at zero specificity and
+   .lt-field's padding (and data-density="compact") wins over it. */
+:where(
+  input[type="text"],
+  input[type="email"],
+  input[type="url"],
+  input[type="number"],
+  input[type="search"],
+  input[type="datetime-local"],
+  input[type="date"],
+  textarea,
+  select
+) {
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);

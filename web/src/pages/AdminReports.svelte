@@ -164,7 +164,7 @@
               <div class="resolve-form">
                 <label class="form-label">
                   Action
-                  <select bind:value={selectedAction}>
+                  <select class="lt-field" bind:value={selectedAction}>
                     <option value="dismiss">Dismiss</option>
                     <option value="warn">Warn</option>
                     <option value="remove_content">Remove content</option>
@@ -176,7 +176,7 @@
                 </label>
                 <label class="form-label">
                   Resolution note
-                  <textarea bind:value={resolutionNote} rows="2" placeholder="Optional note..."></textarea>
+                  <textarea class="lt-field" bind:value={resolutionNote} rows="2" placeholder="Optional note..."></textarea>
                 </label>
                 {#if selectedAction === 'suspend_user'}
                   <p class="warning-text">This will suspend the reported user's account.</p>

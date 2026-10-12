@@ -346,11 +346,11 @@
     <form class="invite-form" onsubmit={(e) => { e.preventDefault(); generateInvite(); }}>
       <label>
         Max uses
-        <input type="number" min="1" max="100" bind:value={inviteMaxUses} />
+        <input class="lt-field" type="number" min="1" max="100" bind:value={inviteMaxUses} />
       </label>
       <label>
         Expires in (hours, 0 = never)
-        <input type="number" min="0" max="8760" bind:value={inviteExpiresHrs} />
+        <input class="lt-field" type="number" min="0" max="8760" bind:value={inviteExpiresHrs} />
       </label>
       <button type="submit" class="lt-btn lt-btn-primary" disabled={generatingInvite}>
         {generatingInvite ? 'Generating...' : 'Generate invite link'}
@@ -358,7 +358,7 @@
     </form>
     {#if inviteUrl}
       <div class="invite-result">
-        <input type="text" readonly value={inviteUrl} onfocus={(e) => e.target.select()} />
+        <input class="lt-field" type="text" readonly value={inviteUrl} onfocus={(e) => e.target.select()} />
         <button class="lt-btn lt-btn-secondary" onclick={copyInviteUrl}>Copy</button>
       </div>
       <p class="lt-muted invite-note">
@@ -376,6 +376,7 @@
     >
       <!-- svelte-ignore a11y_autofocus -->
       <input
+        class="lt-field" data-density="compact"
         type="email"
         autofocus
         bind:value={emailDraft}
@@ -399,6 +400,7 @@
 
 {#snippet roleControl(u)}
   <select
+    class="lt-field" data-density="compact"
     value={pendingRoles[u.id] ?? u.role}
     onchange={(e) => handleRoleSelect(u, e.target.value)}
   >
@@ -535,6 +537,7 @@
             />
             <label class="request-note" for="trust-note-{req.id}">Note to the requester (optional)</label>
             <textarea
+              class="lt-field"
               id="trust-note-{req.id}"
               rows="2"
               placeholder="Sent with a decline"
@@ -564,6 +567,7 @@
 
   <div class="search-bar">
     <input
+      class="lt-field"
       type="search"
       placeholder="Search by name or email..."
       value={searchInput}
@@ -769,7 +773,6 @@
 
   .request textarea {
     max-width: 420px;
-    font-size: 0.85rem;
   }
 
   .request-actions {
@@ -883,14 +886,6 @@
     opacity: 0.7;
   }
 
-  .lt-table select {
-    padding: 0.35rem 0.5rem;
-    font-size: 0.85rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    background: var(--color-surface);
-  }
-
   .email-edit {
     display: flex;
     align-items: center;
@@ -899,8 +894,6 @@
 
   .email-edit input {
     min-width: 12rem;
-    padding: 0.35rem 0.5rem;
-    font-size: 0.85rem;
   }
 
   .email-address {

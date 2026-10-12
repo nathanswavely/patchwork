@@ -380,8 +380,8 @@
     {/if}
 
     <form class="add-form" onsubmit={handleAdd}>
-      <input type="text" bind:value={newName} placeholder="Visit Lancaster City" disabled={adding} />
-      <input type="url" bind:value={newUrl} placeholder="https://…/calendar.ics" disabled={adding} />
+      <input class="lt-field" type="text" bind:value={newName} placeholder="Visit Lancaster City" disabled={adding} />
+      <input class="lt-field" type="url" bind:value={newUrl} placeholder="https://…/calendar.ics" disabled={adding} />
       <button type="submit" class="lt-btn lt-btn-secondary lt-btn-sm" disabled={adding || !newName.trim() || !newUrl.trim()}>
         {adding ? 'Attaching…' : 'Attach feed'}
       </button>
@@ -620,11 +620,6 @@
   .add-form input {
     flex: 1 1 12rem;
     min-width: 0;
-    padding: 0.4rem 0.6rem;
-    border: 1px solid var(--color-border);
-    border-radius: 6px;
-    background: var(--color-bg);
-    color: var(--color-text);
   }
   .form-error { color: var(--color-error); margin: 0.5rem 0 0; }
 

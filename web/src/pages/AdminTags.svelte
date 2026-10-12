@@ -92,6 +92,7 @@
 
   <form class="create-row" onsubmit={(e) => { e.preventDefault(); createTag(); }}>
     <input
+      class="lt-field"
       type="text"
       placeholder="New tag name (e.g. music)"
       bind:value={newName}

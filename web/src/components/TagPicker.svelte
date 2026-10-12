@@ -182,6 +182,7 @@
 
   <div class="suggest-row">
     <input
+      class="lt-field"
       type="text"
       placeholder="Suggest a tag"
       bind:value={draft}
