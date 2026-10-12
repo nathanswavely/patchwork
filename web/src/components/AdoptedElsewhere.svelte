@@ -129,7 +129,7 @@
   <h4>Adopted elsewhere</h4>
 
   {#if records.length === 0}
-    <p class="muted small">Nothing recorded yet.</p>
+    <p class="lt-muted small">Nothing recorded yet.</p>
   {:else}
     <ul class="records">
       {#each records as r}
@@ -144,7 +144,7 @@
           </p>
           {#if r.summary}<p class="summary">{r.summary}</p>{/if}
           {#if r.text_hidden}
-            <p class="muted small">The adopted text is visible to members.</p>
+            <p class="lt-muted small">The adopted text is visible to members.</p>
           {/if}
         </li>
       {/each}
@@ -157,12 +157,12 @@
         <p class="form-head">Record an adopted text</p>
 
         {#if docId}
-          <p class="muted small">Recording an adoption of <strong>{docTitle}</strong>.</p>
+          <p class="lt-muted small">Recording an adoption of <strong>{docTitle}</strong>.</p>
         {:else}
           <label for="ad-title">Which document</label>
           <input id="ad-title" type="text" bind:value={title} disabled={saving}
                  placeholder="Bylaws" />
-          <p class="muted small">
+          <p class="lt-muted small">
             If this patch has no document by that name, one is created.
           </p>
         {/if}
@@ -178,7 +178,7 @@
         <textarea id="ad-body" rows="12" bind:value={adoptedBody} disabled={saving}
                   placeholder="Paste the whole document as it now reads"></textarea>
 
-        <p class="form-note muted">
+        <p class="form-note lt-muted">
           This replaces the whole document. Paste it as it now reads, not just
           the part that changed — Patchwork's copy is being corrected, not
           amended.
@@ -188,17 +188,17 @@
         {#if error}<p class="err">{error}</p>{/if}
 
         <div class="form-actions">
-          <button class="btn btn-primary btn-sm" onclick={save} disabled={saving}>
+          <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={save} disabled={saving}>
             {saving ? 'Recording…' : 'Record'}
           </button>
-          <button class="btn btn-sm btn-ghost" onclick={() => { formOpen = false; }} disabled={saving}>
+          <button class="lt-btn lt-btn-sm lt-btn-ghost" onclick={() => { formOpen = false; }} disabled={saving}>
             Cancel
           </button>
         </div>
       </div>
     {:else}
       <div class="actions">
-        <button class="btn btn-sm" onclick={openForm}>Record an adopted text</button>
+        <button class="lt-btn lt-btn-sm" onclick={openForm}>Record an adopted text</button>
       </div>
     {/if}
   {/if}

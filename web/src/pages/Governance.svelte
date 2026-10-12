@@ -38,7 +38,7 @@
   <title>How governance works &mdash; {instanceName}</title>
 </svelte:head>
 
-<div class="governance-page page-fade">
+<div class="governance-page lt-fade-in">
   <header class="gov-header">
     <h1>How governance works</h1>
     <p class="gov-standfirst">

@@ -123,8 +123,8 @@
     {/if}
 
     <div class="join-actions">
-      <button class="btn btn-secondary" onclick={onClose} disabled={submitting}>Cancel</button>
-      <button class="btn btn-primary" onclick={handleConfirm} disabled={submitting}>
+      <button class="lt-btn lt-btn-secondary" onclick={onClose} disabled={submitting}>Cancel</button>
+      <button class="lt-btn lt-btn-primary" onclick={handleConfirm} disabled={submitting}>
         {isApproval ? 'Send request' : 'Become a member'}
       </button>
     </div>

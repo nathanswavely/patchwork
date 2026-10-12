@@ -95,7 +95,7 @@
     membershipRole !== 'admin'
   );
 
-  let btnSize = $derived(size === 'sm' ? 'btn-sm' : '');
+  let btnSize = $derived(size === 'sm' ? 'lt-btn-sm' : '');
 
   function handleWindowClick(e) {
     if (menuOpen && !e.target.closest('.standing-container')) menuOpen = false;
@@ -265,16 +265,16 @@
            open, where Follow would otherwise be. -->
       <div class="invited-row">
         <span class="invited-label">You've been invited to join</span>
-        <button class="btn btn-primary {btnSize}" onclick={handleAccept} disabled={joining}>Accept</button>
-        <button class="btn btn-secondary {btnSize}" onclick={handleDecline} disabled={joining}>Decline</button>
+        <button class="lt-btn lt-btn-primary {btnSize}" onclick={handleAccept} disabled={joining}>Accept</button>
+        <button class="lt-btn lt-btn-secondary {btnSize}" onclick={handleDecline} disabled={joining}>Decline</button>
       </div>
     {:else if !hasMoved}
-      <button class="btn btn-primary {btnSize}" onclick={handleFollow} disabled={joining}>Follow</button>
+      <button class="lt-btn lt-btn-primary {btnSize}" onclick={handleFollow} disabled={joining}>Follow</button>
     {/if}
 
     {#if canBecomeMember}
       <button
-        class="btn {standing ? 'btn-primary' : 'btn-secondary'} {btnSize}"
+        class="lt-btn {standing ? 'lt-btn-primary' : 'lt-btn-secondary'} {btnSize}"
         onclick={openJoinSheet}
         disabled={joining}
       >Become a member</button>

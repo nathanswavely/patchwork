@@ -581,8 +581,8 @@
     <main class="takeover-gate">
       <div class="auth-gate">
         <h2>Sign in required</h2>
-        <p class="muted" style="margin-bottom: 1rem;">You need to be logged in to view this page.</p>
-        <a href={loginHref} class="btn btn-primary" onclick={(e) => handleNav(e, loginHref)}>Log In</a>
+        <p class="lt-muted" style="margin-bottom: 1rem;">You need to be logged in to view this page.</p>
+        <a href={loginHref} class="lt-btn lt-btn-primary" onclick={(e) => handleNav(e, loginHref)}>Log In</a>
       </div>
     </main>
   {:else}
@@ -635,8 +635,8 @@
     <main class="takeover-gate">
       <div class="auth-gate">
         <h2>Sign in required</h2>
-        <p class="muted" style="margin-bottom: 1rem;">You need to be logged in to view this page.</p>
-        <a href={loginHref} class="btn btn-primary" onclick={(e) => handleNav(e, loginHref)}>Log In</a>
+        <p class="lt-muted" style="margin-bottom: 1rem;">You need to be logged in to view this page.</p>
+        <a href={loginHref} class="lt-btn lt-btn-primary" onclick={(e) => handleNav(e, loginHref)}>Log In</a>
       </div>
     </main>
   {:else}
@@ -698,8 +698,8 @@
       {#if authRequired && !isLoggedIn()}
         <div class="auth-gate">
           <h2>Sign in required</h2>
-          <p class="muted" style="margin-bottom: 1rem;">You need to be logged in to view this page.</p>
-          <a href={loginHref} class="btn btn-primary" onclick={(e) => handleNav(e, loginHref)}>Log In</a>
+          <p class="lt-muted" style="margin-bottom: 1rem;">You need to be logged in to view this page.</p>
+          <a href={loginHref} class="lt-btn lt-btn-primary" onclick={(e) => handleNav(e, loginHref)}>Log In</a>
         </div>
 
       <!-- ===== SOCIAL HOME: Quilt + Cards =====
@@ -801,8 +801,8 @@
       {:else}
         <div class="auth-gate">
           <h2>Page not found</h2>
-          <p class="muted" style="margin-bottom: 1rem;">The page you're looking for doesn't exist.</p>
-          <a href="/" class="btn btn-secondary" onclick={(e) => handleNav(e, '/')}>Back to Quilt</a>
+          <p class="lt-muted" style="margin-bottom: 1rem;">The page you're looking for doesn't exist.</p>
+          <a href="/" class="lt-btn lt-btn-secondary" onclick={(e) => handleNav(e, '/')}>Back to Quilt</a>
         </div>
       {/if}
     {/snippet}
@@ -815,7 +815,7 @@
        answering a different question. -->
   <div class="visitor-banner" role="status">
     <span>You are seeing this patch as a visitor sees it. Nothing you do here changes anything.</span>
-    <button class="btn btn-sm" onclick={leavePreview}>Leave preview</button>
+    <button class="lt-btn lt-btn-sm" onclick={leavePreview}>Leave preview</button>
   </div>
 {/if}
 

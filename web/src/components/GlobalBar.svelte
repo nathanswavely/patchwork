@@ -220,7 +220,7 @@
         {/if}
       </div>
       <a href="/login?mode=signin" class="bar-login" onclick={(e) => handleNav(e, '/login?mode=signin')}>Log In</a>
-      <a href="/login" class="btn btn-primary bar-signup" onclick={(e) => handleNav(e, '/login')}>Sign Up</a>
+      <a href="/login" class="lt-btn lt-btn-primary bar-signup" onclick={(e) => handleNav(e, '/login')}>Sign Up</a>
     {/if}
   </div>
 </header>

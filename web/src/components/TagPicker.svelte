@@ -177,7 +177,7 @@
       {/each}
     </div>
   {:else if vocabulary.length === 0}
-    <p class="muted empty-hint">No tags yet. The instance admin curates the list.</p>
+    <p class="lt-muted empty-hint">No tags yet. The instance admin curates the list.</p>
   {/if}
 
   <div class="suggest-row">
@@ -192,15 +192,15 @@
     />
     <button
       type="button"
-      class="btn btn-secondary btn-sm"
+      class="lt-btn lt-btn-secondary lt-btn-sm"
       onclick={addSuggestion}
       disabled={disabled || !draft.trim()}
     ><Plus size={12} weight="bold" /> Suggest</button>
   </div>
   {#if draftError}
-    <p class="muted suggest-hint error-hint">{draftError}</p>
+    <p class="lt-muted suggest-hint error-hint">{draftError}</p>
   {:else}
-    <p class="muted suggest-hint">
+    <p class="lt-muted suggest-hint">
       A suggested tag stays on this patch privately until an admin adds it to
       the quilt's tags.
     </p>

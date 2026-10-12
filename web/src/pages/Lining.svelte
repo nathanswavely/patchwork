@@ -35,15 +35,15 @@
   <title>The Lining &mdash; {instanceName}</title>
 </svelte:head>
 
-<div class="lining-page page-fade">
+<div class="lining-page lt-fade-in">
   {#if loading}
     <Skeleton lines={10} />
   {:else if error}
-    <p class="muted">Couldn't load the lining: {error}</p>
+    <p class="lt-muted">Couldn't load the lining: {error}</p>
   {:else}
     <header class="lining-header">
       <h1>{lining.title}</h1>
-      <p class="lining-standfirst muted">
+      <p class="lining-standfirst lt-muted">
         The shared baseline every patch on this quilt starts from. A patch can amend its copy. Amendments are public, and the patch is flagged publically if they diverge.
       </p>
     </header>

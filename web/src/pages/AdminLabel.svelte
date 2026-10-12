@@ -164,10 +164,10 @@
   }
 </script>
 
-<div class="page-fade">
+<div class="lt-fade-in">
   <div class="page-header">
     <h1>The Label</h1>
-    <p class="muted">
+    <p class="lt-muted">
       Tells people who runs this quilt and what it costs to keep up. Publishes to /label and is readable without an account.
     </p>
   </div>
@@ -182,7 +182,7 @@
       <div class="settings-card publish-card">
         <div>
           <strong>{published ? 'Published' : 'Not published'}</strong>
-          <p class="muted small">
+          <p class="lt-muted small">
             {#if published}
               Anyone can read the Label, signed in or not.
             {:else if listedCount === 0}
@@ -193,9 +193,9 @@
           </p>
         </div>
         {#if published}
-          <button class="btn btn-secondary" onclick={() => setPublished(false)}>Unpublish</button>
+          <button class="lt-btn lt-btn-secondary" onclick={() => setPublished(false)}>Unpublish</button>
         {:else}
-          <button class="btn btn-primary" onclick={() => setPublished(true)} disabled={listedCount === 0}>
+          <button class="lt-btn lt-btn-primary" onclick={() => setPublished(true)} disabled={listedCount === 0}>
             Publish
           </button>
         {/if}
@@ -213,9 +213,9 @@
           <div class="steward-row">
             <span class="steward-who">
               <strong>{s.display_name || `@${s.username}`}</strong>
-              <span class="muted small">@{s.username}</span>
+              <span class="lt-muted small">@{s.username}</span>
             </span>
-            <span class="steward-state muted small">
+            <span class="steward-state lt-muted small">
               {s.listed ? (s.blurb || 'Listed') : 'Invite pending'}
             </span>
             <button class="icon-btn" title="Remove" onclick={() => removeSteward(s)}>
@@ -230,7 +230,7 @@
             bind:value={newStewardUsername}
             onkeydown={(e) => e.key === 'Enter' && addSteward()}
           />
-          <button class="btn btn-secondary" onclick={addSteward} disabled={!newStewardUsername.trim()}>
+          <button class="lt-btn lt-btn-secondary" onclick={addSteward} disabled={!newStewardUsername.trim()}>
             <Plus size={14} /> Add steward
           </button>
         </div>
@@ -260,8 +260,8 @@
           <div class="field">
             <span class="field-label">Seamripped from</span>
             <div class="seamrip-line">
-              <span>{seamrippedFromName} {#if seamrippedFromUrl}<span class="muted small">({seamrippedFromUrl})</span>{/if}</span>
-              <button class="btn btn-secondary btn-sm"
+              <span>{seamrippedFromName} {#if seamrippedFromUrl}<span class="lt-muted small">({seamrippedFromUrl})</span>{/if}</span>
+              <button class="lt-btn lt-btn-secondary lt-btn-sm"
                 onclick={() => { seamrippedFromName = ''; seamrippedFromUrl = ''; }}>
                 Remove
               </button>
@@ -273,7 +273,7 @@
           </div>
         {/if}
         <div class="field-actions">
-          <button class="btn btn-primary" onclick={saveContent} disabled={saving}>
+          <button class="lt-btn lt-btn-primary" onclick={saveContent} disabled={saving}>
             {saving ? 'Saving…' : 'Save'}
           </button>
         </div>
@@ -312,8 +312,8 @@
           </div>
         {/each}
         <div class="field-actions cost-actions">
-          <button class="btn btn-secondary" onclick={addCostRow}><Plus size={14} /> Add line</button>
-          <button class="btn btn-primary" onclick={saveCosts} disabled={savingCosts}>
+          <button class="lt-btn lt-btn-secondary" onclick={addCostRow}><Plus size={14} /> Add line</button>
+          <button class="lt-btn lt-btn-primary" onclick={saveCosts} disabled={savingCosts}>
             {savingCosts ? 'Saving…' : 'Save costs'}
           </button>
         </div>

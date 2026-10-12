@@ -45,20 +45,20 @@
 
 </script>
 
-<div class="page-fade">
+<div class="lt-fade-in">
   <h1>Patch Claims</h1>
-  <p class="muted" style="margin-bottom: 1.5rem;">Users requesting ownership of unclaimed patches.</p>
+  <p class="lt-muted" style="margin-bottom: 1.5rem;">Users requesting ownership of unclaimed patches.</p>
 
   {#if loading}
     <Skeleton lines={4} height="1rem" />
   {:else if claims.length === 0 && awaitingSetup.length === 0}
-    <p class="muted">No open claims.</p>
+    <p class="lt-muted">No open claims.</p>
   {:else}
     {#if claims.length > 0}
     <h2 class="queue-heading">Awaiting review</h2>
     <div class="claim-list">
       {#each claims as claim (claim.id)}
-        <div class="claim-card card">
+        <div class="claim-card lt-card">
           <div class="claim-header">
             <h3>
               <a
@@ -72,7 +72,7 @@
           <!-- One fact per line on a phone: the domain and the email are the
                evidence being weighed, and run together they were one muted
                wrapped sentence. -->
-          <div class="claim-meta muted">
+          <div class="claim-meta lt-muted">
             <span>Claimed by {claim.claimant_display_name || claim.claimant_username}</span><span class="sep">{' · '}</span><span>{formatDate(claim.created_at)}</span>
             {#if claim.verification_domain}
               <span class="sep">{' · '}</span><span class="fact">verified domain: {claim.verification_domain}</span>
@@ -87,7 +87,7 @@
           <!-- Reject asks first: side by side with Approve, one mis-tap used
                to refuse somebody their patch. -->
           <div class="claim-actions">
-            <button class="btn btn-primary btn-sm" onclick={() => handleAction(claim.id, 'approve')}>Approve</button>
+            <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={() => handleAction(claim.id, 'approve')}>Approve</button>
             <ConfirmAction
               label="Reject"
               confirmLabel="Reject"
@@ -102,7 +102,7 @@
 
     {#if awaitingSetup.length > 0}
       <h2 class="queue-heading">Approved, awaiting setup</h2>
-      <p class="muted queue-note">
+      <p class="lt-muted queue-note">
         Cleared to claim. Each patch stays unclaimed until its claimant
         submits setup, which is where it becomes active and they become
         admin. An approval that runs out simply makes the patch claimable
@@ -110,12 +110,12 @@
       </p>
       <div class="claim-list">
         {#each awaitingSetup as claim (claim.id)}
-          <div class="claim-card card">
+          <div class="claim-card lt-card">
             <div class="claim-header">
               <h3>{claim.node_name}</h3>
               <span class="badge">{claim.method}</span>
             </div>
-            <div class="claim-meta muted">
+            <div class="claim-meta lt-muted">
               Claimed by {claim.claimant_display_name || claim.claimant_username}
               {#if claim.setup_expires_at}
                 {' · '}approval expires {formatDate(claim.setup_expires_at)}

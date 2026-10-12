@@ -107,7 +107,7 @@ Violations may result in a warning, temporary suspension, or removal from the co
   }
 </script>
 
-<div class="page-fade">
+<div class="lt-fade-in">
   <div class="container">
     <div style="padding-top: 2rem;">
       <h2>New Charter</h2>
@@ -159,7 +159,7 @@ Violations may result in a warning, temporary suspension, or removal from the co
                   {#if body.trim()}
                     <MarkdownRenderer content={body} />
                   {:else}
-                    <span class="muted">Nothing to preview</span>
+                    <span class="lt-muted">Nothing to preview</span>
                   {/if}
                 </div>
               {/if}
@@ -172,7 +172,7 @@ Violations may result in a warning, temporary suspension, or removal from the co
               <option value="members">Members only</option>
               <option value="public">Anyone</option>
             </select>
-            <p class="muted field-hint">
+            <p class="lt-muted field-hint">
               {visibility === 'public'
                 ? 'Visitors, search engines, and other quilts can read this document.'
                 : 'Only this patch’s members and admins can read this document. You can publish it later.'}
@@ -180,14 +180,14 @@ Violations may result in a warning, temporary suspension, or removal from the co
           </div>
 
           {#if error}
-            <p class="error-text">{error}</p>
+            <p class="lt-error-text">{error}</p>
           {/if}
 
           <div class="field-actions">
-            <button type="submit" class="btn btn-primary" disabled={submitting}>
+            <button type="submit" class="lt-btn lt-btn-primary" disabled={submitting}>
               {submitting ? 'Saving...' : 'Save'}
             </button>
-            <button type="button" class="btn btn-secondary" onclick={handleCancel}>
+            <button type="button" class="lt-btn lt-btn-secondary" onclick={handleCancel}>
               Cancel
             </button>
           </div>

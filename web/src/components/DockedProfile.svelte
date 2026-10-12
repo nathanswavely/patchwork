@@ -249,7 +249,7 @@
     <X size={16} weight="bold" />
   </button>
 
-  <div class="dock-scroll scroll-thin" class:scrollable={glimpsesActive}>
+  <div class="dock-scroll lt-scroll-thin" class:scrollable={glimpsesActive}>
     {#if host}
       <!-- Another quilt's patch: read-only, and every act on it a doorway
            (docs/adr/024). It has no glimpses to defer, so both heights

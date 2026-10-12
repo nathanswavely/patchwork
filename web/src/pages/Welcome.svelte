@@ -86,7 +86,7 @@
         <p class="agreement-lining-note">Every patch starts from <a href="/lining" target="_blank" rel="noopener">the lining</a>, the shared baseline behind these.</p>
       </div>
 
-      <button class="btn btn-primary cta-btn" onclick={handleContinue}>
+      <button class="lt-btn lt-btn-primary cta-btn" onclick={handleContinue}>
         Build your quilt &rarr;
       </button>
       <!-- The way out, offered at the start rather than only at the end:

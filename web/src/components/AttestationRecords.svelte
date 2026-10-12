@@ -171,9 +171,9 @@
   <h4>Decisions recorded here</h4>
 
   {#if loading}
-    <p class="muted small">Loading…</p>
+    <p class="lt-muted small">Loading…</p>
   {:else if !current}
-    <p class="muted small">Nothing recorded yet.</p>
+    <p class="lt-muted small">Nothing recorded yet.</p>
   {:else}
     <div class="record">
       <p class="record-head">
@@ -208,11 +208,11 @@
                         <option value={m.user_id}>{m.display_name || m.username}</option>
                       {/each}
                     </select>
-                    <button class="btn btn-sm" onclick={() => saveLink(n.id)} disabled={!linkChoice}>Link</button>
-                    <button class="btn btn-sm btn-ghost" onclick={() => { linking = ''; }}>Cancel</button>
+                    <button class="lt-btn lt-btn-sm" onclick={() => saveLink(n.id)} disabled={!linkChoice}>Link</button>
+                    <button class="lt-btn lt-btn-sm lt-btn-ghost" onclick={() => { linking = ''; }}>Cancel</button>
                   </span>
                 {:else}
-                  <button class="btn btn-sm btn-ghost" onclick={() => startLink(n.id)}>This is…</button>
+                  <button class="lt-btn lt-btn-sm lt-btn-ghost" onclick={() => startLink(n.id)}>This is…</button>
                 {/if}
               {/if}
             {/if}
@@ -271,12 +271,12 @@
             {#if !row.userId}
               <input type="text" bind:value={row.name} disabled={saving} placeholder="Their name" />
             {/if}
-            <button class="btn btn-sm btn-ghost" onclick={() => removeRow(i)} disabled={saving}>Remove</button>
+            <button class="lt-btn lt-btn-sm lt-btn-ghost" onclick={() => removeRow(i)} disabled={saving}>Remove</button>
           </div>
         {/each}
-        <button class="btn btn-sm btn-ghost" onclick={addRow} disabled={saving}>Add another</button>
+        <button class="lt-btn lt-btn-sm lt-btn-ghost" onclick={addRow} disabled={saving}>Add another</button>
 
-        <p class="form-note muted">
+        <p class="form-note lt-muted">
           Anyone already here takes up the role. Anyone not here yet is recorded
           by name and holds nothing until they join.
         </p>
@@ -285,17 +285,17 @@
         {#if error}<p class="err">{error}</p>{/if}
 
         <div class="form-actions">
-          <button class="btn btn-primary btn-sm" onclick={save} disabled={saving}>
+          <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={save} disabled={saving}>
             {saving ? 'Recording…' : 'Record'}
           </button>
-          <button class="btn btn-sm btn-ghost" onclick={() => { formOpen = false; }} disabled={saving}>Cancel</button>
+          <button class="lt-btn lt-btn-sm lt-btn-ghost" onclick={() => { formOpen = false; }} disabled={saving}>Cancel</button>
         </div>
       </div>
     {:else}
       <div class="actions">
-        <button class="btn btn-sm" onclick={() => openForm('')}>Record a decision</button>
+        <button class="lt-btn lt-btn-sm" onclick={() => openForm('')}>Record a decision</button>
         {#if current}
-          <button class="btn btn-sm btn-ghost" onclick={() => openForm(current.id)}>Correct the last one</button>
+          <button class="lt-btn lt-btn-sm lt-btn-ghost" onclick={() => openForm(current.id)}>Correct the last one</button>
         {/if}
       </div>
     {/if}

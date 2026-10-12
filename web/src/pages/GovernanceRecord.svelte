@@ -142,13 +142,13 @@
 
 <GovernanceShell>
   {#snippet children()}
-    <div class="record-page page-fade">
+    <div class="record-page lt-fade-in">
       <div class="record-head">
         <h1>Record</h1>
         <!-- No gloss on what the kinds are. Each entry wears its own label,
              and a sentence listing them ahead of the list teaches the reader
              what they are one second from seeing. -->
-        <p class="muted">Every decision this patch has reached, and every one it failed to, newest first.</p>
+        <p class="lt-muted">Every decision this patch has reached, and every one it failed to, newest first.</p>
       </div>
 
       {#if loading}
@@ -156,7 +156,7 @@
       {:else if error}
         <ErrorState message={error} retry={load} />
       {:else if entries.length === 0}
-        <p class="muted empty">
+        <p class="lt-muted empty">
           Nothing settled yet. Proposals show up here once they close.
         </p>
       {:else}
@@ -168,7 +168,7 @@
             >
               <div class="entry-head">
                 <span class="kind">{KIND_LABEL[e.kind] || e.kind}</span>
-                <span class="when muted">{formatDay(e.at)}</span>
+                <span class="when lt-muted">{formatDay(e.at)}</span>
               </div>
               {#if e.link}
                 <a class="entry-title" href={e.link} onclick={(ev) => { ev.preventDefault(); navigate(e.link); }}>
@@ -178,7 +178,7 @@
                 <span class="entry-title plain">{e.title}</span>
               {/if}
               <p class="outcome">{outcomeLine(e)}</p>
-              {#if e.summary}<p class="summary muted">{e.summary}</p>{/if}
+              {#if e.summary}<p class="summary lt-muted">{e.summary}</p>{/if}
             </li>
           {/each}
         </ol>

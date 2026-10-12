@@ -274,9 +274,9 @@
   {:else}
     {@const following = isFollowing(patch.slug)}
     <button
-      class="btn follow-btn"
+      class="lt-btn follow-btn"
       class:following
-      class:btn-secondary={!following}
+      class:lt-btn-secondary={!following}
       onclick={() => toggleFollow(patch)}
       disabled={busy.has(patch.slug)}
       aria-pressed={following}
@@ -330,9 +330,9 @@
 
       <div class="bottom-bar">
         <button
-          class="btn cta-btn"
-          class:btn-primary={selectedInterests.size > 0}
-          class:btn-secondary={selectedInterests.size === 0}
+          class="lt-btn cta-btn"
+          class:lt-btn-primary={selectedInterests.size > 0}
+          class:lt-btn-secondary={selectedInterests.size === 0}
           onclick={() => (phase = 'answer')}
         >
           {selectedInterests.size > 0 ? 'Show me patches' : 'Pick at least one'}
@@ -363,7 +363,7 @@
           comes looking will have something to find.
         </p>
         <div class="bottom-bar">
-          <button class="btn btn-primary cta-btn" onclick={() => navigate('/patches/new')}>
+          <button class="lt-btn lt-btn-primary cta-btn" onclick={() => navigate('/patches/new')}>
             Add a patch
           </button>
         </div>
@@ -401,7 +401,7 @@
                   {#each (patch.tags || []).slice(0, 3) as tag}
                     <span class="meta-tag" style="color: {colorForTag(tag)}">{tag}</span>
                   {/each}
-                  <span class="muted">
+                  <span class="lt-muted">
                     {patch.is_unclaimed
                       ? `${patch.follower_count || 0} following`
                       : `${patch.member_count || 0} members`}
@@ -442,7 +442,7 @@
                       {#each (patch.tags || []).slice(0, 3) as tag}
                         <span class="meta-tag" style="color: {colorForTag(tag)}">{tag}</span>
                       {/each}
-                      <span class="muted">
+                      <span class="lt-muted">
                         {patch.is_unclaimed
                           ? `${patch.follower_count || 0} following`
                           : `${patch.member_count || 0} members`}
@@ -461,7 +461,7 @@
             <p class="counter">
               Following {followedHere} {followedHere === 1 ? 'patch' : 'patches'}
             </p>
-            <button class="btn btn-primary cta-btn" onclick={() => navigate('/my')}>
+            <button class="lt-btn lt-btn-primary cta-btn" onclick={() => navigate('/my')}>
               See your quilt
             </button>
           {:else if isLoggedIn()}
@@ -478,7 +478,7 @@
               </p>
               <div class="bulletin-choices">
                 <button
-                  class="btn btn-secondary"
+                  class="lt-btn lt-btn-secondary"
                   disabled={bulletinSaving}
                   onclick={() => answerBulletin(true)}
                 >Tell me who's new</button>

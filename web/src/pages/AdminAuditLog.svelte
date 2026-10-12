@@ -104,11 +104,11 @@
       <pre class="metadata-json">{formatMetadata(entry.metadata)}</pre>
     {/if}
   {:else}
-    <span class="muted">--</span>
+    <span class="lt-muted">--</span>
   {/if}
 {/snippet}
 
-<div class="page-fade">
+<div class="lt-fade-in">
   <div class="page-header">
     <h1>Audit log</h1>
   </div>
@@ -156,7 +156,7 @@
   {:else if error}
     <ErrorState message={error} retry={() => loadEntries()} />
   {:else if entries.length === 0}
-    <p class="muted" style="text-align: center; padding: 2rem 0;">No audit entries found.</p>
+    <p class="lt-muted" style="text-align: center; padding: 2rem 0;">No audit entries found.</p>
   {:else if narrow}
     <!-- A phone: one entry per row, read top to bottom. As a table the
          details button sat 660px to the right, off the screen. -->
@@ -165,11 +165,11 @@
         <li class="entry">
           <div class="entry-head">
             <span class="badge">{entry.action}</span>
-            <span class="muted entry-time">{formatTimestamp(entry.created_at)}</span>
+            <span class="lt-muted entry-time">{formatTimestamp(entry.created_at)}</span>
           </div>
           <div class="entry-meta">
             <span>{entry.display_name || entry.username || entry.user_id || '--'}</span>
-            <span class="muted">{formatTarget(entry)}</span>
+            <span class="lt-muted">{formatTarget(entry)}</span>
           </div>
           {@render details(entry)}
         </li>
@@ -178,12 +178,12 @@
 
     {#if nextCursor}
       <div style="text-align: center; padding: 1rem 0;">
-        <button class="btn btn-secondary" onclick={() => loadEntries(true)}>Load more</button>
+        <button class="lt-btn lt-btn-secondary" onclick={() => loadEntries(true)}>Load more</button>
       </div>
     {/if}
   {:else}
-    <div class="table-wrapper">
-      <table class="data-table">
+    <div class="lt-table-wrap">
+      <table class="lt-table">
         <thead>
           <tr>
             <th>Time</th>
@@ -196,10 +196,10 @@
         <tbody>
           {#each entries as entry (entry.id)}
             <tr>
-              <td class="muted nowrap">{formatTimestamp(entry.created_at)}</td>
+              <td class="lt-muted nowrap">{formatTimestamp(entry.created_at)}</td>
               <td>{entry.display_name || entry.username || entry.user_id || '--'}</td>
               <td><span class="badge">{entry.action}</span></td>
-              <td class="muted">{formatTarget(entry)}</td>
+              <td class="lt-muted">{formatTarget(entry)}</td>
               <td>{@render details(entry)}</td>
             </tr>
           {/each}
@@ -209,7 +209,7 @@
 
     {#if nextCursor}
       <div style="text-align: center; padding: 1rem 0;">
-        <button class="btn btn-secondary" onclick={() => loadEntries(true)}>Load more</button>
+        <button class="lt-btn lt-btn-secondary" onclick={() => loadEntries(true)}>Load more</button>
       </div>
     {/if}
   {/if}
@@ -260,20 +260,20 @@
     font-weight: 500;
   }
 
-  /* .table-wrapper and .data-table are the shared table component (app.css);
+  /* .lt-table-wrap and .lt-table are the shared table component (app.css);
      these are the audit log's own denser reading of it — rows are scanned in
      bulk, and an expanded metadata block has to sit under its own row. */
-  .data-table {
+  .lt-table {
     font-size: 0.85rem;
   }
 
-  .data-table th,
-  .data-table td {
+  .lt-table th,
+  .lt-table td {
     padding: 0.5rem 0.6rem;
     vertical-align: top;
   }
 
-  .data-table th {
+  .lt-table th {
     font-size: 0.75rem;
   }
 
@@ -333,7 +333,7 @@
   }
 
   .entry-time,
-  .entry-meta .muted {
+  .entry-meta .lt-muted {
     flex-shrink: 0;
     font-size: 0.8rem;
   }

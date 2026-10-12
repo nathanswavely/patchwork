@@ -460,9 +460,9 @@
   {#if showTrustAsk && trustRequestChecked}
     <div class="trust-ask">
       {#if trustRequestStatus === 'pending'}
-        <p class="muted">Your request to be a trusted contributor is waiting for an admin.</p>
+        <p class="lt-muted">Your request to be a trusted contributor is waiting for an admin.</p>
       {:else if trustRequestStatus === 'declined' && !trustCanAskAgain}
-        <p class="muted">Your last request was declined. You can ask again on {formatDay(trustCanAskAgainAt)}.</p>
+        <p class="lt-muted">Your last request was declined. You can ask again on {formatDay(trustCanAskAgainAt)}.</p>
       {:else if trustPanelOpen}
         <div class="trust-panel">
           <TrustScopePicker
@@ -482,25 +482,25 @@
             ></textarea>
           </div>
           {#if trustError}
-            <p class="error-text">{trustError}</p>
+            <p class="lt-error-text">{trustError}</p>
           {/if}
           <div class="field-actions">
             <button
               type="button"
-              class="btn btn-primary btn-sm"
+              class="lt-btn lt-btn-primary lt-btn-sm"
               disabled={trustSubmitting}
               onclick={sendTrustRequest}
             >{trustSubmitting ? 'Sending…' : 'Send request'}</button>
             <button
               type="button"
-              class="btn btn-secondary btn-sm"
+              class="lt-btn lt-btn-secondary lt-btn-sm"
               disabled={trustSubmitting}
               onclick={cancelTrustPanel}
             >Cancel</button>
           </div>
         </div>
       {:else}
-        <p class="muted trust-line">
+        <p class="lt-muted trust-line">
           An instance admin reviews events on unclaimed patches. Add them often?
           <button type="button" class="link-button trust-ask-btn" onclick={openTrustPanel}>Ask to be a trusted contributor.</button>
         </p>
@@ -509,13 +509,13 @@
   {/if}
 {/snippet}
 
-<div class="page-fade">
+<div class="lt-fade-in">
   <div class="container-narrow">
     <div>
       {#if pendingReviewers}
-        <div class="card pending-confirm">
+        <div class="lt-card pending-confirm">
           <h2>Submitted for review</h2>
-          <p class="muted">
+          <p class="lt-muted">
             The {pendingReviewers} will look at it. Your event will appear on
             the calendar once it's approved.
           </p>
@@ -523,13 +523,13 @@
             {#if lockSlug}
               <a
                 href="/patches/{lockSlug}"
-                class="btn btn-primary"
+                class="lt-btn lt-btn-primary"
                 onclick={(e) => { e.preventDefault(); navigate(`/patches/${lockSlug}`); }}
               >Back to patch</a>
             {:else}
               <a
                 href="/events"
-                class="btn btn-primary"
+                class="lt-btn lt-btn-primary"
                 onclick={(e) => { e.preventDefault(); navigate('/events'); }}
               >Back to events</a>
             {/if}
@@ -545,24 +545,24 @@
            heading waits for it rather than flipping mid-load. -->
       {#if isEdit}
         <h1>Edit <VocabLabel term="event" /></h1>
-        <p class="muted" style="margin-bottom: 1.5rem;">Update your event details.</p>
+        <p class="lt-muted" style="margin-bottom: 1.5rem;">Update your event details.</p>
       {:else if lockSlug && !hostingPatch && !error}
         <h1>New <VocabLabel term="event" /></h1>
-        <p class="muted" style="margin-bottom: 1.5rem;">Loading patch...</p>
+        <p class="lt-muted" style="margin-bottom: 1.5rem;">Loading patch...</p>
       {:else if lockSlug && willReview}
         <h1>Suggest an <VocabLabel term="event" /></h1>
-        <p class="muted" style="margin-bottom: 1.5rem;">
+        <p class="lt-muted" style="margin-bottom: 1.5rem;">
           Suggest an event{hostingPatch ? ` for ${hostingPatch.name}` : ''}. It will be reviewed before it appears.
         </p>
         {@render trustAsk()}
       {:else if lockSlug}
         <h1>Create <VocabLabel term="event" /></h1>
-        <p class="muted" style="margin-bottom: 1.5rem;">
+        <p class="lt-muted" style="margin-bottom: 1.5rem;">
           Add an event for {hostingPatch?.name || 'this patch'}. It appears as soon as you save it.
         </p>
       {:else}
         <h1>Create <VocabLabel term="event" /></h1>
-        <p class="muted" style="margin-bottom: 1.5rem;">Schedule a new event for your community.</p>
+        <p class="lt-muted" style="margin-bottom: 1.5rem;">Schedule a new event for your community.</p>
       {/if}
 
       <form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
@@ -583,11 +583,11 @@
                  patches and a suggestion goes to the patch you came from,
                  so a control here would be a dropdown that refuses to open. -->
             {#if loadingPatch}
-              <p class="fixed-patch muted">Loading…</p>
+              <p class="fixed-patch lt-muted">Loading…</p>
             {:else if hostingPatch}
               <p class="fixed-patch">{hostingPatch.name}</p>
             {:else}
-              <p class="muted" style="font-size: 0.85rem;">
+              <p class="lt-muted" style="font-size: 0.85rem;">
                 {error || 'Could not load this patch.'}
               </p>
             {/if}
@@ -616,7 +616,7 @@
             />
           {/if}
           {#if !fixed && willReview}
-            <p class="image-hint muted">
+            <p class="image-hint lt-muted">
               You aren't a member of this patch, so the {reviewers} will look
               at your event before it appears.
             </p>
@@ -633,7 +633,7 @@
               {/each}
             </select>
             {#if !followersMayHaveEvents}
-              <p class="image-hint muted">
+              <p class="image-hint lt-muted">
                 Followers can't see this patch's non-public events. That is set
                 at the patch level, under
                 {#if canEditRules}<a
@@ -656,7 +656,7 @@
         <div class="field">
           <label for="event-url">Event page</label>
           <input id="event-url" type="url" bind:value={eventUrl} disabled={submitting} placeholder="https://..." />
-          <p class="image-hint muted">
+          <p class="image-hint lt-muted">
             Where to buy tickets or read more, if this event has a page
             somewhere else.
           </p>
@@ -665,7 +665,7 @@
         <div class="field">
           <label for="image-url">Image address</label>
           <input id="image-url" type="url" bind:value={imageUrl} disabled={submitting} placeholder="https://..." />
-          <p class="image-hint muted">
+          <p class="image-hint lt-muted">
             Link a flyer or photo you already have online. Patchwork points at
             it and never keeps a copy.
           </p>
@@ -678,7 +678,7 @@
           <div class="field">
             <label for="image-alt">Describe the image</label>
             <input id="image-alt" type="text" bind:value={imageAlt} disabled={submitting} placeholder="Flyer for the March show" />
-            <p class="image-hint muted">
+            <p class="image-hint lt-muted">
               Read aloud by screen readers, and shown if the image stops
               loading.
             </p>
@@ -703,7 +703,7 @@
           does not need to be told about one (docs/adr/045).
         -->
         {#if timezone && !sameZoneAsViewer(timezone)}
-          <p class="zone-note muted">
+          <p class="zone-note lt-muted">
             Times are in {timezone.replace(/_/g, ' ')}{zoneOverridden ? '' : ", this patch's timezone"}.
           </p>
         {/if}
@@ -718,7 +718,7 @@
               disabled={submitting}
               placeholder={patchTimezone || 'America/New_York'}
             />
-            <p class="muted">
+            <p class="lt-muted">
               An IANA name. Clear it to go back to
               {patchTimezone ? patchTimezone.replace(/_/g, ' ') : "the patch's timezone"}.
               {#if timezone && !isValidZone(timezone)}
@@ -733,16 +733,16 @@
         </div>
 
         {#if error}
-          <p class="error-text">{error}</p>
+          <p class="lt-error-text">{error}</p>
         {/if}
 
         <div class="field-actions">
-          <button type="submit" class="btn btn-primary" disabled={submitting || !nodeId}>
+          <button type="submit" class="lt-btn lt-btn-primary" disabled={submitting || !nodeId}>
             {submitting ? 'Saving...' : isEdit ? 'Save Changes' : willReview ? 'Suggest Event' : 'Create Event'}
           </button>
           <button
             type="button"
-            class="btn btn-secondary"
+            class="lt-btn lt-btn-secondary"
             onclick={() => navigate(isEdit ? `/events/${eventId}` : lockSlug ? `/patches/${lockSlug}` : '/dashboard')}
           >
             Cancel

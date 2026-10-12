@@ -172,13 +172,13 @@
   }
 
   /* The shell owns the rhythm between a settings page's cards. No page
-     defines it (each renders a bare section.card stack, usually inside its
-     own .page-fade wrapper), so without this the cards butt together on
+     defines it (each renders a bare section.lt-card stack, usually inside its
+     own .lt-fade-in wrapper), so without this the cards butt together on
      every settings surface. Adjacent-sibling so it works at whatever depth
      a page stacks its cards, and only between them — never above the
      first. :global because the cards come from the consuming page's
      snippet. */
-  .settings-content :global(.card + .card) {
+  .settings-content :global(.lt-card + .lt-card) {
     margin-top: 1.25rem;
   }
 

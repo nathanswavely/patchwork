@@ -283,7 +283,7 @@
              them changes whether an admin's choice does what they think. The
              count one matters most against the "Nobody" label, which would
              otherwise read as hiding the number too (docs/adr/095). -->
-        <span class="setting-desc muted">
+        <span class="setting-desc lt-muted">
           Who a visitor sees listed. Admins and members always see everyone. The member count stays public either way.
         </span>
       </div>
@@ -308,7 +308,7 @@
              once named charters as out of scope; cut, because the control
              sits under Members rather than Documents and the word
              "proposals" is doing that work already. -->
-        <span class="setting-desc muted">
+        <span class="setting-desc lt-muted">
           Who can read the proposals here, the discussion under them, and decisions recorded from meetings. Admins and members always can.
         </span>
       </div>
@@ -331,7 +331,7 @@
     {#if loadingPending}
       <Skeleton lines={2} height="0.9rem" />
     {:else if pendingMembers.length === 0}
-      <p class="muted">No pending requests.</p>
+      <p class="lt-muted">No pending requests.</p>
     {:else}
       <ul class="member-list">
         {#each pendingMembers as member (member.user_id)}
@@ -381,13 +381,13 @@
         bind:value={inviteUsername}
         disabled={inviting}
       />
-      <button class="btn btn-primary btn-sm" type="submit" disabled={inviting || !inviteUsername.trim()}>
+      <button class="lt-btn lt-btn-primary lt-btn-sm" type="submit" disabled={inviting || !inviteUsername.trim()}>
         Invite
       </button>
     </form>
     <!-- The one thing the form cannot show: what pressing Invite does not
          do. It asks; it never admits. -->
-    <p class="setting-desc muted">They're notified and join only if they accept.</p>
+    <p class="setting-desc lt-muted">They're notified and join only if they accept.</p>
 
     {#if !loadingMembers && invited.length > 0}
       <h4 class="subheading">Invited</h4>
@@ -417,7 +417,7 @@
     <h3 class="section-heading">Active Members</h3>
 
     {#if electedCouncil}
-      <p class="council-note muted">
+      <p class="council-note lt-muted">
         {#if vacantSeats > 0}
           This patch elects its council, so admins are not made here. {vacantSeats} seat{vacantSeats === 1 ? ' is' : 's are'} vacant: an admin nominates a member on the Governance page and the members ratify it.
         {:else if nextContestOpens}
@@ -431,7 +431,7 @@
     {#if loadingMembers}
       <Skeleton lines={4} height="0.9rem" />
     {:else if members.length === 0}
-      <p class="muted">No members yet.</p>
+      <p class="lt-muted">No members yet.</p>
     {:else}
       <ul class="member-list">
         {#each members as member (member.user_id)}
@@ -459,7 +459,7 @@
                 {/if}
               </select>
               {#if roleEdits[member.user_id] && roleEdits[member.user_id] !== member.role}
-                <button class="btn btn-primary btn-sm" onclick={() => saveRole(member.user_id)}>
+                <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={() => saveRole(member.user_id)}>
                   Save
                 </button>
               {/if}
@@ -478,13 +478,13 @@
 
   <section class="members-section">
     <h3 class="section-heading">Followers</h3>
-    <p class="setting-desc muted">
+    <p class="setting-desc lt-muted">
       Followers see only this patch's events and public pages.
     </p>
     {#if loadingMembers}
       <Skeleton lines={2} height="0.9rem" />
     {:else if followers.length === 0}
-      <p class="muted">No followers yet.</p>
+      <p class="lt-muted">No followers yet.</p>
     {:else}
       <ul class="member-list">
         {#each followers as follower (follower.user_id)}
@@ -520,7 +520,7 @@
         {#if loadingBanned}
           <Skeleton lines={2} height="0.9rem" />
         {:else if bannedMembers.length === 0}
-          <p class="muted">No removed members.</p>
+          <p class="lt-muted">No removed members.</p>
         {:else}
           <ul class="member-list">
             {#each bannedMembers as member (member.user_id)}

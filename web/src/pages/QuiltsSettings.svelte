@@ -89,24 +89,24 @@
   }
 </script>
 
-<div class="page-fade">
+<div class="lt-fade-in">
   <div class="container-narrow">
     <h1>Connected Quilts</h1>
     <p class="page-desc">Connect other Patchworks to reach them from the quilt switcher. Each opens on its own site. Your connections are part of your account, so they follow you to any device.</p>
 
-    <div class="follow-link card">
+    <div class="follow-link lt-card">
       <h2>Follow a patch from another quilt</h2>
-      <p class="muted follow-link-desc">Found a patch while visiting another quilt? Paste its link (or drop it in the search bar) and it opens here, with a Follow button. Followed patches join your My Quilt.</p>
+      <p class="lt-muted follow-link-desc">Found a patch while visiting another quilt? Paste its link (or drop it in the search bar) and it opens here, with a Follow button. Followed patches join your My Quilt.</p>
       <form class="add-form" onsubmit={(e) => { e.preventDefault(); handleFollowLink(); }}>
         <input
           type="url"
           bind:value={followUrl}
           placeholder="https://their-quilt.example.com/patches/gallery-row"
         />
-        <button type="submit" class="btn btn-secondary" disabled={!followUrl.trim()}>Open patch</button>
+        <button type="submit" class="lt-btn lt-btn-secondary" disabled={!followUrl.trim()}>Open patch</button>
       </form>
       {#if followError}
-        <p class="error-text">{followError}</p>
+        <p class="lt-error-text">{followError}</p>
       {/if}
     </div>
 
@@ -117,21 +117,21 @@
         placeholder="https://other-patchwork.example.com"
         disabled={validating}
       />
-      <button type="submit" class="btn btn-primary" disabled={validating || !newUrl.trim()}>
+      <button type="submit" class="lt-btn lt-btn-primary" disabled={validating || !newUrl.trim()}>
         {validating ? 'Checking...' : 'Add Quilt'}
       </button>
     </form>
 
     {#if error}
-      <p class="error-text">{error}</p>
+      <p class="lt-error-text">{error}</p>
     {/if}
     {#if validatedName}
-      <p class="success-text">Added "{validatedName}"</p>
+      <p class="lt-success-text">Added "{validatedName}"</p>
     {/if}
 
     <div class="quilt-list">
       {#each getConnectedQuilts() as quilt (quilt.id)}
-        <div class="quilt-item card">
+        <div class="quilt-item lt-card">
           <!-- Quilt icon (docs/adr/014): plain img, no CORS needed; older
                instances without the endpoint just hide the slot. -->
           <img
@@ -150,7 +150,7 @@
             <span class="quilt-url">{quilt.url}</span>
             {#if testResults[quilt.url]}
               {#if testResults[quilt.url].loading}
-                <span class="muted" style="font-size: 0.8rem;">Testing...</span>
+                <span class="lt-muted" style="font-size: 0.8rem;">Testing...</span>
               {:else if testResults[quilt.url].ok}
                 <span class="status-ok">
                   {testResults[quilt.url].name}
@@ -164,10 +164,10 @@
             {/if}
           </div>
           <div class="quilt-actions">
-            <button class="btn btn-secondary btn-sm" onclick={() => testConnection(quilt.url)}>
+            <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => testConnection(quilt.url)}>
               Test
             </button>
-            <button class="btn btn-danger btn-sm" onclick={() => handleRemove(quilt)}>
+            <button class="lt-btn lt-btn-danger lt-btn-sm" onclick={() => handleRemove(quilt)}>
               Remove
             </button>
           </div>
@@ -175,7 +175,7 @@
       {:else}
         <div class="empty-state">
           <p>No quilts followed yet.</p>
-          <p class="muted" style="font-size: 0.85rem;">Add a Patchwork instance URL above to start exploring.</p>
+          <p class="lt-muted" style="font-size: 0.85rem;">Add a Patchwork instance URL above to start exploring.</p>
         </div>
       {/each}
     </div>
@@ -218,7 +218,7 @@
     margin-bottom: 0;
   }
 
-  .error-text {
+  .lt-error-text {
     color: var(--color-error);
     font-size: 0.85rem;
   }

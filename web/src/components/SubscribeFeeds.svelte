@@ -42,23 +42,23 @@
 <div class="feed-row">
   <span class="feed-label">Calendar (ICS)</span>
   <code class="feed-url">{icsUrl}</code>
-  <button class="btn btn-secondary btn-sm" onclick={() => copyValue(icsUrl)}>Copy</button>
+  <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => copyValue(icsUrl)}>Copy</button>
 </div>
 <div class="feed-row">
   <span class="feed-label">RSS</span>
   <code class="feed-url">{rssUrl}</code>
-  <button class="btn btn-secondary btn-sm" onclick={() => copyValue(rssUrl)}>Copy</button>
+  <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => copyValue(rssUrl)}>Copy</button>
 </div>
 {#if handleAvailable}
   <div class="feed-row">
     <span class="feed-label">Mastodon</span>
     <code class="feed-url">{handle}</code>
-    <button class="btn btn-secondary btn-sm" onclick={() => copyValue(handle)}>Copy</button>
+    <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => copyValue(handle)}>Copy</button>
   </div>
 {/if}
-<p class="muted feed-hint">Paste the calendar address into your calendar app to follow this patch's events.</p>
+<p class="lt-muted feed-hint">Paste the calendar address into your calendar app to follow this patch's events.</p>
 {#if handleAvailable}
-  <p class="muted feed-hint">
+  <p class="lt-muted feed-hint">
     Search the handle in Mastodon to follow new events there. Replies don't
     reach the patch. The address belongs to {getInstanceName()}, so it
     doesn't travel if this community moves to another quilt.

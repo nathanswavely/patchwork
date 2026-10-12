@@ -327,13 +327,13 @@
   }
 </script>
 
-<div class="page-fade">
+<div class="lt-fade-in">
   <h2>Event Sources</h2>
   <!-- On a phone this 52-word explanation sat above the only control on
        the page, so it folds there. Open, and unlabelled, on a wide screen. -->
   <details class="intro-fold" open={!narrow}>
     <summary>What works?</summary>
-    <p class="muted subtitle">
+    <p class="lt-muted subtitle">
       Calendar feeds this patch pulls events from. Paste an ICS address (a
       Google Calendar's secret address, the calendar feed from your website),
       an events page from Squarespace, Humanitix, and similar sites, or an
@@ -343,7 +343,7 @@
   </details>
 
   {#if loading}
-    <p class="muted" style="padding: 2rem 0;">Loading...</p>
+    <p class="lt-muted" style="padding: 2rem 0;">Loading...</p>
   {:else}
     {#if sources.length > 0}
       <ul class="source-list">
@@ -351,14 +351,14 @@
           <li class="source-row">
             <div class="source-info">
               <span class="source-host">{hostOf(source.url)}</span>
-              <span class="source-url muted">{source.url}</span>
+              <span class="source-url lt-muted">{source.url}</span>
               <span class="source-status">
                 {#if source.status === 'pending'}
-                  <span class="muted">First sync in progress…</span>
+                  <span class="lt-muted">First sync in progress…</span>
                 {:else if source.status === 'error'}
                   <span class="status-error">Sync failed{source.last_error ? `: ${source.last_error}` : ''}</span>
                 {:else}
-                  <span class="muted">
+                  <span class="lt-muted">
                     {source.event_count} {source.event_count === 1 ? 'event' : 'events'}
                     {#if relTime(source.last_success_at)}· synced {relTime(source.last_success_at)}{/if}
                   </span>
@@ -377,7 +377,7 @@
                   <option value={tier}>{label}</option>
                 {/each}
               </select>
-              <p class="correction-hint tier-hint muted">
+              <p class="correction-hint tier-hint lt-muted">
                 Applies to events imported from now on. Anything but Public
                 also stops them federating to other quilts.
               </p>
@@ -392,7 +392,7 @@
                 />
                 <span>This calendar publishes local times as UTC</span>
               </label>
-              <p class="correction-hint muted">
+              <p class="correction-hint lt-muted">
                 Only if this feed's times run hours earlier than the venue's own
                 page. The next sync rewrites its events.
                 {#if previewFor(source)}
@@ -404,7 +404,7 @@
             </div>
             <div class="source-actions">
               <button
-                class="btn btn-secondary btn-sm"
+                class="lt-btn lt-btn-secondary lt-btn-sm"
                 disabled={syncing[source.id] || source.status === 'pending'}
                 onclick={() => syncNow(source.id)}
               >{syncing[source.id] ? 'Syncing…' : 'Sync now'}</button>
@@ -419,7 +419,7 @@
         {/each}
       </ul>
     {:else}
-      <p class="muted empty">No event sources yet.</p>
+      <p class="lt-muted empty">No event sources yet.</p>
     {/if}
 
     <form class="add-form" onsubmit={addSource}>
@@ -438,18 +438,18 @@
           <option value={tier}>{label}</option>
         {/each}
       </select>
-      <button class="btn btn-primary" type="submit" disabled={adding || !newUrl.trim()}>
+      <button class="lt-btn lt-btn-primary" type="submit" disabled={adding || !newUrl.trim()}>
         {adding ? 'Attaching…' : 'Attach feed'}
       </button>
     </form>
-    <p class="muted hint">
+    <p class="lt-muted hint">
       Removing a source keeps past events and removes upcoming imported ones.
     </p>
   {/if}
 
   {#if holds.length > 0}
     <h2 class="section-head">Possible duplicates</h2>
-    <p class="muted subtitle">
+    <p class="lt-muted subtitle">
       Each of these lands at the same time as an event you already have.
       Yours is the one showing.
     </p>
@@ -457,21 +457,21 @@
       {#each holds as hold (hold.id)}
         <li class="hold-row">
           <div class="hold-pair">
-            <span class="hold-when muted">{whenOf(hold.starts_at)}</span>
+            <span class="hold-when lt-muted">{whenOf(hold.starts_at)}</span>
             <span class="hold-yours"><strong>Yours:</strong> {hold.rival_title}</span>
             <span class="hold-theirs">
               <strong>{hold.aggregator_name}:</strong> {hold.title}
-              {#if hold.location}<span class="muted">{' · '}{hold.location}</span>{/if}
+              {#if hold.location}<span class="lt-muted">{' · '}{hold.location}</span>{/if}
             </span>
           </div>
           <div class="hold-actions">
             <button
-              class="btn btn-secondary btn-sm"
+              class="lt-btn lt-btn-secondary lt-btn-sm"
               disabled={deciding[hold.id]}
               onclick={() => decideHold(hold, 'same')}
             >Same event</button>
             <button
-              class="btn btn-secondary btn-sm"
+              class="lt-btn lt-btn-secondary lt-btn-sm"
               disabled={deciding[hold.id]}
               onclick={() => decideHold(hold, 'different')}
             >Add it too</button>
@@ -483,7 +483,7 @@
 
   {#if programs.length > 0}
     <h2 class="section-head">Programs credited to you</h2>
-    <p class="muted subtitle">
+    <p class="lt-muted subtitle">
       Recurring listings someone recognized as yours. They stay on the
       venue's calendar. These are offers to put your name on them too, and
       the venue confirms each one.
@@ -493,7 +493,7 @@
         <li class="program-row">
           <div class="program-head">
             <span class="program-title">{p.display_title}</span>
-            <span class="muted program-sub">
+            <span class="lt-muted program-sub">
               {'listed under '}{p.display_name}{' on '}{p.aggregator_name}
             </span>
           </div>
@@ -501,7 +501,7 @@
         </li>
         {@const mine = offers.filter((o) => o.program_id === p.id)}
         {#if mine.length === 0}
-          <li class="offer-empty muted">
+          <li class="offer-empty lt-muted">
             {p.routed
               ? 'Nothing waiting. Every listing is either linked or dismissed.'
               : `Nothing yet: “${p.display_name}” has not been mapped to a patch, so these listings are not events on this quilt.`}
@@ -510,18 +510,18 @@
           {#each mine as o (o.event_id)}
             <li class="offer-row">
               <div class="offer-info">
-                <span class="offer-when muted">{whenOf(o.starts_at)}</span>
+                <span class="offer-when lt-muted">{whenOf(o.starts_at)}</span>
                 <span class="offer-title">{o.title}</span>
-                <span class="muted offer-owner">{'on '}{o.owner_name}</span>
+                <span class="lt-muted offer-owner">{'on '}{o.owner_name}</span>
               </div>
               <div class="offer-actions">
                 <button
-                  class="btn btn-secondary btn-sm"
+                  class="lt-btn lt-btn-secondary lt-btn-sm"
                   disabled={offering[o.event_id]}
                   onclick={() => proposeLink(o)}
                 >Ask to be added</button>
                 <button
-                  class="btn btn-secondary btn-sm"
+                  class="lt-btn lt-btn-secondary lt-btn-sm"
                   disabled={offering[o.event_id]}
                   onclick={() => dismissOffer(o)}
                 >Not ours</button>
@@ -534,7 +534,7 @@
   {/if}
 
   <h2 class="section-head">Listing calendars</h2>
-  <p class="muted subtitle">
+  <p class="lt-muted subtitle">
     Calendars that list events across the community, like the city calendar.
     Answering to a name brings every event filed under it here from now on.
     Anything an admin points at you waits in your review queue first. Stop
@@ -547,8 +547,8 @@
         <li class="source-row">
           <div class="source-info">
             <span class="source-host">{entry.display_name}</span>
-            <span class="source-url muted">on {entry.aggregator_name}</span>
-            <span class="source-status muted">
+            <span class="source-url lt-muted">on {entry.aggregator_name}</span>
+            <span class="source-status lt-muted">
               {#if entry.suggests}
                 Suggests into your review queue{#if entry.added_by_name}, set up by {entry.added_by_name}{/if}
                 {#if entry.pending_count > 0}
@@ -584,16 +584,16 @@
         <li class="name-row">
           <div class="name-info">
             <span class="name-label">{name.display_name}</span>
-            <span class="muted name-count">
+            <span class="lt-muted name-count">
               {name.count} {name.count === 1 ? 'listing' : 'listings'} on {' '}
               {name.aggregator_name || 'a listing calendar'}
             </span>
             {#if name.sample_titles?.length}
-              <span class="muted samples">{name.sample_titles.join(' · ')}</span>
+              <span class="lt-muted samples">{name.sample_titles.join(' · ')}</span>
             {/if}
           </div>
           <button
-            class="btn btn-secondary btn-sm"
+            class="lt-btn lt-btn-secondary lt-btn-sm"
             disabled={mapping[name.name_key]}
             onclick={() => mapName(name)}
           >{mapping[name.name_key] ? 'Mapping…' : "That's us"}</button>
@@ -601,7 +601,7 @@
       {/each}
     </ul>
   {:else if crosswalk.length === 0}
-    <p class="muted empty">
+    <p class="lt-muted empty">
       No listing calendars are carrying a name this patch could answer to.
     </p>
   {/if}
@@ -858,7 +858,7 @@
       flex: 1 1 auto;
     }
 
-    .add-form .btn {
+    .add-form .lt-btn {
       white-space: nowrap;
     }
   }

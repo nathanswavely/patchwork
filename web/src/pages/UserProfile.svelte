@@ -58,8 +58,8 @@
   {:else if error}
     <div class="profile-error">
       <h2>Person not found</h2>
-      <p class="muted">{error}</p>
-      <a href="/" class="btn btn-secondary" onclick={(e) => { e.preventDefault(); navigate('/'); }}>Back to Quilt</a>
+      <p class="lt-muted">{error}</p>
+      <a href="/" class="lt-btn lt-btn-secondary" onclick={(e) => { e.preventDefault(); navigate('/'); }}>Back to Quilt</a>
     </div>
   {:else if profile}
     <!-- Header -->
@@ -72,7 +72,7 @@
         {/if}
       </div>
       <h1 class="profile-name">{profile.display_name || profile.username}</h1>
-      <p class="profile-username muted">@{profile.username} &middot; here since {formatDate(profile.created_at)}</p>
+      <p class="profile-username lt-muted">@{profile.username} &middot; here since {formatDate(profile.created_at)}</p>
       {#if profile.bio}
         <p class="profile-bio">{profile.bio}</p>
       {/if}
@@ -82,7 +82,7 @@
         <MovedNotice url={profile.moved_to} subject="person" />
       {/if}
       {#if isSelf}
-        <a href="/settings" class="btn btn-secondary btn-edit" onclick={(e) => { e.preventDefault(); navigate('/settings'); }}>
+        <a href="/settings" class="lt-btn lt-btn-secondary btn-edit" onclick={(e) => { e.preventDefault(); navigate('/settings'); }}>
           Edit profile
         </a>
       {:else if profile.id}
@@ -98,7 +98,7 @@
     {#if contact.length > 0}
       <section class="profile-section">
         <h3 class="section-title">Reach {profile.display_name || profile.username}</h3>
-        <p class="muted contact-why">
+        <p class="lt-muted contact-why">
           {isSelf
             ? 'What the people you organize with can see. Each item is here because you gave it to a patch you share with them.'
             : 'Shared with people they organize with. You can see this because you are in a patch they gave it to.'}
@@ -152,9 +152,9 @@
 
     {#if adminOf.length === 0 && memberOf.length === 0 && !profile.bio && (!profile.links || profile.links.length === 0)}
       <div class="profile-empty">
-        <p class="muted">Nothing here yet.</p>
+        <p class="lt-muted">Nothing here yet.</p>
         {#if isSelf}
-          <p class="muted">Memberships you've hidden don't appear on your profile. Manage them in <a href="/settings/patches" onclick={(e) => { e.preventDefault(); navigate('/settings/patches'); }}>Settings</a>.</p>
+          <p class="lt-muted">Memberships you've hidden don't appear on your profile. Manage them in <a href="/settings/patches" onclick={(e) => { e.preventDefault(); navigate('/settings/patches'); }}>Settings</a>.</p>
         {/if}
       </div>
     {/if}

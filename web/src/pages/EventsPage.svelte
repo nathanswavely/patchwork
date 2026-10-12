@@ -279,19 +279,19 @@
 
   {#if loading}
     <div class="events-empty">
-      <p class="muted">Loading events...</p>
+      <p class="lt-muted">Loading events...</p>
     </div>
   {:else if filtered.length === 0}
     <div class="events-empty">
       {#if getSelectedTags().length > 0 || getSearchQuery().trim()}
         <!-- The filter is standing state (docs/adr/033) — when it empties
              the list, say so and offer the way out. -->
-        <p class="muted">
+        <p class="lt-muted">
           No events match your filter{datePreset !== 'any' ? ' for this date range' : ''}.
         </p>
-        <button class="btn btn-secondary" onclick={resetFilters}>Clear filter</button>
+        <button class="lt-btn lt-btn-secondary" onclick={resetFilters}>Clear filter</button>
       {:else}
-        <p class="muted">No upcoming events{datePreset !== 'any' ? ' for this date range' : ''}.</p>
+        <p class="lt-muted">No upcoming events{datePreset !== 'any' ? ' for this date range' : ''}.</p>
       {/if}
     </div>
   {:else}

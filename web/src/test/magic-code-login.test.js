@@ -57,7 +57,7 @@ describe('the code form on the sent-email state', () => {
 
   it('shows the refusal under the form, like the other forms do', () => {
     expect(src).toContain('{#if codeError}');
-    expect(src).toContain('<p class="error-text">{codeError}</p>');
+    expect(src).toContain('<p class="lt-error-text">{codeError}</p>');
   });
 
   it('keeps the "Use a different email" way out, and clears the code with it', () => {

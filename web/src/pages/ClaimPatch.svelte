@@ -151,9 +151,9 @@
   );
 </script>
 
-<div class="claim-page page-fade">
+<div class="claim-page lt-fade-in">
   <h1>Claim {node?.name || 'this patch'}</h1>
-  <p class="muted">Prove you represent this organization to take ownership.</p>
+  <p class="lt-muted">Prove you represent this organization to take ownership.</p>
 
   {#if loading}
     <Skeleton lines={4} height="1rem" />
@@ -162,18 +162,18 @@
     <!-- Approved: a single-use, expiring right to enter setup — not yet an
          active patch, and no "awaiting setup" state visible to anyone
          else (docs/adr/039). -->
-    <div class="card verify-card approved-card">
+    <div class="lt-card verify-card approved-card">
       <div class="verify-header">
         <h2>Claim approved</h2>
       </div>
       <p>You're cleared to set up this patch. Setup is where it becomes active. Until then, it still reads as unclaimed to everyone else.</p>
       {#if claim.setup_expires_at}
-        <p class="muted">Approval expires {formatExpiry(claim.setup_expires_at)}.</p>
+        <p class="lt-muted">Approval expires {formatExpiry(claim.setup_expires_at)}.</p>
       {/if}
       <div class="form-actions" style="margin-top: 1rem;">
         <a
           href="/patches/{slug}/setup"
-          class="btn btn-primary"
+          class="lt-btn lt-btn-primary"
           onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/setup`); }}
         >Set up your patch</a>
       </div>
@@ -181,7 +181,7 @@
 
   {:else if claim}
     <!-- An open claim: its instructions, actions, and a real way out. -->
-    <div class="card verify-card">
+    <div class="lt-card verify-card">
       <div class="verify-header">
         <h2>Your claim is open</h2>
         <span class="badge">{methodLabels[claim.method] || claim.method}</span>
@@ -190,7 +190,7 @@
       {#if claim.method === 'dns'}
         <p>Add a <strong>TXT record</strong> on <strong>{verificationDomain}</strong>:</p>
         <code class="verify-code">{claim.record_value}</code>
-        <p class="muted">DNS changes can take a few minutes to propagate.</p>
+        <p class="lt-muted">DNS changes can take a few minutes to propagate.</p>
 
       {:else if claim.method === 'meta_tag'}
         <p>Add this tag to the <code>&lt;head&gt;</code> of <strong>https://{verificationDomain}</strong>:</p>
@@ -204,7 +204,7 @@
         <code class="verify-code">did=did:web:{verificationDomain}</code>
         <p>Then make sure that DID document lists the handle back:</p>
         <code class="verify-code">"alsoKnownAs": ["at://{verificationDomain}"]</code>
-        <p class="muted">A did:plc handle won't work here. Only did:web is accepted, because its document lives on your own domain rather than in a registry someone else runs.</p>
+        <p class="lt-muted">A did:plc handle won't work here. Only did:web is accepted, because its document lives on your own domain rather than in a registry someone else runs.</p>
 
       {:else if claim.method === 'email'}
         <p>We sent a verification link to <strong>{claim.email}</strong>. Open it to finish claiming. The link expires 24 hours after it's sent.</p>
@@ -215,22 +215,22 @@
 
       <div class="form-actions" style="margin-top: 1rem;">
         {#if claim.method === 'dns' || claim.method === 'meta_tag' || claim.method === 'did'}
-          <button class="btn btn-primary" onclick={handleVerify} disabled={verifying}>
+          <button class="lt-btn lt-btn-primary" onclick={handleVerify} disabled={verifying}>
             {verifying ? 'Checking...' : 'Verify Now'}
           </button>
         {:else if claim.method === 'email'}
-          <button class="btn btn-primary" onclick={handleResend} disabled={resending}>
+          <button class="lt-btn lt-btn-primary" onclick={handleResend} disabled={resending}>
             {resending ? 'Sending...' : 'Resend Email'}
           </button>
         {/if}
-        <button class="btn btn-secondary" onclick={handleWithdraw} disabled={withdrawing}>
+        <button class="lt-btn lt-btn-secondary" onclick={handleWithdraw} disabled={withdrawing}>
           {withdrawing ? 'Withdrawing...' : 'Withdraw Claim'}
         </button>
       </div>
-      <p class="muted withdraw-hint">Withdrawing lets you start over with a different method.</p>
+      <p class="lt-muted withdraw-hint">Withdrawing lets you start over with a different method.</p>
 
       {#if error}
-        <p class="error-text" style="margin-top: 0.75rem;">{error}</p>
+        <p class="lt-error-text" style="margin-top: 0.75rem;">{error}</p>
       {/if}
     </div>
 
@@ -243,7 +243,7 @@
           <input type="radio" name="method" value={method.id} bind:group={selectedMethod} disabled={!available} />
           <div>
             <strong>{method.label}</strong>
-            <span class="muted">{available ? method.desc : unavailableReason(method.id)}</span>
+            <span class="lt-muted">{available ? method.desc : unavailableReason(method.id)}</span>
           </div>
         </label>
       {/each}
@@ -260,19 +260,19 @@
       <div class="field">
         <label for="claim-email">Your email at @{verificationDomain}</label>
         <input id="claim-email" type="email" bind:value={email} placeholder={'you@' + verificationDomain} />
-        <span class="muted field-hint">The address must be at the organization's verified domain.</span>
+        <span class="lt-muted field-hint">The address must be at the organization's verified domain.</span>
       </div>
     {/if}
 
     {#if error}
-      <p class="error-text">{error}</p>
+      <p class="lt-error-text">{error}</p>
     {/if}
 
     <div class="form-actions">
-      <button class="btn btn-primary" onclick={handleClaim} disabled={submitDisabled}>
+      <button class="lt-btn lt-btn-primary" onclick={handleClaim} disabled={submitDisabled}>
         {claiming ? 'Submitting...' : 'Submit Claim'}
       </button>
-      <button class="btn btn-secondary" onclick={() => navigate(`/patches/${slug}`)}>Back</button>
+      <button class="lt-btn lt-btn-secondary" onclick={() => navigate(`/patches/${slug}`)}>Back</button>
     </div>
   {/if}
 </div>
@@ -287,7 +287,7 @@
     margin-bottom: 0.25rem;
   }
 
-  h1 + .muted {
+  h1 + .lt-muted {
     margin-bottom: 1.5rem;
     font-size: 0.88rem;
   }
@@ -342,7 +342,7 @@
     font-size: 0.9rem;
   }
 
-  .method-card .muted {
+  .method-card .lt-muted {
     font-size: 0.78rem;
   }
 

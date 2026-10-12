@@ -340,16 +340,16 @@
   <section class="feeds">
     <h2>Feeds</h2>
     {#if loading}
-      <p class="muted">Loading…</p>
+      <p class="lt-muted">Loading…</p>
     {:else if aggregators.length === 0}
-      <p class="muted">No feeds attached.</p>
+      <p class="lt-muted">No feeds attached.</p>
     {:else}
       <ul class="feed-list">
         {#each aggregators as agg (agg.id)}
           <li class="feed-row">
             <div class="feed-info">
               <span class="feed-name">{agg.name}</span>
-              <span class="feed-status muted">
+              <span class="feed-status lt-muted">
                 {#if agg.status === 'pending'}
                   First fetch in progress…
                 {:else if agg.status === 'error'}
@@ -363,8 +363,8 @@
               </span>
             </div>
             <div class="feed-actions">
-              <button class="btn btn-secondary btn-sm" onclick={() => syncNow(agg)}>Sync now</button>
-              <button class="btn btn-secondary btn-sm" onclick={() => togglePause(agg)}>
+              <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => syncNow(agg)}>Sync now</button>
+              <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => togglePause(agg)}>
                 {agg.paused ? 'Resume' : 'Pause'}
               </button>
               <ConfirmAction
@@ -382,7 +382,7 @@
     <form class="add-form" onsubmit={handleAdd}>
       <input type="text" bind:value={newName} placeholder="Visit Lancaster City" disabled={adding} />
       <input type="url" bind:value={newUrl} placeholder="https://…/calendar.ics" disabled={adding} />
-      <button type="submit" class="btn btn-secondary btn-sm" disabled={adding || !newName.trim() || !newUrl.trim()}>
+      <button type="submit" class="lt-btn lt-btn-secondary lt-btn-sm" disabled={adding || !newName.trim() || !newUrl.trim()}>
         {adding ? 'Attaching…' : 'Attach feed'}
       </button>
     </form>
@@ -392,26 +392,26 @@
   <div class="names-head">
     <h2>
       {showIgnored ? 'Ignored names' : 'Unrouted names'}
-      {#if names.length}<span class="muted count">{names.length}</span>{/if}
+      {#if names.length}<span class="lt-muted count">{names.length}</span>{/if}
     </h2>
     {#if ignoredCount > 0 || showIgnored}
       <button
-        class="btn btn-secondary btn-sm"
+        class="lt-btn lt-btn-secondary lt-btn-sm"
         onclick={() => { showIgnored = !showIgnored; load(); }}
       >{showIgnored ? 'Back to unrouted' : `Show ignored (${ignoredCount})`}</button>
     {/if}
   </div>
 
   {#if loading}
-    <p class="muted" style="padding: 2rem 0;">Loading…</p>
+    <p class="lt-muted" style="padding: 2rem 0;">Loading…</p>
   {:else if aggregators.length === 0}
-    <p class="muted empty">Attach a feed to see the names it carries.</p>
+    <p class="lt-muted empty">Attach a feed to see the names it carries.</p>
   {:else if names.length === 0}
-    <p class="muted empty">
+    <p class="lt-muted empty">
       {showIgnored ? 'No names have been ignored.' : 'Every name your feeds carry is mapped or ignored.'}
     </p>
   {:else}
-    <p class="muted names-note">
+    <p class="lt-muted names-note">
       {#if showIgnored}
         Hidden from this list only. Patch admins still see every name in
         their own picker.
@@ -426,18 +426,18 @@
           <li class="name-row program-row">
             <div class="name-info">
               <span class="name-label">{row.program.display_title}</span>
-              <span class="muted name-count">
+              <span class="lt-muted name-count">
                 {'Credited to '}{row.program.node_name}
                 {' · '}{row.program.listing_count}
                 {row.program.listing_count === 1 ? ' listing under ' : ' listings under '}
                 {row.program.display_name}
               </span>
               {#if !row.program.routed}
-                <span class="muted samples">
+                <span class="lt-muted samples">
                   {`Waiting on “${row.program.display_name}” to be mapped. Until it is, there are no events to offer.`}
                 </span>
               {:else if row.program.offer_count > 0}
-                <span class="muted samples">
+                <span class="lt-muted samples">
                   {row.program.offer_count === 1
                     ? '1 offer waiting on their admins'
                     : `${row.program.offer_count} offers waiting on their admins`}
@@ -455,19 +455,19 @@
           <li class="name-row">
             <div class="name-info">
             <span class="name-label">{name.display_name}</span>
-            <span class="muted name-count">
+            <span class="lt-muted name-count">
               <button class="link-count" onclick={() => openListings(name)}>
                 {name.count} {name.count === 1 ? 'listing' : 'listings'}
               </button>
               {' on '}{name.aggregator_name}
             </span>
             {#if name.sample_titles?.length}
-              <span class="muted samples">{name.sample_titles.join(' · ')}</span>
+              <span class="lt-muted samples">{name.sample_titles.join(' · ')}</span>
             {/if}
           </div>
           <div class="name-map">
             {#if showIgnored}
-              <button class="btn btn-secondary btn-sm" onclick={() => setIgnored(name, false)}>
+              <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => setIgnored(name, false)}>
                 Stop ignoring
               </button>
             {:else}
@@ -500,14 +500,14 @@
   {#if openName}
     <div class="listings-modal">
       <h2>{openName.display_name}</h2>
-      <p class="muted modal-sub">
+      <p class="lt-muted modal-sub">
         {openName.count} {openName.count === 1 ? 'listing' : 'listings'} on {openName.aggregator_name}
       </p>
 
       {#if listingsLoading}
-        <p class="muted">Loading…</p>
+        <p class="lt-muted">Loading…</p>
       {:else}
-        <p class="muted modal-note">
+        <p class="lt-muted modal-note">
           Mapping this name decides whose calendar these land on. If one is
           run by somebody else, credit it to them. The events stay here
           either way.
@@ -518,12 +518,12 @@
             <li class="title-group">
               <div class="group-head">
                 <span class="listing-title">{g.title}</span>
-                <span class="muted group-count">
+                <span class="lt-muted group-count">
                   {g.items.length}{g.items.length === 1 ? ' date' : ' dates'}
                 </span>
               </div>
               {#if credited}
-                <p class="muted credited-note">
+                <p class="lt-muted credited-note">
                   {'Credited to '}{credited.node_name}{'.'}
                   <button class="link-ignore" onclick={() => uncredit(credited)}>
                     Remove credit
@@ -546,8 +546,8 @@
               <ul class="date-list">
                 {#each g.items as l (l.uid + l.occurrence)}
                   <li class="listing">
-                    <span class="listing-when muted">{whenOf(l.starts_at)}</span>
-                    {#if l.location}<span class="muted listing-loc">{l.location}</span>{/if}
+                    <span class="listing-when lt-muted">{whenOf(l.starts_at)}</span>
+                    {#if l.location}<span class="lt-muted listing-loc">{l.location}</span>{/if}
                     {#if l.description}
                       <p class="listing-desc">{snippet(l.description)}</p>
                     {/if}
@@ -566,15 +566,15 @@
 
       <div class="modal-actions">
         {#if openName.ignored}
-          <button class="btn btn-secondary btn-sm" onclick={() => setIgnored(openName, false)}>
+          <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => setIgnored(openName, false)}>
             Stop ignoring
           </button>
         {:else}
-          <button class="btn btn-secondary btn-sm" onclick={() => setIgnored(openName, true)}>
+          <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => setIgnored(openName, true)}>
             Ignore this name
           </button>
         {/if}
-        <button class="btn btn-secondary btn-sm" onclick={() => { openName = null; }}>Close</button>
+        <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => { openName = null; }}>Close</button>
       </div>
     </div>
   {/if}
@@ -708,7 +708,7 @@
   .name-count { font-size: 0.85rem; }
   .samples { font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .name-map { display: flex; flex-direction: column; gap: 0.35rem; flex: 0 1 18rem; }
-  .muted { color: var(--color-text-muted); }
+  .lt-muted { color: var(--color-text-muted); }
 
   /* A program sits under the name it was recognized beneath, indented
      so the list still reads as names first (docs/adr/063). */

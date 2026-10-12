@@ -2467,7 +2467,7 @@
 {:else if error}
   <div class="canvas-state" style="padding-right: {insetRight * 100}%">
     <p>{error}</p>
-    <button class="btn btn-secondary" onclick={loadData}>Try Again</button>
+    <button class="lt-btn lt-btn-secondary" onclick={loadData}>Try Again</button>
   </div>
 {:else if !treeData?.children?.length}
   <div class="canvas-state" style="padding-right: {insetRight * 100}%">
@@ -2480,16 +2480,16 @@
       {#if filterTags.length > 0 || canSuggest}
         <div class="empty-actions">
           {#if filterTags.length > 0}
-            <button class="btn btn-secondary" onclick={onClearFilter}>Clear filter</button>
+            <button class="lt-btn lt-btn-secondary" onclick={onClearFilter}>Clear filter</button>
           {/if}
           {#if canSuggest}
-            <button class="btn btn-secondary" onclick={suggestPatch}>Suggest a patch</button>
+            <button class="lt-btn lt-btn-secondary" onclick={suggestPatch}>Suggest a patch</button>
           {/if}
         </div>
       {/if}
     {:else}
       <p>This quilt is empty.</p>
-      <p class="muted">Create the first patch to get started.</p>
+      <p class="lt-muted">Create the first patch to get started.</p>
     {/if}
   </div>
 {:else}
@@ -2507,10 +2507,10 @@
       {#if filterTags.length > 0 || canSuggest}
         <div class="empty-actions">
           {#if filterTags.length > 0}
-            <button class="btn btn-secondary" onclick={onClearFilter}>Clear filter</button>
+            <button class="lt-btn lt-btn-secondary" onclick={onClearFilter}>Clear filter</button>
           {/if}
           {#if canSuggest}
-            <button class="btn btn-secondary" onclick={suggestPatch}>Suggest a patch</button>
+            <button class="lt-btn lt-btn-secondary" onclick={suggestPatch}>Suggest a patch</button>
           {/if}
         </div>
       {/if}
@@ -2657,7 +2657,7 @@
     pointer-events: none;
   }
 
-  .canvas-empty-overlay .btn {
+  .canvas-empty-overlay .lt-btn {
     pointer-events: auto;
   }
 

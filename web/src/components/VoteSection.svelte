@@ -174,7 +174,7 @@
   <!-- Quorum status -->
   <div class="quorum-status">
     {#if advisory}
-      <span class="quorum-none muted">No quorum. This vote advises; it does not decide.</span>
+      <span class="quorum-none lt-muted">No quorum. This vote advises; it does not decide.</span>
     {:else if quorumPercent > 0}
       {#if quorumMet}
         <span class="quorum-met">Quorum met ({totalVotes} of {electorateSize} voted, {quorumPercent}% needed)</span>
@@ -182,13 +182,13 @@
         <span class="quorum-unmet">{windowClosed ? 'Quorum not met' : 'Quorum not yet met'} ({totalVotes} of {quorumNeeded} needed)</span>
       {/if}
     {:else}
-      <span class="quorum-none muted">No quorum required</span>
+      <span class="quorum-none lt-muted">No quorum required</span>
     {/if}
   </div>
 
   <!-- Time remaining -->
   {#if showTimeLeft && timeLeft && (propState === 'voting' || propState === 'open')}
-    <div class="time-remaining muted">{timeLeft}</div>
+    <div class="time-remaining lt-muted">{timeLeft}</div>
   {/if}
 
   <!-- Vote buttons -->
@@ -222,14 +222,14 @@
   {/if}
 
   <!-- Threshold explanation -->
-  <div class="threshold-info muted">{thresholdExplain}</div>
+  <div class="threshold-info lt-muted">{thresholdExplain}</div>
 
   <!-- The terms this vote is judged by, fixed when it opened (docs/adr/047).
        Said always, not only when they diverge from the patch's current rules —
        and it is the only place a tenure requirement appears, so it is also the
        answer for someone who can see the vote and has no buttons. -->
   {#if termsLine}
-    <div class="terms-info muted">{termsLine}</div>
+    <div class="terms-info lt-muted">{termsLine}</div>
   {/if}
 
   <!-- Voter list -->
@@ -243,14 +243,14 @@
           <li class:uncounted={voter.counted === false}>
             <span class="voter-name">{voter.display_name || voter.username}</span>
             {#if voter.counted === false}
-              <span class="voter-note muted">not counted</span>
+              <span class="voter-note lt-muted">not counted</span>
             {/if}
             <span class="voter-value badge {voter.value}">{voter.value}</span>
           </li>
         {/each}
       </ul>
       {#if uncountedVotes > 0}
-        <p class="voter-list-note muted">
+        <p class="voter-list-note lt-muted">
           Not counted: cast by someone who has since left this patch or is no longer a member.
         </p>
       {/if}

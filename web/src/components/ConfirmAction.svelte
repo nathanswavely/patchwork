@@ -39,25 +39,25 @@
   <span class="confirm-group">
     <span class="confirm-prompt">Are you sure?</span>
     <button
-      class="btn btn-sm confirm-yes"
-      class:btn-danger={variant === 'danger'}
+      class="lt-btn lt-btn-sm confirm-yes"
+      class:lt-btn-danger={variant === 'danger'}
       class:btn-warning={variant === 'warning'}
-      class:btn-primary={variant === 'default'}
+      class:lt-btn-primary={variant === 'default'}
       onclick={doConfirm}
       disabled={executing}
     >
       {executing ? '...' : confirmLabel}
     </button>
-    <button class="btn btn-sm btn-secondary" onclick={cancel} disabled={executing}>
+    <button class="lt-btn lt-btn-sm lt-btn-secondary" onclick={cancel} disabled={executing}>
       Cancel
     </button>
   </span>
 {:else}
   <button
-    class="btn btn-sm"
-    class:btn-danger={variant === 'danger'}
+    class="lt-btn lt-btn-sm"
+    class:lt-btn-danger={variant === 'danger'}
     class:btn-warning={variant === 'warning'}
-    class:btn-secondary={variant === 'default'}
+    class:lt-btn-secondary={variant === 'default'}
     onclick={startConfirm}
     {disabled}
   >

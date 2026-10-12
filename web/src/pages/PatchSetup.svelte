@@ -55,7 +55,7 @@
   </div>
 {:else if error}
   <div class="container-narrow">
-    <p class="error-text">{error}</p>
+    <p class="lt-error-text">{error}</p>
   </div>
 {:else if claim && node}
   <PatchForm

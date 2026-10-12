@@ -106,7 +106,7 @@
 
 </script>
 
-<div class="page-fade">
+<div class="lt-fade-in">
   <div class="container-narrow">
     {#if loading}
       <div style="padding: 2rem 0;">
@@ -119,7 +119,7 @@
       <div class="history-page">
         <div class="history-header">
           <h1>{doc.title}</h1>
-          <p class="muted">Version history &middot; {versions.length} version{versions.length !== 1 ? 's' : ''}</p>
+          <p class="lt-muted">Version history &middot; {versions.length} version{versions.length !== 1 ? 's' : ''}</p>
         </div>
 
         {#if rebuiltOn}
@@ -158,13 +158,13 @@
                     <div class="version-diff">
                       {#if i >= versions.length - 1}
                         {#if ver.repair === 'rebuilt'}
-                          <p class="muted">
+                          <p class="lt-muted">
                             This is the oldest version available. It was written from the
                             database when the document's history was rebuilt, so there is
                             nothing to compare it against.
                           </p>
                         {:else}
-                          <p class="muted">This is the initial version.</p>
+                          <p class="lt-muted">This is the initial version.</p>
                         {/if}
                       {:else if diffLoading}
                         <Skeleton lines={3} height="0.8rem" />
@@ -178,7 +178,7 @@
                       {:else if diffData?.unified}
                         <pre class="unified-diff">{diffData.unified}</pre>
                       {:else}
-                        <p class="muted">Diff not available.</p>
+                        <p class="lt-muted">Diff not available.</p>
                       {/if}
                     </div>
                   {/if}
@@ -205,7 +205,7 @@
                     <option value={ver.sha}>v{ver.version_number}</option>
                   {/each}
                 </select>
-                <button class="btn btn-secondary btn-sm" onclick={handleCompare} disabled={!compareFrom || !compareTo || compareFrom === compareTo || compareLoading}>
+                <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={handleCompare} disabled={!compareFrom || !compareTo || compareFrom === compareTo || compareLoading}>
                   {compareLoading ? 'Loading...' : 'Compare'}
                 </button>
               </div>
@@ -222,18 +222,18 @@
                   {:else if compareDiff.unified}
                     <pre class="unified-diff">{compareDiff.unified}</pre>
                   {:else}
-                    <p class="muted">No differences found.</p>
+                    <p class="lt-muted">No differences found.</p>
                   {/if}
                 </div>
               {/if}
             </div>
           {/if}
         {:else}
-          <p class="muted" style="padding: 2rem 0; text-align: center;">No version history available.</p>
+          <p class="lt-muted" style="padding: 2rem 0; text-align: center;">No version history available.</p>
         {/if}
 
         <div class="history-actions">
-          <button class="btn btn-secondary" onclick={() => navigate(`/patches/${slug}/governance/docs/${docId}`)}>
+          <button class="lt-btn lt-btn-secondary" onclick={() => navigate(`/patches/${slug}/governance/docs/${docId}`)}>
             Back to document
           </button>
         </div>

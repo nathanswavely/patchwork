@@ -74,9 +74,9 @@
   }
 </script>
 
-<div class="submit-page page-fade">
+<div class="submit-page lt-fade-in">
   <h1>Suggest a patch</h1>
-  <p class="muted">Know a place or group that should be on the map? Suggest it here and the real owner can claim it later.</p>
+  <p class="lt-muted">Know a place or group that should be on the map? Suggest it here and the real owner can claim it later.</p>
 
   <form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
     <div class="field">
@@ -95,9 +95,9 @@
     </div>
 
     <div class="field">
-      <label for="feed-url">Events feed <span class="muted">(optional)</span></label>
+      <label for="feed-url">Events feed <span class="lt-muted">(optional)</span></label>
       <input id="feed-url" type="url" bind:value={feedUrl} placeholder="https://..." disabled={submitting} />
-      <span class="field-hint muted">A calendar Patchwork can read: an ICS address, a Squarespace events page, or a page with event markup. Checked when you submit.</span>
+      <span class="field-hint lt-muted">A calendar Patchwork can read: an ICS address, a Squarespace events page, or a page with event markup. Checked when you submit.</span>
     </div>
 
     <div class="field">
@@ -111,24 +111,24 @@
           {/if}
         </div>
       {/each}
-      <button type="button" class="btn btn-secondary btn-sm" onclick={addLink} disabled={submitting}>+ Add link</button>
+      <button type="button" class="lt-btn lt-btn-secondary lt-btn-sm" onclick={addLink} disabled={submitting}>+ Add link</button>
     </div>
 
     <div class="field">
-      <label for="address">Address <span class="muted">(optional)</span></label>
+      <label for="address">Address <span class="lt-muted">(optional)</span></label>
       <input id="address" type="text" bind:value={address} placeholder="123 Main St, Lancaster, PA" disabled={submitting} />
     </div>
 
     <div class="field">
-      <label>Tags <span class="muted">(optional)</span></label>
+      <label>Tags <span class="lt-muted">(optional)</span></label>
       <TagPicker bind:selected={tags} disabled={submitting} />
     </div>
 
     {#if error}
-      <p class="error-text">{error}</p>
+      <p class="lt-error-text">{error}</p>
     {/if}
 
-    <p class="muted review-note">
+    <p class="lt-muted review-note">
       {#if trustedQuiltWide}
         As a trusted contributor, your suggestion joins the quilt at once.
       {:else}
@@ -137,10 +137,10 @@
     </p>
 
     <div class="form-actions">
-      <button type="submit" class="btn btn-primary" disabled={submitting}>
+      <button type="submit" class="lt-btn lt-btn-primary" disabled={submitting}>
         {submitting ? 'Submitting...' : 'Submit'}
       </button>
-      <button type="button" class="btn btn-secondary" onclick={() => navigate('/')} disabled={submitting}>Cancel</button>
+      <button type="button" class="lt-btn lt-btn-secondary" onclick={() => navigate('/')} disabled={submitting}>Cancel</button>
     </div>
   </form>
 </div>
@@ -155,7 +155,7 @@
     margin-bottom: 0.25rem;
   }
 
-  h1 + .muted {
+  h1 + .lt-muted {
     margin-bottom: 1.5rem;
     font-size: 0.88rem;
   }

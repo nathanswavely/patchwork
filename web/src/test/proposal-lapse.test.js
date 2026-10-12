@@ -56,7 +56,7 @@ describe('ProposalList — the row says what happened, not what the column holds
     expect(src).toMatch(/function rowLabel\(p\)/);
     expect(src).toMatch(/if \(p\.state === 'lapsed'\) return 'lapsed'/);
     expect(src).toMatch(/if \(st === 'lapsed'\) return 'not decided'/);
-    expect(src).toMatch(/<span class="muted">\{rowLabel\(proposal\)\}<\/span>/);
+    expect(src).toMatch(/<span class="lt-muted">\{rowLabel\(proposal\)\}<\/span>/);
     expect(src).toMatch(/<span class="badge \{statusClass\(rowStatus\(proposal\)\)\}">\{rowLabel\(proposal\)\}<\/span>/);
   });
 

@@ -69,18 +69,18 @@
   }
 </script>
 
-<div class="page-fade">
+<div class="lt-fade-in">
   <div class="container-narrow">
     <div class="activity-header">
       <h1>What's New</h1>
     </div>
 
     {#if loading}
-      <p class="muted center-text">Loading...</p>
+      <p class="lt-muted center-text">Loading...</p>
     {:else if items.length === 0}
       <div class="empty-state">
         <p>Nothing new yet</p>
-        <p class="muted">Activity from your patches will show up here.</p>
+        <p class="lt-muted">Activity from your patches will show up here.</p>
       </div>
     {:else}
       {#each grouped as group}
@@ -98,13 +98,13 @@
                   <div class="item-title">{item.title}</div>
                   <div class="item-meta">
                     <span class="badge badge-type">{typeLabel(item.type)}</span>
-                    <span class="muted">{item.patch_name}</span>
+                    <span class="lt-muted">{item.patch_name}</span>
                     {#if item.actor_name}
-                      <span class="muted">by {item.actor_name}</span>
+                      <span class="lt-muted">by {item.actor_name}</span>
                     {/if}
                   </div>
                 </div>
-                <span class="item-time muted">{timeOnly(item.created_at)}</span>
+                <span class="item-time lt-muted">{timeOnly(item.created_at)}</span>
               </a>
             {/each}
           </div>
@@ -113,7 +113,7 @@
 
       {#if nextCursor}
         <div class="load-more">
-          <button class="btn btn-secondary btn-sm" onclick={() => loadActivity(true)}>Load more</button>
+          <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => loadActivity(true)}>Load more</button>
         </div>
       {/if}
     {/if}

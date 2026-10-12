@@ -122,21 +122,21 @@
   }
 </script>
 
-<div class="page-fade">
+<div class="lt-fade-in">
   <div class="signup-page">
     {#if validating}
       <div class="state-block">
-        <p class="muted">Checking your link...</p>
+        <p class="lt-muted">Checking your link...</p>
       </div>
     {:else if !valid}
       <div class="state-block">
         <h1>Link expired</h1>
-        <p class="error-text">{validationError}</p>
-        <p class="muted" style="margin-top: 1rem;">
+        <p class="lt-error-text">{validationError}</p>
+        <p class="lt-muted" style="margin-top: 1rem;">
           No account was created yet. Request a new sign-in link and
           you'll be right back here.
         </p>
-        <a href="/login" class="btn btn-primary" style="margin-top: 1rem;"
+        <a href="/login" class="lt-btn lt-btn-primary" style="margin-top: 1rem;"
            onclick={(e) => { e.preventDefault(); navigate('/login'); }}>
           Request a new link
         </a>
@@ -145,20 +145,20 @@
       <div class="state-block">
         <h1>You're in</h1>
         {#if passkeyDone}
-          <p class="success-text">Passkey saved.</p>
-          <p class="muted" style="margin-top: 0.5rem;">
+          <p class="lt-success-text">Passkey saved.</p>
+          <p class="lt-muted" style="margin-top: 0.5rem;">
             This device can sign you in from now on.
           </p>
-          <button class="btn btn-primary" style="margin-top: 1.5rem;" onclick={goToDashboard}>
+          <button class="lt-btn lt-btn-primary" style="margin-top: 1.5rem;" onclick={goToDashboard}>
             Take a look around
           </button>
         {:else}
           <p>Create a passkey and this device signs you in with one tap.</p>
-          <p class="muted" style="margin-top: 0.5rem;">
+          <p class="lt-muted" style="margin-top: 0.5rem;">
             The key stays on your device, and we never hold a password for you.
           </p>
           <button
-            class="btn btn-primary"
+            class="lt-btn lt-btn-primary"
             style="margin-top: 1rem;"
             onclick={enrollPasskey}
             disabled={enrollingPasskey}
@@ -166,9 +166,9 @@
             {enrollingPasskey ? 'Waiting for your browser...' : 'Create a passkey'}
           </button>
           {#if passkeyError}
-            <p class="error-text">{passkeyError}</p>
+            <p class="lt-error-text">{passkeyError}</p>
           {/if}
-          <button class="btn btn-secondary" style="margin-top: 0.5rem;" onclick={goToDashboard}>
+          <button class="lt-btn lt-btn-secondary" style="margin-top: 0.5rem;" onclick={goToDashboard}>
             Skip for now
           </button>
         {/if}
@@ -176,7 +176,7 @@
     {:else}
       <div class="state-block">
         <h1>Choose your username</h1>
-        <p class="muted" style="margin-bottom: 1.5rem;">
+        <p class="lt-muted" style="margin-bottom: 1.5rem;">
           You're signing up as <strong>{email}</strong>. Pick the name for this quilt. Choose wisely, it can't be changed.
         </p>
 
@@ -199,7 +199,7 @@
           {#if usernameHint}
             <p class="hint">{usernameHint}</p>
           {:else}
-            <p class="hint muted">3-30 characters: lowercase letters, numbers, hyphens.</p>
+            <p class="hint lt-muted">3-30 characters: lowercase letters, numbers, hyphens.</p>
           {/if}
 
           <label for="display-name">Display Name</label>
@@ -226,7 +226,7 @@
               required
               disabled={submitting}
             />
-            <p class="hint muted">
+            <p class="hint lt-muted">
               This account will run the quilt. The token is in the server's
               first-run log, unless it was set in configuration.
             </p>
@@ -234,13 +234,13 @@
 
           <button
             type="submit"
-            class="btn btn-primary"
+            class="lt-btn lt-btn-primary"
             disabled={submitting || !username.trim() || (needsBootstrapToken && !bootstrapToken.trim())}
           >
             {submitting ? 'Creating Account...' : 'Create Account'}
           </button>
 
-          <p class="agree-line muted">
+          <p class="agree-line lt-muted">
             By creating an account you agree to the
             <a href="/terms" target="_blank" rel="noopener">User Agreement</a>
             and <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>.
@@ -248,7 +248,7 @@
         </form>
 
         {#if submitError}
-          <p class="error-text">{submitError}</p>
+          <p class="lt-error-text">{submitError}</p>
         {/if}
       </div>
     {/if}

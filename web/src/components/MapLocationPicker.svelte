@@ -200,15 +200,15 @@
     {#if hasDraft}
       <span class="picker-coords">{readout}</span>
     {:else}
-      <span class="muted">No marker placed yet.</span>
+      <span class="lt-muted">No marker placed yet.</span>
     {/if}
   </div>
 
   <div class="picker-actions">
-    <button class="btn btn-primary btn-sm" onclick={save} disabled={!hasDraft || saving}>
+    <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={save} disabled={!hasDraft || saving}>
       {saving ? 'Saving...' : provisional ? 'Use this spot' : 'Save location'}
     </button>
-    <button class="btn btn-secondary btn-sm" onclick={() => onCancel && onCancel()} disabled={saving}>
+    <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => onCancel && onCancel()} disabled={saving}>
       Cancel
     </button>
   </div>
@@ -272,7 +272,7 @@
     gap: 0.4rem;
   }
 
-  .btn-sm {
+  .lt-btn-sm {
     padding: 0.25rem 0.6rem;
     font-size: 0.78rem;
   }

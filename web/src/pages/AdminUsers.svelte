@@ -338,9 +338,9 @@
 </script>
 
 {#snippet inviteSection()}
-  <section class="invite-section card">
+  <section class="invite-section lt-card">
     <h2>Invite links</h2>
-    <p class="muted">
+    <p class="lt-muted">
       Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth.
     </p>
     <form class="invite-form" onsubmit={(e) => { e.preventDefault(); generateInvite(); }}>
@@ -352,16 +352,16 @@
         Expires in (hours, 0 = never)
         <input type="number" min="0" max="8760" bind:value={inviteExpiresHrs} />
       </label>
-      <button type="submit" class="btn btn-primary" disabled={generatingInvite}>
+      <button type="submit" class="lt-btn lt-btn-primary" disabled={generatingInvite}>
         {generatingInvite ? 'Generating...' : 'Generate invite link'}
       </button>
     </form>
     {#if inviteUrl}
       <div class="invite-result">
         <input type="text" readonly value={inviteUrl} onfocus={(e) => e.target.select()} />
-        <button class="btn btn-secondary" onclick={copyInviteUrl}>Copy</button>
+        <button class="lt-btn lt-btn-secondary" onclick={copyInviteUrl}>Copy</button>
       </div>
-      <p class="muted invite-note">
+      <p class="lt-muted invite-note">
         This link is shown once, so copy it now. Anyone with it can create an account.
       </p>
     {/if}
@@ -382,16 +382,16 @@
         placeholder="name@example.com"
         onkeydown={(e) => { if (e.key === 'Escape') cancelEmailEdit(); }}
       />
-      <button type="submit" class="btn btn-primary btn-sm" disabled={savingEmail || !emailDraft.trim()}>
+      <button type="submit" class="lt-btn lt-btn-primary lt-btn-sm" disabled={savingEmail || !emailDraft.trim()}>
         {savingEmail ? 'Saving...' : 'Save'}
       </button>
-      <button type="button" class="btn btn-secondary btn-sm" onclick={cancelEmailEdit}>
+      <button type="button" class="lt-btn lt-btn-secondary lt-btn-sm" onclick={cancelEmailEdit}>
         Cancel
       </button>
     </form>
   {:else}
-    <span class="email-address" class:muted={!u.email}>{u.email || '--'}</span>
-    <button class="btn btn-secondary btn-sm" onclick={() => startEmailEdit(u)}>
+    <span class="email-address" class:lt-muted={!u.email}>{u.email || '--'}</span>
+    <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => startEmailEdit(u)}>
       {u.email ? 'Change' : 'Set'}
     </button>
   {/if}
@@ -458,15 +458,15 @@
       />
       <div class="grant-add-actions">
         <button
-          class="btn btn-primary btn-sm"
+          class="lt-btn lt-btn-primary lt-btn-sm"
           disabled={savingTrustPatches || addTrustSelected.length === 0}
           onclick={() => saveTrustPatches(u)}
         >{savingTrustPatches ? 'Saving...' : 'Grant'}</button>
-        <button class="btn btn-secondary btn-sm" onclick={cancelTrustPatches}>Cancel</button>
+        <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={cancelTrustPatches}>Cancel</button>
       </div>
     </div>
   {:else}
-    <button class="btn btn-secondary btn-sm grant-add-btn" onclick={() => startTrustPatches(u)}>
+    <button class="lt-btn lt-btn-secondary lt-btn-sm grant-add-btn" onclick={() => startTrustPatches(u)}>
       Add a patch
     </button>
   {/if}
@@ -498,7 +498,7 @@
   {/if}
 {/snippet}
 
-<div class="page-fade">
+<div class="lt-fade-in">
   <div class="page-header">
     <h1>Users</h1>
   </div>
@@ -506,9 +506,9 @@
   <PasskeyNotice show={!hasPasskey} action="promote someone to instance admin or set their email address" />
 
   {#if trustRequests.length > 0}
-    <section class="requests-section card">
+    <section class="requests-section lt-card">
       <h2>Trust requests</h2>
-      <p class="muted">
+      <p class="lt-muted">
         People asking to add events on unclaimed patches without review. Grant
         the scope you judge right, wider or narrower than the one asked for.
       </p>
@@ -521,8 +521,8 @@
                 class="user-link"
                 onclick={(e) => { e.preventDefault(); navigate(`/users/${req.user.username}`); }}
               >{req.user.display_name || req.user.username}</a>
-              <span class="muted">@{req.user.username}</span>
-              <span class="muted">{formatDate(req.created_at)}</span>
+              <span class="lt-muted">@{req.user.username}</span>
+              <span class="lt-muted">{formatDate(req.created_at)}</span>
             </div>
             {#if req.message}
               <p class="request-message">{req.message}</p>
@@ -542,12 +542,12 @@
             ></textarea>
             <div class="request-actions">
               <button
-                class="btn btn-primary btn-sm"
+                class="lt-btn lt-btn-primary lt-btn-sm"
                 disabled={requestBusy === req.id}
                 onclick={() => approveRequest(req)}
               >Approve</button>
               <button
-                class="btn btn-secondary btn-sm"
+                class="lt-btn lt-btn-secondary lt-btn-sm"
                 disabled={requestBusy === req.id}
                 onclick={() => declineRequest(req)}
               >Decline</button>
@@ -576,7 +576,7 @@
   {:else if error}
     <ErrorState message={error} retry={() => loadUsers()} />
   {:else if users.length === 0}
-    <p class="muted" style="text-align: center; padding: 2rem 0;">No users found.</p>
+    <p class="lt-muted" style="text-align: center; padding: 2rem 0;">No users found.</p>
   {:else if narrow}
     <!-- A phone: one row per person, opening onto the same controls the
          table spreads across eight columns. The table put every one of
@@ -592,7 +592,7 @@
           >
             <span class="user-row-text">
               <span class="user-row-name">{u.display_name || u.username}</span>
-              <span class="muted user-row-handle">@{u.username}</span>
+              <span class="lt-muted user-row-handle">@{u.username}</span>
             </span>
             <span class="user-row-chips">
               {#if u.role === 'admin'}
@@ -635,7 +635,7 @@
                 <h3>Status</h3>
                 <div class="detail-controls">
                   {@render statusBadge(u)}
-                  <span class="muted">{formatDate(u.created_at)}</span>
+                  <span class="lt-muted">{formatDate(u.created_at)}</span>
                 </div>
                 <div class="detail-controls">{@render accountControl(u)}</div>
               </section>
@@ -647,12 +647,12 @@
 
     {#if nextCursor}
       <div style="text-align: center; padding: 1rem 0;">
-        <button class="btn btn-secondary" onclick={() => loadUsers(true)}>Load more</button>
+        <button class="lt-btn lt-btn-secondary" onclick={() => loadUsers(true)}>Load more</button>
       </div>
     {/if}
   {:else}
-    <div class="table-wrapper">
-      <table class="data-table">
+    <div class="lt-table-wrap">
+      <table class="lt-table">
         <thead>
           <tr>
             <th>Username</th>
@@ -681,7 +681,7 @@
               <td>{@render emailControl(u)}</td>
               <td>{@render roleControl(u)}</td>
               <td>{@render trustControl(u)}</td>
-              <td class="muted">{formatDate(u.created_at)}</td>
+              <td class="lt-muted">{formatDate(u.created_at)}</td>
               <td>{@render statusBadge(u)}</td>
               <td>{@render accountControl(u)}</td>
             </tr>
@@ -692,7 +692,7 @@
 
     {#if nextCursor}
       <div style="text-align: center; padding: 1rem 0;">
-        <button class="btn btn-secondary" onclick={() => loadUsers(true)}>Load more</button>
+        <button class="lt-btn lt-btn-secondary" onclick={() => loadUsers(true)}>Load more</button>
       </div>
     {/if}
   {/if}
@@ -720,7 +720,7 @@
     margin-bottom: 0.25rem;
   }
 
-  .requests-section .muted {
+  .requests-section .lt-muted {
     font-size: 0.82rem;
   }
 
@@ -752,7 +752,7 @@
     font-size: 0.88rem;
   }
 
-  .request-head .muted {
+  .request-head .lt-muted {
     font-size: 0.78rem;
   }
 
@@ -878,12 +878,12 @@
     max-width: 400px;
   }
 
-  /* .table-wrapper and .data-table are the shared table component (app.css). */
-  .data-table tr.suspended {
+  /* .lt-table-wrap and .lt-table are the shared table component (app.css). */
+  .lt-table tr.suspended {
     opacity: 0.7;
   }
 
-  .data-table select {
+  .lt-table select {
     padding: 0.35rem 0.5rem;
     font-size: 0.85rem;
     border: 1px solid var(--color-border);

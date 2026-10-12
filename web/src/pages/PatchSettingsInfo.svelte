@@ -496,7 +496,7 @@
       onSave={(v) => saveTimezone(v)}
       placeholder={instanceTimezone || 'e.g. America/New_York'}
     />
-    <p class="field-hint muted">
+    <p class="field-hint lt-muted">
       An IANA place name. Leave it empty to follow the quilt{instanceTimezone
         ? `, which keeps time in ${instanceTimezone.replace(/_/g, ' ')}`
         : ''}.
@@ -519,7 +519,7 @@
         <div class="zone-choice-actions">
           <button
             type="button"
-            class="btn btn-primary"
+            class="lt-btn lt-btn-primary"
             disabled={!!zoneSaving}
             onclick={() => resolveZoneChange('keep_clock')}
           >{zoneSaving === 'keep_clock'
@@ -529,7 +529,7 @@
                 : 'Keep the listed times'}</button>
           <button
             type="button"
-            class="btn btn-secondary"
+            class="lt-btn lt-btn-secondary"
             disabled={!!zoneSaving}
             onclick={() => resolveZoneChange('keep_instant')}
           >{zoneSaving === 'keep_instant'
@@ -539,12 +539,12 @@
                 : 'Leave the events where they are'}</button>
           <button
             type="button"
-            class="btn btn-secondary"
+            class="lt-btn lt-btn-secondary"
             disabled={!!zoneSaving}
             onclick={() => (zoneChoice = null)}
           >Cancel</button>
         </div>
-        <p class="muted zone-choice-hint">
+        <p class="lt-muted zone-choice-hint">
           Keeping listed times moves each event to the new zone, so 7pm stays 7pm.
           Leaving them where they are keeps the exact moment and changes the clock time shown.
           Events with a timezone of their own, and events from a calendar feed, are not touched.
@@ -561,15 +561,15 @@
           On the map at <span class="location-coords">{locationReadout}</span>
         </p>
       {:else}
-        <p class="muted">Not on the map.</p>
+        <p class="lt-muted">Not on the map.</p>
       {/if}
-      <p class="muted tags-hint">
+      <p class="lt-muted tags-hint">
         Placing a marker adds this patch to the map. The marker can be
         approximate, and is separate from the address above.
       </p>
 
       {#if lookingUp}
-        <p class="muted tags-hint">Looking for this address...</p>
+        <p class="lt-muted tags-hint">Looking for this address...</p>
       {/if}
 
       {#if placingLocation}
@@ -584,7 +584,7 @@
         />
       {:else}
         <div class="location-actions">
-          <button class="btn btn-secondary btn-sm" onclick={openPicker}>
+          <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={openPicker}>
             {onMap ? 'Adjust map location' : 'Set map location'}
           </button>
           {#if onMap}
@@ -623,7 +623,7 @@
       bind:value={foundedAt}
       disabled={savingFounded}
     />
-    <p class="muted tags-hint">
+    <p class="lt-muted tags-hint">
       When this group started, if it predates its patch. Voting tenure is never
       required to be longer than the group has existed.
     </p>
@@ -631,12 +631,12 @@
     {#if foundedDirty}
       <div class="tags-actions">
         <button
-          class="btn btn-primary btn-sm"
+          class="lt-btn lt-btn-primary lt-btn-sm"
           onclick={() => saveFoundedAt(foundedAt)}
           disabled={savingFounded}
         >{savingFounded ? 'Saving...' : 'Save'}</button>
         <button
-          class="btn btn-secondary btn-sm"
+          class="lt-btn lt-btn-secondary lt-btn-sm"
           onclick={() => { foundedAt = node?.founded_at || ''; foundedError = ''; }}
           disabled={savingFounded}
         >Cancel</button>
@@ -655,13 +655,13 @@
     {#if imageUrl.trim()}
       <input type="text" bind:value={imageAlt} disabled={savingImage} placeholder="Describe the image" />
     {/if}
-    <p class="image-hint muted">
+    <p class="image-hint lt-muted">
       Link a picture you already have online. Patchwork points at it and never
       keeps a copy, so it stays yours.
     </p>
     {#if imageError}<p class="image-error">{imageError}</p>{/if}
     {#if imageDirty}
-      <button class="btn btn-sm btn-primary" onclick={saveImage} disabled={savingImage}>
+      <button class="lt-btn lt-btn-sm lt-btn-primary" onclick={saveImage} disabled={savingImage}>
         {savingImage ? 'Saving...' : 'Save image'}
       </button>
     {/if}
@@ -680,7 +680,7 @@
             <div class="links-item-info">
               <a href={link.url} target="_blank" rel="noopener noreferrer">{link.label || link.url}</a>
               {#if link.label}
-                <span class="muted">{link.url}</span>
+                <span class="lt-muted">{link.url}</span>
               {/if}
             </div>
             <ConfirmAction
@@ -694,7 +694,7 @@
         {/each}
       </ul>
     {:else}
-      <p class="muted">No links added.</p>
+      <p class="lt-muted">No links added.</p>
     {/if}
 
     {#if addingLink}
@@ -712,16 +712,16 @@
           bind:value={newLinkLabel}
         />
         <div class="add-link-actions">
-          <button class="btn btn-primary btn-sm" onclick={addLink} disabled={savingLinks || !newLinkUrl.trim()}>
+          <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={addLink} disabled={savingLinks || !newLinkUrl.trim()}>
             {savingLinks ? 'Saving...' : 'Save'}
           </button>
-          <button class="btn btn-secondary btn-sm" onclick={() => { addingLink = false; newLinkUrl = ''; newLinkLabel = ''; }} disabled={savingLinks}>
+          <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => { addingLink = false; newLinkUrl = ''; newLinkLabel = ''; }} disabled={savingLinks}>
             Cancel
           </button>
         </div>
       </div>
     {:else}
-      <button class="btn btn-secondary btn-sm" onclick={() => { addingLink = true; }} style="margin-top: 0.5rem;">
+      <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => { addingLink = true; }} style="margin-top: 0.5rem;">
         Add link
       </button>
     {/if}
@@ -732,7 +732,7 @@
     <div class="links-header">
       <span class="links-label">Tags</span>
     </div>
-    <p class="muted tags-hint">
+    <p class="lt-muted tags-hint">
       Tags help people find this patch, and the quilt places patches with
       shared tags near each other. The first tag decides the default motif.
       Missing a word? Suggest it, and an admin decides whether it joins the
@@ -747,10 +747,10 @@
     />
     {#if tagsDirty}
       <div class="tags-actions">
-        <button class="btn btn-primary btn-sm" onclick={saveTags} disabled={savingTags}>
+        <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={saveTags} disabled={savingTags}>
           {savingTags ? 'Saving...' : 'Save tags'}
         </button>
-        <button class="btn btn-secondary btn-sm" onclick={resetTags} disabled={savingTags}>
+        <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={resetTags} disabled={savingTags}>
           Cancel
         </button>
       </div>
@@ -765,7 +765,7 @@
     <div class="links-header">
       <span class="links-label">Visibility</span>
     </div>
-    <p class="muted tags-hint">
+    <p class="lt-muted tags-hint">
       Patch specific configuration. Events, members, and documents carry their own visibility.
     </p>
     <div class="choice-list">
@@ -781,12 +781,12 @@
           />
           <span class="choice-text">
             <span class="choice-label">{opt.label}</span>
-            <span class="muted choice-desc">{opt.description}</span>
+            <span class="lt-muted choice-desc">{opt.description}</span>
           </span>
         </label>
       {/each}
     </div>
-    <p class="muted tags-hint caveat">
+    <p class="lt-muted tags-hint caveat">
       Either way, anyone holding a direct link can open this patch's page. Private
       keeps it from being found, not from being visited.
     </p>
@@ -801,7 +801,7 @@
       <span class="links-label">Membership policy</span>
     </div>
     {#if membershipPolicyLabel}
-      <p class="muted tags-hint">{membershipPolicyLabel}</p>
+      <p class="lt-muted tags-hint">{membershipPolicyLabel}</p>
     {/if}
     {#if isPatchAdmin}
       <a
@@ -809,12 +809,12 @@
         href="/patches/{slug}/governance/rules/propose"
         onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/rules/propose`); }}
       >Change membership policy</a>
-      <p class="muted tags-hint caveat">
+      <p class="lt-muted tags-hint caveat">
         This is part of the patch's rules. Changing it applies immediately or
         goes to a vote, depending on the patch's decision method.
       </p>
     {:else}
-      <p class="muted tags-hint caveat">
+      <p class="lt-muted tags-hint caveat">
         Changed in Governance, by an admin of this patch.
       </p>
     {/if}
@@ -834,7 +834,7 @@
       />
       <span>Let non-members suggest events to this patch</span>
     </label>
-    <p class="muted tags-hint" style="margin-top: 0.35rem;">
+    <p class="lt-muted tags-hint" style="margin-top: 0.35rem;">
       Suggestions wait in your events queue until an admin approves them.
     </p>
   </div>
@@ -845,7 +845,7 @@
     <div class="links-header">
       <span class="links-label">We have moved</span>
     </div>
-    <p class="muted tags-hint">
+    <p class="lt-muted tags-hint">
       Point this patch at its new home. The page here keeps working and stays
       readable, with a banner saying where the patch went. New joins, new
       follows and event suggestions from outside are turned away and sent to
@@ -863,12 +863,12 @@
     {#if movedDirty}
       <div class="tags-actions">
         <button
-          class="btn btn-primary btn-sm"
+          class="lt-btn lt-btn-primary lt-btn-sm"
           onclick={() => saveMovedTo(movedTo.trim())}
           disabled={savingMoved}
         >{savingMoved ? 'Saving...' : 'Save'}</button>
         <button
-          class="btn btn-secondary btn-sm"
+          class="lt-btn lt-btn-secondary lt-btn-sm"
           onclick={() => { movedTo = node?.moved_to || ''; movedError = ''; }}
           disabled={savingMoved}
         >Cancel</button>
@@ -948,7 +948,7 @@
     margin: 0;
   }
 
-  .image-section .btn {
+  .image-section .lt-btn {
     align-self: flex-start;
   }
 
@@ -1020,7 +1020,7 @@
     word-break: break-all;
   }
 
-  .links-item-info .muted {
+  .links-item-info .lt-muted {
     font-size: 0.78rem;
     word-break: break-all;
   }

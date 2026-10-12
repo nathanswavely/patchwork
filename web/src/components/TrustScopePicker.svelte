@@ -109,7 +109,7 @@
     <span class="scope-summary">{summary}</span>
     <button
       type="button"
-      class="btn btn-secondary btn-sm"
+      class="lt-btn lt-btn-secondary lt-btn-sm"
       aria-expanded={expanded}
       aria-controls={bodyId}
       onclick={() => { expanded = !expanded; }}
@@ -157,15 +157,15 @@
         </label>
 
         {#if loadState === 'loading'}
-          <p class="muted scope-note">Loading unclaimed patches...</p>
+          <p class="lt-muted scope-note">Loading unclaimed patches...</p>
         {:else if loadState === 'error'}
-          <p class="muted scope-note">
+          <p class="lt-muted scope-note">
             Could not load the unclaimed patches.
             <button type="button" class="link-btn" onclick={() => { loadState = 'idle'; ensureLoaded(); }}>Try again</button>
           </p>
         {:else if loadState === 'loaded'}
           {#if matches.length === 0}
-            <p class="muted scope-note">No unclaimed patch by that name.</p>
+            <p class="lt-muted scope-note">No unclaimed patch by that name.</p>
           {:else}
             <ul class="matches">
               {#each matches as node (node.id)}

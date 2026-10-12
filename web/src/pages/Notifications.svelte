@@ -117,13 +117,13 @@
   }
 </script>
 
-<div class="page-fade">
+<div class="lt-fade-in">
   <div class="container-narrow">
     <div class="notif-page-header">
       <h1>Notifications</h1>
       <div class="header-actions">
         {#if notifications.some(n => !n.read_at)}
-          <button class="btn btn-secondary btn-sm" onclick={markAllRead}>Mark all read</button>
+          <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={markAllRead}>Mark all read</button>
         {/if}
         {#if notifications.length > 0}
           <ConfirmAction
@@ -152,11 +152,11 @@
     </div>
 
     {#if loading}
-      <p class="muted center-text">Loading...</p>
+      <p class="lt-muted center-text">Loading...</p>
     {:else if notifications.length === 0}
       <div class="empty-state">
         <p>You're all caught up</p>
-        <p class="muted">No {categoryFilter ? categoryFilter : ''} notifications{unreadOnly ? ' (unread)' : ''}.</p>
+        <p class="lt-muted">No {categoryFilter ? categoryFilter : ''} notifications{unreadOnly ? ' (unread)' : ''}.</p>
       </div>
     {:else}
       <div class="notif-list">
@@ -179,7 +179,7 @@
 
       {#if nextCursor}
         <div class="load-more">
-          <button class="btn btn-secondary btn-sm" onclick={() => loadNotifications(true)}>Load more</button>
+          <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => loadNotifications(true)}>Load more</button>
         </div>
       {/if}
     {/if}
@@ -327,7 +327,7 @@
     flex-wrap: wrap;
   }
 
-  .header-actions :global(.btn) {
+  .header-actions :global(.lt-btn) {
     white-space: nowrap;
   }
 </style>

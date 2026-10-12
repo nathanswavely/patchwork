@@ -100,11 +100,11 @@
       {#if loading}
         <Skeleton lines={6} height="1rem" />
       {:else if !data}
-        <p class="muted">Failed to load template.</p>
+        <p class="lt-muted">Failed to load template.</p>
       {:else}
         <!-- Description -->
         <p class="template-desc">{data.template.description}</p>
-        <p class="template-meta muted">{data.template.leadership} &middot; {data.template.best_for}</p>
+        <p class="template-meta lt-muted">{data.template.leadership} &middot; {data.template.best_for}</p>
 
         <!-- Rules with explanations -->
         {#if ruleExplanations.length > 0}

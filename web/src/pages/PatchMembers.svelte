@@ -96,32 +96,32 @@
 {#if permissionDenied}
   <div class="permission-notice">
     <p>This content is only visible to members.</p>
-    <p class="muted">Become a member to access the member list.</p>
+    <p class="lt-muted">Become a member to access the member list.</p>
   </div>
 {:else}
 <div class="members-page">
   {#if loading}
-    <p class="muted">Loading members...</p>
+    <p class="lt-muted">Loading members...</p>
   {:else if rosterWithheld}
     <!-- The count is deliberately still here (docs/adr/095 decision 3): the
          quilt sizes this patch's tile by it, so withholding it on this one
          page would hide nothing and only make the page read as evasive. -->
     <div class="empty-state">
       <p>This patch doesn't publish its member list.</p>
-      <p class="muted">{memberCount === 1 ? '1 member' : `${memberCount} members`}.</p>
+      <p class="lt-muted">{memberCount === 1 ? '1 member' : `${memberCount} members`}.</p>
     </div>
   {:else if members.length === 0}
     <div class="empty-state">
       <p>No members yet.</p>
-      <p class="muted">Share your patch's invite link to grow your community.</p>
+      <p class="lt-muted">Share your patch's invite link to grow your community.</p>
     </div>
   {:else}
     <div class="members-header">
-      <span class="muted">{memberCount === 1 ? '1 member' : `${memberCount} members`}{#if followerCount > 0}{' · '}{followerCount === 1 ? '1 following' : `${followerCount} following`}{/if}</span>
+      <span class="lt-muted">{memberCount === 1 ? '1 member' : `${memberCount} members`}{#if followerCount > 0}{' · '}{followerCount === 1 ? '1 following' : `${followerCount} following`}{/if}</span>
       {#if adminsOnly}
         <!-- Said once, above the list, because a list of three under a
              count of forty otherwise reads as a bug. -->
-        <span class="muted roster-note">Only this patch's admins are listed publicly.</span>
+        <span class="lt-muted roster-note">Only this patch's admins are listed publicly.</span>
       {/if}
     </div>
     <!-- "Share yours with this patch in My Patches" had no noun and nothing
@@ -141,7 +141,7 @@
          over. Either way the first sentence now names the thing, so
          "yours" has an antecedent by the time it is read. -->
     {#if offerSharing}
-      <p class="muted contact-offer">
+      <p class="lt-muted contact-offer">
         {#if anyContact}
           Contact details here are shared only with this patch's admins and members.
         {:else}
@@ -172,7 +172,7 @@
     </ul>
     {#if nextCursor}
       <button
-        class="btn btn-secondary btn-sm load-more"
+        class="lt-btn lt-btn-secondary lt-btn-sm load-more"
         disabled={loadingMore}
         onclick={() => loadMembers(nextCursor)}
       >{loadingMore ? 'Loading...' : 'Load more'}</button>

@@ -284,17 +284,17 @@
   }
 </script>
 
-<div class="page-fade">
-  <section class="pw-section">
+<div class="lt-fade-in">
+  <section class="lt-section">
     <h2>Passkeys</h2>
-    <p class="muted" style="margin-bottom: 1rem;">
+    <p class="lt-muted" style="margin-bottom: 1rem;">
       Passkeys sign you in without a password or email.
     </p>
 
     {#if loadingCreds}
       <Skeleton lines={2} height="0.9rem" />
     {:else if credentials.length === 0}
-      <p class="muted">No passkeys enrolled yet.</p>
+      <p class="lt-muted">No passkeys enrolled yet.</p>
     {:else}
       <ul class="cred-list">
         {#each credentials as cred (cred.id)}
@@ -315,8 +315,8 @@
                   aria-label="Passkey name"
                   autofocus
                 />
-                <button class="btn btn-secondary" type="submit">Save</button>
-                <button class="btn btn-ghost" type="button" onclick={cancelRename}>
+                <button class="lt-btn lt-btn-secondary" type="submit">Save</button>
+                <button class="lt-btn lt-btn-ghost" type="button" onclick={cancelRename}>
                   Cancel
                 </button>
               </form>
@@ -324,13 +324,13 @@
               <div class="cred-info">
                 <span class="cred-name">{cred.name || 'Passkey'}</span>
                 {#if cred.created_at}
-                  <small class="muted">
+                  <small class="lt-muted">
                     Added {formatDay(cred.created_at)}
                   </small>
                 {/if}
               </div>
               <div class="cred-actions">
-                <button class="btn btn-ghost" onclick={() => startRename(cred)}>
+                <button class="lt-btn lt-btn-ghost" onclick={() => startRename(cred)}>
                   Rename
                 </button>
                 <ConfirmAction
@@ -347,31 +347,31 @@
     {/if}
 
     <div class="add-passkey">
-      <button class="btn btn-secondary" onclick={addPasskey} disabled={addingPasskey}>
+      <button class="lt-btn lt-btn-secondary" onclick={addPasskey} disabled={addingPasskey}>
         {addingPasskey ? 'Enrolling...' : 'Add Passkey'}
       </button>
       {#if passkeyError}
-        <p class="error-text">{passkeyError}</p>
+        <p class="lt-error-text">{passkeyError}</p>
       {/if}
     </div>
 
     {#if credentials.length === 1}
-      <p class="muted second-passkey-nudge">
+      <p class="lt-muted second-passkey-nudge">
         This passkey is attached to one device. We recommend adding a second on another device as backup.
       </p>
     {/if}
   </section>
 
-  <section class="pw-section">
+  <section class="lt-section">
     <h2>Active sessions</h2>
-    <p class="muted" style="margin-bottom: 1rem;">
+    <p class="lt-muted" style="margin-bottom: 1rem;">
       Where you're signed in. Sign out any session you don't recognize.
     </p>
 
     {#if loadingSessions}
       <Skeleton lines={2} height="0.9rem" />
     {:else if sessions.length === 0}
-      <p class="muted">No active sessions.</p>
+      <p class="lt-muted">No active sessions.</p>
     {:else}
       <ul class="session-list">
         {#each sessions as s (s.id)}
@@ -381,7 +381,7 @@
                 {s.label}
                 {#if s.current}<span class="session-current">This session</span>{/if}
               </span>
-              <small class="muted">
+              <small class="lt-muted">
                 {#if s.last_used_at}Last active {timeAgo(s.last_used_at)}{/if}
                 {#if s.created_at}
                   · Signed in {formatDay(s.created_at)}
@@ -413,9 +413,9 @@
     {/if}
   </section>
 
-  <section class="pw-section">
+  <section class="lt-section">
     <h2>Recovery codes</h2>
-    <p class="muted" style="margin-bottom: 1rem;">
+    <p class="lt-muted" style="margin-bottom: 1rem;">
       If you lose your passkey, a recovery code signs you in. A code also
       confirms actions that can't be undone, the way a passkey does. Each
       code works once.
@@ -431,7 +431,7 @@
              current session could have minted proves nothing, so the window
              it opens is withheld until the code is older than the sign-in —
              which costs one sign-out, once. -->
-        <p class="muted codes-confirm-note">
+        <p class="lt-muted codes-confirm-note">
           These codes confirm sensitive actions only after you sign in again
           with one of them. Sign out, sign back in with a code, and the rest
           of the set can confirm from then on.
@@ -442,17 +442,17 @@
           {/each}
         </ul>
         <div class="codes-actions">
-          <button class="btn btn-secondary" onclick={copyCodes}>
+          <button class="lt-btn lt-btn-secondary" onclick={copyCodes}>
             {codesCopied ? 'Copied' : 'Copy all'}
           </button>
-          <button class="btn-link" onclick={() => { newCodes = []; }}>
+          <button class="lt-btn-link" onclick={() => { newCodes = []; }}>
             I've saved them
           </button>
         </div>
       </div>
     {:else}
       {#if recoveryStatus && recoveryStatus.total > 0}
-        <p class="muted">
+        <p class="lt-muted">
           {recoveryStatus.remaining} of {recoveryStatus.total} codes left.
         </p>
         {#if recoveryStatus.remaining <= 3}
@@ -464,15 +464,15 @@
             confirmLabel="Yes, replace my codes"
             onConfirm={generateRecoveryCodes}
           />
-          <p class="muted" style="margin-top: 0.5rem; font-size: 0.8rem;">
+          <p class="lt-muted" style="margin-top: 0.5rem; font-size: 0.8rem;">
             New codes replace the old set. Anything already written down
             stops working.
           </p>
         </div>
       {:else}
-        <p class="muted">No recovery codes yet.</p>
+        <p class="lt-muted">No recovery codes yet.</p>
         <div style="margin-top: 1rem;">
-          <button class="btn btn-secondary" onclick={generateRecoveryCodes} disabled={generatingCodes}>
+          <button class="lt-btn lt-btn-secondary" onclick={generateRecoveryCodes} disabled={generatingCodes}>
             {generatingCodes ? 'Generating...' : 'Generate recovery codes'}
           </button>
         </div>
@@ -483,7 +483,7 @@
 
 <Modal open={namingId !== null} label="Name this passkey" onClose={closeNaming}>
   <h3 class="naming-title">Name this passkey</h3>
-  <p class="muted naming-help">
+  <p class="lt-muted naming-help">
     It's saved and ready to use.
   </p>
   <form
@@ -502,10 +502,10 @@
       use:selectAll
     />
     <div class="naming-actions">
-      <button class="btn btn-primary" type="submit" disabled={savingName}>
+      <button class="lt-btn lt-btn-primary" type="submit" disabled={savingName}>
         {savingName ? 'Saving...' : 'Save name'}
       </button>
-      <button class="btn btn-ghost" type="button" onclick={closeNaming}>
+      <button class="lt-btn lt-btn-ghost" type="button" onclick={closeNaming}>
         Keep "{namingDefault}"
       </button>
     </div>

@@ -242,7 +242,7 @@
 
 {#snippet contactToggle(m)}
   <button
-    class="btn btn-sm vis-toggle"
+    class="lt-btn lt-btn-sm vis-toggle"
     class:contact-shared={m.contact_items_shared > 0}
     disabled={cardEmpty}
     title={cardEmpty
@@ -261,7 +261,7 @@
 {#snippet contactPicker(m)}
   {#if sharingFor === m.node_slug}
     <div class="contact-picker">
-      <p class="muted contact-picker-hint">
+      <p class="lt-muted contact-picker-hint">
         What {m.node_name || m.node_slug} can reach you by. Its admins and
         members see whatever you tick here, including anyone who joins later.
       </p>
@@ -277,14 +277,14 @@
               />
               <span class="contact-picker-kind">{CONTACT_KIND_WORD[it.kind] || it.kind}</span>
               <span class="contact-picker-value">{it.value}</span>
-              {#if it.label}<span class="muted">{' · '}{it.label}</span>{/if}
+              {#if it.label}<span class="lt-muted">{' · '}{it.label}</span>{/if}
             </label>
           </li>
         {/each}
       </ul>
       <div class="contact-picker-actions">
-        <button class="btn btn-primary btn-sm" disabled={sharingBusy} onclick={() => saveSharing(m)}>Save</button>
-        <button class="btn btn-sm" disabled={sharingBusy} onclick={() => (sharingFor = null)}>Cancel</button>
+        <button class="lt-btn lt-btn-primary lt-btn-sm" disabled={sharingBusy} onclick={() => saveSharing(m)}>Save</button>
+        <button class="lt-btn lt-btn-sm" disabled={sharingBusy} onclick={() => (sharingFor = null)}>Cancel</button>
       </div>
     </div>
   {/if}
@@ -292,7 +292,7 @@
 
 {#snippet visibilityToggle(m)}
   <button
-    class="btn btn-sm vis-toggle"
+    class="lt-btn lt-btn-sm vis-toggle"
     class:vis-hidden={!m.visible}
     title={m.visible
       ? 'Shown on your profile and the patch\'s public member list. Click to hide from both.'
@@ -305,9 +305,9 @@
 
 <div class="settings-patches">
   {#if loading}
-    <p class="muted">Loading...</p>
+    <p class="lt-muted">Loading...</p>
   {:else if error}
-    <p class="error-text">{error}</p>
+    <p class="lt-error-text">{error}</p>
   {:else}
     {#if myClaims.length > 0}
       <section class="patch-section">
@@ -330,7 +330,7 @@
               {:else}
                 <span class="badge state-badge" title="Nobody has answered this claim yet.">claim under review</span>
               {/if}
-              <span class="muted joined-date">
+              <span class="lt-muted joined-date">
                 {#if c.status === 'approved' && c.setup_expires_at}
                   expires {formatDate(c.setup_expires_at)}
                 {:else}
@@ -340,9 +340,9 @@
             </div>
             <div class="patch-actions">
               {#if c.status === 'approved'}
-                <button class="btn btn-primary btn-sm" onclick={() => navigate(`/patches/${c.node_slug}/setup`)}>Set up patch</button>
+                <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={() => navigate(`/patches/${c.node_slug}/setup`)}>Set up patch</button>
               {:else}
-                <button class="btn btn-sm" onclick={() => navigate(`/patches/${c.node_slug}/claim`)}>View claim</button>
+                <button class="lt-btn lt-btn-sm" onclick={() => navigate(`/patches/${c.node_slug}/claim`)}>View claim</button>
               {/if}
             </div>
           </div>
@@ -353,7 +353,7 @@
     {#if archivedPatches.length > 0}
       <section class="patch-section">
         <h3 class="section-heading">Archived</h3>
-        <p class="muted section-note">
+        <p class="lt-muted section-note">
           You run these and nobody can open them. Restoring a patch is an
           instance admin's to do.
         </p>
@@ -369,8 +369,8 @@
                    often a duplicate of one still running and the name is
                    then the same on both rows. It is the only thing that
                    tells them apart. -->
-              <span class="muted joined-date">/{m.node_slug}</span>
-              <span class="muted joined-date">joined {formatDate(m.joined_at)}</span>
+              <span class="lt-muted joined-date">/{m.node_slug}</span>
+              <span class="lt-muted joined-date">joined {formatDate(m.joined_at)}</span>
             </div>
           </div>
         {/each}
@@ -378,10 +378,10 @@
     {/if}
 
     {#if patches.length === 0 && myClaims.length === 0 && archivedPatches.length === 0}
-    <p class="muted">You haven't joined any patches yet.</p>
+    <p class="lt-muted">You haven't joined any patches yet.</p>
     {:else if patches.length > 0}
     {#if cardEmpty && (adminPatches.length > 0 || memberPatches.length > 0)}
-      <p class="muted contact-hint">
+      <p class="lt-muted contact-hint">
         Your contact card is empty. Add the ways you are willing to be reached
         under
         <a href="/settings" onclick={(e) => { e.preventDefault(); navigate('/settings'); }}>Profile</a>,
@@ -399,7 +399,7 @@
                   {m.node_name || m.node_slug}
                 </a>
                 <span class="badge">admin</span>
-                <span class="muted joined-date">{formatDate(m.joined_at)}</span>
+                <span class="lt-muted joined-date">{formatDate(m.joined_at)}</span>
               </div>
               <div class="patch-actions">
                 {@render visibilityToggle(m)}
@@ -423,7 +423,7 @@
                   {m.node_name || m.node_slug}
                 </a>
                 <span class="badge">member</span>
-                <span class="muted joined-date">{formatDate(m.joined_at)}</span>
+                <span class="lt-muted joined-date">{formatDate(m.joined_at)}</span>
               </div>
               <div class="patch-actions">
                 {@render visibilityToggle(m)}
@@ -447,7 +447,7 @@
                 {m.node_name || m.node_slug}
               </a>
               <span class="badge" title="This patch's admins have not answered your request yet.">awaiting approval</span>
-              <span class="muted joined-date">asked {formatDate(m.joined_at)}</span>
+              <span class="lt-muted joined-date">asked {formatDate(m.joined_at)}</span>
             </div>
             <!-- No contact control: a pending request is not standing in the
                  room yet, so there is nothing to share into (docs/adr/083). -->
@@ -474,11 +474,11 @@
               {#if note}
                 <span class="badge state-badge" title={note.title}>{note.label}</span>
               {/if}
-              <span class="muted joined-date">{formatDate(m.joined_at)}</span>
+              <span class="lt-muted joined-date">{formatDate(m.joined_at)}</span>
             </div>
             <div class="patch-actions">
               {#if rung}
-                <button class="btn btn-primary btn-sm" onclick={() => { joinTarget = m; }} disabled={joining}>{rung}</button>
+                <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={() => { joinTarget = m; }} disabled={joining}>{rung}</button>
               {/if}
               <ConfirmAction label="Unfollow" variant="default" onConfirm={() => handleLeave(m)} />
             </div>

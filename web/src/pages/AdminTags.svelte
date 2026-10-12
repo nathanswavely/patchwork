@@ -81,7 +81,7 @@
 
 <div class="admin-tags">
   <h1>Tags</h1>
-  <p class="muted intro">
+  <p class="lt-muted intro">
     The vocabulary patch admins tag their patches with. Tags power discovery
     and pull patches with shared tags together on the quilt. A tag's motif
     is the mark shown for patches that chose no motif of their own.
@@ -97,7 +97,7 @@
       bind:value={newName}
       disabled={creating}
     />
-    <button type="submit" class="btn btn-primary" disabled={creating || !newName.trim()}>
+    <button type="submit" class="lt-btn lt-btn-primary" disabled={creating || !newName.trim()}>
       {creating ? 'Adding…' : 'Add tag'}
     </button>
   </form>
@@ -107,7 +107,7 @@
   {:else if error}
     <ErrorState message={error} onRetry={load} />
   {:else if tags.length === 0}
-    <p class="muted">No tags yet. Add the first one above.</p>
+    <p class="lt-muted">No tags yet. Add the first one above.</p>
   {:else}
     <ul class="tag-list">
       {#each tags as tag (tag.id)}
@@ -163,7 +163,7 @@
               {/each}
             </div>
             {#if tag.motif}
-              <button type="button" class="btn btn-secondary btn-sm" onclick={() => setMotif(tag, '')}>
+              <button type="button" class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => setMotif(tag, '')}>
                 Clear motif
               </button>
             {/if}
@@ -282,7 +282,7 @@
     background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
   }
 
-  .btn-sm {
+  .lt-btn-sm {
     align-self: flex-start;
   }
 </style>

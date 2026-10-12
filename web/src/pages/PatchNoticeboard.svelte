@@ -94,7 +94,7 @@
 {#if !inRoom}
   <div class="permission-notice">
     <p>The noticeboard is for this patch's members.</p>
-    <p class="muted">Become a member to read and put up notices.</p>
+    <p class="lt-muted">Become a member to read and put up notices.</p>
   </div>
 {:else if composing}
   <div class="noticeboard-page">
@@ -118,7 +118,7 @@
             {#if body.trim()}
               <MarkdownRenderer content={body} />
             {:else}
-              <span class="muted">Nothing to preview</span>
+              <span class="lt-muted">Nothing to preview</span>
             {/if}
           </div>
         {:else}
@@ -130,7 +130,7 @@
       <div class="field">
         <label for="notice-image">Image address</label>
         <input id="notice-image" type="url" bind:value={imageUrl} disabled={submitting} placeholder="https://..." />
-        <p class="hint muted">Link a flyer or photo you already have online. Patchwork points at it and never keeps a copy.</p>
+        <p class="hint lt-muted">Link a flyer or photo you already have online. Patchwork points at it and never keeps a copy.</p>
       </div>
       {#if imageUrl.trim()}
         <div class="field">
@@ -143,7 +143,7 @@
         <input type="checkbox" bind:checked={repliesOpen} disabled={submitting} />
         <span>
           <strong>Take replies</strong>
-          <span class="muted">You or an admin can switch this off later. Existing replies stay.</span>
+          <span class="lt-muted">You or an admin can switch this off later. Existing replies stay.</span>
         </span>
       </label>
 
@@ -151,39 +151,39 @@
         <input type="checkbox" bind:checked={tellMembers} disabled={submitting} />
         <span>
           <strong>Tell members</strong>
-          <span class="muted">Rings the bell for every member of this patch. Off, the notice waits here for people to walk in.</span>
+          <span class="lt-muted">Rings the bell for every member of this patch. Off, the notice waits here for people to walk in.</span>
         </span>
       </label>
 
       <div class="form-actions">
-        <button type="submit" class="btn btn-primary" disabled={submitting}>{submitting ? 'Putting up…' : 'Put up notice'}</button>
-        <button type="button" class="btn btn-secondary" onclick={() => navigate(`/patches/${slug}/noticeboard`)} disabled={submitting}>Cancel</button>
+        <button type="submit" class="lt-btn lt-btn-primary" disabled={submitting}>{submitting ? 'Putting up…' : 'Put up notice'}</button>
+        <button type="button" class="lt-btn lt-btn-secondary" onclick={() => navigate(`/patches/${slug}/noticeboard`)} disabled={submitting}>Cancel</button>
       </div>
     </form>
   </div>
 {:else}
   <div class="noticeboard-page">
     <div class="board-header">
-      <p class="muted board-hint">
+      <p class="lt-muted board-hint">
         Read by this patch's admins and members, and nobody else.
         {#if noticePosting === 'admins'}
           Its admins put up the notices.
         {/if}
       </p>
       {#if mayPost}
-        <button class="btn btn-primary btn-sm" onclick={openComposer}>Put up a notice</button>
+        <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={openComposer}>Put up a notice</button>
       {/if}
     </div>
 
     {#if loading}
-      <p class="muted">Loading the noticeboard...</p>
+      <p class="lt-muted">Loading the noticeboard...</p>
     {:else if error}
-      <p class="error-text">{error}</p>
+      <p class="lt-error-text">{error}</p>
     {:else if notices.length === 0}
       <div class="empty-state">
         <p>Nothing on the board yet.</p>
         {#if mayPost}
-          <p class="muted">Put up the first notice.</p>
+          <p class="lt-muted">Put up the first notice.</p>
         {/if}
       </div>
     {:else}
@@ -194,7 +194,7 @@
               onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/noticeboard/${n.id}`); }}>
               {n.title}
             </a>
-            <div class="notice-meta muted">
+            <div class="notice-meta lt-muted">
               <span>{n.author_display_name || n.author_username}</span>
               <span>{formatRelative(n.created_at)}</span>
               {#if n.members_told}<span class="mark">members told</span>{/if}
@@ -208,7 +208,7 @@
         {/each}
       </ul>
       {#if nextCursor}
-        <button class="btn btn-secondary btn-sm" onclick={() => loadNotices(nextCursor)}>Older notices</button>
+        <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => loadNotices(nextCursor)}>Older notices</button>
       {/if}
     {/if}
   </div>
@@ -300,7 +300,7 @@
     cursor: pointer;
   }
   .check-row input { margin-top: 0.25rem; }
-  .check-row span > .muted { display: block; font-size: 0.8rem; }
+  .check-row span > .lt-muted { display: block; font-size: 0.8rem; }
   .form-actions { display: flex; gap: 0.5rem; }
 
   /* The hint keeps a readable measure and the button its one line: when
@@ -308,7 +308,7 @@
      its own label. */
   .board-header { flex-wrap: wrap; }
   .board-hint { flex: 1 1 16rem; min-width: 0; }
-  .board-header .btn { white-space: nowrap; }
+  .board-header .lt-btn { white-space: nowrap; }
 
   @media (pointer: coarse) {
     .toggle-btn {

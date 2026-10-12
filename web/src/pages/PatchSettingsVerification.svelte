@@ -71,7 +71,7 @@
 <div class="verification">
   <section class="v-section">
     <h3 class="v-heading">Verification domain</h3>
-    <p class="muted v-hint">
+    <p class="lt-muted v-hint">
       The one domain the platform has vetted as belonging to this organization.
       Self-service claims prove control of it (DNS record or a meta tag). Leave
       it empty to require admin review for every claim. This is separate from
@@ -89,11 +89,11 @@
       />
       {#if dirty}
         <div class="v-actions">
-          <button class="btn btn-primary btn-sm" onclick={saveDomain} disabled={saving}>
+          <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={saveDomain} disabled={saving}>
             {saving ? 'Saving…' : 'Save'}
           </button>
           <button
-            class="btn btn-secondary btn-sm"
+            class="lt-btn lt-btn-secondary lt-btn-sm"
             onclick={() => { domain = patch.value.verificationDomain || ''; }}
             disabled={saving}
           >Cancel</button>
@@ -101,13 +101,13 @@
       {/if}
     </div>
     {#if !domain.trim()}
-      <p class="muted v-note">No verification domain set. Claims can only be approved by admin review.</p>
+      <p class="lt-muted v-note">No verification domain set. Claims can only be approved by admin review.</p>
     {/if}
   </section>
 
   <section class="v-section">
     <h3 class="v-heading">Claim state</h3>
-    <p class="muted v-hint">
+    <p class="lt-muted v-hint">
       This patch is unclaimed. When someone proves they run it, claiming turns
       it into their patch.
     </p>
@@ -117,12 +117,12 @@
           {openClaims} open {openClaims === 1 ? 'claim' : 'claims'} awaiting review.
         </p>
       {:else}
-        <p class="muted v-note">No open claims.</p>
+        <p class="lt-muted v-note">No open claims.</p>
       {/if}
     {/if}
     <a
       href="/admin/review/claims"
-      class="btn btn-secondary btn-sm"
+      class="lt-btn lt-btn-secondary lt-btn-sm"
       onclick={(e) => { e.preventDefault(); navigate('/admin/review/claims'); }}
     >Review claims</a>
   </section>

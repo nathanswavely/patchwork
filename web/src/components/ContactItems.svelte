@@ -24,7 +24,7 @@
   {#each items as item (item.id)}
     {@const Mark = CONTACT_KIND_MARK[item.kind]}
     <li>
-      <span class="contact-kind muted">
+      <span class="contact-kind lt-muted">
         {#if Mark}<Mark size={14} aria-hidden="true" />{/if}
         <span>{CONTACT_KIND_WORD[item.kind] || item.kind}</span>
       </span>
@@ -33,7 +33,7 @@
       {:else}
         <span class="contact-value">{item.value}</span>
       {/if}
-      {#if item.label}<span class="muted">{' · '}{item.label}</span>{/if}
+      {#if item.label}<span class="lt-muted">{' · '}{item.label}</span>{/if}
     </li>
   {/each}
 </ul>

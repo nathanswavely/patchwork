@@ -70,7 +70,7 @@
   );
 </script>
 
-<div class="page-fade">
+<div class="lt-fade-in">
   <div class="page-header">
     <h1>Overview</h1>
   </div>
@@ -83,15 +83,15 @@
     <section class="section">
       <h2>Waiting on you</h2>
       {#if waiting.length === 0}
-        <p class="muted">Nothing is waiting on you.</p>
+        <p class="lt-muted">Nothing is waiting on you.</p>
       {:else}
         <ul class="lines">
           {#each waiting as q (q.queue)}
             <li>
-              <a href={QUEUES[q.queue].href} class="line card" onclick={(e) => handleNav(e, QUEUES[q.queue].href)}>
+              <a href={QUEUES[q.queue].href} class="line lt-card" onclick={(e) => handleNav(e, QUEUES[q.queue].href)}>
                 <strong>{plural(q.count, QUEUES[q.queue].one, QUEUES[q.queue].many)}</strong>
                 {#if q.oldest_at}
-                  <span class="muted">oldest {formatRelative(q.oldest_at)}</span>
+                  <span class="lt-muted">oldest {formatRelative(q.oldest_at)}</span>
                 {/if}
               </a>
             </li>
@@ -115,37 +115,37 @@
         <ul class="lines">
           {#each care.adminless_patches as p (p.slug)}
             <li>
-              <a href={`/patches/${p.slug}/settings/members`} class="line card" onclick={(e) => handleNav(e, `/patches/${p.slug}/settings/members`)}>
+              <a href={`/patches/${p.slug}/settings/members`} class="line lt-card" onclick={(e) => handleNav(e, `/patches/${p.slug}/settings/members`)}>
                 <strong>{p.name} has no admin.</strong>
                 {#if p.member_count > 0}
-                  <span class="muted">{plural(p.member_count, 'member', 'members')} to hand it to.</span>
+                  <span class="lt-muted">{plural(p.member_count, 'member', 'members')} to hand it to.</span>
                 {:else}
-                  <span class="muted">No members to hand it to.</span>
+                  <span class="lt-muted">No members to hand it to.</span>
                 {/if}
               </a>
             </li>
           {/each}
           {#each care.failing_aggregators as a (a.id)}
             <li>
-              <a href="/admin/settings/aggregators" class="line card" onclick={(e) => handleNav(e, '/admin/settings/aggregators')}>
+              <a href="/admin/settings/aggregators" class="line lt-card" onclick={(e) => handleNav(e, '/admin/settings/aggregators')}>
                 <strong>{a.name} is not syncing.</strong>
-                <span class="muted">{a.last_error}{#if a.last_success_at}{' · '}last synced {formatRelative(a.last_success_at)}{/if}</span>
+                <span class="lt-muted">{a.last_error}{#if a.last_success_at}{' · '}last synced {formatRelative(a.last_success_at)}{/if}</span>
               </a>
             </li>
           {/each}
           {#each care.failing_unclaimed_sources as s (s.id)}
             <li>
-              <a href={`/patches/${s.node_slug}/settings/sources`} class="line card" onclick={(e) => handleNav(e, `/patches/${s.node_slug}/settings/sources`)}>
+              <a href={`/patches/${s.node_slug}/settings/sources`} class="line lt-card" onclick={(e) => handleNav(e, `/patches/${s.node_slug}/settings/sources`)}>
                 <strong>{s.node_name}'s feed is not syncing.</strong>
-                <span class="muted">{s.last_error}{#if s.last_success_at}{' · '}last synced {formatRelative(s.last_success_at)}{/if}</span>
+                <span class="lt-muted">{s.last_error}{#if s.last_success_at}{' · '}last synced {formatRelative(s.last_success_at)}{/if}</span>
               </a>
             </li>
           {/each}
           {#if care.failed_deliveries > 0}
             <li>
-              <div class="line card">
+              <div class="line lt-card">
                 <strong>{plural(care.failed_deliveries, 'federated activity', 'federated activities')} could not be delivered.</strong>
-                <span class="muted">The delivery worker has given up on these.</span>
+                <span class="lt-muted">The delivery worker has given up on these.</span>
               </div>
             </li>
           {/if}

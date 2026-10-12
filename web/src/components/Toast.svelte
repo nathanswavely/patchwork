@@ -38,7 +38,7 @@
      Text stays --color-text in every colorway. Coloring a whole sentence
      with --color-error reads as alarm even when the sentence is only
      telling you a patch is unclaimed; --color-error is for the short
-     label (.error-text), not for prose. */
+     label (.lt-error-text), not for prose. */
   .toast {
     --toast-hue: var(--color-text-muted);
     /* How much of the hue the ground and the edge take. Named rather than

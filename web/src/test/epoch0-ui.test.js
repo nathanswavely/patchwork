@@ -54,7 +54,7 @@ describe('F-008 — the create form asks who can join', () => {
     expect(src).toMatch(/Following is separate and always open/);
     // No em dashes in copy a reader sees. Scoped to the paragraph, not the
     // surrounding markup: code comments are not copy and keep house style.
-    const hint = src.match(/<p class="field-hint muted">\s*Members vote[\s\S]*?<\/p>/);
+    const hint = src.match(/<p class="field-hint lt-muted">\s*Members vote[\s\S]*?<\/p>/);
     expect(hint, 'who-can-join hint paragraph not found').toBeTruthy();
     expect(hint[0]).not.toContain('—');
   });
@@ -159,7 +159,7 @@ describe('F-022 — the rules editor knows every succession policy a template sh
   it('has options for election and nomination, each with a plain hint', () => {
     expect(vocab).toMatch(/value: 'election', label: 'Election',\s*\n\s*hint: '[^']+'/);
     expect(vocab).toMatch(/value: 'nomination', label: 'Nomination',\s*\n\s*hint: '[^']+'/);
-    expect(src).toMatch(/<p class="venue-hint muted">\{successionHint\}<\/p>/);
+    expect(src).toMatch(/<p class="venue-hint lt-muted">\{successionHint\}<\/p>/);
   });
 
   it('reads them from the shared module rather than keeping a second copy', () => {

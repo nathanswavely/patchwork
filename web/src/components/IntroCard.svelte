@@ -113,7 +113,7 @@
       </p>
       <div class="intro-actions">
         <a href="/about" class="intro-about" onclick={goAbout}>What is Patchwork?</a>
-        <a href="/login" class="btn btn-primary intro-join" onclick={goJoin}>Join</a>
+        <a href="/login" class="lt-btn lt-btn-primary intro-join" onclick={goJoin}>Join</a>
       </div>
       <!-- The full card's only dismissal, and deliberately a worded one: a
            × closes a box, this answers the card's actual question — you can

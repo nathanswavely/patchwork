@@ -90,14 +90,14 @@
   }
 </script>
 
-<div class="page-fade">
+<div class="lt-fade-in">
   <h2>Noticeboard</h2>
-  <p class="muted subtitle">Read by this patch's admins and members, and nobody else.</p>
+  <p class="lt-muted subtitle">Read by this patch's admins and members, and nobody else.</p>
 
   <div class="setting-row">
     <div class="setting-info">
       <span class="setting-label">Who puts up notices</span>
-      <span class="setting-desc muted">Members too, or only this patch's admins. Anyone in the room can reply either way.</span>
+      <span class="setting-desc lt-muted">Members too, or only this patch's admins. Anyone in the room can reply either way.</span>
     </div>
     <SegmentedControl
       options={[{ value: 'members', label: 'Members' }, { value: 'admins', label: 'Admins only' }]}
@@ -110,13 +110,13 @@
   <div class="setting-row">
     <div class="setting-info">
       <span class="setting-label">New notices take replies</span>
-      <span class="setting-desc muted">The starting position. Each notice's author decides for their own, and can change it later.</span>
+      <span class="setting-desc lt-muted">The starting position. Each notice's author decides for their own, and can change it later.</span>
     </div>
     <ToggleSwitch checked={repliesDefault} label="New notices take replies" onchange={(e) => setRepliesDefault(e.currentTarget.checked)} />
   </div>
 
   <h3 class="queue-heading">Reports</h3>
-  <p class="muted subtitle">
+  <p class="lt-muted subtitle">
     Reports about notices and replies come to this patch's admins. Three things can be done with one: dismiss it, remove what was reported, or switch replies off on the notice.
   </p>
 
@@ -127,21 +127,21 @@
   </div>
 
   {#if loadingReports}
-    <p class="muted">Loading...</p>
+    <p class="lt-muted">Loading...</p>
   {:else if reports.length === 0}
-    <p class="muted">No {tab} reports.</p>
+    <p class="lt-muted">No {tab} reports.</p>
   {:else}
     <ul class="report-list">
       {#each reports as r (r.id)}
         <li class="report-row">
           <div class="report-head">
             <span class="badge">{r.entity_type}</span>
-            <span class="muted">{formatDate(r.created_at)}</span>
-            <span class="muted">reported by {r.reporter_name}</span>
+            <span class="lt-muted">{formatDate(r.created_at)}</span>
+            <span class="lt-muted">reported by {r.reporter_name}</span>
           </div>
           <p class="report-target">
             {#if r.gone}
-              <span class="muted">Already taken down.</span>
+              <span class="lt-muted">Already taken down.</span>
             {:else}
               <a href="/patches/{slug}/noticeboard/{r.notice_id}" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/noticeboard/${r.notice_id}`); }}>
                 {r.target}
@@ -149,7 +149,7 @@
             {/if}
           </p>
           <p class="report-reason">{r.reason}</p>
-          {#if r.details}<p class="muted report-details">{r.details}</p>{/if}
+          {#if r.details}<p class="lt-muted report-details">{r.details}</p>{/if}
 
           {#if tab === 'pending'}
             {#if resolvingId === r.id}
@@ -172,16 +172,16 @@
                   {#if action === 'remove'}
                     <ConfirmAction label="Confirm" confirmLabel="Yes, remove it" variant="danger" onConfirm={resolve} />
                   {:else}
-                    <button class="btn btn-primary btn-sm" onclick={resolve}>Confirm</button>
+                    <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={resolve}>Confirm</button>
                   {/if}
-                  <button class="btn btn-secondary btn-sm" onclick={() => resolvingId = null}>Cancel</button>
+                  <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => resolvingId = null}>Cancel</button>
                 </div>
               </div>
             {:else}
-              <button class="btn btn-secondary btn-sm" onclick={() => startResolve(r)}>Review</button>
+              <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => startResolve(r)}>Review</button>
             {/if}
           {:else if r.resolution_note}
-            <p class="muted report-details">Note: {r.resolution_note}</p>
+            <p class="lt-muted report-details">Note: {r.resolution_note}</p>
           {/if}
         </li>
       {/each}

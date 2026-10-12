@@ -48,7 +48,7 @@
 
 </script>
 
-<div class="page-fade">
+<div class="lt-fade-in">
   <div class="doc-page">
     {#if loading}
       <div style="padding: 2rem 0;">
@@ -66,7 +66,7 @@
             <h1>{doc.title}</h1>
             <div class="doc-meta">
               <span class="badge">v{doc.version}</span>
-              <span class="muted">Last updated {formatDay(doc.updated_at)}</span>
+              <span class="lt-muted">Last updated {formatDay(doc.updated_at)}</span>
               {#if isMember && doc.visibility !== 'public'}
                 <!-- Only members see this doc at all; the chip tells them the
                      public can't (docs/adr/036). -->
@@ -77,7 +77,7 @@
           <div class="doc-actions">
             <a
               href="/patches/{slug}/governance/docs/{doc.id}/history"
-              class="btn-link"
+              class="lt-btn-link"
               onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/docs/${doc.id}/history`); }}
             >
               History ({doc.version} {doc.version === 1 ? 'version' : 'versions'})
@@ -85,7 +85,7 @@
             {#if isLoggedIn() && isMember && membershipRole !== 'follower'}
               <a
                 href="/patches/{slug}/governance/docs/{doc.id}/propose"
-                class="btn btn-primary"
+                class="lt-btn lt-btn-primary"
                 onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/docs/${doc.id}/propose`); }}
               >
                 Propose change

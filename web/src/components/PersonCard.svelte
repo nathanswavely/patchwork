@@ -109,12 +109,12 @@
         </span>
         <span class="person-names">
           <span class="person-display">{person.display_name || person.username}</span>
-          <span class="muted person-handle">@{person.username}</span>
+          <span class="lt-muted person-handle">@{person.username}</span>
         </span>
       </div>
 
       {#if role}
-        <p class="person-standing muted">
+        <p class="person-standing lt-muted">
           {#if ROLE_MARK[role]}
             {@const Mark = ROLE_MARK[role]}
             <Mark size={14} weight={role === 'follower' ? 'fill' : 'regular'} />

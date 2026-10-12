@@ -115,7 +115,7 @@
   </div>
 {:else}
   <div class="rules-diff">
-    <p class="muted">No changes to governance rules.</p>
+    <p class="lt-muted">No changes to governance rules.</p>
   </div>
 {/if}
 

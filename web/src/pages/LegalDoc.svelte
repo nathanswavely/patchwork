@@ -52,7 +52,7 @@
   <title>{data?.title || 'Legal'} &mdash; {instanceName}</title>
 </svelte:head>
 
-<div class="legal-page page-fade">
+<div class="legal-page lt-fade-in">
   {#if loading}
     <Skeleton lines={10} />
   {:else if error}
@@ -62,7 +62,7 @@
       <p class="legal-kicker">The fine print</p>
       <h1>{data.title}</h1>
       {#if data.customized && updatedDate}
-        <p class="legal-sub muted">Last updated {updatedDate}.</p>
+        <p class="legal-sub lt-muted">Last updated {updatedDate}.</p>
       {/if}
     </header>
 
@@ -70,7 +70,7 @@
       <MarkdownRenderer content={data.markdown} />
     </section>
 
-    <footer class="legal-cross muted">
+    <footer class="legal-cross lt-muted">
       Also see the
       <a href={other.href} onclick={(e) => go(e, other.href)}>{other.label}</a>.
       <a href="/label" onclick={(e) => go(e, '/label')}>The Label</a> says

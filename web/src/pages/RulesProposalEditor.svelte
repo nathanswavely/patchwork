@@ -237,31 +237,31 @@
      would center on the column instead of the page — visibly off-center, and
      narrower than the same notice everywhere else it appears. -->
 {#if !canPropose}
-  <div class="permission-notice page-fade">
+  <div class="permission-notice lt-fade-in">
     <p>Only members can propose a change to these rules.</p>
-    <p class="muted">Become a member to take part in how this patch governs itself.</p>
+    <p class="lt-muted">Become a member to take part in how this patch governs itself.</p>
   </div>
 {:else}
-<div class="rules-editor page-fade">
+<div class="rules-editor lt-fade-in">
   {#if loading}
     <Skeleton lines={1} height="2rem" width="50%" />
     <Skeleton lines={6} height="0.9rem" />
   {:else if error}
     <div class="error-state">
-      <p class="error-text">{error}</p>
-      <button class="btn btn-secondary" onclick={loadRules}>Retry</button>
+      <p class="lt-error-text">{error}</p>
+      <button class="lt-btn lt-btn-secondary" onclick={loadRules}>Retry</button>
     </div>
   {:else if currentRules}
 
     <div class="editor-header">
-      <span class="editor-context muted">{directChange ? 'Changing' : 'Proposing changes to'}</span>
+      <span class="editor-context lt-muted">{directChange ? 'Changing' : 'Proposing changes to'}</span>
       <h1>Governance Rules</h1>
     </div>
 
     {#if draftRestored}
       <div class="draft-banner">
         <span>Restored unsaved changes from {draftTimestamp ? new Date(draftTimestamp).toLocaleTimeString() : 'earlier'}</span>
-        <button class="btn-link danger" onclick={discardDraft}>Discard</button>
+        <button class="lt-btn-link lt-tone-error" onclick={discardDraft}>Discard</button>
       </div>
     {/if}
 
@@ -274,10 +274,10 @@
         />
 
         <div class="editor-card-footer">
-          <button class="btn btn-primary" onclick={goToReview} disabled={!hasChanges}>
+          <button class="lt-btn lt-btn-primary" onclick={goToReview} disabled={!hasChanges}>
             {directChange ? 'Review & apply' : 'Review & submit'}
           </button>
-          <button class="btn btn-secondary" onclick={() => navigate(`/patches/${slug}/governance`)}>
+          <button class="lt-btn lt-btn-secondary" onclick={() => navigate(`/patches/${slug}/governance`)}>
             Cancel
           </button>
         </div>
@@ -293,7 +293,7 @@
     {:else}
       <div class="review-step">
         <div class="review-card">
-          <div class="review-card-header muted">Your changes</div>
+          <div class="review-card-header lt-muted">Your changes</div>
           <div class="review-card-body">
             <StructuredRulesDiff {currentRules} {proposedRules} />
           </div>
@@ -308,21 +308,21 @@
             </div>
 
             <div class="field">
-              <label for="rules-desc">{directChange ? 'Why this change?' : 'Why are you proposing this?'} <span class="muted">(optional)</span></label>
+              <label for="rules-desc">{directChange ? 'Why this change?' : 'Why are you proposing this?'} <span class="lt-muted">(optional)</span></label>
               <textarea id="rules-desc" bind:value={description} rows="4" disabled={submitting} placeholder="Help others understand why this change matters."></textarea>
             </div>
 
-            <p class="submit-consequence muted">{submitConsequence}</p>
+            <p class="submit-consequence lt-muted">{submitConsequence}</p>
 
             <div class="review-actions">
-              <button class="btn btn-primary" onclick={handleSubmit} disabled={submitting || !title.trim()}>
+              <button class="lt-btn lt-btn-primary" onclick={handleSubmit} disabled={submitting || !title.trim()}>
                 {#if directChange}
                   {submitting ? 'Applying...' : 'Apply change'}
                 {:else}
                   {submitting ? 'Submitting...' : 'Submit proposal'}
                 {/if}
               </button>
-              <button class="btn btn-secondary" onclick={() => { step = 'editing'; }} disabled={submitting}>
+              <button class="lt-btn lt-btn-secondary" onclick={() => { step = 'editing'; }} disabled={submitting}>
                 Back to editing
               </button>
             </div>

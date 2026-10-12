@@ -126,7 +126,7 @@ describe('a moved patch offers no rung it cannot honour', () => {
   it('drops Follow and Become a member, and keeps standing', () => {
     const src = source('components/PatchRelationship.svelte');
     expect(src).toMatch(/let hasMoved = \$derived\(!!node\?\.moved_to\);/);
-    expect(src).toMatch(/\{:else if !hasMoved\}\s*\n\s*<button class="btn btn-primary \{btnSize\}" onclick=\{handleFollow\}/);
+    expect(src).toMatch(/\{:else if !hasMoved\}\s*\n\s*<button class="lt-btn lt-btn-primary \{btnSize\}" onclick=\{handleFollow\}/);
     expect(src).toMatch(/canBecomeMember = \$derived\(\s*\n\s*!hasMoved &&/);
     // Standing itself is untouched: somebody already in the patch keeps the
     // control that lets them leave.

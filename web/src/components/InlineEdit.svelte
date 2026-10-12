@@ -80,10 +80,10 @@
         />
       {/if}
       <div class="inline-edit-actions">
-        <button class="btn btn-primary btn-sm" onclick={handleSave} disabled={saving}>
+        <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={handleSave} disabled={saving}>
           {saving ? 'Saving...' : 'Save'}
         </button>
-        <button class="btn btn-secondary btn-sm" onclick={cancelEdit} disabled={saving}>
+        <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={cancelEdit} disabled={saving}>
           Cancel
         </button>
       </div>
@@ -97,7 +97,7 @@
           {value}
         {/if}
       {:else}
-        <span class="muted">Not set</span>
+        <span class="lt-muted">Not set</span>
       {/if}
     </div>
   {/if}

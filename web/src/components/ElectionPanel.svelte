@@ -232,7 +232,7 @@
       door says it is closed, and says when it closed.
     -->
     {#if phase !== 'nominating' && proposal.nominations_close_at}
-      <p class="muted small closed-window">
+      <p class="lt-muted small closed-window">
         Standing closed {formatDay(proposal.nominations_close_at)}.
       </p>
     {/if}
@@ -254,7 +254,7 @@
     {/if}
 
     {#if candidates.length === 0}
-      <p class="muted small">
+      <p class="lt-muted small">
         {phase === 'nominating' ? 'Nobody has stood yet.' : 'Nobody stood.'}
       </p>
     {:else}
@@ -300,13 +300,13 @@
         {#if iAmStanding}
           <p class="standing small">
             You are standing in this election.
-            <button class="btn-link" onclick={withdraw} disabled={busy}>
+            <button class="lt-btn-link" onclick={withdraw} disabled={busy}>
               {busy ? 'Withdrawing…' : 'Withdraw'}
             </button>
           </p>
         {:else}
           <div class="stand-row">
-            <label for="why-standing">Why you are standing <span class="muted">(optional)</span></label>
+            <label for="why-standing">Why you are standing <span class="lt-muted">(optional)</span></label>
             <textarea
               id="why-standing"
               bind:value={statement}
@@ -316,10 +316,10 @@
               placeholder="A few lines the other members will see beside your name on the ballot."
             ></textarea>
             <div class="stand-actions">
-              <button class="btn btn-sm" onclick={stand} disabled={busy}>
+              <button class="lt-btn lt-btn-sm" onclick={stand} disabled={busy}>
                 {busy ? 'Standing…' : 'Stand for election'}
               </button>
-              <span class="muted small">{STATEMENT_MAX - statement.length} characters left</span>
+              <span class="lt-muted small">{STATEMENT_MAX - statement.length} characters left</span>
             </div>
           </div>
         {/if}
@@ -338,11 +338,11 @@
                   <option value={m.user_id}>{m.display_name || m.username}</option>
                 {/each}
               </select>
-              <button class="btn btn-sm" onclick={nominate} disabled={busy || !nomineeId}>
+              <button class="lt-btn lt-btn-sm" onclick={nominate} disabled={busy || !nomineeId}>
                 {busy ? 'Adding…' : 'Put forward'}
               </button>
             </div>
-            <p class="muted small">
+            <p class="lt-muted small">
               They go on the ballot straight away, and can withdraw themselves
               until nominations close.
             </p>
@@ -352,7 +352,7 @@
     {/if}
 
     {#if phase === 'voting' && canVote && candidates.length > 0}
-      <button class="btn btn-primary btn-sm" onclick={submitBallot} disabled={busy}>
+      <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={submitBallot} disabled={busy}>
         {busy ? 'Saving…' : ballotIn ? 'Update my ballot' : 'Save my ballot'}
       </button>
       <!-- One sentence, not two saying the same thing. Read on the page: the
@@ -361,7 +361,7 @@
       {#if ballotIn}
         <p class="ballot-in small">Your ballot is in. You can change it until voting closes.</p>
       {:else}
-        <p class="muted small">You can change this until voting closes.</p>
+        <p class="lt-muted small">You can change this until voting closes.</p>
       {/if}
 
       <!-- Turning up and approving nobody (F-092).
@@ -383,10 +383,10 @@
             and saving replaces that.
           </p>
         {:else}
-          <button class="btn-link small" onclick={abstain} disabled={busy}>
+          <button class="lt-btn-link small" onclick={abstain} disabled={busy}>
             {busy ? 'Saving…' : 'Take part without approving anyone'}
           </button>
-          <p class="muted small">
+          <p class="lt-muted small">
             Counts toward the turnout this election needs, the way an abstention
             counts on an ordinary proposal.
           </p>
@@ -430,7 +430,7 @@
     display: flex;
     flex-direction: column;
     /* Or a column stretches every button to the panel's full width, which is
-       how the theme-less `.btn` got noticed: a full-bleed pale pill. */
+       how the theme-less `.lt-btn` got noticed: a full-bleed pale pill. */
     align-items: flex-start;
     gap: 0.6rem;
   }

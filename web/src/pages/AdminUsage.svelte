@@ -74,10 +74,10 @@
   }
 </script>
 
-<div class="admin-usage page-fade">
+<div class="admin-usage lt-fade-in">
   <header class="page-head">
     <h1>Usage</h1>
-    <p class="muted">
+    <p class="lt-muted">
       How much this quilt is being read, counted on the server as daily totals. There is no script in the page, no cookie, and nothing kept that names a person, an address, or a moment.
     </p>
   </header>
@@ -87,7 +87,7 @@
   {:else if error}
     <ErrorState message={error} retry={() => load(days)} />
   {:else if data}
-    <section class="card switch-card">
+    <section class="lt-card switch-card">
       <div class="switch-row">
         <div>
           <h2>{data.enabled ? 'Counting is on' : 'Counting is off'}</h2>
@@ -95,7 +95,7 @@
                heading and its switch. Open, and unlabelled, on a wide screen. -->
           <details class="counted-fold" open={!narrow}>
             <summary>What is counted</summary>
-            <p class="muted">
+            <p class="lt-muted">
               {#if data.enabled}
                 Each page load adds one to that kind of page for today. A browser is counted once a day, from a hash of its address and type under a secret the server draws at random, keeps in memory, and replaces at midnight. Totals are kept for {data.retention_months} months. The privacy policy states all of this.
               {:else}
@@ -105,8 +105,8 @@
           </details>
         </div>
         <button
-          class="btn"
-          class:btn-primary={!data.enabled}
+          class="lt-btn"
+          class:lt-btn-primary={!data.enabled}
           onclick={() => setEnabled(!data.enabled)}
           disabled={toggling}
         >
@@ -129,7 +129,7 @@
           </button>
         {/each}
       </div>
-      <span class="muted since">Since {data.since}, in UTC days</span>
+      <span class="lt-muted since">Since {data.since}, in UTC days</span>
     </div>
 
     <section class="tiles">
@@ -151,10 +151,10 @@
       </div>
     </section>
 
-    <section class="card">
+    <section class="lt-card">
       <h2>Page loads by day</h2>
       {#if quiet}
-        <p class="muted">
+        <p class="lt-muted">
           {data.enabled ? 'Nothing counted in this window yet. Counts are written once a minute.' : 'Nothing counted in this window. Counting is off.'}
         </p>
       {:else}
@@ -165,19 +165,19 @@
             </div>
           {/each}
         </div>
-        <div class="chart-axis muted">
+        <div class="chart-axis lt-muted">
           <span>{shortDay(data.series[0].day)}</span>
           <span>{shortDay(data.series[data.series.length - 1].day)}</span>
         </div>
-        <p class="muted hint">Visitors are distinct within one day only, so they are not added across days. Hover a bar for that day's two numbers.</p>
+        <p class="lt-muted hint">Visitors are distinct within one day only, so they are not added across days. Hover a bar for that day's two numbers.</p>
       {/if}
     </section>
 
     <div class="two-col">
-      <section class="card">
+      <section class="lt-card">
         <h2>Pages</h2>
         {#if data.paths.length === 0}
-          <p class="muted">Nothing counted in this window.</p>
+          <p class="lt-muted">Nothing counted in this window.</p>
         {:else}
           <table class="paths">
             <tbody>
@@ -190,13 +190,13 @@
               {/each}
             </tbody>
           </table>
-          <p class="muted hint">A page is counted by its shape. Which patch or person a load was for is never kept.</p>
+          <p class="lt-muted hint">A page is counted by its shape. Which patch or person a load was for is never kept.</p>
         {/if}
       </section>
 
-      <section class="card">
+      <section class="lt-card">
         <h2>Activity</h2>
-        <p class="muted">What people did in the same window, from the records the quilt keeps anyway. These are the same whether counting is on or off.</p>
+        <p class="lt-muted">What people did in the same window, from the records the quilt keeps anyway. These are the same whether counting is on or off.</p>
         <dl class="activity">
           <div><dt>Accounts created</dt><dd>{data.activity.accounts.toLocaleString()}</dd></div>
           <div><dt>Patches joined</dt><dd>{data.activity.joins.toLocaleString()}</dd></div>
@@ -207,12 +207,12 @@
       </section>
     </div>
 
-    <section class="card clear-card">
+    <section class="lt-card clear-card">
       <div>
         <h2>Clear counts</h2>
-        <p class="muted">Deletes every daily total this quilt has kept. Counting continues if it is on. The deletion is recorded in the audit log.</p>
+        <p class="lt-muted">Deletes every daily total this quilt has kept. Counting continues if it is on. The deletion is recorded in the audit log.</p>
       </div>
-      <button class="btn btn-danger" onclick={clearCounts} disabled={clearing}>
+      <button class="lt-btn lt-btn-danger" onclick={clearCounts} disabled={clearing}>
         {clearing ? 'Clearing…' : 'Clear all counts'}
       </button>
     </section>
@@ -226,14 +226,14 @@
     gap: var(--pw-stack);
   }
 
-  .card {
+  .lt-card {
     background: var(--color-surface, #fff);
     border: 1px solid var(--color-border, #e3e0da);
     border-radius: var(--radius);
     padding: 1.25rem;
   }
 
-  .card h2 {
+  .lt-card h2 {
     font-size: 1rem;
     margin: 0 0 0.5rem;
   }
@@ -252,8 +252,8 @@
     max-width: 62ch;
   }
 
-  .switch-row .btn,
-  .clear-card .btn {
+  .switch-row .lt-btn,
+  .clear-card .lt-btn {
     flex-shrink: 0;
   }
 
