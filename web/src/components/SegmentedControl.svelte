@@ -35,6 +35,7 @@
     font-weight: 500;
     color: var(--color-text-muted);
     cursor: pointer;
+    min-height: var(--lt-target);
   }
 
   .seg button + button {
@@ -52,7 +53,6 @@
 
   @media (pointer: coarse) {
     .seg button {
-      min-height: 40px;
       padding: 0 0.9rem;
     }
   }

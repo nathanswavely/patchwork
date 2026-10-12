@@ -483,7 +483,7 @@
     }
   }
 
-  @media (max-width: 720px) {
+  @media (max-width: 768px) {
     .drafter-body {
       flex-direction: column;
     }

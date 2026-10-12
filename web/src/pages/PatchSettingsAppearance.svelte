@@ -592,7 +592,7 @@
     line-height: 1.2;
   }
 
-  @media (max-width: 600px) {
+  @media (max-width: 640px) {
     .preview-row {
       flex-direction: column;
     }

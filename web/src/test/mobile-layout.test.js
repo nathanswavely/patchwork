@@ -63,12 +63,14 @@ describe('a finger gets a finger-sized target', () => {
     return i >= 0 ? src.slice(i) : '';
   };
 
+  // A control Patchwork draws itself takes --lt-target in its own rule:
+  // 24px under a mouse, 44px under a finger (step 4b; segments up from 40).
   it('in the shared controls', () => {
-    expect(coarse('components/SegmentedControl.svelte')).toContain('min-height: 40px');
+    expect(source('components/SegmentedControl.svelte')).toMatch(/\.seg button \{[^}]*min-height: var\(--lt-target\);/);
     expect(coarse('components/Modal.svelte')).toContain('width: 44px');
-    expect(coarse('components/GlobalBar.svelte')).toContain('min-height: 44px');
-    expect(coarse('components/PatchOverflow.svelte')).toContain('min-height: 44px');
-    expect(coarse('components/PatchRelationship.svelte')).toContain('min-height: 44px');
+    expect(source('components/GlobalBar.svelte')).toMatch(/\.user-dropdown button \{[^}]*min-height: var\(--lt-target\);/);
+    expect(source('components/PatchOverflow.svelte')).toMatch(/\.overflow-menu > a \{[^}]*min-height: var\(--lt-target\);/);
+    expect(source('components/PatchRelationship.svelte')).toMatch(/\.standing-menu button \{[^}]*min-height: var\(--lt-target\);/);
   });
 
   // The switch and the tag chips are Liquid Textile's, which sizes them by

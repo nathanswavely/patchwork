@@ -251,6 +251,7 @@
     cursor: pointer;
     border-bottom: 2px solid transparent;
     margin-bottom: -1px;
+    min-height: var(--lt-target);
   }
 
   .tab-btn.active {
@@ -357,11 +358,5 @@
   .tab-btn {
     white-space: nowrap;
     flex-shrink: 0;
-  }
-
-  @media (pointer: coarse) {
-    .tab-btn {
-      min-height: 44px;
-    }
   }
 </style>

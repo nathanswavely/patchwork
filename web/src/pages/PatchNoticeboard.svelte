@@ -270,6 +270,7 @@
     padding: 0.15rem 0.5rem;
     border-radius: var(--radius);
     cursor: pointer;
+    min-height: var(--lt-target);
   }
   .toggle-btn.active { color: var(--color-text); border-color: var(--color-primary); }
   .preview-pane {
@@ -296,7 +297,6 @@
 
   @media (pointer: coarse) {
     .toggle-btn {
-      min-height: 40px;
       padding-inline: 0.9rem;
     }
   }

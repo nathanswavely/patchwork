@@ -278,6 +278,7 @@
     cursor: pointer;
     font: inherit;
     color: inherit;
+    min-height: var(--lt-target);
   }
 
   .range-tab.active {
@@ -359,7 +360,7 @@
     gap: var(--pw-stack);
   }
 
-  @media (max-width: 720px) {
+  @media (max-width: 768px) {
     .two-col {
       grid-template-columns: 1fr;
     }
@@ -420,12 +421,6 @@
   .activity dd {
     margin: 0;
     font-variant-numeric: tabular-nums;
-  }
-
-  @media (pointer: coarse) {
-    .range-tab {
-      min-height: 40px;
-    }
   }
 
   .counted-fold > summary {

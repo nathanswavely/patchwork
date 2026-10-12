@@ -155,6 +155,7 @@
     color: var(--color-text);
     cursor: pointer;
     text-align: left;
+    min-height: var(--lt-target);
   }
   .person-trigger:hover,
   .person-trigger:focus-visible {
@@ -208,11 +209,5 @@
 
   .person-profile-link {
     font-size: 0.85rem;
-  }
-
-  @media (pointer: coarse) {
-    .person-trigger {
-      min-height: 40px;
-    }
   }
 </style>

@@ -13,15 +13,6 @@
   --font-display: var(--lt-font-display);
   --font-mono: var(--lt-font-mono);
 
-  /* Button sizing lives here, not in components, so a media query can
-     retune every button at once (see the coarse-pointer block below). */
-  --btn-pad-y: var(--lt-btn-pad-y);
-  --btn-pad-x: var(--lt-btn-pad-x);
-  --btn-font: var(--lt-btn-font);
-  --btn-sm-pad-y: var(--lt-btn-sm-pad-y);
-  --btn-sm-pad-x: var(--lt-btn-sm-pad-x);
-  --btn-sm-font: var(--lt-btn-sm-font);
-
   /* ---- Layout spacing (docs/adr/038) ----
      Fluid, so there are no spacing breakpoints to fight: a future
      [data-density] on <html> layers on top the way [data-theme] does,
@@ -147,12 +138,16 @@
   }
 }
 
-/* Touch targets: small buttons are finger-sized on coarse pointers. */
+/* iOS zooms the whole page when a focused field is under 16px. By pointer,
+   not width, as Liquid Textile decides it: an iPad zooms too, and a narrow
+   desktop window does not. .lt-field has the floor already; this keeps it
+   for the few fields that are not one (the finder, the document editors),
+   and is forced because their styles are scoped. */
 @media (pointer: coarse) {
-  :root {
-    --btn-sm-pad-y: 0.45rem;
-    --btn-sm-pad-x: 0.85rem;
-    --btn-sm-font: 0.85rem;
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
   }
 }
 
@@ -381,16 +376,6 @@ button:disabled {
      row from whatever sits beside it (the event-source form's URL field
      was left 26px wide). A row holding a select wraps on a phone, and its
      select sets width: auto. CSS cannot tell the two apart from here. */
-
-  /* iOS zooms the whole page when a focused field is under 16px. Component
-     styles are scoped (higher specificity than a bare element selector), so
-     the floor has to be forced — otherwise tapping the search bar, which sets
-     its own 0.88rem, jolts the layout. */
-  input,
-  textarea,
-  select {
-    font-size: 16px !important;
-  }
 
   /* The top of a workspace page on a phone (the admin panel, a patch's
      workspace). Three insets stacked there, each reasonable alone: the

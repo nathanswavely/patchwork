@@ -107,6 +107,7 @@
     color: var(--color-text-muted);
     cursor: pointer;
     white-space: nowrap;
+    min-height: var(--lt-target);
   }
 
   .segmented button:last-child {
@@ -122,11 +123,5 @@
     background: var(--color-accent);
     color: var(--color-bg);
     font-weight: 600;
-  }
-
-  @media (pointer: coarse) {
-    .segmented button {
-      min-height: 40px;
-    }
   }
 </style>

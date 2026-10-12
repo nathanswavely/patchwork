@@ -348,6 +348,7 @@
     border-radius: var(--radius);
     cursor: pointer;
     transition: background 120ms ease;
+    min-height: var(--lt-target);
   }
 
   .standing-mark {
@@ -379,7 +380,8 @@
   }
 
   .standing-menu button {
-    display: block;
+    display: flex;
+    align-items: center;
     width: 100%;
     padding: 0.4rem 0.6rem;
     font-size: 0.85rem;
@@ -390,21 +392,10 @@
     border: none;
     border-radius: calc(var(--radius) - 2px);
     cursor: pointer;
+    min-height: var(--lt-target);
   }
 
   .standing-menu button:hover {
     background: var(--color-overlay);
-  }
-
-  @media (pointer: coarse) {
-    .standing {
-      min-height: 40px;
-    }
-
-    .standing-menu button {
-      display: flex;
-      align-items: center;
-      min-height: 44px;
-    }
   }
 </style>

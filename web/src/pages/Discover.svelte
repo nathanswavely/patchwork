@@ -786,7 +786,7 @@
     color: var(--color-primary);
   }
 
-  @media (min-width: 640px) {
+  @media (min-width: 641px) {
     .tag-grid {
       grid-template-columns: repeat(3, 1fr);
     }

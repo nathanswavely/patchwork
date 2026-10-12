@@ -205,6 +205,7 @@
     padding: 0.2rem 0.6rem;
     border-radius: 999px;
     cursor: pointer;
+    min-height: var(--lt-target);
   }
   .tab-btn.active { color: var(--color-text); border-color: var(--color-primary); }
   .report-list { list-style: none; padding: 0; margin: 0; }
@@ -217,6 +218,6 @@
   .resolve-form { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem; max-width: 30rem; }
 
   @media (pointer: coarse) {
-    .tab-btn { min-height: 36px; padding: 0 0.8rem; }
+    .tab-btn { padding: 0 0.8rem; }
   }
 </style>
