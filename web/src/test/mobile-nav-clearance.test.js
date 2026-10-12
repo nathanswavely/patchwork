@@ -13,16 +13,20 @@ function source(relPath) {
 // `:global(body) .social-main` — and the body-prefixed one won on
 // specificity, so a phone with no intro card up (anyone signed in) reserved
 // 12px for a 51px bar and the page ran underneath it. One token, declared
-// once, consumed everywhere.
+// once, consumed everywhere: Liquid Textile's --lt-chrome-bottom, set by
+// the bar that is on the page.
 describe('mobile bottom nav clearance', () => {
   const css = () => source('app.css');
   const shell = () => source('components/SocialShell.svelte');
 
-  it('declares the bar footprint as one token, zero above the breakpoint', () => {
-    // 0px above the breakpoint is what lets every consumer write
-    // `calc(var(--pw-nav-h) + <gap>)` with no media query of its own.
-    expect(css()).toMatch(/--pw-nav-h:\s*0px/);
-    expect(css()).toMatch(/--pw-nav-h:\s*calc\(51px \+ env\(safe-area-inset-bottom, 0px\)\)/);
+  it('declares the bar footprint as one token, zero where there is no bar', () => {
+    // 0px where nothing sits at the foot is what lets every consumer write
+    // `calc(var(--lt-chrome-bottom) + <gap>)` with no media query of its own.
+    expect(source('vendor/liquid-textile/foundation.css')).toMatch(/--lt-chrome-bottom:\s*0px/);
+    expect(source('vendor/liquid-textile/foundation.css')).toMatch(/--lt-tabbar-h:\s*51px/);
+    // The rail sets it while it is on the page; the workspace's .lt-tabbar sets its own.
+    expect(css()).toMatch(/html:has\(\.sidebar-rail\) \{\s*--lt-chrome-bottom: calc\(var\(--lt-tabbar-h\) \+ env\(safe-area-inset-bottom, 0px\)\);/);
+    expect(css()).not.toContain('--pw-nav-h');
   });
 
   it('shares the shell breakpoint for that token', () => {
@@ -34,7 +38,7 @@ describe('mobile bottom nav clearance', () => {
   it('gives the bar the height the token reserves for it', () => {
     // Otherwise 51px is a guess about a box whose contents could change.
     const src = shell();
-    expect(src).toContain('height: var(--pw-nav-h)');
+    expect(src).toContain('height: var(--lt-chrome-bottom)');
     expect(src).toContain('box-sizing: border-box');
   });
 
@@ -42,7 +46,7 @@ describe('mobile bottom nav clearance', () => {
     const src = shell();
     const bottoms = src.match(/^\s*padding-bottom:.*$/gm) || [];
     expect(bottoms).toHaveLength(1);
-    expect(bottoms[0]).toContain('var(--pw-nav-h)');
+    expect(bottoms[0]).toContain('var(--lt-chrome-bottom)');
     // max(), not a sum: the intro card publishes its footprint measured from
     // the viewport bottom, so its number already contains the bar's.
     expect(bottoms[0]).toContain('max(');

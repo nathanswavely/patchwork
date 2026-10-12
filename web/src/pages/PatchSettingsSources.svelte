@@ -4,9 +4,7 @@
   import { formatEventTime, reinterpretUTCAsLocal } from '../lib/datetime.js';
   import { showToast } from '../stores/toast.svelte.js';
   import ConfirmAction from '../components/ConfirmAction.svelte';
-  import { isNarrow } from '../stores/viewport.svelte.js';
-
-  let narrow = $derived(isNarrow());
+  import { ltFold } from '../lib/lt.js';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -331,7 +329,7 @@
   <h2>Event Sources</h2>
   <!-- On a phone this 52-word explanation sat above the only control on
        the page, so it folds there. Open, and unlabelled, on a wide screen. -->
-  <details class="intro-fold" open={!narrow}>
+  <details class="lt-fold intro-fold" use:ltFold>
     <summary>What works?</summary>
     <p class="lt-muted subtitle">
       Calendar feeds this patch pulls events from. Paste an ICS address (a
@@ -854,9 +852,8 @@
     cursor: pointer;
   }
 
-  @media (min-width: 641px) {
-    .intro-fold > summary {
-      display: none;
-    }
+  /* Held open on a wide screen (ltFold), where the words are just there. */
+  .intro-fold:global([data-held]) > summary {
+    display: none;
   }
 </style>

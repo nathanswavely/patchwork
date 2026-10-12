@@ -11,7 +11,7 @@
  *
  *   <button use:ltConfirm={{ onConfirm, confirmLabel, tone }}>
  */
-import { confirmAction, dialog, menu, segmented, tabs } from '../vendor/liquid-textile/behaviors.js';
+import { confirmAction, dialog, fold, inlineEdit, menu, segmented, tabs } from '../vendor/liquid-textile/behaviors.js';
 
 export { media, viewport, toast } from '../vendor/liquid-textile/behaviors.js';
 
@@ -114,12 +114,54 @@ export function ltSegmented(group, opts) {
  * data-overflow, which fades an edge with more tabs beyond it.
  *
  *   <div class="lt-tabs" role="tablist" use:ltTabs={{ onSelect }}>
+ *
+ * A row of links that stays on screen while the route changes passes
+ * `current` (the tab it is on), so the new current tab is brought into
+ * view as it would be on arriving.
  */
 export function ltTabs(row, opts = {}) {
   let current = opts;
-  const handle = tabs(row, { onSelect: (t) => current.onSelect?.(t) });
+  const make = () => tabs(row, { onSelect: (t) => current.onSelect?.(t) });
+  let handle = make();
   return {
-    update(next) { current = next || {}; },
+    update(next) {
+      const moved = (next || {}).current !== current.current;
+      current = next || {};
+      // After the flush, once aria-current has moved.
+      if (moved) queueMicrotask(() => { handle.destroy(); handle = make(); });
+    },
+    destroy() { handle.destroy(); },
+  };
+}
+
+/**
+ * A <details class="lt-fold"> held open at and above 641px, where nothing
+ * folds, and folded below it (fold()). Its summary does nothing while held.
+ *
+ *   <details class="lt-fold" use:ltFold>
+ */
+export const ltFold = action((details, opts) => fold(details, opts));
+
+/**
+ * A value edited where it stands (inlineEdit()): the root holds a
+ * [data-edit] button and a [data-value] element. The page owns the value:
+ * a new `value` shows, and after a save the view shows the page's value,
+ * not what was typed, so an edit the page turned away leaves it as it was.
+ *
+ *   <div class="lt-inline-edit" use:ltInlineEdit={{ value, onSave, onError, words }}>
+ */
+export function ltInlineEdit(root, opts) {
+  let current = opts;
+  const handle = inlineEdit(root, {
+    ...opts,
+    onSave: async (v) => { await current.onSave?.(v); return current.value; },
+    onError: (err) => current.onError?.(err),
+  });
+  return {
+    update(next) {
+      current = next;
+      if (next.value !== handle.value) handle.value = next.value;
+    },
     destroy() { handle.destroy(); },
   };
 }

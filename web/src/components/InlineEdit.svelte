@@ -1,4 +1,12 @@
 <script>
+  /**
+   * A value edited where it stands: Liquid Textile's inline edit
+   * (ltInlineEdit in lib/lt.js). Edit puts focus in the field and Save or
+   * Cancel hands it back to Edit; Enter saves a line, Mod+Enter a textarea,
+   * Escape cancels. The page owns the value: what shows after a save is
+   * the page's, so an edit it turned away leaves the old value.
+   */
+  import { ltInlineEdit } from '../lib/lt.js';
   import { showToast } from '../stores/toast.svelte.js';
 
   let {
@@ -7,166 +15,33 @@
     type = 'text', // 'text' | 'textarea' | 'select'
     options = [],   // for select: [{ value, label }]
     onSave = async () => {},
-    disabled = false,
     placeholder = '',
   } = $props();
 
-  let editing = $state(false);
-  let editValue = $state('');
-  let saving = $state(false);
-
-  function startEdit() {
-    editValue = value || '';
-    editing = true;
-  }
-
-  function cancelEdit() {
-    editing = false;
-  }
-
-  async function handleSave() {
-    if (editValue === value) {
-      editing = false;
-      return;
-    }
-    saving = true;
-    try {
-      await onSave(editValue);
-      editing = false;
-    } catch (e) {
-      showToast(e.message || 'Failed to save', 'error');
-    } finally {
-      saving = false;
-    }
-  }
-
-  function handleKeydown(e) {
-    if (e.key === 'Escape') cancelEdit();
-    if (e.key === 'Enter' && type === 'text') handleSave();
-  }
+  // Every word the edit shows is Patchwork's, written here where the copy
+  // ledger reads it rather than left to Liquid Textile's defaults.
+  const words = { save: 'Save', cancel: 'Cancel', saving: 'Saving...' };
+  const empty = 'Not set';
+  const onError = (e) => showToast(e.message || 'Failed to save', 'error');
 </script>
 
-<div class="inline-edit">
-  <div class="inline-edit-header">
-    <span class="inline-edit-label">{label}</span>
-    {#if !editing && !disabled}
-      <button class="edit-btn" onclick={startEdit}>Edit</button>
-    {/if}
+<div
+  class="lt-inline-edit"
+  use:ltInlineEdit={{
+    value,
+    type,
+    options,
+    label,
+    placeholder,
+    onSave,
+    onError,
+    empty,
+    words,
+  }}
+>
+  <div class="lt-inline-edit-head">
+    <span class="lt-eyebrow">{label}</span>
+    <button type="button" class="lt-btn-link" data-edit>Edit</button>
   </div>
-
-  {#if editing}
-    <div class="inline-edit-form">
-      {#if type === 'textarea'}
-        <textarea
-          class="lt-field inline-input"
-          bind:value={editValue}
-          onkeydown={handleKeydown}
-          rows="3"
-          {placeholder}
-        ></textarea>
-      {:else if type === 'select'}
-        <select class="lt-field inline-input" bind:value={editValue}>
-          {#each options as opt}
-            <option value={opt.value}>{opt.label}</option>
-          {/each}
-        </select>
-      {:else}
-        <input
-          class="lt-field inline-input"
-          type="text"
-          bind:value={editValue}
-          onkeydown={handleKeydown}
-          {placeholder}
-        />
-      {/if}
-      <div class="lt-actions inline-edit-actions">
-        <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={handleSave} disabled={saving}>
-          {saving ? 'Saving...' : 'Save'}
-        </button>
-        <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={cancelEdit} disabled={saving}>
-          Cancel
-        </button>
-      </div>
-    </div>
-  {:else}
-    <div class="inline-edit-value">
-      {#if value}
-        {#if type === 'select'}
-          {options.find(o => o.value === value)?.label || value}
-        {:else}
-          {value}
-        {/if}
-      {:else}
-        <span class="lt-muted">Not set</span>
-      {/if}
-    </div>
-  {/if}
+  <div data-value></div>
 </div>
-
-<style>
-  .inline-edit {
-    padding: 0.6rem 0;
-  }
-
-  .inline-edit + .inline-edit {
-    border-top: 1px solid var(--color-border);
-  }
-
-  .inline-edit-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.3rem;
-  }
-
-  .inline-edit-label {
-    font-size: 0.78rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--color-text-muted);
-  }
-
-  .edit-btn {
-    border: none;
-    background: none;
-    font-size: 0.78rem;
-    color: var(--color-primary);
-    cursor: pointer;
-    padding: 0.15rem 0.4rem;
-    border-radius: 4px;
-    transition: background 100ms ease;
-    min-height: var(--lt-target);
-  }
-
-  .edit-btn:hover {
-    background: var(--color-overlay);
-  }
-
-  .inline-edit-value {
-    font-size: 0.9rem;
-    line-height: 1.5;
-    color: var(--color-text);
-  }
-
-  .inline-edit-form {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .inline-input {
-    width: 100%;
-  }
-
-
-  textarea.inline-input {
-    min-height: 60px;
-  }
-
-  @media (pointer: coarse) {
-    .edit-btn {
-      padding: 0 0.75rem;
-    }
-  }
-</style>

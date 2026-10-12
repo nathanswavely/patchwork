@@ -7,11 +7,12 @@
    * permission-gated tabs, non-members get Join/Follow in the right
    * cluster.
    *
-   * On a narrow screen the tabs are a bottom bar, where the quilt's own
-   * rail sits at that width, so a phone's navigation is at the foot of the
-   * screen everywhere. workspaceTabs never returns more than five, which is
-   * what makes a bar of fixed slots possible. A single tab is no choice at
-   * all and gets no bar. The relationship cluster stays at the top.
+   * On a narrow screen the tabs are a bottom bar (Liquid Textile's
+   * .lt-tabbar), where the quilt's own rail sits at that width, so a
+   * phone's navigation is at the foot of the screen everywhere.
+   * workspaceTabs never returns more than five, which is what makes a bar
+   * of fixed slots possible. A single tab is no choice at all and gets no
+   * bar. The relationship cluster stays at the top.
    */
   import { setContext } from 'svelte';
   import { api } from '../lib/api.js';
@@ -20,6 +21,7 @@
   import { setPatchName } from '../stores/patchName.svelte.js';
   import { workspaceFinderProvider } from '../lib/finderProviders.js';
   import { workspaceTabs } from '../lib/patchWorkspace.js';
+  import { ltTabs } from '../lib/lt.js';
   import GlobalBar from './GlobalBar.svelte';
   import ContextCrumb from './ContextCrumb.svelte';
   import WorkspaceSearch from './WorkspaceSearch.svelte';
@@ -209,55 +211,6 @@
     e.preventDefault();
     navigate(href);
   }
-
-  // The tab strip scrolls sideways on a narrow screen with its scrollbar
-  // deliberately switched off, and nothing else said the row continued. A
-  // member on a 390px phone: "I can see 'Governance' and 'Members' and then
-  // the row runs off the side of the screen. There are apparently Events and
-  // Noticeboard tabs too — I only know because I found them by other routes.
-  // I never once thought to swipe that row sideways." She had been on the
-  // site a year without knowing the patch had a noticeboard.
-  //
-  // Two things, because she was missing two. A fade on whichever side has
-  // more tabs behind it, which is the "half-cut-off word peeking out" she
-  // asked for in as many words. And the active tab scrolled into view, so
-  // arriving at a tab that lives off the edge shows you where you are
-  // instead of leaving the strip parked at the start.
-  let tabStrip = $state(null);
-  let moreLeft = $state(false);
-  let moreRight = $state(false);
-
-  function measureTabs() {
-    const el = tabStrip;
-    if (!el) return;
-    // A pixel of slack: scrollWidth and clientWidth differ by fractions at
-    // some zoom levels on a strip that does not actually overflow, and a
-    // fade over nothing is its own small lie.
-    moreLeft = el.scrollLeft > 1;
-    moreRight = el.scrollLeft + el.clientWidth < el.scrollWidth - 1;
-  }
-
-  $effect(() => {
-    const el = tabStrip;
-    if (!el) return;
-    measureTabs();
-    const ro = new ResizeObserver(measureTabs);
-    ro.observe(el);
-    return () => ro.disconnect();
-  });
-
-  // Bring the current tab into view when it is off the edge. Reads activeTab
-  // so it re-runs on navigation.
-  $effect(() => {
-    const el = tabStrip;
-    const current = activeTab;
-    if (!el || !current) return;
-    const tab = el.querySelector('.workspace-tab.active');
-    if (tab?.scrollIntoView) {
-      tab.scrollIntoView({ inline: 'nearest', block: 'nearest' });
-    }
-    measureTabs();
-  });
 </script>
 
 <div class="workspace">
@@ -322,20 +275,22 @@
   {:else if node}
     <!-- Workspace nav: tabs + relationship cluster, directly under the bar -->
     <div class="workspace-nav">
+      <!-- Liquid Textile's tab row (ltTabs), which fades an edge with more
+           tabs past it and brings the current one into view: a member of a
+           year never found the Noticeboard tab off the edge of a phone
+           (f2660b9). At or below 768px, two or more tabs are its tab bar. -->
       <nav
-        class="workspace-tabs"
+        class="lt-tabs workspace-tabs"
+        class:lt-tabbar={tabs.length >= 2}
         class:single={tabs.length < 2}
-        class:more-left={moreLeft}
-        class:more-right={moreRight}
-        bind:this={tabStrip}
-        onscroll={measureTabs}
+        use:ltTabs={{ current: activeTab }}
       >
         {#each tabs as tab (tab.id)}
           {@const Icon = tab.icon}
           <a
             href={tab.href}
-            class="workspace-tab"
-            class:active={activeTab === tab.id}
+            class="lt-tab workspace-tab"
+            aria-current={activeTab === tab.id ? 'page' : undefined}
             onclick={(e) => handleTabClick(e, tab.href)}
           >
             <span class="tab-icon"><Icon size={16} weight="duotone" /></span>
@@ -415,63 +370,9 @@
     border-bottom: 1px solid var(--color-border);
   }
 
+  /* Liquid Textile's tab row (ltTabs); the nav under it draws the rule. */
   .workspace-tabs {
-    display: flex;
-    align-items: stretch;
-    gap: 4px;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .workspace-tabs::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* The edge says the row continues. A mask rather than an overlaid
-     gradient, so it works on any background and needs no element of its
-     own; the sides are set independently because the row can be cut at
-     either end once it has been scrolled. */
-  .workspace-tabs.more-right {
-    mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent 100%);
-  }
-
-  .workspace-tabs.more-left {
-    mask-image: linear-gradient(to right, transparent 0, #000 28px);
-  }
-
-  .workspace-tabs.more-left.more-right {
-    mask-image: linear-gradient(
-      to right,
-      transparent 0,
-      #000 28px,
-      #000 calc(100% - 28px),
-      transparent 100%
-    );
-  }
-
-  .workspace-tab {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 12px 12px;
-    font-size: 0.88rem;
-    font-weight: 500;
-    color: var(--color-text-muted);
-    text-decoration: none;
-    white-space: nowrap;
-    border-bottom: 2px solid transparent;
-    transition: color 120ms ease;
-  }
-
-  .workspace-tab:hover {
-    color: var(--color-text);
-    text-decoration: none;
-  }
-
-  .workspace-tab.active {
-    color: var(--color-text);
-    font-weight: 600;
-    border-bottom-color: var(--color-accent);
+    border-bottom: 0;
   }
 
   .tab-icon {
@@ -480,16 +381,17 @@
     color: var(--color-text-muted);
   }
 
-  .workspace-tab.active .tab-icon {
+  .workspace-tab[aria-current="page"] .tab-icon {
     color: var(--color-accent);
   }
 
   /* --- Narrow screen: the tabs become a bottom bar ---
-     The same footprint and glass as SocialShell's mobile rail. Its height
-     is app.css's --pw-nav-h, which everything else ending at the foot of
-     the screen (toasts, the vote bar) already clears. The row the tabs
-     leave keeps only the relationship cluster, and stops being sticky:
-     a Join button does not need to follow you down the page. */
+     Liquid Textile's .lt-tabbar: the same footprint and glass as
+     SocialShell's mobile rail, and while it is on the page it sets
+     --lt-chrome-bottom, which everything else ending at the foot of the
+     screen (toasts, the vote bar) clears. The row the tabs leave keeps
+     only the relationship cluster, and stops being sticky: a Join button
+     does not need to follow you down the page. */
   /* The phone's patch bar (PatchBarMenu); a wide screen has the crumb. */
   .patch-bar-slot {
     display: none;
@@ -509,43 +411,8 @@
       padding-top: 0.25rem;
     }
 
-    .workspace-tabs {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 55;
-      height: var(--pw-nav-h);
-      box-sizing: border-box;
-      padding: 4px 4px env(safe-area-inset-bottom, 0px);
-      gap: 0;
-      overflow: visible;
-      background: var(--color-glass);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-top: 1px solid var(--color-border);
-    }
-
-    .workspace-tabs.more-left,
-    .workspace-tabs.more-right,
-    .workspace-tabs.more-left.more-right {
-      mask-image: none;
-    }
-
     .workspace-tabs.single {
       display: none;
-    }
-
-    .workspace-tab {
-      flex: 1 1 0;
-      min-width: 0;
-      flex-direction: column;
-      justify-content: center;
-      gap: 2px;
-      padding: 2px 4px;
-      font-size: 0.68rem;
-      border-bottom: none;
-      border-radius: var(--radius);
     }
 
     .workspace-tab .tab-icon :global(svg) {
@@ -559,16 +426,12 @@
       text-overflow: ellipsis;
     }
 
-    .workspace-tab.active {
-      color: var(--color-primary);
-    }
-
-    .workspace-tab.active .tab-icon {
+    .workspace-tab[aria-current="page"] .tab-icon {
       color: var(--color-primary);
     }
 
     .workspace-body.over-tab-bar {
-      padding-bottom: calc(var(--pw-nav-h) + 2rem);
+      padding-bottom: calc(var(--lt-chrome-bottom) + 2rem);
     }
   }
 

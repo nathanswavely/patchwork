@@ -79,11 +79,10 @@
 <style>
   /* Liquid Textile's action bar: fixed to the foot, surface, top edge,
      shadow, the slide-up and its reduced-motion opt-out. It sits on
-     --lt-chrome-bottom, which here is Patchwork's tab bar, the patch
-     workspace's or the quilt's (--pw-nav-h is 0px where there is none).
-     Above the rail and the global bar, as it always was. */
+     --lt-chrome-bottom, which is Patchwork's tab bar, the patch
+     workspace's or the quilt's (0px where there is none). Above the rail
+     and the global bar, as it always was. */
   .sticky-vote-bar {
-    --lt-chrome-bottom: var(--pw-nav-h);
     z-index: 100;
   }
 

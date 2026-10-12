@@ -4,14 +4,10 @@
   import { showToast } from '../stores/toast.svelte.js';
   import { navigate } from '../stores/router.svelte.js';
   import { withStepUp, stepUpStatus, PasskeyRequiredError } from '../lib/stepUp.js';
-  import { isNarrow } from '../stores/viewport.svelte.js';
+  import { ltFold } from '../lib/lt.js';
   import PasskeyNotice from '../components/PasskeyNotice.svelte';
 
 
-  // On a phone the four rare sections (moving, the two exports, deleting
-  // the account) fold to their headings. Open, their explanations ran the
-  // page past four screens for things done once, if ever.
-  let narrow = $derived(isNarrow());
   let user = $derived(getUser());
   let displayName = $state('');
   // Personal discovery filter (docs/adr/037).
@@ -476,8 +472,12 @@
       </form>
     </section>
 
+    <!-- On a phone the four rare sections (moving, the two exports, deleting
+         the account) fold to their headings (ltFold). Open, their
+         explanations ran the page past four screens for things done once,
+         if ever. -->
     <section class="lt-section">
-      <details class="pw-fold" open={!narrow}>
+      <details class="lt-fold" use:ltFold>
         <summary><h2>I have moved</h2></summary>
       <p class="lt-muted profile-hint">
         Point your profile at wherever you are now. Your page here keeps
@@ -683,7 +683,7 @@
            and I'd have had a file with one person in it." So each heading
            now says whose data it is, and each paragraph ends by naming the
            other one (F-103). The fold around it is the phone pass's. -->
-      <details class="pw-fold" open={!narrow}>
+      <details class="lt-fold" use:ltFold>
         <summary><h2>Your own data</h2></summary>
       <p class="lt-muted profile-hint">
         One file with everything this quilt holds about you: your profile and
@@ -712,7 +712,7 @@
            is doing none." Plain words first, the product's own word beside
            them so somebody told to "take a seamrip" still finds it. The
            fold around it is the phone pass's. -->
-      <details class="pw-fold" open={!narrow}>
+      <details class="lt-fold" use:ltFold>
         <summary><h2>A copy of this quilt (seamrip)</h2></summary>
       <p class="lt-muted profile-hint">
         A copy of this quilt as you can see it, in the format a new Patchwork
@@ -782,7 +782,7 @@
 
     <!-- ===== Danger zone (docs/adr/086) ===== -->
     <section class="lt-section">
-      <details class="pw-fold" open={!narrow}>
+      <details class="lt-fold" use:ltFold>
         <summary><h2 class="danger-heading">Danger Zone</h2></summary>
       <div class="lt-banner lt-tone-error danger-card">
         <h3>Delete your account</h3>
@@ -1044,56 +1044,5 @@
     flex-direction: column;
     gap: 0.5rem;
     padding-top: 0.25rem;
-  }
-
-  /* A folded section's heading is its summary: the whole line is the
-     target, with a caret saying it opens. Open on a wide screen, where
-     nothing folds. */
-  .pw-fold > summary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    min-height: 44px;
-    cursor: pointer;
-    list-style: none;
-  }
-
-  .pw-fold > summary::-webkit-details-marker {
-    display: none;
-  }
-
-  .pw-fold > summary h2 {
-    margin: 0;
-  }
-
-  .pw-fold > summary::after {
-    content: '';
-    width: 0.5rem;
-    height: 0.5rem;
-    border-right: 2px solid var(--color-text-muted);
-    border-bottom: 2px solid var(--color-text-muted);
-    transform: rotate(45deg);
-    margin-right: 0.35rem;
-    transition: transform 150ms ease;
-  }
-
-  .pw-fold[open] > summary::after {
-    transform: rotate(-135deg);
-  }
-
-  .pw-fold[open] > summary {
-    margin-bottom: 0.5rem;
-  }
-
-  @media (min-width: 641px) {
-    .pw-fold > summary {
-      pointer-events: none;
-      cursor: default;
-    }
-
-    .pw-fold > summary::after {
-      display: none;
-    }
   }
 </style>

@@ -762,15 +762,21 @@ export function confirmAction(button, {
  *     onSave: async (v) => api.save(v),                 // throw to stay open
  *     onError: (err) => toast(err.message, { tone: 'error' }),
  *     empty: 'Not set', label: 'Name',                  // label names the field
+ *     placeholder: 'e.g. Lancaster, PA',
  *     words: { save: 'Save', cancel: 'Cancel', saving: 'Saving…' },
  *   })
  *
- * Returns { edit, cancel, get value }.
+ * The value shown after a save is what was typed, unless onSave resolves
+ * to something else: the value as the app stored it, or the old one when
+ * it turned the edit away without an error. An app that owns the value
+ * sets it on the handle when it changes elsewhere.
+ *
+ * Returns { edit, cancel, value (get and set), destroy }.
  */
 export function inlineEdit(root, {
   value = '', type = 'text', options = [], onSave = () => {},
   onError = (err) => toast(err?.message || 'Could not save', { tone: 'error' }),
-  empty = 'Not set', label, words = {},
+  empty = 'Not set', label, placeholder, words = {},
 } = {}) {
   const say = { save: 'Save', cancel: 'Cancel', saving: 'Saving…', ...words };
   const editBtn = root.querySelector('[data-edit]');
@@ -793,6 +799,7 @@ export function inlineEdit(root, {
   }
   field.className = 'lt-field';
   if (label) field.setAttribute('aria-label', label);
+  if (placeholder && type !== 'select') field.placeholder = placeholder;
   const actions = document.createElement('div');
   actions.className = 'lt-actions';
   const save = document.createElement('button');
@@ -828,6 +835,7 @@ export function inlineEdit(root, {
     if (type !== 'select') field.select();
   }
   function cancel() {
+    show();
     form.hidden = true;
     view.hidden = false;
     editBtn.hidden = false;
@@ -840,9 +848,8 @@ export function inlineEdit(root, {
     save.disabled = cancelBtn.disabled = true;
     save.textContent = say.saving;
     try {
-      await onSave(next);
-      current = next;
-      show();
+      const kept = await onSave(next);
+      current = kept === undefined ? next : kept;
       cancel();
     } catch (err) {
       onError(err);
@@ -861,7 +868,20 @@ export function inlineEdit(root, {
   });
   show();
 
-  return { edit, cancel, get value() { return current; } };
+  return {
+    edit,
+    cancel,
+    get value() { return current; },
+    // A new value shows at once, or when an open edit closes without a save.
+    set value(v) { current = v; if (form.hidden) show(); },
+    // The form and its listeners go with it.
+    destroy() {
+      editBtn.removeEventListener('click', edit);
+      form.remove();
+      view.hidden = false;
+      editBtn.hidden = false;
+    },
+  };
 }
 
 // ------------------------------------------------------------------- fold ---

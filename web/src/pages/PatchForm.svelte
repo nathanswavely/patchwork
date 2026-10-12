@@ -15,9 +15,7 @@
   import { PALETTES, PALETTE_KEYS, paletteForPatch } from '../lib/quiltTheme.js';
   import { BLOCKS, getBlockIndex, getRotation } from '../lib/quiltBlocks.js';
   import { templateMembershipPolicy } from '../lib/governanceTemplates.js';
-  import { isNarrow } from '../stores/viewport.svelte.js';
-
-  let narrow = $derived(isNarrow());
+  import { ltFold } from '../lib/lt.js';
 
   // Patch setup (docs/adr/039) reuses this exact form: a claim is creation
   // with prepopulated fields, not a handoff. mode='setup' prepopulates
@@ -500,7 +498,7 @@
              Patch Settings; on a phone, with the fabric wall and blocks, they
              were a screen and a half of a form that is only asking who this
              patch is. Folded there, open and unlabelled on a wide screen. -->
-        <details class="appearance-fold" open={!narrow}>
+        <details class="lt-fold appearance-fold" use:ltFold>
           <summary>Appearance (optional)</summary>
           <div class="field">
             <label class="lt-label">Tile</label>
@@ -1125,9 +1123,8 @@
     cursor: pointer;
   }
 
-  @media (min-width: 641px) {
-    .appearance-fold > summary {
-      display: none;
-    }
+  /* Held open on a wide screen (ltFold), where the words are just there. */
+  .appearance-fold:global([data-held]) > summary {
+    display: none;
   }
 </style>
