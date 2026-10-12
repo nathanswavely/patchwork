@@ -220,94 +220,13 @@
   --color-badge-outline: rgba(0, 0, 0, 0.6);
 }
 
+/* The margin reset. Liquid Textile's base.css (element defaults: html,
+   links, headings, bare fields, focus rings, the phone's overflow clip)
+   does not reset margins, and every page here is drawn against it. */
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
   margin: 0;
-}
-
-html {
-  font-family: var(--font);
-  color: var(--color-text);
-  background: var(--color-bg);
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-}
-
-body {
-  min-height: 100vh;
-  /* Kill the double-tap-to-zoom delay/jump — a double tap on the quilt or a
-     mistimed tap on a control shouldn't scale the UI. Pinch zoom stays. */
-  touch-action: manipulation;
-}
-
-a {
-  color: var(--color-primary);
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-h1, h2, h3, h4 {
-  line-height: 1.25;
-}
-
-/* Big headings carry the hand-lettered brand voice; smaller headings and
-   everything else stay in the grotesque for readability. */
-h1, h2 {
-  font-family: var(--font-display);
-  font-variation-settings: 'BNCE' 20;
-}
-
-input, textarea, select, button {
-  font-family: inherit;
-  font-size: inherit;
-  /* Buttons don't inherit color by default — without this, any button
-     missing an explicit color renders the UA's black ButtonText, which
-     vanishes in dark mode. */
-  color: inherit;
-}
-
-/* A fallback for a field nothing else draws. Every form field is
-   Liquid Textile's .lt-field now, so this sits at zero specificity and
-   .lt-field's padding (and data-density="compact") wins over it. */
-:where(
-  input[type="text"],
-  input[type="email"],
-  input[type="url"],
-  input[type="number"],
-  input[type="search"],
-  input[type="datetime-local"],
-  input[type="date"],
-  textarea,
-  select
-) {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  background: var(--color-surface);
-  color: var(--color-text);
-  transition: border-color 150ms ease;
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 1px;
-  border-color: var(--color-primary);
-}
-
-button {
-  cursor: pointer;
-}
-
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 .container {
@@ -341,51 +260,28 @@ button:disabled {
 }
 
 @media (max-width: 640px) {
-  /* clip, not hidden: overflow-x: hidden makes body a scroll container
-     that never scrolls, and every position: sticky below it then sticks to
-     that instead of the viewport, which is to say never. hidden stays as
-     the fallback for a browser without clip. */
-  html {
-    overflow-x: hidden;
-    overflow-x: clip;
-  }
-
-  body {
-    overflow-x: hidden;
-    overflow-x: clip;
-  }
-
-  input[type="text"],
-  input[type="email"],
-  input[type="url"],
-  input[type="number"],
-  input[type="search"],
-  input[type="datetime-local"],
-  input[type="date"],
-  textarea,
-  select {
+  /* On a phone a field fills its line. This is right for a field stacked
+     in a form and wrong for one in a flex row: a full-width select is a
+     100% flex basis, and it takes the row from whatever sits beside it
+     (the event-source form's URL field was left 26px wide). A row holding
+     a select wraps on a phone, and its select sets width: auto. CSS cannot
+     tell the two apart from here. Thirty-odd rows of a field and a button
+     lean on it to let the field shrink beside the button; each would need
+     flex: 1 and min-width: 0 of its own before this could go. */
+  .lt-field {
     width: 100%;
     max-width: 100%;
   }
-  /* This is right for a field stacked in a form and wrong for one in a
-     flex row: a full-width select is a 100% flex basis, and it takes the
-     row from whatever sits beside it (the event-source form's URL field
-     was left 26px wide). A row holding a select wraps on a phone, and its
-     select sets width: auto. CSS cannot tell the two apart from here. */
 
   /* The top of a workspace page on a phone (the admin panel, a patch's
      workspace). Three insets stacked there, each reasonable alone: the
      content area's 1.5rem, every page header's own 1.5rem, and a 2em
-     display-font h1, so the first control landed a third of the way down
-     the screen. The shells' up links take the first line; the heading
+     display-font h1 (base.css now eases it to 1.6rem), so the first
+     control landed a third of the way down the screen. The shells' up links take the first line; the heading
      follows it closely. The patch workspace tightens further in PatchShell,
      where the up link shares the cluster's row. */
   .workspace-body.work-content {
     padding-top: 0.75rem;
-  }
-
-  .workspace-body h1 {
-    font-size: 1.6rem;
   }
 
   .workspace-body.work-content .page-header {

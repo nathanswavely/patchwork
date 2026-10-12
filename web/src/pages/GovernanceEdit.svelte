@@ -197,10 +197,6 @@ Violations may result in a warning, temporary suspension, or removal from the co
 </div>
 
 <style>
-  h1 {
-    margin-bottom: 0.25rem;
-  }
-
   form {
     display: flex;
     flex-direction: column;

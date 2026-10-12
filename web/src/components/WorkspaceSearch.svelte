@@ -332,6 +332,8 @@
   .finder-input {
     flex: 1;
     min-width: 0;
+    /* The pill is the target; base.css's field minimum would stretch it. */
+    min-height: 0;
     border: none;
     background: none;
     padding: 0;

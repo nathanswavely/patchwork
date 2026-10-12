@@ -168,9 +168,10 @@ describe('pickers a finger can use', () => {
 
 describe('sticky works on a phone', () => {
   it('clips sideways overflow without making body a scroll container', () => {
-    const css = source('app.css');
-    expect(css).toMatch(/body \{\s*overflow-x: hidden;\s*overflow-x: clip;/);
-    expect(css).toMatch(/html \{\s*overflow-x: hidden;\s*overflow-x: clip;/);
+    // Liquid Textile's base.css, which main.js loads (f7aaf0c's lesson).
+    const css = source('vendor/liquid-textile/base.css');
+    expect(css).toMatch(/@media \(max-width: 640px\) \{[\s\S]*:where\(html, body\) \{ overflow-x: hidden; overflow-x: clip; \}/);
+    expect(source('main.js')).toContain("import './vendor/liquid-textile/base.css';");
   });
 });
 

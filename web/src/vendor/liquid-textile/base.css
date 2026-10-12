@@ -1,0 +1,96 @@
+/**
+ * Liquid Textile — Base
+ *
+ * Element defaults for an app that wants the foundation's look without
+ * putting a class on every input. Opt-in: index.css does not import it,
+ * because a library should not restyle a page behind its back.
+ *
+ * Every selector is wrapped in :where(), which has zero specificity, so
+ * any rule an app writes, even a bare element selector, wins.
+ */
+
+:where(*, *::before, *::after) { box-sizing: border-box; }
+
+:where(html) {
+  font-family: var(--lt-font);
+  color: var(--lt-color-text);
+  background: var(--lt-color-bg);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+
+:where(body) {
+  margin: 0;
+  /* No double-tap-to-zoom jump on a mistimed tap. Pinch zoom stays. */
+  touch-action: manipulation;
+}
+
+:where(a) { color: var(--lt-color-primary); text-decoration: none; }
+:where(a:hover) { text-decoration: underline; }
+
+:where(h1, h2, h3, h4) { line-height: 1.25; }
+/* Big headings carry the hand-lettered voice; h3 and smaller stay in the
+   grotesque with everything else (see the type rule in foundation.css). */
+:where(h1, h2) {
+  font-family: var(--lt-font-display);
+  font-variation-settings: 'BNCE' var(--lt-bounce, 20);
+}
+/* A display-face h1 at the browser's 2em pushes the first control a third
+   of the way down a phone (Patchwork, 2026-09-28). It eases from 2rem on a
+   wide screen to 1.6rem on a narrow one, with no breakpoint. */
+:where(h1) { font-size: clamp(1.6rem, 1.35rem + 1.2vw, 2rem); }
+
+/* Form controls inherit the page's type and color. Without color: inherit,
+   a button renders the browser's black ButtonText, which vanishes in dark. */
+:where(input, textarea, select, button) {
+  font: inherit;
+  color: inherit;
+}
+:where(button) { cursor: pointer; }
+:where(button:disabled) { cursor: not-allowed; opacity: 0.5; }
+
+:where(
+  input[type="text"], input[type="email"], input[type="url"], input[type="number"],
+  input[type="search"], input[type="password"], input[type="date"],
+  input[type="datetime-local"], textarea, select
+) {
+  min-height: var(--lt-target, 24px);
+  padding: var(--lt-field-pad-y, 0.45rem) var(--lt-field-pad-x, 0.7rem);
+  border: 1px solid var(--lt-color-border);
+  border-radius: var(--lt-radius-control);
+  background: var(--lt-color-surface);
+  color: var(--lt-color-text);
+  font-size: var(--lt-field-font, 1rem);
+  font-weight: 400;
+  transition: border-color var(--lt-quick) ease;
+}
+:where(input, textarea, select):focus-visible {
+  outline: 2px solid var(--lt-color-primary);
+  outline-offset: 1px;
+}
+:where(input[type="checkbox"], input[type="radio"]) {
+  accent-color: var(--lt-color-primary);
+}
+
+/* One focus ring for everything a keyboard can reach. */
+:where(button, a, [tabindex]):focus-visible {
+  outline: 2px solid var(--lt-color-primary);
+  outline-offset: 2px;
+}
+
+:where(code, kbd, samp, pre) { font-family: var(--lt-font-mono); }
+
+@media (pointer: coarse) {
+  /* iOS zooms the page when a focused field is under 16px. By pointer, not
+     width: an iPad zooms too, and a narrow desktop window does not. */
+  :where(input, textarea, select) { font-size: 16px; }
+}
+
+@media (max-width: 640px) {
+  /* One element wider than a phone should not let the whole page slide
+     sideways. clip, not hidden: overflow-x: hidden makes the root a
+     scroll container that never scrolls, and then no position: sticky
+     works (Patchwork, f7aaf0c). hidden stays as the fallback. */
+  :where(html, body) { overflow-x: hidden; overflow-x: clip; }
+}

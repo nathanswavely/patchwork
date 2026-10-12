@@ -11,14 +11,14 @@
 # web/src/main.js are the only lines that move.
 #
 # FILES is what Patchwork imports, nothing more. behaviors.js joined with
-# step 4b (viewport, through web/src/lib/lt.js); base.css joins when a
-# migration step starts using it.
+# step 4b (viewport, through web/src/lib/lt.js), base.css with step 7
+# (the element defaults app.css used to write).
 set -euo pipefail
 
 src="${1:?usage: scripts/sync-lt.sh <path-to-liquid-textile>}"
 here="$(cd "$(dirname "$0")/.." && pwd)"
 dest="$here/web/src/vendor/liquid-textile"
-FILES=(foundation.css liquid-textile.css patterns.css textures.css behaviors.js LICENSE)
+FILES=(foundation.css base.css liquid-textile.css patterns.css textures.css behaviors.js LICENSE)
 
 for f in "${FILES[@]}"; do
   [ -f "$src/$f" ] || { echo "sync-lt: $src/$f not found" >&2; exit 1; }
