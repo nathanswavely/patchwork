@@ -313,8 +313,8 @@
       <section class="patch-section">
         <h3 class="section-heading">Claiming</h3>
         {#each myClaims as c (c.id)}
-          <div class="patch-row">
-            <div class="patch-info">
+          <div class="lt-item patch-row">
+            <div class="lt-item-main patch-info">
               <a href="/patches/{c.node_slug}" class="patch-name" onclick={(e) => { e.preventDefault(); navigate(`/patches/${c.node_slug}`); }}>
                 {c.node_name || c.node_slug}
               </a>
@@ -338,7 +338,7 @@
                 {/if}
               </span>
             </div>
-            <div class="patch-actions">
+            <div class="lt-item-actions patch-actions">
               {#if c.status === 'approved'}
                 <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={() => navigate(`/patches/${c.node_slug}/setup`)}>Set up patch</button>
               {:else}
@@ -358,8 +358,8 @@
           instance admin's to do.
         </p>
         {#each archivedPatches as m (m.node_slug)}
-          <div class="patch-row">
-            <div class="patch-info">
+          <div class="lt-item patch-row">
+            <div class="lt-item-main patch-info">
               <!-- No link. Every slug route refuses an archived patch, so
                    one here would be a door onto the refusal this section
                    exists to explain. -->
@@ -393,15 +393,15 @@
         <h3 class="section-heading">Managing</h3>
         {#each adminPatches as m (m.node_slug)}
           <div class="patch-entry">
-            <div class="patch-row">
-              <div class="patch-info">
+            <div class="lt-item patch-row">
+              <div class="lt-item-main patch-info">
                 <a href="/patches/{m.node_slug}" class="patch-name" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}`); }}>
                   {m.node_name || m.node_slug}
                 </a>
                 <span class="lt-pill">admin</span>
                 <span class="lt-muted joined-date">{formatDate(m.joined_at)}</span>
               </div>
-              <div class="patch-actions">
+              <div class="lt-item-actions patch-actions">
                 {@render visibilityToggle(m)}
                 {@render contactToggle(m)}
               </div>
@@ -417,15 +417,15 @@
         <h3 class="section-heading">Member of</h3>
         {#each memberPatches as m (m.node_slug)}
           <div class="patch-entry">
-            <div class="patch-row">
-              <div class="patch-info">
+            <div class="lt-item patch-row">
+              <div class="lt-item-main patch-info">
                 <a href="/patches/{m.node_slug}" class="patch-name" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}`); }}>
                   {m.node_name || m.node_slug}
                 </a>
                 <span class="lt-pill">member</span>
                 <span class="lt-muted joined-date">{formatDate(m.joined_at)}</span>
               </div>
-              <div class="patch-actions">
+              <div class="lt-item-actions patch-actions">
                 {@render visibilityToggle(m)}
                 {@render contactToggle(m)}
                 <ConfirmAction label="Leave" variant="warning" onConfirm={() => handleLeave(m)} />
@@ -441,8 +441,8 @@
       <section class="patch-section">
         <h3 class="section-heading">Requested</h3>
         {#each pendingPatches as m (m.node_slug)}
-          <div class="patch-row">
-            <div class="patch-info">
+          <div class="lt-item patch-row">
+            <div class="lt-item-main patch-info">
               <a href="/patches/{m.node_slug}" class="patch-name" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}`); }}>
                 {m.node_name || m.node_slug}
               </a>
@@ -451,7 +451,7 @@
             </div>
             <!-- No contact control: a pending request is not standing in the
                  room yet, so there is nothing to share into (docs/adr/083). -->
-            <div class="patch-actions">
+            <div class="lt-item-actions patch-actions">
               <ConfirmAction label="Withdraw" variant="default" onConfirm={() => handleLeave(m)} />
             </div>
           </div>
@@ -465,8 +465,8 @@
         {#each followerPatches as m (m.node_slug)}
           {@const rung = rungFor(m)}
           {@const note = stateNote(m)}
-          <div class="patch-row">
-            <div class="patch-info">
+          <div class="lt-item patch-row">
+            <div class="lt-item-main patch-info">
               <a href="/patches/{m.node_slug}" class="patch-name" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}`); }}>
                 {m.node_name || m.node_slug}
               </a>
@@ -476,7 +476,7 @@
               {/if}
               <span class="lt-muted joined-date">{formatDate(m.joined_at)}</span>
             </div>
-            <div class="patch-actions">
+            <div class="lt-item-actions patch-actions">
               {#if rung}
                 <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={() => { joinTarget = m; }} disabled={joining}>{rung}</button>
               {/if}
@@ -522,21 +522,14 @@
     margin-bottom: 0.5rem;
   }
 
-  .patch-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.6rem 0;
-    border-bottom: 1px solid var(--color-border);
-    gap: 0.75rem;
-  }
-
+  /* A row is Liquid Textile's .lt-item: the name keeps 14rem and the
+     controls wrap under it when they cannot sit beside it. Side by side
+     they never shrank, so the name went to nothing and a Leave button
+     acted on a row nobody could identify. */
   .patch-info {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    min-width: 0;
-    flex: 1;
     /* The badges and dates beside the name never wrap, so on a phone they
        took the whole line and squeezed the name itself to nothing: every
        row on this page read as a row of chips belonging to no patch.
@@ -574,13 +567,6 @@
 
   .joined-date {
     font-size: 0.75rem;
-    flex-shrink: 0;
-  }
-
-  .patch-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
     flex-shrink: 0;
   }
 
@@ -622,11 +608,8 @@
   /* One patch and, when open, the picker for what it can reach you by
      (docs/adr/083). The picker sits under its row rather than in a dialog:
      the decision is about this patch, so it stays attached to it. */
-  .patch-entry {
-    border-bottom: 1px solid var(--color-border);
-  }
-  .patch-entry .patch-row {
-    border-bottom: none;
+  .patch-entry + .patch-entry {
+    border-top: 1px solid var(--color-border);
   }
   .contact-picker {
     padding: 0 0 0.75rem 0;
@@ -662,34 +645,21 @@
     gap: 0.4rem;
   }
 
-  /* A phone: the patch's name on its own line, the controls on the next.
-     Side by side, the controls never shrank, so the name went to nothing
-     and a Leave button acted on a row nobody could identify. The joined
-     date is the first thing to give up its room. */
+  /* A phone, where the controls are always on the line under the name:
+     the joined date is the first thing to give up its room, and the one
+     act that ends the relationship (Leave, or its confirm) sits apart
+     from the two that tune it. */
   @media (max-width: 640px) {
-    .patch-row {
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    .patch-info {
-      flex: 1 1 100%;
-    }
-
     .joined-date {
       display: none;
     }
 
     .patch-actions {
-      flex: 1 1 100%;
-      flex-wrap: wrap;
-      gap: 0.5rem;
+      flex-grow: 1;
     }
 
-    /* The one act that ends the relationship sits apart from the two
-       that tune it. */
-    .patch-actions > :global(.btn-warning),
-    .patch-actions > :global(.confirm-group) {
+    .patch-actions > :global(.lt-btn-warning),
+    .patch-actions > :global(.lt-confirm) {
       margin-left: auto;
     }
   }

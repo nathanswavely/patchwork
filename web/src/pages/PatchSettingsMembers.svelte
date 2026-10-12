@@ -335,13 +335,13 @@
     {:else}
       <ul class="member-list">
         {#each pendingMembers as member (member.user_id)}
-          <li class="member-row pending-row">
-            <div class="member-row-main">
-              <div class="member-info">
+          <li class="pending-row">
+            <div class="lt-item member-row-main">
+              <div class="lt-item-main member-info">
                 <span class="member-name">{member.display_name || member.username}</span>
                 <span class="lt-pill lt-tone-warning">pending</span>
               </div>
-              <div class="member-actions">
+              <div class="lt-item-actions member-actions">
                 <ConfirmAction
                   label="Approve"
                   confirmLabel="Approve"
@@ -393,12 +393,12 @@
       <h4 class="subheading">Invited</h4>
       <ul class="member-list">
         {#each invited as person (person.user_id)}
-          <li class="member-row">
-            <div class="member-info">
+          <li class="lt-item member-row">
+            <div class="lt-item-main member-info">
               <span class="member-name">{person.display_name || person.username}</span>
               <span class="lt-pill lt-tone-muted">invited</span>
             </div>
-            <div class="member-actions">
+            <div class="lt-item-actions member-actions">
               <ConfirmAction
                 label="Rescind"
                 confirmLabel="Rescind"
@@ -435,12 +435,12 @@
     {:else}
       <ul class="member-list">
         {#each members as member (member.user_id)}
-          <li class="member-row">
-            <div class="member-info">
+          <li class="lt-item member-row">
+            <div class="lt-item-main member-info">
               <span class="member-name">{member.display_name || member.username}</span>
               <span class="lt-pill">{member.role}</span>
             </div>
-            <div class="member-actions">
+            <div class="lt-item-actions member-actions">
               <select
                 data-density="compact" class="lt-field role-select"
                 value={roleEdits[member.user_id] ?? member.role}
@@ -488,11 +488,11 @@
     {:else}
       <ul class="member-list">
         {#each followers as follower (follower.user_id)}
-          <li class="member-row">
-            <div class="member-info">
+          <li class="lt-item member-row">
+            <div class="lt-item-main member-info">
               <span class="member-name">{follower.display_name || follower.username}</span>
             </div>
-            <div class="member-actions">
+            <div class="lt-item-actions member-actions">
               <ConfirmAction
                 label="Remove"
                 confirmLabel="Remove"
@@ -524,12 +524,12 @@
         {:else}
           <ul class="member-list">
             {#each bannedMembers as member (member.user_id)}
-              <li class="member-row">
-                <div class="member-info">
+              <li class="lt-item member-row">
+                <div class="lt-item-main member-info">
                   <span class="member-name">{member.display_name || member.username}</span>
                   <span class="lt-pill lt-tone-error">removed</span>
                 </div>
-                <div class="member-actions">
+                <div class="lt-item-actions member-actions">
                   <ConfirmAction
                     label="Reinstate"
                     confirmLabel="Reinstate"
@@ -579,29 +579,22 @@
     margin: 0;
   }
 
-  .member-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.6rem 0;
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .member-row:last-child {
-    border-bottom: none;
-  }
-
+  /* A row is Liquid Textile's .lt-item: the name keeps 14rem and the
+     actions wrap under it when they cannot sit beside it, by the row's own
+     width. A pending request is the row with its join note under it. */
   .pending-row {
+    display: flex;
     flex-direction: column;
-    align-items: stretch;
     gap: 0.4rem;
+    padding: 0.6rem 0;
+  }
+
+  .pending-row + .pending-row {
+    border-top: 1px solid var(--color-border);
   }
 
   .member-row-main {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
+    padding: 0;
   }
 
   .join-message {
@@ -622,13 +615,6 @@
   .member-name {
     font-weight: 500;
     font-size: 0.9rem;
-  }
-
-  .member-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-shrink: 0;
   }
 
   .council-note {
@@ -674,30 +660,8 @@
     margin-left: 0.25rem;
   }
 
-  /* A phone: the name gets its own line and the controls the one below.
-     Side by side, the controls never shrink, so a Save or a Remove
-     confirm appearing squeezed the name to nothing and the role select
-     slid over it. */
-  @media (max-width: 640px) {
-    .member-row,
-    .member-row-main {
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    .member-info {
-      flex: 1 1 100%;
-    }
-
-    .member-actions {
-      flex: 1 1 100%;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-    }
-
-    .role-select {
-      width: auto;
-      flex: 1 1 8rem;
-    }
+  /* Among the actions, not filling a phone's line as a lone field does. */
+  .role-select {
+    width: auto;
   }
 </style>

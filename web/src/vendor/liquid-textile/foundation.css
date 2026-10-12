@@ -1569,6 +1569,10 @@ html:has(.lt-dialog:modal, .lt-drawer:modal, .lt-sheet:modal) { overflow: hidden
    box); a definite width gives the browser the real one. */
 .lt-table-wrap:has(> .lt-table-stack) { container-type: inline-size; width: 100%; }
 @container (max-width: 40rem) {
+  /* .lt-table.lt-table-stack, not :where(): the table's own .lt-table td
+     (padding, a rule under every cell, a 22rem cap) and its nowrap for a
+     cell holding a control would otherwise win, and every cell drew a
+     line. */
   .lt-table-stack { min-width: 0; }
   .lt-table-stack.lt-table-pin :is(th, td):first-child { position: static; background: none; box-shadow: none; }
   .lt-table-stack :where(thead) {
@@ -1579,18 +1583,20 @@ html:has(.lt-dialog:modal, .lt-drawer:modal, .lt-sheet:modal) { overflow: hidden
     clip: rect(0 0 0 0);
     white-space: nowrap;
   }
-  .lt-table-stack :where(tbody, tr, td) { display: block; }
+  .lt-table-stack :where(tbody, tr) { display: block; }
   .lt-table-stack :where(tr) { padding: 0.6rem 0; border-bottom: 1px solid var(--lt-color-border); }
-  .lt-table-stack :where(td) {
+  .lt-table.lt-table-stack td {
     display: grid;
     grid-template-columns: minmax(6rem, 35%) minmax(0, 1fr);
     gap: 0.75rem;
+    /* A tag or a button keeps its own width, not the column's. */
+    justify-items: start;
     max-width: none;
     padding: 0.2rem 0;
     border: 0;
     white-space: normal;
   }
-  .lt-table-stack :where(td)::before {
+  .lt-table.lt-table-stack td::before {
     content: attr(data-label);
     color: var(--lt-color-text-muted);
     font-size: var(--lt-text-xs);
@@ -1599,8 +1605,8 @@ html:has(.lt-dialog:modal, .lt-drawer:modal, .lt-sheet:modal) { overflow: hidden
     text-transform: uppercase;
   }
   /* A cell with no label holds actions: they keep their own width. */
-  .lt-table-stack :where(td:not([data-label])) { grid-template-columns: minmax(0, 1fr); justify-items: start; }
-  .lt-table-stack :where(td:not([data-label]))::before { display: none; }
+  .lt-table.lt-table-stack td:not([data-label]) { grid-template-columns: minmax(0, 1fr); }
+  .lt-table.lt-table-stack td:not([data-label])::before { display: none; }
 }
 
 /* ================================================================

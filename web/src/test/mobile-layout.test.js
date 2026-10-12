@@ -22,10 +22,15 @@ describe('the shell owns the gutter', () => {
 
 describe('a row wraps rather than squeezing its name', () => {
   const cases = [
-    ['pages/PatchSettingsMembers.svelte', '.member-info {\n      flex: 1 1 100%;'],
-    ['pages/UserSettingsPatches.svelte', '.patch-info {\n      flex: 1 1 100%;'],
-    ['pages/EventDetail.svelte', '.detail-header h1 {\n    flex: 1 1 14rem;'],
-    ['pages/SecuritySettings.svelte', '.cred-info {\n    flex: 1 1 12rem;'],
+    // Liquid Textile's .lt-item: the name keeps 14rem (.lt-item-main) and
+    // the actions wrap under it, by the row's own width.
+    ['pages/PatchSettingsMembers.svelte', '<li class="lt-item member-row">'],
+    ['pages/PatchSettingsMembers.svelte', '<div class="lt-item-main member-info">'],
+    ['pages/UserSettingsPatches.svelte', '<div class="lt-item patch-row">'],
+    ['pages/UserSettingsPatches.svelte', '<div class="lt-item-main patch-info">'],
+    ['pages/EventDetail.svelte', '<h1 class="lt-item-main">{event.title}</h1>'],
+    ['pages/SecuritySettings.svelte', '<div class="lt-item-main cred-info">'],
+    ['vendor/liquid-textile/foundation.css', '.lt-item-main { flex: 1 1 14rem; min-width: 0; }'],
     // Liquid Textile's .lt-setting: its words take flex 1 1 14rem, and the
     // control wraps under them.
     ['pages/PatchSettingsNoticeboard.svelte', '<div class="lt-setting">'],
@@ -126,7 +131,10 @@ describe('admin tables have a phone form', () => {
 
   it('the audit log reads as a list on a phone and names a target by the tail of its id', () => {
     const src = source('pages/AdminAuditLog.svelte');
-    expect(src).toContain('<ul class="entry-list">');
+    // Liquid Textile's stacked table: under 40rem each row reads top to
+    // bottom, a label beside each value.
+    expect(src).toContain('<table class="lt-table lt-table-stack">');
+    expect(src).toContain('<td data-label="Details">');
     expect(src).toContain('entry.entity_id.slice(-8)');
     expect(src).not.toContain('entity_id?.substring(0, 8)');
   });

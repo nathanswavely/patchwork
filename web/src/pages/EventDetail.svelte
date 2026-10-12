@@ -152,10 +152,10 @@
       </div>
     {/if}
 
-    <div class="detail-header">
-      <h1>{event.title}</h1>
+    <div class="lt-item detail-header">
+      <h1 class="lt-item-main">{event.title}</h1>
       {#if canEdit || (imported && canManage)}
-        <div class="header-actions">
+        <div class="lt-item-actions header-actions">
           {#if canEdit}
             <a
               href="/events/{event.id}/edit"
@@ -303,24 +303,21 @@
     color: var(--color-primary);
   }
 
+  /* Liquid Textile's .lt-item: the title keeps a readable measure, and
+     when it and the actions do not fit on one line (a phone, or a Delete
+     confirm opening) the actions wrap below it. Side by side they never
+     shrank, so the confirm crushed the title to 69px and pushed Cancel off
+     the screen. A heading, not a list row: no padding of its own. */
   .detail-header {
-    display: flex;
     align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
+    gap: 0.5rem 1rem;
+    padding: 0;
   }
 
   .detail-header h1 {
     font-size: 1.5rem;
     font-weight: 700;
     margin-bottom: 0.25rem;
-  }
-
-  .header-actions {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    flex-shrink: 0;
   }
 
   .calendar-actions {
@@ -427,22 +424,5 @@
     height: auto;
     border-radius: var(--radius);
     margin: 1rem 0;
-  }
-
-  /* The title keeps a readable measure: when it and the actions do not
-     fit on one line (a phone, or a Delete confirm opening), the actions
-     wrap below it. Side by side they never shrank, so the confirm crushed
-     the title to 69px and pushed Cancel off the screen. */
-  .detail-header {
-    flex-wrap: wrap;
-  }
-
-  .detail-header h1 {
-    flex: 1 1 14rem;
-    min-width: 0;
-  }
-
-  .header-actions {
-    flex-wrap: wrap;
   }
 </style>

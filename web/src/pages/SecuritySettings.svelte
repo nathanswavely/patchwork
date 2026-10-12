@@ -298,7 +298,7 @@
     {:else}
       <ul class="cred-list">
         {#each credentials as cred (cred.id)}
-          <li>
+          <li class="lt-item">
             {#if renamingId === cred.id}
               <form
                 class="rename-form"
@@ -322,7 +322,7 @@
                 </button>
               </form>
             {:else}
-              <div class="cred-info">
+              <div class="lt-item-main cred-info">
                 <span class="cred-name">{cred.name || 'Passkey'}</span>
                 {#if cred.created_at}
                   <small class="lt-muted">
@@ -330,7 +330,7 @@
                   </small>
                 {/if}
               </div>
-              <div class="cred-actions">
+              <div class="lt-item-actions cred-actions">
                 <button class="lt-btn lt-btn-ghost" onclick={() => startRename(cred)}>
                   Rename
                 </button>
@@ -525,18 +525,9 @@
     padding: 0;
   }
 
-  .cred-list li {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .cred-list li:last-child {
-    border-bottom: none;
-  }
-
+  /* Each passkey is Liquid Textile's .lt-item: when the name and its
+     actions do not fit on one line (a phone, or a Revoke confirm opening),
+     the actions wrap under the name instead of squeezing it. */
   .cred-info {
     display: flex;
     flex-direction: column;
@@ -545,12 +536,6 @@
 
   .cred-name {
     font-weight: 500;
-  }
-
-  .cred-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
   }
 
   .session-list {
@@ -687,18 +672,5 @@
     align-items: center;
     gap: 0.5rem;
     flex-wrap: wrap;
-  }
-
-  /* When the name and its actions do not fit on one line (a phone, or a
-     Revoke confirm opening), the actions wrap under the name instead of
-     squeezing it. */
-  .cred-list li {
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .cred-info {
-    flex: 1 1 12rem;
-    min-width: 0;
   }
 </style>
