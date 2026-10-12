@@ -159,7 +159,10 @@ describe("two heights on a phone, none in the pane's slot", () => {
     expect(headSrc).toMatch(/\.profile-head\.docked \.profile-cover \{\s*margin: 0 calc\(-1 \* var\(--pw-gutter\)\)/);
     // At rest the sheet ends at the row, so its standing menu opens upward
     // — the sheet's rule, since the panel has room below.
-    expect(dock()).toMatch(/\.dock\.sheet \.dock-head :global\(\.standing-menu\) \{\s*top: auto;\s*bottom:/);
+    // menu() flips the standing menu above its button when there is no
+    // room below, as at rest in the sheet; the dock no longer does it by hand.
+    expect(dock()).not.toContain(':global(.standing-menu)');
+    expect(source('vendor/liquid-textile/behaviors.js')).toMatch(/bottom: 'calc\(100% \+ 4px\)'/);
     // The head ends at its row (no bottom margin), so the rule under it
     // would sit on the buttons unless each container sets the gap.
     expect(headSrc).toMatch(/\.profile-actions \{\s*display: flex;\s*justify-content: center;\s*\}/);

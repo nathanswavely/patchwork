@@ -16,6 +16,7 @@
   import { isLoggedIn } from '../stores/auth.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
   import JoinSheet from './JoinSheet.svelte';
+  import { ltMenu } from '../lib/lt.js';
   import { CaretDown, Heart, UsersThree, Wrench } from 'phosphor-svelte';
 
   let {
@@ -33,7 +34,7 @@
 
   let joining = $state(false);
   let joinSheetOpen = $state(false);
-  let menuOpen = $state(false);
+  let menuEl = $state(null);
 
   /**
    * Standing reads from the membership row and never from is_admin: an
@@ -97,10 +98,6 @@
 
   let btnSize = $derived(size === 'sm' ? 'lt-btn-sm' : '');
 
-  function handleWindowClick(e) {
-    if (menuOpen && !e.target.closest('.standing-container')) menuOpen = false;
-  }
-
   function openJoinSheet() {
     if (!isLoggedIn()) { navigate('/login'); return; }
     joinSheetOpen = true;
@@ -142,7 +139,6 @@
   // (memberships.go, WithdrawMembershipRequest). It sits in the same menu
   // as the exits for the same reason they do — one deliberate step.
   async function handleWithdraw() {
-    menuOpen = false;
     joining = true;
     try {
       await api(`nodes/${slug}/withdraw`, { method: 'POST' });
@@ -193,7 +189,6 @@
   // message it returns is the one worth showing.
   async function handleLeave() {
     const wasFollower = membershipRole === 'follower';
-    menuOpen = false;
     joining = true;
     try {
       await api(`nodes/${slug}/leave`, { method: 'POST' });
@@ -207,8 +202,6 @@
   }
 </script>
 
-<svelte:window onclick={handleWindowClick} />
-
 <div class="relationship-row">
   {#if isBanned}
     <span class="banned-notice">Removed from this community</span>
@@ -219,10 +212,8 @@
         <button
           class="standing"
           class:sm={size === 'sm'}
-          onclick={() => { menuOpen = !menuOpen; }}
           disabled={joining}
-          aria-haspopup="menu"
-          aria-expanded={menuOpen}
+          use:ltMenu={{ list: menuEl }}
         >
           <!-- The role mark is decoration beside the word; phosphor renders
                role="img" with no name, which leaves the button unnamed to a
@@ -231,11 +222,9 @@
           <span>{standing.label}</span>
           <span class="standing-mark" aria-hidden="true"><CaretDown size={11} weight="bold" /></span>
         </button>
-        {#if menuOpen}
-          <div class="standing-menu" role="menu">
-            <button role="menuitem" onclick={handleLeave} disabled={joining}>{standing.exit}</button>
-          </div>
-        {/if}
+        <div class="lt-popover lt-menu standing-menu" bind:this={menuEl}>
+          <button class="lt-menu-item" onclick={handleLeave} disabled={joining}>{standing.exit}</button>
+        </div>
       </div>
     {:else if awaiting}
       <!-- Same shape as a standing control, and for the same reason: what
@@ -246,19 +235,15 @@
         <button
           class="standing awaiting"
           class:sm={size === 'sm'}
-          onclick={() => { menuOpen = !menuOpen; }}
           disabled={joining}
-          aria-haspopup="menu"
-          aria-expanded={menuOpen}
+          use:ltMenu={{ list: menuEl }}
         >
           <span>Membership requested</span>
           <span class="standing-mark" aria-hidden="true"><CaretDown size={11} weight="bold" /></span>
         </button>
-        {#if menuOpen}
-          <div class="standing-menu" role="menu">
-            <button role="menuitem" onclick={handleWithdraw} disabled={joining}>Withdraw request</button>
-          </div>
-        {/if}
+        <div class="lt-popover lt-menu standing-menu" bind:this={menuEl}>
+          <button class="lt-menu-item" onclick={handleWithdraw} disabled={joining}>Withdraw request</button>
+        </div>
       </div>
     {:else if invitedHere}
       <!-- Waiting on this person, not on an admin: both answers in the
@@ -331,8 +316,11 @@
   }
 
   /* --- Standing control: the resting form of where you stand --- */
+  /* Liquid Textile's menu (ltMenu), which flips above the button when
+     there is no room below (the docked sheet at rest). */
   .standing-container {
     position: relative;
+    --lt-z-menu: 60;
   }
 
   .standing {
@@ -364,38 +352,5 @@
 
   .standing:hover {
     background: var(--color-border);
-  }
-
-  .standing-menu {
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0;
-    min-width: 100%;
-    z-index: 60;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
-    padding: 0.25rem;
-  }
-
-  .standing-menu button {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    padding: 0.4rem 0.6rem;
-    font-size: 0.85rem;
-    text-align: left;
-    white-space: nowrap;
-    color: var(--color-text);
-    background: none;
-    border: none;
-    border-radius: calc(var(--radius) - 2px);
-    cursor: pointer;
-    min-height: var(--lt-target);
-  }
-
-  .standing-menu button:hover {
-    background: var(--color-overlay);
   }
 </style>

@@ -19,6 +19,7 @@
   import { isLoggedIn, isAdmin as isGlobalAdmin, getUser, logout } from '../stores/auth.svelte.js';
   import { Plus, Sliders } from 'phosphor-svelte';
   import DisplayMenu from './DisplayMenu.svelte';
+  import { ltMenu } from '../lib/lt.js';
   import NotificationBell from './NotificationBell.svelte';
   import SidePanel from './SidePanel.svelte';
   import NotifIcon from './NotifIcon.svelte';
@@ -34,7 +35,7 @@
   let { glass = false, bordered = false, shelfBell = false, patchContext = false, leading, search } = $props();
 
   let userMenuOpen = $state(false);
-  let newMenuOpen = $state(false);
+  let newMenuEl = $state(null);
   let displayMenuOpen = $state(false);
 
   // Notification panel state
@@ -99,7 +100,6 @@
   $effect(() => {
     void path;
     userMenuOpen = false;
-    newMenuOpen = false;
     displayMenuOpen = false;
   });
 
@@ -117,9 +117,6 @@
   function handleWindowClick(e) {
     if (userMenuOpen && !e.target.closest('.user-menu-container')) {
       userMenuOpen = false;
-    }
-    if (newMenuOpen && !e.target.closest('.new-menu-container')) {
-      newMenuOpen = false;
     }
   }
 </script>
@@ -140,21 +137,16 @@
       <div class="new-menu-container">
         <button
           class="bar-new-btn"
-          class:open={newMenuOpen}
-          onclick={() => { newMenuOpen = !newMenuOpen; }}
           aria-label="Create new"
-          aria-haspopup="menu"
-          aria-expanded={newMenuOpen}
+          use:ltMenu={{ list: newMenuEl, align: 'end' }}
         >
           <Plus size={16} weight="bold" />
           <span class="bar-new-label">New</span>
         </button>
-        {#if newMenuOpen}
-          <div class="new-dropdown" role="menu">
-            <a href="/patches/new" role="menuitem" onclick={(e) => { handleNav(e, '/patches/new'); newMenuOpen = false; }}>New patch</a>
-            <a href="/events/new" role="menuitem" onclick={(e) => { handleNav(e, '/events/new'); newMenuOpen = false; }}>New event</a>
-          </div>
-        {/if}
+        <div class="lt-popover lt-menu new-dropdown" bind:this={newMenuEl}>
+          <a href="/patches/new" class="lt-menu-item" onclick={(e) => handleNav(e, '/patches/new')}>New patch</a>
+          <a href="/events/new" class="lt-menu-item" onclick={(e) => handleNav(e, '/events/new')}>New event</a>
+        </div>
       </div>
       <div class="bar-bell" class:shelf-bell={shelfBell}>
         <NotificationBell onOpen={handleBellOpen} />
@@ -174,23 +166,23 @@
           </div>
         </button>
         {#if userMenuOpen}
-          <div class="user-dropdown">
+          <div class="lt-popover user-dropdown">
             <div class="user-dropdown-name">
               {getUser()?.display_name || getUser()?.username}
               {#if isGlobalAdmin()}
                 <span class="user-dropdown-role">Instance admin</span>
               {/if}
             </div>
-            <a href="/users/{getUser()?.username}" onclick={(e) => { handleNav(e, `/users/${getUser()?.username}`); userMenuOpen = false; }}>Your profile</a>
-            <a href="/settings" onclick={(e) => { handleNav(e, '/settings'); userMenuOpen = false; }}>Settings</a>
-            <a href="/label" onclick={(e) => { handleNav(e, '/label'); userMenuOpen = false; }}>The Label</a>
+            <a class="lt-menu-item" href="/users/{getUser()?.username}" onclick={(e) => { handleNav(e, `/users/${getUser()?.username}`); userMenuOpen = false; }}>Your profile</a>
+            <a class="lt-menu-item" href="/settings" onclick={(e) => { handleNav(e, '/settings'); userMenuOpen = false; }}>Settings</a>
+            <a class="lt-menu-item" href="/label" onclick={(e) => { handleNav(e, '/label'); userMenuOpen = false; }}>The Label</a>
             {#if isGlobalAdmin()}
-              <a href="/admin" onclick={(e) => { handleNav(e, '/admin'); userMenuOpen = false; }}>Admin</a>
+              <a class="lt-menu-item" href="/admin" onclick={(e) => { handleNav(e, '/admin'); userMenuOpen = false; }}>Admin</a>
             {/if}
-            <div class="dropdown-divider"></div>
+            <div class="lt-menu-divider"></div>
             <DisplayMenu />
-            <div class="dropdown-divider"></div>
-            <button onclick={handleLogout}>Log Out</button>
+            <div class="lt-menu-divider"></div>
+            <button class="lt-menu-item" onclick={handleLogout}>Log Out</button>
           </div>
         {/if}
       </div>
@@ -215,7 +207,7 @@
           <Sliders size={18} />
         </button>
         {#if displayMenuOpen}
-          <div class="user-dropdown display-dropdown" role="menu">
+          <div class="lt-popover user-dropdown display-dropdown">
             <DisplayMenu />
           </div>
         {/if}
@@ -319,7 +311,7 @@
   }
 
   .top-bar.quilt-mode .bar-new-btn:hover,
-  .top-bar.quilt-mode .bar-new-btn.open,
+  .top-bar.quilt-mode .bar-new-btn:global([aria-expanded="true"]),
   .top-bar.quilt-mode .bar-login:hover {
     background: color-mix(in srgb, var(--color-bg) 80%, transparent);
   }
@@ -398,8 +390,10 @@
   }
 
   /* --- + New button --- */
+  /* Liquid Textile's menu (ltMenu); the list is the popover below. */
   .new-menu-container {
     position: relative;
+    --lt-z-menu: 200;
   }
 
   .bar-new-btn {
@@ -419,7 +413,7 @@
   }
 
   .bar-new-btn:hover,
-  .bar-new-btn.open {
+  .bar-new-btn:global([aria-expanded="true"]) {
     color: var(--color-text);
     background: var(--color-overlay);
   }
@@ -433,38 +427,6 @@
     .bar-new-btn {
       padding: 0.4rem;
     }
-  }
-
-  .new-dropdown {
-    position: absolute;
-    top: calc(100% + 6px);
-    right: 0;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    box-shadow: 0 4px 16px var(--color-shadow);
-    min-width: 160px;
-    z-index: 200;
-    overflow: hidden;
-    padding: 4px;
-  }
-
-  .new-dropdown a {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    padding: 0.5rem 0.75rem;
-    text-align: left;
-    font-size: 0.85rem;
-    color: var(--color-text);
-    text-decoration: none;
-    border-radius: 4px;
-    min-height: var(--lt-target);
-  }
-
-  .new-dropdown a:hover {
-    background: var(--color-overlay);
-    text-decoration: none;
   }
 
   .user-menu-container {
@@ -507,10 +469,6 @@
     position: absolute;
     top: calc(100% + 6px);
     right: 0;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    box-shadow: 0 4px 16px var(--color-shadow);
     min-width: 180px;
     z-index: 200;
     overflow: hidden;
@@ -534,35 +492,6 @@
     font-size: 0.72rem;
     font-weight: 500;
     color: var(--color-accent);
-  }
-
-  .user-dropdown a,
-  .user-dropdown button {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    padding: 0.5rem 0.75rem;
-    text-align: left;
-    font-size: 0.85rem;
-    color: var(--color-text);
-    text-decoration: none;
-    border: none;
-    background: none;
-    cursor: pointer;
-    border-radius: 4px;
-    min-height: var(--lt-target);
-  }
-
-  .user-dropdown a:hover,
-  .user-dropdown button:hover {
-    background: var(--color-overlay);
-    text-decoration: none;
-  }
-
-  .dropdown-divider {
-    height: 1px;
-    background: var(--color-border);
-    margin: 0.25rem 0;
   }
 
   /* ================================================================
