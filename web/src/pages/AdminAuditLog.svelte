@@ -2,9 +2,6 @@
   import { api } from '../lib/api.js';
   import Skeleton from '../components/Skeleton.svelte';
   import ErrorState from '../components/ErrorState.svelte';
-  import { isNarrow } from '../stores/viewport.svelte.js';
-
-  let narrow = $derived(isNarrow());
 
   let entries = $state([]);
   let loading = $state(true);
@@ -157,33 +154,12 @@
     <ErrorState message={error} retry={() => loadEntries()} />
   {:else if entries.length === 0}
     <p class="lt-muted" style="text-align: center; padding: 2rem 0;">No audit entries found.</p>
-  {:else if narrow}
-    <!-- A phone: one entry per row, read top to bottom. As a table the
-         details button sat 660px to the right, off the screen. -->
-    <ul class="entry-list">
-      {#each entries as entry (entry.id)}
-        <li class="entry">
-          <div class="entry-head">
-            <span class="lt-tag">{entry.action}</span>
-            <span class="lt-muted entry-time">{formatTimestamp(entry.created_at)}</span>
-          </div>
-          <div class="entry-meta">
-            <span>{entry.display_name || entry.username || entry.user_id || '--'}</span>
-            <span class="lt-muted">{formatTarget(entry)}</span>
-          </div>
-          {@render details(entry)}
-        </li>
-      {/each}
-    </ul>
-
-    {#if nextCursor}
-      <div style="text-align: center; padding: 1rem 0;">
-        <button class="lt-btn lt-btn-secondary" onclick={() => loadEntries(true)}>Load more</button>
-      </div>
-    {/if}
   {:else}
+    <!-- Liquid Textile's stacked table: in a box under 40rem (a phone)
+         each entry reads top to bottom, a label beside each value. As a
+         table the details button sat 660px to the right, off the screen. -->
     <div class="lt-table-wrap">
-      <table class="lt-table">
+      <table class="lt-table lt-table-stack">
         <thead>
           <tr>
             <th>Time</th>
@@ -196,11 +172,11 @@
         <tbody>
           {#each entries as entry (entry.id)}
             <tr>
-              <td class="lt-muted nowrap">{formatTimestamp(entry.created_at)}</td>
-              <td>{entry.display_name || entry.username || entry.user_id || '--'}</td>
-              <td><span class="lt-tag">{entry.action}</span></td>
-              <td class="lt-muted">{formatTarget(entry)}</td>
-              <td>{@render details(entry)}</td>
+              <td class="lt-muted nowrap" data-label="Time">{formatTimestamp(entry.created_at)}</td>
+              <td data-label="User">{entry.display_name || entry.username || entry.user_id || '--'}</td>
+              <td data-label="Action"><span class="lt-tag">{entry.action}</span></td>
+              <td class="lt-muted" data-label="Target">{formatTarget(entry)}</td>
+              <td data-label="Details">{@render details(entry)}</td>
             </tr>
           {/each}
         </tbody>
@@ -254,17 +230,23 @@
     font-weight: 500;
   }
 
-  /* .lt-table-wrap and .lt-table are the shared table component (app.css);
-     these are the audit log's own denser reading of it — rows are scanned in
-     bulk, and an expanded metadata block has to sit under its own row. */
+  /* The audit log's own denser reading of Liquid Textile's table: rows
+     are scanned in bulk, and an expanded metadata block has to sit under
+     its own row. The cell padding only while it is a table; stacked, the
+     cells take the stack's. */
   .lt-table {
     font-size: 0.85rem;
   }
 
-  .lt-table th,
   .lt-table td {
-    padding: 0.5rem 0.6rem;
     vertical-align: top;
+  }
+
+  @container (width > 40rem) {
+    .lt-table th,
+    .lt-table td {
+      padding: 0.5rem 0.6rem;
+    }
   }
 
   .lt-table th {
@@ -290,46 +272,6 @@
     overflow-x: auto;
     white-space: pre-wrap;
     word-break: break-all;
-  }
-
-  /* ---- The phone list ---- */
-  .entry-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    border-top: 1px solid var(--color-border);
-  }
-
-  .entry {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid var(--color-border);
-    font-size: 0.88rem;
-  }
-
-  .entry-head,
-  .entry-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 0.75rem;
-  }
-
-  .entry-head .lt-tag {
-    min-width: 0;
-    overflow-wrap: anywhere;
-  }
-
-  .entry-time,
-  .entry-meta .lt-muted {
-    flex-shrink: 0;
-    font-size: 0.8rem;
-  }
-
-  .entry .expand-btn {
-    align-self: flex-start;
   }
 
   /* The four filters two by two, instead of four full-width rows above

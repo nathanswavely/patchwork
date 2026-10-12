@@ -27414,7 +27414,7 @@
         },
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 193,
+          "line": 169,
           "kind": "markup",
           "raw": "Details",
           "quote": null
@@ -30585,7 +30585,7 @@
         },
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 113,
+          "line": 110,
           "kind": "markup",
           "raw": "Audit log",
           "quote": null
@@ -36126,7 +36126,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 20,
+          "line": 17,
           "kind": "js-string",
           "raw": "The \"From\" date must be before the \"To\" date.",
           "quote": "'"
@@ -36144,14 +36144,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 119,
+          "line": 116,
           "kind": "markup",
           "raw": "Action",
           "quote": null
         },
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 191,
+          "line": 167,
           "kind": "markup",
           "raw": "Action",
           "quote": null
@@ -36183,7 +36183,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 121,
+          "line": 118,
           "kind": "markup",
           "raw": "All",
           "quote": null
@@ -36201,7 +36201,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 122,
+          "line": 119,
           "kind": "markup",
           "raw": "node.create",
           "quote": null
@@ -36219,7 +36219,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 123,
+          "line": 120,
           "kind": "markup",
           "raw": "node.update",
           "quote": null
@@ -36237,7 +36237,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 124,
+          "line": 121,
           "kind": "markup",
           "raw": "node.delete",
           "quote": null
@@ -36255,7 +36255,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 125,
+          "line": 122,
           "kind": "markup",
           "raw": "event.create",
           "quote": null
@@ -36273,7 +36273,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 126,
+          "line": 123,
           "kind": "markup",
           "raw": "event.update",
           "quote": null
@@ -36291,7 +36291,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 127,
+          "line": 124,
           "kind": "markup",
           "raw": "event.delete",
           "quote": null
@@ -36309,7 +36309,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 128,
+          "line": 125,
           "kind": "markup",
           "raw": "report.create",
           "quote": null
@@ -36327,7 +36327,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 129,
+          "line": 126,
           "kind": "markup",
           "raw": "report.resolve",
           "quote": null
@@ -36345,7 +36345,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 130,
+          "line": 127,
           "kind": "markup",
           "raw": "admin.user_update",
           "quote": null
@@ -36363,7 +36363,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 131,
+          "line": 128,
           "kind": "markup",
           "raw": "admin.user_email_set",
           "quote": null
@@ -36381,7 +36381,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 132,
+          "line": 129,
           "kind": "markup",
           "raw": "membership.join",
           "quote": null
@@ -36399,7 +36399,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 133,
+          "line": 130,
           "kind": "markup",
           "raw": "auth.login",
           "quote": null
@@ -36417,14 +36417,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 137,
+          "line": 134,
           "kind": "markup",
           "raw": "User",
           "quote": null
         },
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 190,
+          "line": 166,
           "kind": "markup",
           "raw": "User",
           "quote": null
@@ -36442,7 +36442,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 138,
+          "line": 135,
           "kind": "attr:placeholder",
           "raw": "Search by user ID...",
           "quote": "\""
@@ -36460,7 +36460,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 141,
+          "line": 138,
           "kind": "markup",
           "raw": "From",
           "quote": null
@@ -36485,7 +36485,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 159,
+          "line": 156,
           "kind": "markup",
           "raw": "No audit entries found.",
           "quote": null
@@ -36503,7 +36503,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 189,
+          "line": 165,
           "kind": "markup",
           "raw": "Time",
           "quote": null
@@ -36521,7 +36521,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 192,
+          "line": 168,
           "kind": "markup",
           "raw": "Target",
           "quote": null
