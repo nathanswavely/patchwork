@@ -33,6 +33,7 @@ Edit `patchwork.yaml`. The fields that matter most:
 | `geographic` | Map center (lat/lng) and radius in km. |
 | `modules` | Toggle map, governance, ledger. |
 | `submissions` | Community submissions of unclaimed patches: `enabled` gates the whole feature, `auto_approve` skips admin review. |
+| `server` | `port` the app listens on (the compose file and Caddyfile expect 8080) and `host`, the interface it binds. Leave `host` unset under Docker. Set it to `127.0.0.1` for a bare-metal run behind a proxy on the same box, or for development. `PATCHWORK_HOST` and `PATCHWORK_PORT` in the environment override both. |
 | `smtp` | Optional. Without it, magic links print to the log. Set `PATCHWORK_SMTP_PASS` in the environment to keep the password out of the file. The port picks the TLS mode: 465 (or 2465) connects with implicit TLS; any other port (587, 25, …) connects in plaintext and upgrades via STARTTLS when the server offers it. Auth uses PLAIN when advertised and falls back to LOGIN for servers that only offer that (Office 365, some appliance relays). See [Email](#email-optional) for provider recipes. |
 | `multi_quilt` | When true, public GET endpoints send CORS headers so other Patchwork SPAs can merge your quilt into theirs. |
 | `federation.enabled` | ActivityPub federation. **Read the federation section below before enabling.** |
