@@ -127,7 +127,7 @@
       <nav class="admin-menu" aria-label="Administration">
         {#each menuTabs as tab (tab.id)}
           {@const Icon = tab.icon}
-          <a href={tab.href} class="admin-menu-link" onclick={(e) => handleNav(e, tab.href)}>
+          <a href={tab.href} class="lt-list-row admin-menu-link" onclick={(e) => handleNav(e, tab.href)}>
             <span class="tab-icon"><Icon size={20} weight="duotone" /></span>
             <span class="admin-menu-label">{tab.label}</span>
             {#if tab.id === 'review' && reviewTotal > 0}
@@ -138,7 +138,7 @@
         {/each}
       </nav>
     {:else if !activeTab?.sections}
-      <a href="/admin" class="admin-back" onclick={(e) => handleNav(e, '/admin')}>
+      <a href="/admin" class="lt-split-back admin-back" onclick={(e) => handleNav(e, '/admin')}>
         <CaretLeft size={14} weight="bold" />
         Administration
       </a>
@@ -225,9 +225,9 @@
     color: var(--color-accent);
   }
 
-  /* The narrow screen's navigation. Neither exists on a wide one. */
-  .admin-menu,
-  .admin-back {
+  /* The narrow screen's navigation. Neither exists on a wide one: the
+     back link is Liquid Textile's split back link, hidden until here. */
+  .admin-menu {
     display: none;
   }
 
@@ -252,20 +252,11 @@
     }
   }
 
+  /* Liquid Textile's phone menu row, inset and sized like the sections
+     list a tab drills into (SettingsShell), which sits in the same page. */
   .admin-menu-link {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    min-height: 52px;
-    padding: 0.75rem 0.25rem;
+    padding: 0 0.25rem;
     font-size: 1rem;
-    color: var(--color-text);
-    text-decoration: none;
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .admin-menu-link:hover {
-    text-decoration: none;
   }
 
   .admin-menu-label {
@@ -275,20 +266,5 @@
   .admin-menu-caret {
     display: flex;
     color: var(--color-text-muted);
-  }
-
-  .admin-back {
-    align-items: center;
-    gap: 0.35rem;
-    min-height: 44px;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-    color: var(--color-text-muted);
-    text-decoration: none;
-  }
-
-  .admin-back:hover {
-    color: var(--color-text);
-    text-decoration: none;
   }
 </style>

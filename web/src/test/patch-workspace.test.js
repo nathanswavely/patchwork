@@ -151,7 +151,7 @@ describe('the workspace tabs are a bottom bar on a narrow screen', () => {
   });
 
   it('lifts the sticky vote bar above whichever tab bar is at the foot', () => {
-    expect(source('components/StickyVoteBar.svelte')).toContain('bottom: var(--pw-nav-h);');
+    expect(source('components/StickyVoteBar.svelte')).toContain('--lt-chrome-bottom: var(--pw-nav-h);');
   });
 });
 

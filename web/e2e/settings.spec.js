@@ -139,7 +139,7 @@ test.describe('Admin — Pages Load', () => {
   test('a Review section shows the sidebar and the tab row', async ({ page }) => {
     await goto(page, '/admin/review/claims');
     await expect(page.locator('.workspace-tab.active')).toHaveText(/Review/);
-    await expect(page.locator('.settings-nav-link.active')).toHaveText(/Claims/);
+    await expect(page.locator('.settings-nav-link[aria-current="page"]')).toHaveText(/Claims/);
     await expect(page.locator('.settings-nav-link', { hasText: 'Suggested tags' })).toBeVisible();
   });
 });

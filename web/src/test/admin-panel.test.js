@@ -237,9 +237,9 @@ describe('the narrow screen drills down, one level on screen at a time', () => {
   it("makes a sectioned tab's bare URL its list, going back to the root", () => {
     expect(shell).toContain('indexHref={activeTab.href}');
     expect(shell).toContain("parent={{ href: '/admin', label: 'Administration' }}");
-    expect(settingsShell).toContain('class:at-index={atIndex}');
+    expect(settingsShell).toContain("data-at={indexHref ? (atIndex ? 'index' : 'detail') : undefined}");
     expect(settingsShell).toContain('{#if !atIndex}');
-    expect(settingsShell).toContain('.drill:not(.at-index) .settings-sidebar');
+    expect(settingsShell).toContain('class:lt-split-nav={!!indexHref}');
   });
 
   it('keeps the old scrolling row for a shell that does not opt in', () => {

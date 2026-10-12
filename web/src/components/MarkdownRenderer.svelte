@@ -9,29 +9,11 @@
   let html = $derived(content ? DOMPurify.sanitize(marked.parse(content)) : '');
 </script>
 
-<div class="markdown-body">
+<!-- Governance prose (the charter, proposal bodies, legal documents) at
+     full body size, read at length at a proper measure (docs/adr/038).
+     Liquid Textile's .lt-prose was lifted from the rules this used to
+     carry; its rules sit at zero specificity, so a surface that tightens
+     its own paragraphs (a comment, a preview pane) still wins. -->
+<div class="lt-prose">
   {@html html}
 </div>
-
-<style>
-  /* Full body size: this renders governance prose — the charter, proposal
-     bodies, legal docs — meant to be read at length, now at a proper
-     measure (docs/adr/038). 0.9rem left it small as well as, until P0/P2,
-     narrow. */
-  .markdown-body { font-size: 1rem; line-height: 1.7; color: var(--color-text); }
-  .markdown-body :global(h1) { font-size: 1.4rem; font-weight: 700; margin: 1.5rem 0 0.5rem; }
-  .markdown-body :global(h2) { font-size: 1.2rem; font-weight: 600; margin: 1.25rem 0 0.4rem; }
-  .markdown-body :global(h3) { font-size: 1.05rem; font-weight: 600; margin: 1rem 0 0.3rem; }
-  .markdown-body :global(p) { margin: 0 0 0.75rem; }
-  .markdown-body :global(ul), .markdown-body :global(ol) { margin: 0 0 0.75rem; padding-left: 1.5rem; }
-  .markdown-body :global(li) { margin-bottom: 0.25rem; }
-  .markdown-body :global(a) { color: var(--color-primary); }
-  .markdown-body :global(code) { background: var(--color-overlay); padding: 0.15rem 0.35rem; border-radius: 3px; font-size: 0.85em; }
-  .markdown-body :global(pre) { background: var(--color-overlay); padding: 0.75rem 1rem; border-radius: 4px; overflow-x: auto; margin: 0 0 0.75rem; }
-  .markdown-body :global(pre code) { background: none; padding: 0; }
-  .markdown-body :global(blockquote) { border-left: 3px solid var(--color-border); padding-left: 1rem; color: var(--color-text-muted); margin: 0 0 0.75rem; }
-  .markdown-body :global(table) { width: 100%; border-collapse: collapse; margin: 0 0 0.75rem; }
-  .markdown-body :global(th), .markdown-body :global(td) { border: 1px solid var(--color-border); padding: 0.4rem 0.6rem; text-align: left; font-size: 0.85rem; }
-  .markdown-body :global(th) { background: var(--color-overlay); font-weight: 600; }
-  .markdown-body :global(hr) { border: none; border-top: 1px solid var(--color-border); margin: 1.5rem 0; }
-</style>

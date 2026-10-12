@@ -56,24 +56,31 @@
   }
 </script>
 
-<div class="settings-shell" class:drill={!!indexHref} class:at-index={atIndex}>
+<!-- Liquid Textile's side navigation, the current section marked
+     aria-current. A shell given indexHref is Liquid Textile's split: on a
+     narrow screen it shows one level at a time, by data-at. -->
+<div
+  class="settings-shell"
+  class:lt-split={!!indexHref}
+  data-at={indexHref ? (atIndex ? 'index' : 'detail') : undefined}
+>
   {#if indexHref && !workspaceUp}
     {#if back}
-      <a href={back.href} class="settings-back" onclick={(e) => handleClick(e, back.href)}>
+      <a href={back.href} class="lt-split-back settings-back" onclick={(e) => handleClick(e, back.href)}>
         <CaretLeft size={14} weight="bold" />
         {back.label}
       </a>
     {/if}
   {/if}
-  <nav class="settings-sidebar">
+  <nav class="settings-sidebar" class:lt-split-nav={!!indexHref}>
     <h2 class="settings-title">{title}</h2>
-    <ul class="settings-nav">
+    <ul class="lt-sidenav settings-nav">
       {#each sections as section}
         <li>
           <a
             href={section.href}
-            class="settings-nav-link"
-            class:active={isActive(section.href)}
+            class="lt-sidenav-link settings-nav-link"
+            aria-current={isActive(section.href) ? 'page' : undefined}
             onclick={(e) => handleClick(e, section.href)}
           >
             {section.label}
@@ -97,14 +104,21 @@
 
 <style>
   .settings-shell {
-    display: flex;
-    gap: 2rem;
     min-height: 400px;
   }
 
+  /* A shell that does not drill: the list beside the page, at the split's
+     measure so every settings surface lines up. */
+  .settings-shell:not(.lt-split) {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .settings-shell:not(.lt-split) .settings-sidebar {
+    flex: 0 0 13rem;
+  }
+
   .settings-sidebar {
-    flex-shrink: 0;
-    width: 200px;
     padding-top: 0.5rem;
   }
 
@@ -116,39 +130,6 @@
     color: var(--color-text-muted);
     padding: 0 0.5rem;
     margin-bottom: 0.5rem;
-  }
-
-  .settings-nav {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .settings-nav-link {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    padding: 0.45rem 0.6rem;
-    font-size: 0.85rem;
-    color: var(--color-text-muted);
-    text-decoration: none;
-    border-radius: 4px;
-    transition: background 100ms ease, color 100ms ease;
-  }
-
-  .settings-nav-link:hover {
-    background: var(--color-overlay);
-    color: var(--color-text);
-    text-decoration: none;
-  }
-
-  .settings-nav-link.active {
-    background: var(--color-overlay);
-    color: var(--color-text);
-    font-weight: 500;
   }
 
   /* How many items a section is holding for the reader. Only the admin
@@ -172,45 +153,42 @@
   }
 
   @media (max-width: 640px) {
-    .settings-shell {
+    /* A shell that does not drill keeps its scrolling row of sections. */
+    .settings-shell:not(.lt-split) {
       flex-direction: column;
       gap: 0;
     }
 
-    .settings-sidebar {
-      width: 100%;
+    .settings-shell:not(.lt-split) .settings-sidebar {
+      flex: none;
       padding-bottom: 1rem;
       border-bottom: 1px solid var(--color-border);
       margin-bottom: 1rem;
     }
 
-    .settings-nav {
+    .settings-shell:not(.lt-split) .settings-nav {
       flex-direction: row;
       gap: 0;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
     }
 
-    .settings-nav-link {
+    .settings-shell:not(.lt-split) .settings-nav-link {
       white-space: nowrap;
     }
 
-    /* Drill-down. A section's page shows the back link and no list. */
-    .drill .settings-back {
+    /* Drill-down. The split hides the list on a section's page and shows
+       the back link there; the index, the list as a page of its own, goes
+       back to the shell's parent as well. */
+    .lt-split[data-at="index"] .settings-back {
       display: inline-flex;
     }
 
-    .drill:not(.at-index) .settings-sidebar {
-      display: none;
-    }
-
-    /* The index is the list, as a page of its own. */
-    .drill.at-index .settings-sidebar {
+    .lt-split .settings-sidebar {
       padding-top: 0;
-      border-bottom: none;
     }
 
-    .drill.at-index .settings-title {
+    .lt-split .settings-title {
       font-size: 1.6rem;
       text-transform: none;
       letter-spacing: normal;
@@ -219,52 +197,16 @@
       margin-bottom: 1rem;
     }
 
-    .drill .settings-nav {
-      flex-direction: column;
-      overflow-x: visible;
-      border-top: 1px solid var(--color-border);
-    }
-
-    .drill .settings-nav-link {
-      min-height: 52px;
-      padding: 0.75rem 0.25rem;
-      font-size: 1rem;
-      color: var(--color-text);
-      border-radius: 0;
-      border-bottom: 1px solid var(--color-border);
-    }
-
-    .drill .settings-nav-link.active {
-      background: none;
-      font-weight: 400;
-    }
-
-    .drill .settings-nav-count {
+    .lt-split .settings-nav-count {
       margin-left: auto;
     }
 
-    .drill .settings-nav-caret {
+    .lt-split .settings-nav-caret {
       display: flex;
     }
   }
 
   /* Only a drill-down shell on a narrow screen has these. */
-  .settings-back {
-    display: none;
-    align-items: center;
-    gap: 0.35rem;
-    min-height: 44px;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-    color: var(--color-text-muted);
-    text-decoration: none;
-  }
-
-  .settings-back:hover {
-    color: var(--color-text);
-    text-decoration: none;
-  }
-
   .settings-nav-caret {
     display: none;
     color: var(--color-text-muted);
