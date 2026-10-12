@@ -247,7 +247,7 @@ test.describe('Notifications — Preferences', () => {
       await firstToggle.click();
       await savePromise;
       // Should not show any error toast
-      const errorToast = page.locator('.toast-error');
+      const errorToast = page.locator('.lt-toast.lt-tone-error');
       const hasError = await errorToast.isVisible().catch(() => false);
       expect(hasError).toBe(false);
     }

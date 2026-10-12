@@ -241,6 +241,9 @@ html {
 
 body {
   min-height: 100vh;
+  /* Liquid Textile's toasts ride above the phone tab bar, which is
+     --pw-nav-h tall (0px where there is none). */
+  --lt-toast-lift: var(--pw-nav-h);
   /* Kill the double-tap-to-zoom delay/jump — a double tap on the quilt or a
      mistimed tap on a control shouldn't scale the UI. Pinch zoom stays. */
   touch-action: manipulation;

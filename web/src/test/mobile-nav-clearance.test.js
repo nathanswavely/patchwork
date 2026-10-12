@@ -60,7 +60,7 @@ describe('mobile bottom nav clearance', () => {
   it('has nothing at the foot repeating a number of its own', () => {
     const foot = [
       ['components/SocialShell.svelte', shell()],
-      ['components/Toast.svelte', source('components/Toast.svelte')],
+      ['app.css', source('app.css')],
       ['components/MapView.svelte', source('components/MapView.svelte')],
       ['components/IntroCard.svelte', source('components/IntroCard.svelte')],
     ];
