@@ -130,7 +130,7 @@ describe("two heights on a phone, none in the pane's slot", () => {
   it('leaves Escape to a dialog open above it', () => {
     // Both listen on the window; one Escape used to close the join sheet
     // and the profile it was joining from together.
-    expect(dock()).toMatch(/if \(document\.querySelector\('\[role="dialog"\]\[aria-modal="true"\]'\)\) return;\s*onClose\(\);/);
+    expect(dock()).toMatch(/if \(document\.querySelector\('dialog:modal'\)\) return;\s*onClose\(\);/);
   });
 
   it('keeps the shell on the surface while a profile is docked', () => {

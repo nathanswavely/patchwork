@@ -1,137 +1,31 @@
 <script>
+  /**
+   * A modal: Liquid Textile's dialog on a native <dialog> (ltDialog in
+   * lib/lt.js). The browser holds focus inside it, closes it on Escape and
+   * makes the page behind inert; the backdrop and the close button close
+   * it too, and focus goes back where it was. It sits in the top layer,
+   * above every z-index, so it needs no portal out of a positioned box.
+   * Its content renders only while it is open.
+   */
   import { X } from 'phosphor-svelte';
-  import { portal } from '../lib/portal.js';
+  import { ltDialog } from '../lib/lt.js';
+
   let { open = false, onClose = () => {}, label = 'Dialog', children } = $props();
-
-  let contentEl = $state(null);
-
-  const FOCUSABLE =
-    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
-
-  // Move focus into the dialog on open, restore it on close.
-  $effect(() => {
-    if (!open || !contentEl) return;
-    const previous = document.activeElement;
-    const first = contentEl.querySelector(FOCUSABLE);
-    (first ?? contentEl).focus();
-    return () => {
-      if (previous instanceof HTMLElement) previous.focus();
-    };
-  });
-
-  function handleBackdrop(e) {
-    if (e.target === e.currentTarget) onClose();
-  }
-
-  function handleKeydown(e) {
-    if (!open) return;
-    if (e.key === 'Escape') {
-      onClose();
-      return;
-    }
-    if (e.key !== 'Tab' || !contentEl) return;
-    const focusables = [...contentEl.querySelectorAll(FOCUSABLE)];
-    if (focusables.length === 0) {
-      e.preventDefault();
-      contentEl.focus();
-      return;
-    }
-    const first = focusables[0];
-    const last = focusables[focusables.length - 1];
-    if (e.shiftKey && (document.activeElement === first || document.activeElement === contentEl)) {
-      e.preventDefault();
-      last.focus();
-    } else if (!e.shiftKey && document.activeElement === last) {
-      e.preventDefault();
-      first.focus();
-    }
-  }
 </script>
 
-<svelte:window onkeydown={handleKeydown} />
-
-<!-- Portaled to <body> (lib/portal.js): a scrim inside a positioned,
-     z-indexed box covers only what that box covers. The backdrop is the
-     block's only node, which is what makes moving it safe. -->
-{#if open}
-  <div class="modal-backdrop" use:portal onclick={handleBackdrop}>
-    <div
-      class="modal-content"
-      role="dialog"
-      aria-modal="true"
-      aria-label={label}
-      tabindex="-1"
-      bind:this={contentEl}
-    >
-      <button class="modal-close" aria-label="Close" onclick={onClose}>
-        <X size={16} weight="bold" />
-      </button>
-      {@render children()}
-    </div>
-  </div>
-{/if}
+<dialog class="lt-dialog modal" aria-label={label} use:ltDialog={{ open, onClose }}>
+  <button class="lt-dialog-close" data-close aria-label="Close">
+    <X size={16} weight="bold" />
+  </button>
+  {#if open}
+    {@render children()}
+  {/if}
+</dialog>
 
 <style>
-  .modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: var(--color-scrim);
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-  }
-
-  .modal-content {
-    background: var(--color-surface);
-    /* A modal paints its own surface, so it must set its own text color:
-       it renders where it was mounted, and a mount point over cover art
-       (`.cover-actions`, which set color: #fff) left uncolored text white
-       on a light surface. The subscribe modal shipped invisible in light mode. */
-    color: var(--color-text);
-    border-radius: var(--radius);
-    box-shadow: 0 8px 32px var(--color-shadow);
-    max-width: 560px;
+  /* Liquid Textile's dialog sizes to its content, up to 32rem. These hold
+     forms, which want the whole of it. */
+  .modal {
     width: 100%;
-    max-height: 80vh;
-    overflow-y: auto;
-    padding: 1.5rem;
-    position: relative;
-  }
-
-  .modal-content:focus {
-    outline: none;
-  }
-
-  .modal-close {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    background: none;
-    color: var(--color-text-muted);
-    cursor: pointer;
-    border-radius: var(--radius);
-    transition: background 100ms ease, color 100ms ease;
-  }
-
-  .modal-close:hover {
-    background: var(--color-overlay);
-    color: var(--color-text);
-  }
-
-  @media (pointer: coarse) {
-    .modal-close {
-      top: 6px;
-      right: 6px;
-      width: 44px;
-      height: 44px;
-    }
   }
 </style>

@@ -191,10 +191,11 @@ describe('F-023 — the event form heading follows who is posting', () => {
 });
 
 describe('F-025 — Escape closes the template preview drawer', () => {
-  const src = source('pages/PatchForm.svelte');
-
-  it('listens on the window and clears previewTemplate', () => {
-    expect(src).toMatch(/onkeydown=\{\(e\) => \{ if \(e\.key === 'Escape' && previewTemplate\) previewTemplate = ''; \}\}/);
+  // The drawer is a native modal <dialog>, which closes itself on Escape;
+  // its close hands back to PatchForm, which clears previewTemplate.
+  it('is a native dialog whose close clears previewTemplate', () => {
+    expect(source('components/TemplatePreviewDrawer.svelte')).toMatch(/<dialog\s+class="lt-drawer template-drawer"[\s\S]*?use:ltDialog=\{\{ open: true, onClose \}\}/);
+    expect(source('pages/PatchForm.svelte')).toContain("onClose={() => previewTemplate = ''}");
   });
 });
 

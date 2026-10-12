@@ -716,7 +716,6 @@
   </div>
 </div>
 
-<svelte:window onkeydown={(e) => { if (e.key === 'Escape' && previewTemplate) previewTemplate = ''; }} />
 
 {#if previewTemplate}
   <TemplatePreviewDrawer templateId={previewTemplate} onClose={() => previewTemplate = ''} />

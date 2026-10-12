@@ -23,6 +23,7 @@
   import Modal from './Modal.svelte';
   import ReportButton from './ReportButton.svelte';
   import SubscribeFeeds from './SubscribeFeeds.svelte';
+  import { ltDialog } from '../lib/lt.js';
   import { CaretLeft, CaretDown, Eye, Plus, CalendarBlank, Flag } from 'phosphor-svelte';
 
   let {
@@ -73,13 +74,7 @@
     sheetOpen = false;
     navigate(href);
   }
-
-  function onKeydown(e) {
-    if (sheetOpen && e.key === 'Escape') sheetOpen = false;
-  }
 </script>
-
-<svelte:window onkeydown={onKeydown} />
 
 <div class="patch-bar">
   <a
@@ -106,11 +101,15 @@
 
 </div>
 
-{#if sheetOpen}
-  <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-  <div class="patch-sheet-backdrop" onclick={() => { sheetOpen = false; }}></div>
-  <div class="patch-sheet" role="dialog" aria-label={node?.name || slug}>
-    <div class="patch-sheet-grip" aria-hidden="true"></div>
+<!-- Liquid Textile's sheet on a native <dialog> (ltDialog in lib/lt.js):
+     focus stays inside it, and Escape or the backdrop close it. -->
+<dialog
+  class="lt-sheet patch-sheet"
+  aria-label={node?.name || slug}
+  use:ltDialog={{ open: sheetOpen, onClose: () => { sheetOpen = false; } }}
+>
+  {#if sheetOpen}
+    <div class="lt-sheet-grip" aria-hidden="true"></div>
     <div class="patch-sheet-head">
       <span class="patch-sheet-tile" style="background: {tileColor}" aria-hidden="true"></span>
       <span class="lt-type-name patch-sheet-name">{node?.name || slug}</span>
@@ -130,31 +129,31 @@
       />
     </div>
     <nav class="patch-sheet-rows">
-      <a href="/patches/{slug}" class="patch-sheet-row" onclick={(e) => go(e, `/patches/${slug}`)}>
+      <a href="/patches/{slug}" class="lt-list-row patch-sheet-row" onclick={(e) => go(e, `/patches/${slug}`)}>
         <Eye size={18} weight="duotone" />
         View the public profile
       </a>
       {#if postingRight !== 'none'}
-        <a href="/events/new?node={slug}" class="patch-sheet-row" onclick={(e) => go(e, `/events/new?node=${slug}`)}>
+        <a href="/events/new?node={slug}" class="lt-list-row patch-sheet-row" onclick={(e) => go(e, `/events/new?node=${slug}`)}>
           <Plus size={18} weight="bold" />
           {postingRight === 'direct' ? 'New event' : 'Suggest an event'}
         </a>
       {/if}
       {#if feedAvailable}
-        <button type="button" class="patch-sheet-row" onclick={() => { sheetOpen = false; subscribeOpen = true; }}>
+        <button type="button" class="lt-list-row patch-sheet-row" onclick={() => { sheetOpen = false; subscribeOpen = true; }}>
           <CalendarBlank size={18} weight="duotone" />
           Subscribe
         </button>
       {/if}
       {#if canReport}
-        <button type="button" class="patch-sheet-row" onclick={() => { sheetOpen = false; reportOpen = true; }}>
+        <button type="button" class="lt-list-row patch-sheet-row" onclick={() => { sheetOpen = false; reportOpen = true; }}>
           <Flag size={18} weight="duotone" />
           Report
         </button>
       {/if}
     </nav>
-  </div>
-{/if}
+  {/if}
+</dialog>
 
 <!-- Outside the sheet: opening either closes the sheet, and a modal
      rendered inside it would be destroyed with it. -->
@@ -239,47 +238,6 @@
     color: var(--color-text-muted);
   }
 
-  .patch-sheet-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: 210;
-    background: var(--color-scrim);
-  }
-
-  .patch-sheet {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 211;
-    max-height: 80vh;
-    overflow-y: auto;
-    padding: 8px 0 calc(12px + env(safe-area-inset-bottom, 0px));
-    background: var(--color-surface);
-    border-radius: 14px 14px 0 0;
-    box-shadow: 0 -8px 24px var(--color-shadow);
-    animation: sheet-up 180ms ease;
-  }
-
-  @keyframes sheet-up {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .patch-sheet {
-      animation: none;
-    }
-  }
-
-  .patch-sheet-grip {
-    width: 36px;
-    height: 4px;
-    margin: 0 auto 10px;
-    border-radius: 2px;
-    background: var(--color-border);
-  }
-
   .patch-sheet-head {
     display: flex;
     align-items: center;
@@ -306,32 +264,6 @@
     display: flex;
     flex-direction: column;
     border-top: 1px solid var(--color-border);
-  }
-
-  .patch-sheet-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-height: 52px;
-    padding: 0 var(--pw-gutter);
-    border: none;
-    border-bottom: 1px solid var(--color-border);
-    background: none;
-    color: var(--color-text);
-    font-size: 0.95rem;
-    text-align: left;
-    text-decoration: none;
-    cursor: pointer;
-  }
-
-  .patch-sheet-row :global(svg) {
-    color: var(--color-text-muted);
-    flex-shrink: 0;
-  }
-
-  .patch-sheet-row:hover {
-    background: var(--color-overlay);
-    text-decoration: none;
   }
 
   .subscribe-title {

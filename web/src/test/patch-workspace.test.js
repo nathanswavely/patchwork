@@ -206,7 +206,7 @@ describe('on a phone the patch name is the menu', () => {
   });
 
   it('puts standing, the public profile, posting, subscribing and reporting in the sheet', () => {
-    const sheet = bar.slice(bar.indexOf('<div class="patch-sheet"'));
+    const sheet = bar.slice(bar.indexOf('<dialog\n  class="lt-sheet patch-sheet"'));
     expect(sheet).toMatch(/<PatchRelationship[\s\S]*size="sm"/);
     expect(sheet).toContain('View the public profile');
     expect(sheet).toContain("{postingRight === 'direct' ? 'New event' : 'Suggest an event'}");
