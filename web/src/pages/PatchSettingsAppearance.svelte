@@ -2,6 +2,7 @@
   import { getContext } from 'svelte';
   import * as d3 from 'd3';
   import { api } from '../lib/api.js';
+  import { ltTabs } from '../lib/lt.js';
   import { showToast } from '../stores/toast.svelte.js';
   import { PALETTES, PALETTE_KEYS, paletteForPatch, darken } from '../lib/quiltTheme.js';
   import { BLOCKS, getBlockIndex, getRotation, renderDraftBlock } from '../lib/quiltBlocks.js';
@@ -243,21 +244,11 @@
     </div>
   </div>
 
-  <div class="mode-tabs" role="tablist" aria-label="Block source">
-    <button
-      role="tab"
-      aria-selected={draft.mode === 'traditional'}
-      class:active={draft.mode === 'traditional'}
-      onclick={() => { draft.mode = 'traditional'; }}
-    >
+  <div class="lt-tabs mode-tabs" role="tablist" aria-label="Block source" use:ltTabs={{ onSelect: (t) => { draft.mode = t.dataset.value; } }}>
+    <button role="tab" class="lt-tab" data-value="traditional" aria-selected={draft.mode === 'traditional'}>
       Traditional blocks
     </button>
-    <button
-      role="tab"
-      aria-selected={draft.mode === 'draft'}
-      class:active={draft.mode === 'draft'}
-      onclick={() => { draft.mode = 'draft'; }}
-    >
+    <button role="tab" class="lt-tab" data-value="draft" aria-selected={draft.mode === 'draft'}>
       Draft your own
     </button>
   </div>
@@ -424,26 +415,7 @@
   }
 
   .mode-tabs {
-    display: flex;
-    gap: 0.25rem;
-    border-bottom: 1px solid var(--color-border);
     margin-bottom: 0.25rem;
-  }
-
-  .mode-tabs button {
-    padding: 0.45rem 0.9rem;
-    font-size: 0.82rem;
-    font-weight: 600;
-    background: none;
-    border: none;
-    border-bottom: 2px solid transparent;
-    color: var(--color-text-muted);
-    cursor: pointer;
-  }
-
-  .mode-tabs button.active {
-    color: var(--color-text);
-    border-bottom-color: var(--color-primary);
   }
 
   .picker-group {

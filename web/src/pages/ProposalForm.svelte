@@ -4,6 +4,7 @@
   import { navigate, getQuery } from '../stores/router.svelte.js';
   import { formatDay } from '../lib/datetime.js';
   import MarkdownRenderer from '../components/MarkdownRenderer.svelte';
+  import SegmentedControl from '../components/SegmentedControl.svelte';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -189,10 +190,12 @@
         <div class="field">
           <label class="lt-label">
             <span>Description</span>
-            <div class="toggle-group">
-              <button type="button" class="toggle-btn" class:active={!previewMode} onclick={() => previewMode = false}>Write</button>
-              <button type="button" class="toggle-btn" class:active={previewMode} onclick={() => previewMode = true}>Preview</button>
-            </div>
+            <SegmentedControl
+              options={[{ value: 'write', label: 'Write' }, { value: 'preview', label: 'Preview' }]}
+              value={previewMode ? 'preview' : 'write'}
+              label="Write or preview"
+              onchange={(v) => { previewMode = v === 'preview'; }}
+            />
           </label>
           {#if previewMode}
             <div class="preview-pane">
@@ -377,29 +380,6 @@
     min-height: 160px;
   }
 
-  .toggle-group {
-    display: flex;
-    gap: 0;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-
-  .toggle-btn {
-    padding: 0.2rem 0.6rem;
-    border: none;
-    background: var(--color-surface);
-    font-size: 0.75rem;
-    color: var(--color-text-muted);
-    cursor: pointer;
-    min-height: var(--lt-target);
-  }
-
-  .toggle-btn.active {
-    background: var(--color-primary);
-    color: var(--color-btn-on-primary);
-  }
-
   .preview-pane {
     padding: 0.75rem;
     border: 1px solid var(--color-border);
@@ -489,11 +469,5 @@
 
   .field-actions {
     padding-top: 0.5rem;
-  }
-
-  @media (pointer: coarse) {
-    .toggle-btn {
-      padding-inline: 0.9rem;
-    }
   }
 </style>

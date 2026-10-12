@@ -1,59 +1,33 @@
 <script>
+  /**
+   * A few mutually exclusive choices side by side: Liquid Textile's
+   * segmented control (ltSegmented in lib/lt.js). It is a radio group with
+   * one tab stop; the arrows move and choose, and aria-checked marks the
+   * choice. The page owns the value.
+   */
+  import { ltSegmented } from '../lib/lt.js';
+
   let {
     options = [], // [{ value, label, title? }]
     value,
     label = '', // aria-label for the group
     onchange = () => {},
   } = $props();
+
+  // A segment carries its value as text (data-value); hand the page back
+  // its own value, which may be a number.
+  function pick(v) {
+    const opt = options.find((o) => String(o.value) === v);
+    if (opt) onchange(opt.value);
+  }
 </script>
 
-<div class="seg" role="group" aria-label={label || undefined}>
+<div
+  class="lt-segmented"
+  aria-label={label || undefined}
+  use:ltSegmented={{ value: String(value), onChange: pick }}
+>
   {#each options as opt (opt.value)}
-    <button
-      type="button"
-      class:active={value === opt.value}
-      aria-pressed={value === opt.value}
-      title={opt.title}
-      onclick={() => onchange(opt.value)}
-    >{opt.label}</button>
+    <button type="button" class="lt-segment" data-value={String(opt.value)} title={opt.title}>{opt.label}</button>
   {/each}
 </div>
-
-<style>
-  .seg {
-    display: inline-flex;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-
-  .seg button {
-    padding: 0.3rem 0.75rem;
-    border: none;
-    background: var(--color-surface);
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: var(--color-text-muted);
-    cursor: pointer;
-    min-height: var(--lt-target);
-  }
-
-  .seg button + button {
-    border-left: 1px solid var(--color-border);
-  }
-
-  .seg button.active {
-    background: var(--color-primary);
-    color: var(--color-btn-on-primary);
-  }
-
-  .seg button {
-    white-space: nowrap;
-  }
-
-  @media (pointer: coarse) {
-    .seg button {
-      padding: 0 0.9rem;
-    }
-  }
-</style>

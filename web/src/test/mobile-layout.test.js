@@ -70,7 +70,8 @@ describe('a finger gets a finger-sized target', () => {
   // A control Patchwork draws itself takes --lt-target in its own rule:
   // 24px under a mouse, 44px under a finger (step 4b; segments up from 40).
   it('in the shared controls', () => {
-    expect(source('components/SegmentedControl.svelte')).toMatch(/\.seg button \{[^}]*min-height: var\(--lt-target\);/);
+    expect(source('components/SegmentedControl.svelte')).toContain('class="lt-segment"');
+    expect(source('vendor/liquid-textile/foundation.css')).toMatch(/\.lt-segment \{[^}]*min-height: var\(--lt-target\);/);
     // Modal's close is Liquid Textile's .lt-dialog-close, sized by --lt-target.
     expect(source('components/Modal.svelte')).toContain('class="lt-dialog-close"');
     expect(source('vendor/liquid-textile/foundation.css')).toMatch(/\.lt-dialog-close \{[^}]*width: max\(28px, var\(--lt-target\)\);/);

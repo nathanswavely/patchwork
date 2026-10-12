@@ -73,10 +73,10 @@ test.describe('Discovery — Quilt View', () => {
 
     await page.locator('.bar-avatar-btn').click();
     const colors = page.locator('.display-row', { hasText: 'Colors' });
-    await expect(colors.getByText('Default', { exact: true })).toHaveAttribute('aria-pressed', 'true');
+    await expect(colors.getByText('Default', { exact: true })).toHaveAttribute('aria-checked', 'true');
 
     await colors.getByText('Muted', { exact: true }).click();
-    await expect(colors.getByText('Muted', { exact: true })).toHaveAttribute('aria-pressed', 'true');
+    await expect(colors.getByText('Muted', { exact: true })).toHaveAttribute('aria-checked', 'true');
     expect(await page.evaluate(() => localStorage.getItem('patchwork-colors'))).toBe('muted');
 
     await colors.getByText('Default', { exact: true }).click();

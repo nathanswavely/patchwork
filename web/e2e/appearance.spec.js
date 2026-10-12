@@ -99,7 +99,8 @@ test.describe('Patch Appearance — Picker', () => {
     await expect(page.getByText('1 of 24 seams')).toBeVisible();
 
     // Color a piece with fabric 2.
-    await page.getByRole('button', { name: 'Color', exact: true }).click();
+    // The drafter's tools are a segmented control, a radio group.
+    await page.getByRole('radio', { name: 'Color', exact: true }).click();
     await page.locator('.bundle-slots .slot').nth(1).click();
     await page.locator('.piece').first().dispatchEvent('click');
 

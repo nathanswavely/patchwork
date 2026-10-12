@@ -7,6 +7,7 @@
    * own — a rename needs no edit here).
    */
   import { api } from '../lib/api.js';
+  import { ltTabs } from '../lib/lt.js';
   import { showToast } from '../stores/toast.svelte.js';
   import { navigate } from '../stores/router.svelte.js';
   import Skeleton from '../components/Skeleton.svelte';
@@ -90,14 +91,14 @@
   {:else if error}
     <ErrorState message={error} retry={load} />
   {:else}
-    <div class="doc-tabs" role="tablist">
+    <div class="doc-tabs" role="tablist" aria-label="Documents" use:ltTabs={{ onSelect: (t) => { active = t.dataset.value; } }}>
       {#each docs as d (d.doc)}
         <button
           role="tab"
           aria-selected={active === d.doc}
           class="doc-tab"
           class:active={active === d.doc}
-          onclick={() => { active = d.doc; }}
+          data-value={d.doc}
         >
           {d.title}
           <span class="doc-state" class:customized={d.customized}>
