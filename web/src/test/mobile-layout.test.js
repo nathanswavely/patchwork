@@ -235,10 +235,12 @@ describe('copy pass A and C (2026-09-28)', () => {
 
   it('folds rare sections and long explanations on a phone only', () => {
     const account = source('pages/AccountSettings.svelte');
-    expect(account.split('<details class="pw-fold" open={!narrow}>').length - 1).toBe(4);
-    expect(source('pages/PatchSettingsSources.svelte')).toContain('<details class="intro-fold" open={!narrow}>');
-    expect(source('pages/PatchForm.svelte')).toContain('<details class="appearance-fold" open={!narrow}>');
-    expect(source('pages/AdminUsage.svelte')).toContain('<details class="counted-fold" open={!narrow}>');
+    // Liquid Textile's fold(): held open from 641px, folded below it.
+    expect(account.split('<details class="lt-fold" use:ltFold>').length - 1).toBe(4);
+    expect(source('pages/PatchSettingsSources.svelte')).toContain('<details class="lt-fold intro-fold" use:ltFold>');
+    expect(source('pages/PatchForm.svelte')).toContain('<details class="lt-fold appearance-fold" use:ltFold>');
+    expect(source('pages/AdminUsage.svelte')).toContain('<details class="lt-fold counted-fold" use:ltFold>');
+    expect(source('vendor/liquid-textile/behaviors.js')).toMatch(/export function fold\(details, \{ above = 641 \}/);
   });
 
   it('states the time left once on a proposal', () => {

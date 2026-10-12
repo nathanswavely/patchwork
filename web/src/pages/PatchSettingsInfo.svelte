@@ -1081,12 +1081,12 @@
 
   /* The address, timezone and map marker are sub-fields of one Location
      section, so their labels step down from the section's own. */
-  .location-section :global(.inline-edit) {
+  .location-section :global(.lt-inline-edit) {
     padding: 0.4rem 0;
     border-top: none;
   }
 
-  .location-section :global(.inline-edit-label),
+  .location-section :global(.lt-inline-edit-head > .lt-eyebrow),
   .sub-label {
     font-size: 0.82rem;
     font-weight: 500;
@@ -1097,7 +1097,7 @@
 
   /* The field after the section gets the same rule the fields draw between
      themselves; without it the section just runs into Website. */
-  .location-section + :global(.inline-edit) {
+  .location-section + :global(.lt-inline-edit) {
     border-top: 1px solid var(--color-border);
   }
 

@@ -142,7 +142,11 @@ describe('the workspace tabs are a bottom bar on a narrow screen', () => {
   });
 
   it('pins the tabs to the foot at the quilt rail\'s breakpoint and height', () => {
-    expect(shell).toMatch(/@media \(max-width: 768px\) \{[\s\S]*\.workspace-tabs \{\s*position: fixed;[\s\S]*height: var\(--pw-nav-h\);/);
+    // Liquid Textile's tab bar: fixed to the foot at 768px, --lt-tabbar-h
+    // tall, the height SocialShell's rail is given there.
+    expect(shell).toContain('class:lt-tabbar={tabs.length >= 2}');
+    const lt = source('vendor/liquid-textile/foundation.css');
+    expect(lt).toMatch(/@media \(max-width: 768px\) \{\s*\.lt-tabbar,[\s\S]*?position: fixed;[\s\S]*?height: calc\(var\(--lt-tabbar-h\)/);
   });
 
   it('draws no bar for a single tab, and clears the bar only when there is one', () => {
@@ -151,7 +155,9 @@ describe('the workspace tabs are a bottom bar on a narrow screen', () => {
   });
 
   it('lifts the sticky vote bar above whichever tab bar is at the foot', () => {
-    expect(source('components/StickyVoteBar.svelte')).toContain('--lt-chrome-bottom: var(--pw-nav-h);');
+    // .lt-action-bar sits on --lt-chrome-bottom, which each bar sets.
+    expect(source('components/StickyVoteBar.svelte')).toContain('lt-action-bar');
+    expect(source('vendor/liquid-textile/foundation.css')).toMatch(/html:has\(\.lt-tabbar:not\(\[hidden\]\)\) \{\s*--lt-chrome-bottom:/);
   });
 });
 

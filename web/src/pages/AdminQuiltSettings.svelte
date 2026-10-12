@@ -832,7 +832,7 @@
 
   .icon-save-bar {
     position: sticky;
-    bottom: calc(var(--pw-nav-h) + 0.5rem);
+    bottom: calc(var(--lt-chrome-bottom) + 0.5rem);
     z-index: 5;
     display: flex;
     justify-content: flex-end;

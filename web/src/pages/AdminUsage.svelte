@@ -1,5 +1,5 @@
 <script>
-  import { isNarrow } from '../stores/viewport.svelte.js';
+  import { ltFold } from '../lib/lt.js';
   /**
    * Usage: daily page views and visitors, counted on the server
    * (docs/adr/2026-09-18-counting-visitors-without-watching-anyone.md).
@@ -17,7 +17,6 @@
   import ErrorState from '../components/ErrorState.svelte';
 
 
-  let narrow = $derived(isNarrow());
   let loading = $state(true);
   let error = $state('');
   let data = $state(null);
@@ -94,7 +93,7 @@
           <h2>{data.enabled ? 'Counting is on' : 'Counting is off'}</h2>
           <!-- The mechanics fold on a phone, where they stood between the
                heading and its switch. Open, and unlabelled, on a wide screen. -->
-          <details class="counted-fold" open={!narrow}>
+          <details class="lt-fold counted-fold" use:ltFold>
             <summary>What is counted</summary>
             <p class="lt-muted">
               {#if data.enabled}
@@ -404,9 +403,8 @@
     cursor: pointer;
   }
 
-  @media (min-width: 641px) {
-    .counted-fold > summary {
-      display: none;
-    }
+  /* Held open on a wide screen (ltFold), where the words are just there. */
+  .counted-fold:global([data-held]) > summary {
+    display: none;
   }
 </style>

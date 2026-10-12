@@ -261,7 +261,7 @@
      control the card must never sit on.
 
      The offset clears the sidebar rail, which is a bottom tab bar at this
-     width. It comes from app.css (`--pw-nav-h`, the bar's footprint, plus
+     width. It comes from app.css (`--lt-chrome-bottom`, the bar's footprint, plus
      the canvas row's gap) precisely so every surface that floats something
      over the foot of the screen reads one number instead of guessing it.
 

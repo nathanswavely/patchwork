@@ -947,7 +947,7 @@
     margin-left: 200px;
     padding: calc(56px + 2rem) var(--pw-gutter) 0;
     /* Foot of the page, all widths, ONE declaration. Two things can sit
-       over the bottom of the screen: the mobile tab bar (--pw-nav-h, 0px
+       over the bottom of the screen: the mobile tab bar (--lt-chrome-bottom, 0px
        above its breakpoint, so this line is also the desktop 2rem) and the
        intro card. max(), not a sum — the card publishes how much of the
        foot it occupies measured from the viewport bottom, so its number
@@ -960,7 +960,7 @@
        card up (i.e. anyone signed in) reserved 12px for a 51px bar and
        every non-quilt page ended underneath it. Reserving the foot in one
        place is what keeps that from being re-derivable. */
-    padding-bottom: max(calc(var(--pw-nav-h) + 2rem), calc(var(--intro-card-h, 0px) + 12px));
+    padding-bottom: max(calc(var(--lt-chrome-bottom) + 2rem), calc(var(--intro-card-h, 0px) + 12px));
     min-height: 100vh;
     transition: margin-left 150ms ease;
   }
@@ -1069,10 +1069,10 @@
       padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
       /* The rail is a bottom tab bar at this width, and it OVERLAYS the
          page — so its height is not left to its contents. It is exactly
-         what app.css's --pw-nav-h reserves at the foot of every surface,
+         what app.css's --lt-chrome-bottom reserves at the foot of every surface,
          safe area and border included (border-box), which is what makes
          that token a fact rather than a guess about this bar. */
-      height: var(--pw-nav-h);
+      height: var(--lt-chrome-bottom);
       box-sizing: border-box;
       background: var(--color-glass);
       backdrop-filter: blur(16px);
