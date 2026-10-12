@@ -185,8 +185,8 @@
 
 <div class="rules-editor">
   <div class="field">
-    <label for="re-decision">Decision Method</label>
-    <select id="re-decision" bind:value={decisionMethod}>
+    <label class="lt-label" for="re-decision">Decision Method</label>
+    <select class="lt-field" id="re-decision" bind:value={decisionMethod}>
       {#each DECISION_OPTIONS as opt}
         <option value={opt.value}>{opt.label}</option>
       {/each}
@@ -198,16 +198,16 @@
 
   {#if !adminDecides}
     <div class="field">
-      <label for="re-quorum">Quorum (%)</label>
-      <input id="re-quorum" type="number" min="0" max="100" bind:value={quorumPercent} />
+      <label class="lt-label" for="re-quorum">Quorum (%)</label>
+      <input class="lt-field" id="re-quorum" type="number" min="0" max="100" bind:value={quorumPercent} />
       {#if quorumHint}
         <p class="venue-hint lt-muted">{quorumHint}</p>
       {/if}
     </div>
 
     <div class="field">
-      <label for="re-voting-period">Default Voting Period</label>
-      <select id="re-voting-period" bind:value={votingPeriodHours}>
+      <label class="lt-label" for="re-voting-period">Default Voting Period</label>
+      <select class="lt-field" id="re-voting-period" bind:value={votingPeriodHours}>
         {#each VOTING_PERIOD_OPTIONS as opt}
           <option value={opt.value}>{opt.label}</option>
         {/each}
@@ -215,8 +215,8 @@
     </div>
 
     <div class="field">
-      <label for="re-amendment">Amendment Threshold</label>
-      <select id="re-amendment" bind:value={amendmentThreshold}>
+      <label class="lt-label" for="re-amendment">Amendment Threshold</label>
+      <select class="lt-field" id="re-amendment" bind:value={amendmentThreshold}>
         {#each THRESHOLD_OPTIONS as opt}
           <option value={opt.value}>{opt.label}</option>
         {/each}
@@ -224,7 +224,7 @@
     </div>
 
     <div class="field checkbox-field">
-      <label>
+      <label class="lt-check">
         <input type="checkbox" bind:checked={autoApply} />
         Auto-Apply Amendments
       </label>
@@ -234,7 +234,7 @@
          sits with the voting knobs and is hidden under admin-decides like
          the rest of them (docs/adr/041, docs/adr/051). -->
     <div class="field checkbox-field">
-      <label>
+      <label class="lt-check">
         <input type="checkbox" bind:checked={subjectRecusal} />
         People don't vote on proposals about themselves
       </label>
@@ -251,8 +251,8 @@
   {/if}
 
   <div class="field">
-    <label for="re-venue">Where admins are chosen</label>
-    <select id="re-venue" bind:value={leadershipVenue}>
+    <label class="lt-label" for="re-venue">Where admins are chosen</label>
+    <select class="lt-field" id="re-venue" bind:value={leadershipVenue}>
       <option value="patchwork">In Patchwork</option>
       <option value="elsewhere">Somewhere else, recorded here</option>
     </select>
@@ -266,8 +266,8 @@
   </div>
 
   <div class="field">
-    <label for="re-proposal-venue">Where proposals are decided</label>
-    <select id="re-proposal-venue" bind:value={proposalVenue}>
+    <label class="lt-label" for="re-proposal-venue">Where proposals are decided</label>
+    <select class="lt-field" id="re-proposal-venue" bind:value={proposalVenue}>
       <option value="patchwork">In Patchwork</option>
       <option value="elsewhere">Somewhere else, recorded here</option>
     </select>
@@ -282,8 +282,8 @@
   </div>
 
   <div class="field">
-    <label for="re-succession">Succession Policy</label>
-    <select id="re-succession" bind:value={successionPolicy}>
+    <label class="lt-label" for="re-succession">Succession Policy</label>
+    <select class="lt-field" id="re-succession" bind:value={successionPolicy}>
       {#each successionOptions as opt (opt.value)}
         <option value={opt.value}>{opt.label}</option>
       {/each}
@@ -295,8 +295,8 @@
 
   {#if !adminDecides}
     <div class="field">
-      <label for="re-tenure">Minimum Voting Tenure</label>
-      <select id="re-tenure" bind:value={minVotingTenureDays}>
+      <label class="lt-label" for="re-tenure">Minimum Voting Tenure</label>
+      <select class="lt-field" id="re-tenure" bind:value={minVotingTenureDays}>
         {#each TENURE_OPTIONS as opt}
           <option value={opt.value}>{opt.label}</option>
         {/each}
@@ -308,8 +308,8 @@
   {/if}
 
   <div class="field">
-    <label for="re-membership">Membership Policy</label>
-    <select id="re-membership" bind:value={membershipPolicy}>
+    <label class="lt-label" for="re-membership">Membership Policy</label>
+    <select class="lt-field" id="re-membership" bind:value={membershipPolicy}>
       {#each MEMBERSHIP_OPTIONS as opt}
         <option value={opt.value}>{opt.label}</option>
       {/each}
@@ -317,13 +317,13 @@
   </div>
 
   <div class="field">
-    <label class="section-label">Follower Permissions</label>
+    <label class="lt-label section-label">Follower Permissions</label>
     <div class="checkbox-group">
-      <label><input type="checkbox" bind:checked={followerEvents} /> Events</label>
+      <label class="lt-check"><input type="checkbox" bind:checked={followerEvents} /> Events</label>
       <p class="follower-hint lt-muted">Off: followers see this patch's public events only.</p>
-      <label><input type="checkbox" bind:checked={followerProposals} /> Proposals</label>
-      <label><input type="checkbox" bind:checked={followerCharters} /> Charters</label>
-      <label><input type="checkbox" bind:checked={followerMembers} /> Members</label>
+      <label class="lt-check"><input type="checkbox" bind:checked={followerProposals} /> Proposals</label>
+      <label class="lt-check"><input type="checkbox" bind:checked={followerCharters} /> Charters</label>
+      <label class="lt-check"><input type="checkbox" bind:checked={followerMembers} /> Members</label>
     </div>
   </div>
 </div>
@@ -345,29 +345,6 @@
     gap: 0.2rem;
   }
 
-  .field label {
-    font-size: 0.82rem;
-    font-weight: 500;
-    color: var(--color-text-muted);
-  }
-
-  .field select,
-  .field input[type="number"] {
-    padding: 0.4rem 0.6rem;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    background: var(--color-surface);
-    color: var(--color-text);
-    font-size: 0.88rem;
-    font-family: inherit;
-  }
-
-  .field select:focus,
-  .field input:focus {
-    outline: none;
-    border-color: var(--color-primary);
-  }
-
   .venue-hint {
     font-size: 0.78rem;
     margin: 0.35rem 0 0;
@@ -384,12 +361,7 @@
   }
 
   .checkbox-field label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
     font-size: 0.88rem;
-    color: var(--color-text);
-    cursor: pointer;
   }
 
   .checkbox-field input[type="checkbox"] {
@@ -398,9 +370,6 @@
   }
 
   .section-label {
-    font-size: 0.82rem;
-    font-weight: 500;
-    color: var(--color-text-muted);
     margin-bottom: 0.25rem;
   }
 
@@ -411,12 +380,7 @@
   }
 
   .checkbox-group label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
     font-size: 0.88rem;
-    color: var(--color-text);
-    cursor: pointer;
   }
 
   .checkbox-group input[type="checkbox"] {

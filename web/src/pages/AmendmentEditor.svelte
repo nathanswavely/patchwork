@@ -256,13 +256,13 @@
           <div class="review-card-header">{directChange ? 'Describe this change' : 'Describe your proposal'}</div>
           <div class="review-card-body">
             <div class="field">
-              <label for="amendment-title">Summary of changes</label>
-              <input id="amendment-title" type="text" bind:value={title} disabled={submitting} placeholder="e.g. Update conflict resolution process" />
+              <label class="lt-label" for="amendment-title">Summary of changes</label>
+              <input class="lt-field" id="amendment-title" type="text" bind:value={title} disabled={submitting} placeholder="e.g. Update conflict resolution process" />
             </div>
 
             <div class="field">
-              <label for="amendment-desc">{directChange ? 'Why this change?' : 'Why are you proposing this?'} <span class="lt-muted">(optional)</span></label>
-              <textarea id="amendment-desc" bind:value={description} rows="4" disabled={submitting} placeholder="Help others understand why this change matters."></textarea>
+              <label class="lt-label" for="amendment-desc"><span>{directChange ? 'Why this change?' : 'Why are you proposing this?'} <span class="lt-optional">(optional)</span></span></label>
+              <textarea class="lt-field" id="amendment-desc" bind:value={description} rows="4" disabled={submitting} placeholder="Help others understand why this change matters."></textarea>
             </div>
 
             <div class="review-actions">
@@ -414,11 +414,6 @@
     flex-direction: column;
     gap: 0.3rem;
     margin-bottom: 1rem;
-  }
-
-  .field label {
-    font-size: 0.85rem;
-    font-weight: 500;
   }
 
   .review-actions {

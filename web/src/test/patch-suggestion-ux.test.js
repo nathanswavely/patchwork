@@ -36,8 +36,8 @@ describe('SubmitPatch.svelte: a suggestion may carry a feed (decision 6)', () =>
 
   it('has an optional Events feed field bound to feedUrl', () => {
     expect(src).toMatch(/let feedUrl = \$state\(''\)/);
-    expect(src).toMatch(/<label for="feed-url">Events feed/);
-    expect(src).toMatch(/<input id="feed-url" type="url" bind:value=\{feedUrl\}/);
+    expect(src).toMatch(/<label class="lt-label" for="feed-url"><span>Events feed/);
+    expect(src).toMatch(/<input class="lt-field" id="feed-url" type="url" bind:value=\{feedUrl\}/);
   });
 
   it('hints at what is checked, and when', () => {

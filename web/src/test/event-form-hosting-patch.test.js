@@ -59,7 +59,7 @@ describe('choosing a patch is the picker, over the whole quilt', () => {
   });
 
   it('keeps the field labelled: the picker takes the id the label points at', () => {
-    expect(form).toContain('<label for="node">Hosting Patch');
+    expect(form).toContain('<label class="lt-label" for="node"><span>Hosting Patch');
     expect(form).toMatch(/inputId="node"/);
     // The prop has to actually reach the input, or the label names nothing.
     expect(picker).toMatch(/inputId = null,/);

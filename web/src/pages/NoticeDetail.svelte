@@ -156,24 +156,24 @@
   {:else if editing}
     <form class="edit-form" onsubmit={(e) => { e.preventDefault(); saveEdit(); }}>
       <div class="field">
-        <label for="edit-title">Title</label>
-        <input id="edit-title" type="text" bind:value={editTitle} maxlength="140" disabled={saving} />
+        <label class="lt-label" for="edit-title">Title</label>
+        <input class="lt-field" id="edit-title" type="text" bind:value={editTitle} maxlength="140" disabled={saving} />
       </div>
       <div class="field">
-        <label for="edit-body">Notice</label>
-        <textarea id="edit-body" bind:value={editBody} rows="8" disabled={saving}></textarea>
+        <label class="lt-label" for="edit-body">Notice</label>
+        <textarea class="lt-field" id="edit-body" bind:value={editBody} rows="8" disabled={saving}></textarea>
       </div>
       <div class="field">
-        <label for="edit-image">Image address</label>
-        <input id="edit-image" type="url" bind:value={editImageUrl} disabled={saving} placeholder="https://..." />
+        <label class="lt-label" for="edit-image">Image address</label>
+        <input class="lt-field" id="edit-image" type="url" bind:value={editImageUrl} disabled={saving} placeholder="https://..." />
       </div>
       {#if editImageUrl.trim()}
         <div class="field">
-          <label for="edit-image-alt">Describe the image</label>
-          <input id="edit-image-alt" type="text" bind:value={editImageAlt} disabled={saving} />
+          <label class="lt-label" for="edit-image-alt">Describe the image</label>
+          <input class="lt-field" id="edit-image-alt" type="text" bind:value={editImageAlt} disabled={saving} />
         </div>
       {/if}
-      <div class="form-actions">
+      <div class="lt-actions form-actions">
         <button type="submit" class="lt-btn lt-btn-primary" disabled={saving}>{saving ? 'Saving…' : 'Save'}</button>
         <button type="button" class="lt-btn lt-btn-secondary" onclick={() => editing = false} disabled={saving}>Cancel</button>
       </div>
@@ -249,8 +249,8 @@
 
       {#if notice.replies_open}
         <form class="reply-form" onsubmit={(e) => { e.preventDefault(); sendReply(); }}>
-          <textarea bind:value={replyText} rows="3" placeholder="Reply to this notice" disabled={replying}></textarea>
-          <div class="form-actions">
+          <textarea class="lt-field" bind:value={replyText} rows="3" placeholder="Reply to this notice" disabled={replying}></textarea>
+          <div class="lt-actions form-actions">
             <button type="submit" class="lt-btn lt-btn-primary lt-btn-sm" disabled={replying || !replyText.trim()}>{replying ? 'Sending…' : 'Reply'}</button>
           </div>
         </form>
@@ -286,14 +286,4 @@
   .reply-form, .edit-form { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.75rem; }
   .edit-form { gap: 1rem; max-width: 40rem; }
   .field { display: flex; flex-direction: column; gap: 0.25rem; }
-  .field > label { font-size: 0.85rem; font-weight: 500; color: var(--color-text-muted); }
-  .field input, .field textarea, .reply-form textarea {
-    padding: 0.5rem 0.65rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    background: var(--color-surface);
-    color: var(--color-text);
-    font: inherit;
-  }
-  .form-actions { display: flex; gap: 0.5rem; }
 </style>

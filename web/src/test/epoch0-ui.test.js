@@ -54,7 +54,7 @@ describe('F-008 — the create form asks who can join', () => {
     expect(src).toMatch(/Following is separate and always open/);
     // No em dashes in copy a reader sees. Scoped to the paragraph, not the
     // surrounding markup: code comments are not copy and keep house style.
-    const hint = src.match(/<p class="field-hint lt-muted">\s*Members vote[\s\S]*?<\/p>/);
+    const hint = src.match(/<p class="lt-hint field-hint">\s*Members vote[\s\S]*?<\/p>/);
     expect(hint, 'who-can-join hint paragraph not found').toBeTruthy();
     expect(hint[0]).not.toContain('—');
   });

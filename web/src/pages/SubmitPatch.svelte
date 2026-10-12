@@ -80,32 +80,32 @@
 
   <form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
     <div class="field">
-      <label for="name">Name <span class="required">*</span></label>
-      <input id="name" type="text" bind:value={name} placeholder="e.g. Gallery Row" disabled={submitting} />
+      <label class="lt-label" for="name"><span>Name <span class="lt-required">*</span></span></label>
+      <input class="lt-field" id="name" type="text" bind:value={name} placeholder="e.g. Gallery Row" disabled={submitting} />
     </div>
 
     <div class="field">
-      <label for="description">Description</label>
-      <textarea id="description" bind:value={description} rows="3" placeholder="What is this place/group about?" disabled={submitting}></textarea>
+      <label class="lt-label" for="description">Description</label>
+      <textarea class="lt-field" id="description" bind:value={description} rows="3" placeholder="What is this place/group about?" disabled={submitting}></textarea>
     </div>
 
     <div class="field">
-      <label for="website">Website</label>
-      <input id="website" type="url" bind:value={website} placeholder="https://..." disabled={submitting} />
+      <label class="lt-label" for="website">Website</label>
+      <input class="lt-field" id="website" type="url" bind:value={website} placeholder="https://..." disabled={submitting} />
     </div>
 
     <div class="field">
-      <label for="feed-url">Events feed <span class="lt-muted">(optional)</span></label>
-      <input id="feed-url" type="url" bind:value={feedUrl} placeholder="https://..." disabled={submitting} />
-      <span class="field-hint lt-muted">A calendar Patchwork can read: an ICS address, a Squarespace events page, or a page with event markup. Checked when you submit.</span>
+      <label class="lt-label" for="feed-url"><span>Events feed <span class="lt-optional">(optional)</span></span></label>
+      <input class="lt-field" id="feed-url" type="url" bind:value={feedUrl} placeholder="https://..." disabled={submitting} />
+      <span class="lt-hint field-hint">A calendar Patchwork can read: an ICS address, a Squarespace events page, or a page with event markup. Checked when you submit.</span>
     </div>
 
     <div class="field">
-      <label>Links</label>
+      <label class="lt-label">Links</label>
       {#each links as link, i}
         <div class="link-row">
-          <input type="url" bind:value={link.url} placeholder="https://..." disabled={submitting} />
-          <input type="text" bind:value={link.label} placeholder="Label (optional)" disabled={submitting} />
+          <input class="lt-field" type="url" bind:value={link.url} placeholder="https://..." disabled={submitting} />
+          <input class="lt-field" type="text" bind:value={link.label} placeholder="Label (optional)" disabled={submitting} />
           {#if links.length > 1}
             <button type="button" class="remove-btn" onclick={() => removeLink(i)} disabled={submitting}>&times;</button>
           {/if}
@@ -115,12 +115,12 @@
     </div>
 
     <div class="field">
-      <label for="address">Address <span class="lt-muted">(optional)</span></label>
-      <input id="address" type="text" bind:value={address} placeholder="123 Main St, Lancaster, PA" disabled={submitting} />
+      <label class="lt-label" for="address"><span>Address <span class="lt-optional">(optional)</span></span></label>
+      <input class="lt-field" id="address" type="text" bind:value={address} placeholder="123 Main St, Lancaster, PA" disabled={submitting} />
     </div>
 
     <div class="field">
-      <label>Tags <span class="lt-muted">(optional)</span></label>
+      <label class="lt-label"><span>Tags <span class="lt-optional">(optional)</span></span></label>
       <TagPicker bind:selected={tags} disabled={submitting} />
     </div>
 
@@ -136,7 +136,7 @@
       {/if}
     </p>
 
-    <div class="form-actions">
+    <div class="lt-actions form-actions">
       <button type="submit" class="lt-btn lt-btn-primary" disabled={submitting}>
         {submitting ? 'Submitting...' : 'Submit'}
       </button>
@@ -172,19 +172,6 @@
     gap: 0.35rem;
   }
 
-  .field label {
-    font-size: 0.85rem;
-    font-weight: 500;
-  }
-
-  .field-hint {
-    font-size: 0.8rem;
-  }
-
-  .required {
-    color: var(--color-error);
-  }
-
   .review-note {
     font-size: 0.85rem;
   }
@@ -218,8 +205,6 @@
   }
 
   .form-actions {
-    display: flex;
-    gap: 0.75rem;
     padding-top: 0.5rem;
   }
 </style>

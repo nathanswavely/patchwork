@@ -101,13 +101,13 @@
     <h2 class="page-title">Put up a notice</h2>
     <form class="notice-form" onsubmit={(e) => { e.preventDefault(); putUp(); }}>
       <div class="field">
-        <label for="notice-title">Title</label>
-        <input id="notice-title" type="text" bind:value={title} maxlength="140" disabled={submitting} placeholder="Notice title" />
+        <label class="lt-label" for="notice-title">Title</label>
+        <input class="lt-field" id="notice-title" type="text" bind:value={title} maxlength="140" disabled={submitting} placeholder="Notice title" />
       </div>
 
       <div class="field">
-        <label for="notice-body">
-          Notice
+        <label class="lt-label" for="notice-body">
+          <span>Notice</span>
           <div class="toggle-group">
             <button type="button" class="toggle-btn" class:active={!previewMode} onclick={() => previewMode = false}>Write</button>
             <button type="button" class="toggle-btn" class:active={previewMode} onclick={() => previewMode = true}>Preview</button>
@@ -122,24 +122,24 @@
             {/if}
           </div>
         {:else}
-          <textarea id="notice-body" bind:value={body} rows="8" disabled={submitting}
+          <textarea class="lt-field" id="notice-body" bind:value={body} rows="8" disabled={submitting}
             placeholder="Markdown is supported."></textarea>
         {/if}
       </div>
 
       <div class="field">
-        <label for="notice-image">Image address</label>
-        <input id="notice-image" type="url" bind:value={imageUrl} disabled={submitting} placeholder="https://..." />
+        <label class="lt-label" for="notice-image">Image address</label>
+        <input class="lt-field" id="notice-image" type="url" bind:value={imageUrl} disabled={submitting} placeholder="https://..." />
         <p class="hint lt-muted">Link a flyer or photo you already have online. Patchwork points at it and never keeps a copy.</p>
       </div>
       {#if imageUrl.trim()}
         <div class="field">
-          <label for="notice-image-alt">Describe the image</label>
-          <input id="notice-image-alt" type="text" bind:value={imageAlt} disabled={submitting} placeholder="Alt text for the image" />
+          <label class="lt-label" for="notice-image-alt">Describe the image</label>
+          <input class="lt-field" id="notice-image-alt" type="text" bind:value={imageAlt} disabled={submitting} placeholder="Alt text for the image" />
         </div>
       {/if}
 
-      <label class="check-row">
+      <label class="lt-check check-row">
         <input type="checkbox" bind:checked={repliesOpen} disabled={submitting} />
         <span>
           <strong>Take replies</strong>
@@ -147,7 +147,7 @@
         </span>
       </label>
 
-      <label class="check-row">
+      <label class="lt-check check-row">
         <input type="checkbox" bind:checked={tellMembers} disabled={submitting} />
         <span>
           <strong>Tell members</strong>
@@ -155,7 +155,7 @@
         </span>
       </label>
 
-      <div class="form-actions">
+      <div class="lt-actions form-actions">
         <button type="submit" class="lt-btn lt-btn-primary" disabled={submitting}>{submitting ? 'Putting up…' : 'Put up notice'}</button>
         <button type="button" class="lt-btn lt-btn-secondary" onclick={() => navigate(`/patches/${slug}/noticeboard`)} disabled={submitting}>Cancel</button>
       </div>
@@ -254,21 +254,11 @@
 
   .notice-form { display: flex; flex-direction: column; gap: 1rem; max-width: 40rem; }
   .field { display: flex; flex-direction: column; gap: 0.25rem; }
+  /* The label's words and its Write/Preview toggle share a line. */
   .field > label {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--color-text-muted);
-    display: flex;
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
-  }
-  .field input, .field textarea {
-    padding: 0.5rem 0.65rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    background: var(--color-surface);
-    color: var(--color-text);
-    font: inherit;
   }
   .hint { font-size: 0.78rem; margin: 0; }
   .toggle-group { display: inline-flex; gap: 0.25rem; }
@@ -288,16 +278,14 @@
     border: 1px dashed var(--color-border);
     border-radius: var(--radius);
   }
+  /* Words and a muted line under them: the box sits by the first line. */
   .check-row {
-    display: flex;
     gap: 0.6rem;
     align-items: flex-start;
     font-size: 0.9rem;
-    cursor: pointer;
   }
   .check-row input { margin-top: 0.25rem; }
   .check-row span > .lt-muted { display: block; font-size: 0.8rem; }
-  .form-actions { display: flex; gap: 0.5rem; }
 
   /* The hint keeps a readable measure and the button its one line: when
      they do not fit together the button wraps below instead of folding
