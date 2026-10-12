@@ -1,61 +1,41 @@
 /**
- * Theme store — manages dark/light/system preference.
- * Persists to localStorage. Applies data-theme attribute to <html>.
+ * The theme: a reactive shell over Liquid Textile's initTheme (lib/lt.js),
+ * the way the viewport store wraps viewport(). It sets data-theme on
+ * <html> from the reader's choice, else the OS, and keeps following the OS
+ * until they choose. Held per browser under 'patchwork-theme'.
+ *
+ * index.html's pre-paint script applies the same rule before the bundle
+ * loads, so the first frame is already in the right theme; keep the two
+ * reading the same key.
+ *
+ *   getResolvedTheme()    what is showing: 'light' or 'dark'
+ *   getThemePreference()  what the reader chose: 'light', 'dark' or
+ *                         'system', so the Display menu can keep "System"
+ *                         lit while the OS swings it
+ *   setTheme(pref)        'system' forgets the choice
  */
+import { initTheme } from '../lib/lt.js';
 
-const STORAGE_KEY = 'patchwork-theme';
+const theme = initTheme({ key: 'patchwork-theme' });
 
-// 'dark' | 'light' | 'system' — default follows the OS so light-preferring
-// first-time visitors don't land in dark mode.
-let preference = $state(localStorage.getItem(STORAGE_KEY) || 'system');
+let resolved = $state(theme.get());
+let preference = $state(theme.preference());
 
-// Resolved theme: always 'dark' or 'light'.
-let resolved = $state(resolveTheme(preference));
-
-function resolveTheme(pref) {
-  if (pref === 'system') {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
-  return pref;
-}
-
-// Apply to DOM immediately.
-function applyTheme(theme) {
-  document.documentElement.setAttribute('data-theme', theme);
-}
-
-// Initialize on load.
-applyTheme(resolved);
-
-// Listen for system preference changes.
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-  if (preference === 'system') {
-    resolved = resolveTheme('system');
-    applyTheme(resolved);
-  }
-});
+// What is showing changes under the store too, when the OS swings and the
+// reader has not chosen; data-theme is the one place both changes land.
+new MutationObserver(() => { resolved = theme.get(); })
+  .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
 export function getResolvedTheme() {
   return resolved;
 }
 
-/**
- * What the reader *chose* — 'dark', 'light' or 'system' — as against what
- * that currently resolves to. The Display menu shows the choice, so
- * "System" can stay lit while the OS swings it between light and dark.
- */
 export function getThemePreference() {
   return preference;
 }
 
 export function setTheme(pref) {
-  preference = pref;
-  resolved = resolveTheme(pref);
-  localStorage.setItem(STORAGE_KEY, pref);
-  applyTheme(resolved);
-}
-
-export function toggleTheme() {
-  const next = resolved === 'dark' ? 'light' : 'dark';
-  setTheme(next);
+  theme.set(pref);
+  preference = theme.preference();
+  resolved = theme.get();
 }
