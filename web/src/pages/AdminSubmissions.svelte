@@ -124,7 +124,7 @@
             </p>
           {/if}
           <div class="sub-tags">
-            <span class="field-label">Tags</span>
+            <span class="lt-label">Tags</span>
             {#if narrow && !editingTags[sub.id]}
               <div class="tag-summary">
                 {#each tagInputs[sub.id] || [] as name (name)}
@@ -135,29 +135,30 @@
             {:else}
               <TagPicker bind:selected={tagInputs[sub.id]} />
             {/if}
-            <span class="lt-muted">The submitter's picks.</span>
+            <span class="lt-hint">The submitter's picks.</span>
           </div>
           <div class="sub-meta lt-muted">
             Submitted by {sub.submitter_display_name || sub.submitter_username || 'unknown'}
           </div>
           <div class="sub-domain">
-            <label for="vd-{sub.id}">Verified domain for claims</label>
+            <label class="lt-label" for="vd-{sub.id}">Verified domain for claims</label>
             <input
+              class="lt-field"
               id="vd-{sub.id}"
               type="text"
               placeholder="none (admin review only)"
               bind:value={domainInputs[sub.id]}
             />
-            <span class="lt-muted">Owners prove control of this domain to claim the patch. Leave empty if you can't vouch for it.</span>
+            <span class="lt-hint">Owners prove control of this domain to claim the patch. Leave empty if you can't vouch for it.</span>
           </div>
           <div class="sub-grants">
-            <label class="grant-line">
+            <label class="lt-check grant-line">
               <input type="checkbox" bind:checked={grantTrustInputs[sub.id]} />
               Let {submitterName(sub)} add events here without review until it is claimed
             </label>
-            <p class="lt-muted grant-hint">A per-patch trusted-contributor grant. Revocable from Users.</p>
+            <p class="lt-hint grant-hint">A per-patch trusted-contributor grant. Revocable from Users.</p>
             {#if sub.feed_url}
-              <label class="grant-line">
+              <label class="lt-check grant-line">
                 <input type="checkbox" bind:checked={attachFeedInputs[sub.id]} />
                 Attach the events feed
               </label>
@@ -166,14 +167,15 @@
           {#if decliningId === sub.id}
             <div class="decline-form">
               <div class="sub-note">
-                <label for="note-{sub.id}">Note to the suggester (optional)</label>
+                <label class="lt-label" for="note-{sub.id}">Note to the suggester (optional)</label>
                 <textarea
+                  class="lt-field"
                   id="note-{sub.id}"
                   rows="2"
                   placeholder="Why this one isn't joining the quilt"
                   bind:value={noteInputs[sub.id]}
                 ></textarea>
-                <span class="lt-muted">Sent with a rejection. Approvals don't carry it.</span>
+                <span class="lt-hint">Sent with a rejection. Approvals don't carry it.</span>
               </div>
               <div class="sub-actions">
                 <button class="lt-btn lt-btn-danger lt-btn-sm" onclick={() => handleAction(sub, 'reject')}>Reject</button>
@@ -233,15 +235,6 @@
     margin-bottom: 0.5rem;
   }
 
-  .sub-tags .field-label {
-    font-size: 0.78rem;
-    font-weight: 500;
-  }
-
-  .sub-tags .lt-muted {
-    font-size: 0.72rem;
-  }
-
   .sub-meta {
     font-size: 0.78rem;
     margin-bottom: 0.5rem;
@@ -254,17 +247,8 @@
     margin-bottom: 0.65rem;
   }
 
-  .sub-domain label {
-    font-size: 0.78rem;
-    font-weight: 500;
-  }
-
   .sub-domain input {
     max-width: 320px;
-  }
-
-  .sub-domain .lt-muted {
-    font-size: 0.72rem;
   }
 
   .sub-feed {
@@ -288,11 +272,7 @@
   }
 
   .grant-line {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
     font-size: 0.82rem;
-    cursor: pointer;
   }
 
   .grant-line input[type="checkbox"] {
@@ -301,7 +281,6 @@
   }
 
   .grant-hint {
-    font-size: 0.72rem;
     margin: 0 0 0.15rem 1.5rem;
   }
 
@@ -312,18 +291,9 @@
     margin-bottom: 0.65rem;
   }
 
-  .sub-note label {
-    font-size: 0.78rem;
-    font-weight: 500;
-  }
-
   .sub-note textarea {
     max-width: 420px;
     font-size: 0.85rem;
-  }
-
-  .sub-note .lt-muted {
-    font-size: 0.72rem;
   }
 
   .sub-actions {
