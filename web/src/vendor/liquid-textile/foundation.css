@@ -439,6 +439,11 @@
    ================================================================ */
 
 .lt-field {
+  /* Never wider than its box, and free to shrink in a row beside a
+     button: a field's natural width is its minimum otherwise, and a
+     phone's row of a field and a button overflowed. */
+  min-width: 0;
+  max-width: 100%;
   min-height: var(--lt-target);
   padding: var(--lt-field-pad-y) var(--lt-field-pad-x);
   border: 1px solid var(--lt-color-border);

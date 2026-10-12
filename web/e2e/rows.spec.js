@@ -48,4 +48,25 @@ test.describe('Rows and the stacked audit log', () => {
     const name = await row.locator('.patch-name').boundingBox();
     expect(leave.y).toBeGreaterThan(name.y + name.height - 1);
   });
+
+  // A field and its button share a phone's line: the field shrinks rather
+  // than pushing the button off the screen or onto two lines (7c, once
+  // app.css stopped making every field 100% wide).
+  for (const [route, row] of [['/submit', '.link-row'], ['/admin/settings/label', '.steward-add']]) {
+    test(`a field and its button fit a phone's line on ${route}`, async ({ page }) => {
+      await page.setViewportSize(PHONE);
+      await goto(page, route);
+      const box = await page.locator(row).first().boundingBox();
+      for (const el of await page.locator(`${row} > *`).all()) {
+        const b = await el.boundingBox();
+        expect(b.x + b.width).toBeLessThanOrEqual(box.x + box.width + 1);
+      }
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(PHONE.width);
+      const button = page.locator(`${row} button`).first();
+      if (await button.count()) {
+        const h = await button.evaluate((b) => b.getBoundingClientRect().height / parseFloat(getComputedStyle(b).lineHeight || '20'));
+        expect(h).toBeLessThan(2.5); // one line of words, not two
+      }
+    });
+  }
 });
