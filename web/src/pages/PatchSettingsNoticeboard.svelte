@@ -94,7 +94,7 @@
   <h2>Noticeboard</h2>
   <p class="lt-muted subtitle">Read by this patch's admins and members, and nobody else.</p>
 
-  <div class="setting-row">
+  <div class="lt-setting">
     <div class="setting-info">
       <span class="setting-label">Who puts up notices</span>
       <span class="setting-desc lt-muted">Members too, or only this patch's admins. Anyone in the room can reply either way.</span>
@@ -107,7 +107,7 @@
     />
   </div>
 
-  <div class="setting-row">
+  <div class="lt-setting">
     <div class="setting-info">
       <span class="setting-label">New notices take replies</span>
       <span class="setting-desc lt-muted">The starting position. Each notice's author decides for their own, and can change it later.</span>
@@ -154,9 +154,9 @@
           {#if tab === 'pending'}
             {#if resolvingId === r.id}
               <div class="resolve-form">
-                <label class="form-label">
+                <label class="lt-label">
                   Action
-                  <select bind:value={action}>
+                  <select class="lt-field" bind:value={action}>
                     <option value="dismiss">Dismiss, leave it up</option>
                     {#if !r.gone}
                       <option value="remove">Remove the {r.entity_type}</option>
@@ -164,11 +164,11 @@
                     {/if}
                   </select>
                 </label>
-                <label class="form-label">
+                <label class="lt-label">
                   Note
-                  <textarea bind:value={note} rows="2" placeholder="Optional"></textarea>
+                  <textarea class="lt-field" bind:value={note} rows="2" placeholder="Optional"></textarea>
                 </label>
-                <div class="resolve-actions">
+                <div class="lt-actions resolve-actions">
                   {#if action === 'remove'}
                     <ConfirmAction label="Confirm" confirmLabel="Yes, remove it" variant="danger" onConfirm={resolve} />
                   {:else}
@@ -192,14 +192,6 @@
 <style>
   h2 { font-size: 1.2rem; margin-bottom: 0.25rem; }
   .subtitle { font-size: 0.85rem; margin-bottom: 1.25rem; }
-  .setting-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid var(--color-border);
-  }
   .setting-info { display: flex; flex-direction: column; gap: 0.1rem; }
   .setting-label { font-size: 0.92rem; font-weight: 500; color: var(--color-text); }
   .setting-desc { font-size: 0.8rem; }
@@ -223,22 +215,6 @@
   .report-reason { margin: 0.2rem 0; font-weight: 500; }
   .report-details { font-size: 0.82rem; margin: 0.2rem 0; }
   .resolve-form { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem; max-width: 30rem; }
-  .form-label { display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.82rem; color: var(--color-text-muted); }
-  .form-label select, .form-label textarea {
-    padding: 0.4rem 0.55rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    background: var(--color-surface);
-    color: var(--color-text);
-    font: inherit;
-  }
-  .resolve-actions { display: flex; gap: 0.5rem; }
-
-  /* A narrow row wraps its control under the text when the two do not fit
-     side by side: a switch stays beside its label, a segmented control
-     drops below it instead of wrapping its own labels. */
-  .setting-row { flex-wrap: wrap; }
-  .setting-info { flex: 1 1 14rem; min-width: 0; }
 
   @media (pointer: coarse) {
     .tab-btn { min-height: 36px; padding: 0 0.8rem; }

@@ -58,28 +58,28 @@
     <div class="inline-edit-form">
       {#if type === 'textarea'}
         <textarea
-          class="inline-input"
+          class="lt-field inline-input"
           bind:value={editValue}
           onkeydown={handleKeydown}
           rows="3"
           {placeholder}
         ></textarea>
       {:else if type === 'select'}
-        <select class="inline-input" bind:value={editValue}>
+        <select class="lt-field inline-input" bind:value={editValue}>
           {#each options as opt}
             <option value={opt.value}>{opt.label}</option>
           {/each}
         </select>
       {:else}
         <input
-          class="inline-input"
+          class="lt-field inline-input"
           type="text"
           bind:value={editValue}
           onkeydown={handleKeydown}
           {placeholder}
         />
       {/if}
-      <div class="inline-edit-actions">
+      <div class="lt-actions inline-edit-actions">
         <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={handleSave} disabled={saving}>
           {saving ? 'Saving...' : 'Save'}
         </button>
@@ -156,29 +156,13 @@
 
   .inline-input {
     width: 100%;
-    padding: 0.45rem 0.6rem;
-    font-size: 0.88rem;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    background: var(--color-surface);
-    color: var(--color-text);
-    font-family: inherit;
   }
 
-  .inline-input:focus {
-    outline: none;
-    border-color: var(--color-primary);
-  }
 
   textarea.inline-input {
-    resize: vertical;
     min-height: 60px;
   }
 
-  .inline-edit-actions {
-    display: flex;
-    gap: 0.4rem;
-  }
 
   @media (pointer: coarse) {
     .edit-btn {

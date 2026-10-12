@@ -80,7 +80,7 @@
     <div class="v-field">
       <input
         type="text"
-        class="v-input"
+        class="lt-field v-input"
         placeholder="example.org"
         bind:value={domain}
         disabled={saving}
@@ -88,7 +88,7 @@
         spellcheck="false"
       />
       {#if dirty}
-        <div class="v-actions">
+        <div class="lt-actions v-actions">
           <button class="lt-btn lt-btn-primary lt-btn-sm" onclick={saveDomain} disabled={saving}>
             {saving ? 'Saving…' : 'Save'}
           </button>
@@ -167,23 +167,6 @@
   .v-input {
     flex: 1;
     min-width: 200px;
-    padding: 0.45rem 0.6rem;
-    font-size: 0.88rem;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    background: var(--color-surface);
-    color: var(--color-text);
-    font-family: inherit;
-  }
-
-  .v-input:focus {
-    outline: none;
-    border-color: var(--color-primary);
-  }
-
-  .v-actions {
-    display: flex;
-    gap: 0.4rem;
   }
 
   .v-note {
