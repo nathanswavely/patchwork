@@ -98,7 +98,6 @@
   import SignInLink from './pages/SignInLink.svelte';
   import Welcome from './pages/Welcome.svelte';
   import Discover from './pages/Discover.svelte';
-  import Toast from './components/Toast.svelte';
   import StepUpPrompt from './components/StepUpPrompt.svelte';
 
   // --- Routes ---
@@ -819,7 +818,6 @@
   </div>
 {/if}
 
-<Toast />
 
 <!-- Mounted once, for every surface (docs/adr/099). Registering it here is
      what lets lib/stepUp.js ask for a recovery code without the seven

@@ -43,16 +43,20 @@ describe('a row wraps rather than squeezing its name', () => {
   });
 });
 
+// ConfirmAction is Liquid Textile's confirmAction(): its .lt-confirm group
+// wraps, and its prompt is read aloud but not shown on a phone.
 describe('ConfirmAction fits the row it opens in', () => {
   const src = source('components/ConfirmAction.svelte');
+  const lt = source('vendor/liquid-textile/foundation.css');
 
   it('lets its confirm state wrap', () => {
-    expect(src).toMatch(/\.confirm-group \{\s*flex-wrap: wrap;/);
+    expect(src).toContain('use:ltConfirm={{');
+    expect(lt).toMatch(/\.lt-confirm \{[^}]*flex-wrap: wrap;/);
   });
 
   it('keeps the prompt for a screen reader while hiding it on a phone', () => {
-    expect(src).toContain('<span class="confirm-prompt">Are you sure?</span>');
-    expect(src).toMatch(/@media \(max-width: 640px\) \{\s*\.confirm-prompt \{\s*position: absolute;/);
+    expect(src).toContain("prompt: 'Are you sure?',");
+    expect(lt).toMatch(/@media \(max-width: 640px\) \{\s*\.lt-confirm-prompt \{\s*position: absolute;/);
   });
 });
 
