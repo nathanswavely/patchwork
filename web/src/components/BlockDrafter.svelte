@@ -346,6 +346,7 @@
   }
 
   .grid-select select {
+    font-size: inherit;
     padding: 0.2rem 0.35rem;
     border: 1px solid var(--color-border);
     border-radius: var(--radius);

@@ -8,6 +8,9 @@ import '@fontsource-variable/space-grotesk/index.css';
 // app.css, so Patchwork's own rules win on order while both exist, and so
 // app.css can set an --lt- token over Liquid Textile's.
 import './vendor/liquid-textile/foundation.css';
+// Element defaults (html, links, headings, bare fields), all in :where(),
+// so every component's own rule wins.
+import './vendor/liquid-textile/base.css';
 import './vendor/liquid-textile/liquid-textile.css';
 import './vendor/liquid-textile/patterns.css';
 import './vendor/liquid-textile/textures.css';

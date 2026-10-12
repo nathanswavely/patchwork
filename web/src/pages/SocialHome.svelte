@@ -1043,13 +1043,6 @@
     transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
   }
 
-  /* Icon only — the chevron's direction is the whole message, so the button
-     is square rather than a pill with a label that would not fit at the
-     stop it exists to reach. */
-  .list-control.pane-stop {
-    padding: 4px 7px;
-  }
-
   .list-control:hover,
   .list-order:hover {
     color: var(--color-text);
