@@ -425,7 +425,7 @@ func main() {
 	root = middleware.BlockAICrawlers(root)
 
 	// Start server.
-	addr := ":" + cfg.Server.Port
+	addr := cfg.Server.Addr()
 	log.Printf("server: listening on %s", addr)
 
 	if !cfg.SMTP.Configured() {

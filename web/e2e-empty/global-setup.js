@@ -85,6 +85,10 @@ export default async function globalSetup() {
     // that path rather than the log-reading one.
     env: {
       ...process.env,
+      // Loopback only, for the same reason as playwright.config.js: a
+      // test stack is nobody else's business, and an all-interface listen
+      // from a freshly built binary is a Windows Firewall prompt.
+      PATCHWORK_HOST: '127.0.0.1',
       PATCHWORK_PORT: String(EMPTY_API_PORT),
       PATCHWORK_BOOTSTRAP_TOKEN: BOOTSTRAP_TOKEN,
     },

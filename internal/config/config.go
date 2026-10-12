@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"net"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -268,6 +269,15 @@ type Modules struct {
 }
 
 type Server struct {
+	// Host is the interface the server binds. Empty means every interface,
+	// which is what the bundled Docker image needs: Caddy reaches the app
+	// over the compose network, never over loopback. Set it to 127.0.0.1
+	// for a server only this machine should reach, which is every
+	// development run. On Windows that is also what keeps the firewall
+	// quiet: it prompts for each new executable path that listens on all
+	// interfaces, and a worktree build or a `go run` is a new path every
+	// time, but a loopback listen is never asked about.
+	Host string `yaml:"host"`
 	Port string `yaml:"port"`
 
 	// TrustedProxies lists CIDR blocks whose X-Forwarded-For headers are
@@ -277,6 +287,23 @@ type Server struct {
 	// plus private ranges), which cover the bundled Docker Compose topology
 	// where Caddy reaches the app over a private bridge network.
 	TrustedProxies []string `yaml:"trusted_proxies"`
+}
+
+// Addr is the listen address: the host joined to the port, or ":port" for
+// every interface when no host is set.
+func (s Server) Addr() string {
+	return net.JoinHostPort(s.Host, s.Port)
+}
+
+// ProbeHost is the address a local health probe should connect to. A
+// wildcard bind is reachable on loopback; a specific host is reachable
+// only there.
+func (s Server) ProbeHost() string {
+	switch s.Host {
+	case "", "0.0.0.0", "::":
+		return "127.0.0.1"
+	}
+	return s.Host
 }
 
 type Database struct {
@@ -373,12 +400,15 @@ func Load(path string) (*Config, error) {
 		cfg.Instance.BootstrapToken = tok
 	}
 
-	// Port and database path can also come from the environment, so one
+	// Host, port and database path can also come from the environment, so one
 	// command can run an isolated instance without editing patchwork.yaml —
 	// which is per-checkout and gitignored, so a test harness has no
 	// business rewriting it. The e2e suite uses both to stand up a stack
 	// that shares neither a port nor a database with a running dev server
 	// (see web/e2e/ports.js).
+	if host := os.Getenv("PATCHWORK_HOST"); host != "" {
+		cfg.Server.Host = host
+	}
 	if port := os.Getenv("PATCHWORK_PORT"); port != "" {
 		cfg.Server.Port = port
 	}
