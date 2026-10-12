@@ -84,7 +84,7 @@ describe('getting in and out', () => {
   // their effects on its slug, which does not change when only the query
   // does, so a soft navigation left half the page holding admin answers.
   it('enters with a page load rather than a soft navigation', () => {
-    expect(overflow).toContain('<a role="menuitem" href={previewHref}>View as a visitor</a>');
+    expect(overflow).toContain('<a class="lt-menu-item" href={previewHref}>View as a visitor</a>');
     expect(overflow).not.toContain('navigate(previewHref)');
   });
 

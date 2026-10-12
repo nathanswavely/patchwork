@@ -106,7 +106,7 @@ describe('surfaces that state where you stand', () => {
     expect(rel).toMatch(/api\(`nodes\/\$\{slug\}\/withdraw`, \{ method: 'POST' \}\)/);
     // Behind the menu, like every other undo in this row — not a button
     // sitting next to the thing it undoes.
-    expect(rel).toMatch(/role="menuitem" onclick=\{handleWithdraw\}[\s\S]{0,60}Withdraw request/);
+    expect(rel).toMatch(/class="lt-menu-item" onclick=\{handleWithdraw\}[\s\S]{0,60}Withdraw request/);
     // And it must not reach for leave, which would 400 on a pending row.
     expect(rel).not.toMatch(/awaiting[\s\S]{0,400}handleLeave/);
   });

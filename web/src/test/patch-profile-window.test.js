@@ -231,7 +231,7 @@ describe('PatchOverflow', () => {
   // Opening the report modal closes the menu. Mounted inside it, the modal
   // would be destroyed by the very click that opened it.
   it('mounts the report modal outside the menu it is triggered from', () => {
-    const menuStart = src.indexOf('{#if menuOpen}');
+    const menuStart = src.indexOf('bind:this={menuEl}');
     const menuEnd = src.indexOf('Mounted outside the menu');
     expect(menuStart).toBeGreaterThan(-1);
     expect(menuEnd).toBeGreaterThan(menuStart);

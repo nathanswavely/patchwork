@@ -11,7 +11,7 @@
  *
  *   <button use:ltConfirm={{ onConfirm, confirmLabel, tone }}>
  */
-import { confirmAction, dialog } from '../vendor/liquid-textile/behaviors.js';
+import { confirmAction, dialog, menu } from '../vendor/liquid-textile/behaviors.js';
 
 export { media, viewport, toast } from '../vendor/liquid-textile/behaviors.js';
 
@@ -28,6 +28,35 @@ function action(make) {
 
 /** A two-step button for an act you cannot take back (confirmAction). */
 export const ltConfirm = action((button, opts) => confirmAction(button, opts));
+
+/**
+ * A menu of actions under a button (menu()): click or ArrowDown opens it on
+ * its first item, arrows, Home and End move, Escape closes it and hands
+ * focus back, and choosing an item, Tab or a click elsewhere closes it. It
+ * flips above the button when there is no room below.
+ *
+ *   <button use:ltMenu={{ list: listEl, align: 'end' }}>
+ *   <div class="lt-popover lt-menu" bind:this={listEl}>
+ *     <button class="lt-menu-item">…</button>
+ *
+ * The list is always rendered; menu() hides and shows it, so it must not
+ * set a display of its own. It is built once the list is bound, and an item
+ * that appears later (an {#if} inside the list) is made a menu item as it
+ * does. The list's stacking level is --lt-z-menu, set on its container.
+ */
+export const ltMenu = action((trigger, { list, ...opts } = {}) => {
+  if (!list) return { destroy() {} };
+  const handle = menu(trigger, list, opts);
+  const enlist = () => {
+    for (const el of list.querySelectorAll('.lt-menu-item:not([role])')) {
+      el.setAttribute('role', 'menuitem');
+      el.tabIndex = -1;
+    }
+  };
+  const watch = new MutationObserver(enlist);
+  watch.observe(list, { childList: true, subtree: true });
+  return { destroy() { watch.disconnect(); handle.destroy(); } };
+});
 
 /**
  * A native <dialog class="lt-dialog | lt-drawer | lt-sheet"> run by

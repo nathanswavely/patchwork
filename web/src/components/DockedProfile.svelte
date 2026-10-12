@@ -451,15 +451,6 @@
     padding-top: 0;
   }
 
-  /* At rest the sheet ends just under the relationship row, so its standing
-     menu opens upward: downward is below the fold, where a "Leave" nobody
-     can see is a menu that appears to do nothing. The panel has room below
-     and keeps the menu's own direction. */
-  .dock.sheet .dock-head :global(.standing-menu) {
-    top: auto;
-    bottom: calc(100% + 4px);
-  }
-
   .dock-glimpses {
     margin-top: 1.5rem;
   }

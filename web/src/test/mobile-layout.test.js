@@ -74,9 +74,11 @@ describe('a finger gets a finger-sized target', () => {
     // Modal's close is Liquid Textile's .lt-dialog-close, sized by --lt-target.
     expect(source('components/Modal.svelte')).toContain('class="lt-dialog-close"');
     expect(source('vendor/liquid-textile/foundation.css')).toMatch(/\.lt-dialog-close \{[^}]*width: max\(28px, var\(--lt-target\)\);/);
-    expect(source('components/GlobalBar.svelte')).toMatch(/\.user-dropdown button \{[^}]*min-height: var\(--lt-target\);/);
-    expect(source('components/PatchOverflow.svelte')).toMatch(/\.overflow-menu > a \{[^}]*min-height: var\(--lt-target\);/);
-    expect(source('components/PatchRelationship.svelte')).toMatch(/\.standing-menu button \{[^}]*min-height: var\(--lt-target\);/);
+    // Menu rows are Liquid Textile's .lt-menu-item, sized by --lt-target.
+    expect(source('components/GlobalBar.svelte')).toContain('<button class="lt-menu-item" onclick={handleLogout}>');
+    expect(source('components/PatchOverflow.svelte')).toContain('<a class="lt-menu-item" href={previewHref}>');
+    expect(source('components/PatchRelationship.svelte')).toContain('<button class="lt-menu-item" onclick={handleLeave}');
+    expect(source('vendor/liquid-textile/foundation.css')).toMatch(/\.lt-menu-item \{[^}]*min-height: var\(--lt-target\);/);
   });
 
   // The switch and the tag chips are Liquid Textile's, which sizes them by

@@ -20,6 +20,7 @@
   } from '../stores/quilt.svelte.js';
   import { switcherQuilts, fetchQuiltInfo } from '../stores/multiQuilt.svelte.js';
   import GlobalBar from './GlobalBar.svelte';
+  import { ltMenu } from '../lib/lt.js';
   import WorkspaceSearch from './WorkspaceSearch.svelte';
   import FilterChips from './FilterChips.svelte';
   import { discoveryFinderProvider } from '../lib/finderProviders.js';
@@ -41,7 +42,7 @@
     dockOpen = false,
   } = $props();
 
-  let scopeMenuOpen = $state(false);
+  let scopeMenuEl = $state(null);
 
   // The search (docs/adr/033): one autocomplete posture on every social
   // page. The discovery corpus is fetched once per shell mount, on first
@@ -71,10 +72,9 @@
   // another quilt is visited at its own address, never rendered here.
   let otherQuilts = $derived(switcherQuilts(getNeighborQuilts(), window.location.origin));
 
-  // Display names fetched lazily when the menu opens.
+  // Display names fetched lazily, the first time the menu is reached for.
   let quiltDetails = $state({});
-  $effect(() => {
-    if (!scopeMenuOpen) return;
+  function loadQuiltDetails() {
     for (const q of otherQuilts) {
       if (quiltDetails[q.url] !== undefined) continue;
       quiltDetails[q.url] = null; // pending
@@ -85,10 +85,9 @@
         };
       });
     }
-  });
+  }
 
   function selectQuilt(q) {
-    scopeMenuOpen = false;
     window.open(q.url, '_blank', 'noopener');
   }
 
@@ -190,9 +189,6 @@
   }
 
   function handleWindowClick(e) {
-    if (scopeMenuOpen && !e.target.closest('.scope-switcher')) {
-      scopeMenuOpen = false;
-    }
     if (filterSheetOpen && !e.target.closest('.filter-sheet') && !e.target.closest('.filter-fab')) {
       filterSheetOpen = false;
     }
@@ -207,7 +203,6 @@
   // on the scope root. Scope reads as "same view, other quilt", not "go
   // home".
   function selectScope(scope) {
-    scopeMenuOpen = false;
     navigate(scopedPath(surfaceForRoute(routeName) || 'quilt', scope));
   }
 </script>
@@ -226,7 +221,12 @@
         <SidebarSimple size={20} weight={sidebarCollapsed ? 'duotone' : 'fill'} />
       </button>
       <div class="scope-switcher">
-        <button class="scope-btn" onclick={() => { scopeMenuOpen = !scopeMenuOpen; }}>
+        <button
+          class="scope-btn"
+          use:ltMenu={{ list: scopeMenuEl }}
+          onclick={loadQuiltDetails}
+          onkeydown={loadQuiltDetails}
+        >
           {#if quiltScope === 'my'}
             <House class="logo-icon" size={20} weight="duotone" />
           {:else if getInstanceIconUrl()}
@@ -240,13 +240,12 @@
             </svg>
           {/if}
           <span class="lt-type-name logo-label">{activeScopeLabel}</span>
-          <span class="logo-chevron" class:open={scopeMenuOpen}>
+          <span class="logo-chevron">
             <CaretDown size={12} weight="bold" />
           </span>
         </button>
-        {#if scopeMenuOpen}
-          <div class="scope-dropdown">
-            <button class="scope-option" class:active={quiltScope === 'local'} onclick={() => selectScope('local')}>
+        <div class="lt-popover lt-menu scope-dropdown" bind:this={scopeMenuEl}>
+            <button class="lt-menu-item scope-option" aria-current={quiltScope === 'local' ? 'true' : undefined} onclick={() => selectScope('local')}>
               {#if getInstanceIconUrl()}
                 <img class="quilt-icon-img" src={getInstanceIconUrl()} alt="" width="16" height="16" />
               {:else}
@@ -260,17 +259,17 @@
               <span>{getInstanceName()}</span>
             </button>
             {#if isLoggedIn()}
-              <button class="scope-option" class:active={quiltScope === 'my'} onclick={() => selectScope('my')}>
+              <button class="lt-menu-item scope-option" aria-current={quiltScope === 'my' ? 'true' : undefined} onclick={() => selectScope('my')}>
                 <House size={16} weight="duotone" />
                 <span>My Quilt</span>
               </button>
             {/if}
             {#if otherQuilts.length > 0}
-              <div class="scope-section-label">Connected quilts</div>
+              <div class="lt-menu-label scope-section-label">Connected quilts</div>
               {#each otherQuilts as q (q.url)}
                 {@const detail = quiltDetails[q.url]}
                 <button
-                  class="scope-option"
+                  class="lt-menu-item scope-option"
                   onclick={() => selectQuilt(q)}
                   title="Opens {detail?.name || q.name || q.url} on its own site"
                 >
@@ -280,8 +279,7 @@
                 </button>
               {/each}
             {/if}
-          </div>
-        {/if}
+        </div>
       </div>
     {/snippet}
 
@@ -528,8 +526,10 @@
     color: var(--color-text);
   }
 
+  /* Liquid Textile's menu (ltMenu); the list is the popover below. */
   .scope-switcher {
     position: relative;
+    --lt-z-menu: 200;
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -609,31 +609,11 @@
     transition: transform 150ms ease;
   }
 
-  .logo-chevron.open {
+  .scope-btn:global([aria-expanded="true"]) .logo-chevron {
     transform: rotate(180deg);
   }
 
-  .scope-dropdown {
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    box-shadow: 0 4px 16px var(--color-shadow);
-    min-width: 200px;
-    z-index: 200;
-    overflow: hidden;
-    padding: 4px;
-  }
-
   .scope-section-label {
-    padding: 8px 10px 3px;
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--color-text-muted);
     border-top: 1px solid var(--color-border);
     margin-top: 4px;
   }
@@ -645,30 +625,10 @@
     color: var(--color-text-muted);
   }
 
+  /* A mark, a name, and for another quilt a doorway, read left to right. */
   .scope-option {
-    display: flex;
-    align-items: center;
+    justify-content: flex-start;
     gap: 8px;
-    width: 100%;
-    padding: 8px 10px;
-    border: none;
-    background: none;
-    border-radius: 4px;
-    color: var(--color-text);
-    font-size: 0.88rem;
-    font-weight: 500;
-    cursor: pointer;
-    text-align: left;
-    transition: background 100ms ease;
-  }
-
-  .scope-option:hover {
-    background: var(--color-overlay);
-  }
-
-  .scope-option.active {
-    color: var(--color-primary);
-    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
   }
 
   .scope-option svg {
@@ -676,7 +636,7 @@
     color: var(--color-text-muted);
   }
 
-  .scope-option.active svg {
+  .scope-option[aria-current="true"] svg {
     color: var(--color-primary);
   }
 

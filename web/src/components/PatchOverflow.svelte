@@ -21,6 +21,7 @@
   import { isLoggedIn } from '../stores/auth.svelte.js';
   import { signedInForPatchView } from '../lib/preview.js';
   import Modal from './Modal.svelte';
+  import { ltMenu } from '../lib/lt.js';
   import ReportButton from './ReportButton.svelte';
   import SubscribeFeeds from './SubscribeFeeds.svelte';
 
@@ -36,7 +37,7 @@
   // menu item offering to start again would be a dead end.
   let previewing = $derived(getQuery().get('as') === 'visitor');
 
-  let menuOpen = $state(false);
+  let menuEl = $state(null);
   let subscribeOpen = $state(false);
   let reportOpen = $state(false);
 
@@ -57,37 +58,28 @@
   let canPreview = $derived(isAdmin && !previewing);
   let previewHref = $derived(`/patches/${slug}?as=visitor`);
 
-  function handleWindowClick(e) {
-    if (menuOpen && !e.target.closest('.overflow-container')) menuOpen = false;
-  }
-
 </script>
-
-<svelte:window onclick={handleWindowClick} />
 
 {#if feedAvailable || canEnterWorkspace || canReport || canPreview}
   <div class="overflow-container">
     <button
       class="overflow-trigger"
-      onclick={() => { menuOpen = !menuOpen; }}
-      aria-haspopup="menu"
-      aria-expanded={menuOpen}
       aria-label="More actions"
+      use:ltMenu={{ list: menuEl, align: 'end' }}
       title="More actions"
     >
       <DotsThree size={20} weight="bold" />
     </button>
 
-    {#if menuOpen}
-      <div class="overflow-menu" role="menu">
+    <div class="lt-popover lt-menu overflow-menu" bind:this={menuEl}>
         {#if feedAvailable}
-          <button role="menuitem" onclick={() => { menuOpen = false; subscribeOpen = true; }}>Subscribe</button>
+          <button class="lt-menu-item" onclick={() => { subscribeOpen = true; }}>Subscribe</button>
         {/if}
         {#if canEnterWorkspace}
           <a
-            role="menuitem"
+            class="lt-menu-item"
             href={workspaceHref}
-            onclick={(e) => { e.preventDefault(); menuOpen = false; navigate(workspaceHref); }}
+            onclick={(e) => { e.preventDefault(); navigate(workspaceHref); }}
           >Workspace view</a>
         {/if}
         {#if canPreview}
@@ -99,13 +91,12 @@
                makes middle-click and open-in-new-tab do the obvious
                thing, which for "show me the visitor view" is worth
                having. -->
-          <a role="menuitem" href={previewHref}>View as a visitor</a>
+          <a class="lt-menu-item" href={previewHref}>View as a visitor</a>
         {/if}
         {#if canReport}
-          <button role="menuitem" onclick={() => { menuOpen = false; reportOpen = true; }}>Report</button>
+          <button class="lt-menu-item" onclick={() => { reportOpen = true; }}>Report</button>
         {/if}
-      </div>
-    {/if}
+    </div>
   </div>
 
   <!-- Mounted outside the menu on purpose: opening the modal closes the
@@ -129,9 +120,11 @@
 {/if}
 
 <style>
+  /* Liquid Textile's menu (ltMenu): its list is the popover below. */
   .overflow-container {
     position: relative;
     display: inline-flex;
+    --lt-z-menu: 60;
   }
 
   .overflow-trigger {
@@ -153,44 +146,6 @@
   .overflow-trigger:hover {
     color: var(--color-text);
     background: var(--color-overlay);
-  }
-
-  .overflow-menu {
-    position: absolute;
-    top: calc(100% + 4px);
-    right: 0;
-    z-index: 60;
-    min-width: 10rem;
-    padding: 0.25rem;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
-  }
-
-  .overflow-menu > button,
-  .overflow-menu > a {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    padding: 0.4rem 0.6rem;
-    font-size: 0.85rem;
-    font-weight: 500;
-    text-align: left;
-    white-space: nowrap;
-    color: var(--color-text);
-    background: none;
-    border: none;
-    border-radius: calc(var(--radius) - 2px);
-    text-decoration: none;
-    cursor: pointer;
-    min-height: var(--lt-target);
-  }
-
-  .overflow-menu > button:hover,
-  .overflow-menu > a:hover {
-    background: var(--color-overlay);
-    text-decoration: none;
   }
 
   .subscribe-title {
