@@ -43,6 +43,8 @@
     color: var(--color-text-muted);
     cursor: pointer;
     border-radius: var(--radius);
+    min-width: var(--lt-target);
+    min-height: var(--lt-target);
   }
 
   .bell-btn:hover {
@@ -52,12 +54,5 @@
   .badge-count {
     top: -2px;
     right: -4px;
-  }
-
-  @media (pointer: coarse) {
-    .bell-btn {
-      min-width: 40px;
-      min-height: 40px;
-    }
   }
 </style>

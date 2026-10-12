@@ -1,22 +1,51 @@
 /**
- * Whether the screen is narrow enough that a workspace drills down, one
- * level of navigation on screen at a time, instead of showing a tab row and
- * a sidebar together. The width is SettingsShell's own breakpoint, so the
- * CSS that stacks the sidebar and the script that decides whether a bare
- * tab URL redirects agree on what "narrow" means.
+ * The screen, as Liquid Textile measures it: a reactive shell over its
+ * viewport() (lib/lt.js), the same way the theme store wraps initTheme.
+ * The conditions are the ones its CSS is written against, so the script
+ * that decides whether a bare tab URL redirects, or whether a tap
+ * previews, agrees with the stylesheet that stacks the sidebar or docks
+ * the tab bar.
+ *
+ *   isNarrow()             a phone layout: stack, drill down, tables to
+ *                          lists (640px; SettingsShell's split)
+ *   isHandheld()           the app's chrome goes mobile (768px): the bottom
+ *                          tab bar, notifications as a page
+ *   isCoarse()             a finger
+ *   canHover()             a pointer that can rest without pressing
+ *   prefersReducedMotion() the person asked for less movement
+ *
+ * Each is read reactively. ADR 094's per-gesture pointerType check stays
+ * where it is: it asks what this touch was, not what the screen is.
  */
-export const NARROW_QUERY = '(max-width: 640px)';
+import { media, viewport } from '../lib/lt.js';
 
-const mq = typeof window !== 'undefined' && window.matchMedia
-  ? window.matchMedia(NARROW_QUERY)
-  : null;
+export const NARROW_QUERY = media.narrow;
 
-let narrow = $state(mq ? mq.matches : false);
+const live = typeof window !== 'undefined' && typeof window.matchMedia === 'function';
 
-mq?.addEventListener('change', (e) => {
-  narrow = e.matches;
-});
+let now = $state({ narrow: false, handheld: false, coarse: false, hover: true, reducedMotion: false });
+
+if (live) {
+  const vp = viewport((next) => { now = next; });
+  now = Object.fromEntries(Object.keys(media).map((name) => [name, vp[name]]));
+}
 
 export function isNarrow() {
-  return narrow;
+  return now.narrow;
+}
+
+export function isHandheld() {
+  return now.handheld;
+}
+
+export function isCoarse() {
+  return now.coarse;
+}
+
+export function canHover() {
+  return now.hover;
+}
+
+export function prefersReducedMotion() {
+  return now.reducedMotion;
 }

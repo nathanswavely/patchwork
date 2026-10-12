@@ -34,6 +34,7 @@
   import PatchProfileGlimpses from './PatchProfileGlimpses.svelte';
   import RemotePatch from '../pages/RemotePatch.svelte';
   import { X } from 'phosphor-svelte';
+  import { prefersReducedMotion } from '../stores/viewport.svelte.js';
 
   let {
     slug = '',
@@ -179,7 +180,7 @@
     const el = sheetEl;
     const from = origin;
     if (!el || isSheet || typeof el.animate !== 'function') return;
-    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    if (prefersReducedMotion()) return;
     const to = el.getBoundingClientRect();
     const easing = 'cubic-bezier(0.32, 0.72, 0, 1)';
     if (from && to.width > 0 && to.height > 0) {

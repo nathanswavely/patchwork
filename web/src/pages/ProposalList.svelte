@@ -376,7 +376,4 @@
     white-space: nowrap;
   }
   }
-
-  @media (pointer: coarse) {
-  }
 </style>

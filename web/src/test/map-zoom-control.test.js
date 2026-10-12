@@ -20,7 +20,7 @@ describe('map zoom control placement', () => {
 
   it('takes the control away from the default corner and places it by breakpoint', () => {
     expect(map()).toMatch(/zoomControl:\s*false/);
-    expect(map()).toContain("window.matchMedia('(max-width: 768px)')");
+    expect(map()).toContain('window.matchMedia(media.handheld)');
     expect(map()).toMatch(/isNarrow \? 'topleft' : 'bottomleft'/);
     // A viewport that crosses the breakpoint (a tablet rotating) moves it.
     expect(map()).toContain("narrow.addEventListener('change', onBreakpoint)");

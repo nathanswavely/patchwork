@@ -16,6 +16,7 @@
    */
   import { Heart, UsersThree, Wrench } from 'phosphor-svelte';
   import { navigate } from '../stores/router.svelte.js';
+  import { canHover } from '../stores/viewport.svelte.js';
   import ContactItems from './ContactItems.svelte';
 
   let { person, role = '' } = $props();
@@ -23,9 +24,7 @@
   let open = $state(false);
   let anchor = $state(null);
   let pos = $state({ top: 0, left: 0 });
-  const hasPointer =
-    typeof window !== 'undefined' &&
-    window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  let hasPointer = $derived(canHover());
 
   // CONTEXT.md role marks: heart = follower, three users = member,
   // wrench = admin. Paired with the word, never standing alone.
@@ -156,6 +155,7 @@
     color: var(--color-text);
     cursor: pointer;
     text-align: left;
+    min-height: var(--lt-target);
   }
   .person-trigger:hover,
   .person-trigger:focus-visible {
@@ -209,11 +209,5 @@
 
   .person-profile-link {
     font-size: 0.85rem;
-  }
-
-  @media (pointer: coarse) {
-    .person-trigger {
-      min-height: 40px;
-    }
   }
 </style>

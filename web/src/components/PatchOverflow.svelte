@@ -146,6 +146,8 @@
     border-radius: var(--radius);
     cursor: pointer;
     transition: background 150ms ease, color 150ms ease;
+    min-width: var(--lt-target);
+    min-height: var(--lt-target);
   }
 
   .overflow-trigger:hover {
@@ -168,7 +170,8 @@
 
   .overflow-menu > button,
   .overflow-menu > a {
-    display: block;
+    display: flex;
+    align-items: center;
     width: 100%;
     padding: 0.4rem 0.6rem;
     font-size: 0.85rem;
@@ -181,6 +184,7 @@
     border-radius: calc(var(--radius) - 2px);
     text-decoration: none;
     cursor: pointer;
+    min-height: var(--lt-target);
   }
 
   .overflow-menu > button:hover,
@@ -194,19 +198,5 @@
     font-weight: 700;
     margin-bottom: 0.75rem;
     padding-right: 1.5rem;
-  }
-
-  @media (pointer: coarse) {
-    .overflow-trigger {
-      width: 40px;
-      height: 40px;
-    }
-
-    .overflow-menu > button,
-    .overflow-menu > a {
-      display: flex;
-      align-items: center;
-      min-height: 44px;
-    }
   }
 </style>

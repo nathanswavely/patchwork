@@ -242,7 +242,7 @@
     color: var(--color-primary);
   }
 
-  @media (min-width: 640px) {
+  @media (min-width: 641px) {
     .step {
       padding: 4rem 2rem 3rem;
     }
@@ -250,7 +250,7 @@
 
   /* The shell owns the gutter (docs/adr/038); on a phone a second 2rem
      inset pushed both buttons below the fold. */
-  @media (max-width: 639px) {
+  @media (max-width: 640px) {
     .step {
       padding: 1.5rem 0;
     }

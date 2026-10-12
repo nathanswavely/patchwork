@@ -1,6 +1,7 @@
 <script>
   import { diffLines } from 'diff';
   import SegmentedControl from './SegmentedControl.svelte';
+  import { isHandheld } from '../stores/viewport.svelte.js';
 
   let {
     oldText = '',
@@ -18,11 +19,9 @@
       viewMode = defaultMode;
       return;
     }
-    const mq = window.matchMedia('(min-width: 769px)');
-    viewMode = mq.matches ? 'split' : 'unified';
-    const handler = (e) => { viewMode = e.matches ? 'split' : 'unified'; };
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
+    // Side by side where the app's chrome is a desktop's; one column once it
+    // goes handheld.
+    viewMode = isHandheld() ? 'unified' : 'split';
   });
 
   // Collapsed sections: set of indices into the collapsible ranges.

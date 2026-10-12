@@ -136,6 +136,7 @@
     padding: 0.15rem 0.4rem;
     border-radius: 4px;
     transition: background 100ms ease;
+    min-height: var(--lt-target);
   }
 
   .edit-btn:hover {
@@ -163,10 +164,8 @@
     min-height: 60px;
   }
 
-
   @media (pointer: coarse) {
     .edit-btn {
-      min-height: 40px;
       padding: 0 0.75rem;
     }
   }

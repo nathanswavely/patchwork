@@ -767,7 +767,7 @@
     color: var(--color-text-muted);
   }
 
-  @media (min-width: 640px) {
+  @media (min-width: 641px) {
     .fork-cards {
       flex-direction: row;
     }

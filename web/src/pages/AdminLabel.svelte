@@ -435,15 +435,10 @@
     color: var(--color-text);
     opacity: 0.6;
     padding: 4px;
+    min-width: var(--lt-target);
+    min-height: var(--lt-target);
   }
   .icon-btn:hover {
     opacity: 1;
-  }
-
-  @media (pointer: coarse) {
-    .icon-btn {
-      min-width: 40px;
-      min-height: 40px;
-    }
   }
 </style>

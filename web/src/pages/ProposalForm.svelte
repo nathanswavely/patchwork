@@ -392,6 +392,7 @@
     font-size: 0.75rem;
     color: var(--color-text-muted);
     cursor: pointer;
+    min-height: var(--lt-target);
   }
 
   .toggle-btn.active {
@@ -492,7 +493,6 @@
 
   @media (pointer: coarse) {
     .toggle-btn {
-      min-height: 40px;
       padding-inline: 0.9rem;
     }
   }

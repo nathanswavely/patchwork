@@ -97,7 +97,7 @@
 
 {#snippet details(entry)}
   {#if entry.metadata && entry.metadata !== '{}'}
-    <button class="expand-btn" onclick={() => toggleExpand(entry.id)}>
+    <button class="lt-btn-link expand-btn" onclick={() => toggleExpand(entry.id)}>
       {expandedIds.has(entry.id) ? 'Hide' : 'Show'}
     </button>
     {#if expandedIds.has(entry.id)}
@@ -275,13 +275,9 @@
     white-space: nowrap;
   }
 
+  /* Liquid Textile's text button: its target reaches --lt-target with
+     padding the negative margin hands back, so the row keeps its height. */
   .expand-btn {
-    border: none;
-    background: none;
-    color: var(--color-primary);
-    font-size: 0.8rem;
-    padding: 0;
-    cursor: pointer;
     text-decoration: underline;
   }
 
@@ -356,8 +352,7 @@
 
   @media (pointer: coarse) {
     .expand-btn {
-      min-height: 40px;
-      padding: 0 0.25rem;
+      padding-inline: 0.25rem;
     }
   }
 </style>

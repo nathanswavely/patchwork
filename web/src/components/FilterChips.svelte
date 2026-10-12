@@ -222,7 +222,4 @@
   .chips-flow {
     margin-bottom: 1rem;
   }
-
-  @media (pointer: coarse) {
-  }
 </style>

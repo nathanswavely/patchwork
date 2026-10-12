@@ -15,6 +15,7 @@
    * prop. `glass` and `bordered` are mutually exclusive by contract.
    */
   import { navigate, getPath } from '../stores/router.svelte.js';
+  import { isHandheld } from '../stores/viewport.svelte.js';
   import { isLoggedIn, isAdmin as isGlobalAdmin, getUser, logout } from '../stores/auth.svelte.js';
   import { Plus, Sliders } from 'phosphor-svelte';
   import DisplayMenu from './DisplayMenu.svelte';
@@ -43,7 +44,7 @@
 
   function handleBellOpen() {
     // On mobile, notifications are a page, not an overlay.
-    if (window.matchMedia('(max-width: 768px)').matches) {
+    if (isHandheld()) {
       navigate('/notifications');
       return;
     }
@@ -413,6 +414,8 @@
     font-weight: 600;
     cursor: pointer;
     border-radius: var(--radius);
+    min-width: var(--lt-target);
+    min-height: var(--lt-target);
   }
 
   .bar-new-btn:hover,
@@ -447,7 +450,8 @@
   }
 
   .new-dropdown a {
-    display: block;
+    display: flex;
+    align-items: center;
     width: 100%;
     padding: 0.5rem 0.75rem;
     text-align: left;
@@ -455,6 +459,7 @@
     color: var(--color-text);
     text-decoration: none;
     border-radius: 4px;
+    min-height: var(--lt-target);
   }
 
   .new-dropdown a:hover {
@@ -533,7 +538,8 @@
 
   .user-dropdown a,
   .user-dropdown button {
-    display: block;
+    display: flex;
+    align-items: center;
     width: 100%;
     padding: 0.5rem 0.75rem;
     text-align: left;
@@ -544,6 +550,7 @@
     background: none;
     cursor: pointer;
     border-radius: 4px;
+    min-height: var(--lt-target);
   }
 
   .user-dropdown a:hover,
@@ -664,21 +671,12 @@
     background: var(--color-overlay);
   }
 
-  /* A finger: the bar's buttons and every menu row are at least a
-     thumb's height. */
+  /* The bar's buttons and every menu row are at least --lt-target tall,
+     a thumb's height on a finger; there the new button's icon sits
+     centred in the larger box. */
   @media (pointer: coarse) {
     .bar-new-btn {
-      min-width: 40px;
-      min-height: 40px;
       justify-content: center;
-    }
-
-    .new-dropdown a,
-    .user-dropdown a,
-    .user-dropdown button {
-      display: flex;
-      align-items: center;
-      min-height: 44px;
     }
   }
 

@@ -200,6 +200,8 @@
     cursor: pointer;
     padding: 0 0.25rem;
     line-height: 1;
+    min-width: var(--lt-target);
+    min-height: var(--lt-target);
   }
 
   .close-btn:hover {
@@ -333,8 +335,6 @@
 
   @media (pointer: coarse) {
     .close-btn {
-      min-width: 44px;
-      min-height: 44px;
       margin-right: -0.5rem;
     }
   }
