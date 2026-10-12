@@ -443,6 +443,23 @@
     gap: 0.5rem;
   }
 
+  /* Standing: the words, the statement at the panel's width, then the
+     button. The statement had no width of its own, so it was twenty
+     characters wide on a wide screen and full only by app.css's old
+     phone rule. */
+  .stand-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .stand-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
   .nominate-other label {
     display: block;
     font-size: 0.8rem;

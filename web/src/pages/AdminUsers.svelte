@@ -1021,10 +1021,6 @@
     flex: 1 1 100%;
   }
 
-  .user-detail select {
-    width: auto;
-  }
-
   .user-detail .patch-grants {
     flex-basis: 100%;
   }

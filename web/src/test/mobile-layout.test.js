@@ -20,6 +20,19 @@ describe('the shell owns the gutter', () => {
   });
 });
 
+describe('a field sizes itself, at every width', () => {
+  it('is never wider than its box and shrinks in a row (Liquid Textile)', () => {
+    const lt = source('vendor/liquid-textile/foundation.css');
+    expect(lt).toMatch(/^\.lt-field \{[^}]*min-width: 0;[^}]*max-width: 100%;/m);
+  });
+
+  it('has no phone rule in app.css making every field full width', () => {
+    // It was right for a field on its own line and wrong in a row, where a
+    // 100% select took the row from its button.
+    expect(source('app.css')).not.toMatch(/\.lt-field\s*\{[^}]*width:\s*100%/);
+  });
+});
+
 describe('a row wraps rather than squeezing its name', () => {
   const cases = [
     // Liquid Textile's .lt-item: the name keeps 14rem (.lt-item-main) and

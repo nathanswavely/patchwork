@@ -260,19 +260,6 @@
 }
 
 @media (max-width: 640px) {
-  /* On a phone a field fills its line. This is right for a field stacked
-     in a form and wrong for one in a flex row: a full-width select is a
-     100% flex basis, and it takes the row from whatever sits beside it
-     (the event-source form's URL field was left 26px wide). A row holding
-     a select wraps on a phone, and its select sets width: auto. CSS cannot
-     tell the two apart from here. Thirty-odd rows of a field and a button
-     lean on it to let the field shrink beside the button; each would need
-     flex: 1 and min-width: 0 of its own before this could go. */
-  .lt-field {
-    width: 100%;
-    max-width: 100%;
-  }
-
   /* The top of a workspace page on a phone (the admin panel, a patch's
      workspace). Three insets stacked there, each reasonable alone: the
      content area's 1.5rem, every page header's own 1.5rem, and a 2em

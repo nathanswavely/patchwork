@@ -659,9 +659,4 @@
     color: var(--color-text-muted);
     margin-left: 0.25rem;
   }
-
-  /* Among the actions, not filling a phone's line as a lone field does. */
-  .role-select {
-    width: auto;
-  }
 </style>
