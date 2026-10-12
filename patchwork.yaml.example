@@ -90,6 +90,15 @@ federation:
 server:
   port: "8080"
 
+  # Interface to bind. Commented out means every interface, which the
+  # bundled Docker setup needs (Caddy reaches the app over the compose
+  # network). For a server only this machine should reach, such as any
+  # development run, set 127.0.0.1. On Windows that also stops the firewall
+  # prompt: it asks about every new executable that listens on all
+  # interfaces and never about one listening on loopback. PATCHWORK_HOST in
+  # the environment overrides this, as PATCHWORK_PORT does for the port.
+  # host: "127.0.0.1"
+
   # Peers whose X-Forwarded-For header is trusted, as CIDR blocks or bare
   # addresses. Requests from anywhere else have the header ignored and are
   # attributed to the connecting address, so client IPs used for rate
