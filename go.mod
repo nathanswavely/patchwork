@@ -1,6 +1,6 @@
 module github.com/patchwork-toolkit/patchwork
 
-go 1.26.6
+go 1.26.9
 
 require (
 	github.com/emersion/go-ical v0.0.0-20250609112844-439c63cef608
@@ -8,7 +8,7 @@ require (
 	github.com/go-webauthn/webauthn v0.18.0
 	github.com/mattn/go-sqlite3 v1.14.52
 	github.com/sergi/go-diff v1.4.0
-	golang.org/x/text v0.41.0
+	golang.org/x/text v0.42.0
 	golang.org/x/time v0.16.0
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -39,8 +39,8 @@ require (
 	github.com/tinylib/msgp v1.6.4 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
-	golang.org/x/crypto v0.55.0 // indirect
-	golang.org/x/net v0.57.0 // indirect
-	golang.org/x/sys v0.47.0 // indirect
+	golang.org/x/crypto v0.57.0 // indirect
+	golang.org/x/net v0.60.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 )
