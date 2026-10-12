@@ -1,6 +1,7 @@
 <script>
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
+  import { ltTabs } from '../lib/lt.js';
   import { navigate } from '../stores/router.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
   import { formatDay as formatDate } from '../lib/datetime.js';
@@ -120,9 +121,9 @@
     Reports about notices and replies come to this patch's admins. Three things can be done with one: dismiss it, remove what was reported, or switch replies off on the notice.
   </p>
 
-  <div class="tabs">
+  <div class="lt-tabs tabs" role="tablist" aria-label="Reports" use:ltTabs={{ onSelect: (t) => { tab = t.dataset.value; } }}>
     {#each [['pending', 'Pending'], ['resolved', 'Resolved'], ['dismissed', 'Dismissed']] as [key, label]}
-      <button class="tab-btn" class:active={tab === key} onclick={() => { tab = key; }}>{label}</button>
+      <button role="tab" class="lt-tab" data-value={key} aria-selected={tab === key}>{label}</button>
     {/each}
   </div>
 
@@ -196,18 +197,7 @@
   .setting-label { font-size: 0.92rem; font-weight: 500; color: var(--color-text); }
   .setting-desc { font-size: 0.8rem; }
   .queue-heading { font-size: 1rem; margin: 1.75rem 0 0.25rem; }
-  .tabs { display: flex; gap: 0.25rem; margin-bottom: 0.75rem; }
-  .tab-btn {
-    border: 1px solid var(--color-border);
-    background: transparent;
-    color: var(--color-text-muted);
-    font-size: 0.8rem;
-    padding: 0.2rem 0.6rem;
-    border-radius: 999px;
-    cursor: pointer;
-    min-height: var(--lt-target);
-  }
-  .tab-btn.active { color: var(--color-text); border-color: var(--color-primary); }
+  .tabs { margin-bottom: 0.75rem; }
   .report-list { list-style: none; padding: 0; margin: 0; }
   .report-row { padding: 0.75rem 0; border-bottom: 1px solid var(--color-border); font-size: 0.9rem; }
   .report-head { display: flex; gap: 0.6rem; align-items: center; font-size: 0.8rem; margin-bottom: 0.25rem; }
@@ -216,8 +206,4 @@
   .report-reason { margin: 0.2rem 0; font-weight: 500; }
   .report-details { font-size: 0.82rem; margin: 0.2rem 0; }
   .resolve-form { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem; max-width: 30rem; }
-
-  @media (pointer: coarse) {
-    .tab-btn { padding: 0 0.8rem; }
-  }
 </style>

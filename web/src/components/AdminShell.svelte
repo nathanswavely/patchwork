@@ -23,6 +23,7 @@
   import ContextCrumb from './ContextCrumb.svelte';
   import WorkspaceSearch from './WorkspaceSearch.svelte';
   import SettingsShell from './SettingsShell.svelte';
+  import { ltTabs } from '../lib/lt.js';
   import { Gauge, Tray, Users, GearSix, ListMagnifyingGlass, CaretLeft, CaretRight } from 'phosphor-svelte';
 
   let { children } = $props();
@@ -102,14 +103,14 @@
   </GlobalBar>
 
   <div class="workspace-nav">
-    <nav class="workspace-tabs">
+    <nav class="lt-tabs workspace-tabs" use:ltTabs>
       {#each tabs as tab (tab.id)}
         {@const Icon = tab.icon}
         {@const href = tabHref(tab)}
         <a
           {href}
-          class="workspace-tab"
-          class:active={isActive(tab)}
+          class="lt-tab workspace-tab"
+          aria-current={isActive(tab) ? 'page' : undefined}
           onclick={(e) => handleNav(e, href)}
         >
           <span class="tab-icon"><Icon size={16} weight="duotone" /></span>
@@ -178,41 +179,9 @@
     border-bottom: 1px solid var(--color-border);
   }
 
+  /* Liquid Textile's tab row (ltTabs); the nav under it draws the rule. */
   .workspace-tabs {
-    display: flex;
-    align-items: stretch;
-    gap: 4px;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .workspace-tabs::-webkit-scrollbar {
-    display: none;
-  }
-
-  .workspace-tab {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 12px 12px;
-    font-size: 0.88rem;
-    font-weight: 500;
-    color: var(--color-text-muted);
-    text-decoration: none;
-    white-space: nowrap;
-    border-bottom: 2px solid transparent;
-    transition: color 120ms ease;
-  }
-
-  .workspace-tab:hover {
-    color: var(--color-text);
-    text-decoration: none;
-  }
-
-  .workspace-tab.active {
-    color: var(--color-text);
-    font-weight: 600;
-    border-bottom-color: var(--color-accent);
+    border-bottom: 0;
   }
 
   .tab-icon {
@@ -221,7 +190,7 @@
     color: var(--color-text-muted);
   }
 
-  .workspace-tab.active .tab-icon {
+  .workspace-tab[aria-current="page"] .tab-icon {
     color: var(--color-accent);
   }
 

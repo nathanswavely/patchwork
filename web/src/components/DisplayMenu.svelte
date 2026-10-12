@@ -16,6 +16,7 @@
    */
   import { getThemePreference, setTheme } from '../stores/theme.svelte.js';
   import { getColorMode, setColorMode } from '../stores/colors.svelte.js';
+  import { ltSegmented } from '../lib/lt.js';
 
   const THEMES = [
     { value: 'light', label: 'Light' },
@@ -35,28 +36,26 @@
 <div class="display-menu">
   <div class="display-row">
     <span class="display-label" id="display-theme-label">Theme</span>
-    <div class="segmented" role="group" aria-labelledby="display-theme-label">
+    <div
+      class="lt-segmented"
+      aria-labelledby="display-theme-label"
+      use:ltSegmented={{ value: getThemePreference(), onChange: setTheme }}
+    >
       {#each THEMES as t (t.value)}
-        <button
-          type="button"
-          class:selected={getThemePreference() === t.value}
-          aria-pressed={getThemePreference() === t.value}
-          onclick={() => setTheme(t.value)}
-        >{t.label}</button>
+        <button type="button" class="lt-segment" data-value={t.value}>{t.label}</button>
       {/each}
     </div>
   </div>
 
   <div class="display-row">
     <span class="display-label" id="display-colors-label">Colors</span>
-    <div class="segmented" role="group" aria-labelledby="display-colors-label">
+    <div
+      class="lt-segmented"
+      aria-labelledby="display-colors-label"
+      use:ltSegmented={{ value: getColorMode(), onChange: setColorMode }}
+    >
       {#each COLORS as c (c.value)}
-        <button
-          type="button"
-          class:selected={getColorMode() === c.value}
-          aria-pressed={getColorMode() === c.value}
-          onclick={() => setColorMode(c.value)}
-        >{c.label}</button>
+        <button type="button" class="lt-segment" data-value={c.value}>{c.label}</button>
       {/each}
     </div>
   </div>
@@ -84,44 +83,9 @@
     color: var(--color-text-muted);
   }
 
-  .segmented {
+  /* Liquid Textile's segmented control (ltSegmented), the width of the
+     menu it sits in. */
+  .lt-segmented {
     display: flex;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-
-  /* These buttons sit inside the account dropdown, whose own rule makes
-     every descendant button a full-width block row. Reassert the segment
-     shape here so the two menus cannot disagree about it. */
-  .segmented button {
-    flex: 1;
-    display: block;
-    width: auto;
-    padding: 0.3rem 0.4rem;
-    font-size: 0.78rem;
-    text-align: center;
-    background: transparent;
-    border: none;
-    border-right: 1px solid var(--color-border);
-    color: var(--color-text-muted);
-    cursor: pointer;
-    white-space: nowrap;
-    min-height: var(--lt-target);
-  }
-
-  .segmented button:last-child {
-    border-right: none;
-  }
-
-  .segmented button:hover {
-    background: var(--color-overlay-hover);
-    color: var(--color-text);
-  }
-
-  .segmented button.selected {
-    background: var(--color-accent);
-    color: var(--color-bg);
-    font-weight: 600;
   }
 </style>

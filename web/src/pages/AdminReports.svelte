@@ -1,5 +1,6 @@
 <script>
   import { api } from '../lib/api.js';
+  import { ltTabs } from '../lib/lt.js';
   import { showToast } from '../stores/toast.svelte.js';
   import Skeleton from '../components/Skeleton.svelte';
   import ErrorState from '../components/ErrorState.svelte';
@@ -116,12 +117,13 @@
     <h1>Reports</h1>
   </div>
 
-  <div class="tabs">
+  <div class="lt-tabs tabs" role="tablist" aria-label="Reports" use:ltTabs={{ onSelect: (t) => { activeTab = t.dataset.value; } }}>
     {#each tabs as tab}
       <button
-        class="tab-btn"
-        class:active={activeTab === tab.key}
-        onclick={() => { activeTab = tab.key; }}
+        role="tab"
+        class="lt-tab"
+        data-value={tab.key}
+        aria-selected={activeTab === tab.key}
       >
         {tab.label}
       </button>
@@ -235,32 +237,7 @@
   }
 
   .tabs {
-    display: flex;
-    gap: 0.25rem;
     margin-bottom: 1.5rem;
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: 0;
-  }
-
-  .tab-btn {
-    padding: 0.5rem 1rem;
-    border: none;
-    background: none;
-    font-size: 0.9rem;
-    color: var(--color-text-muted);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
-    min-height: var(--lt-target);
-  }
-
-  .tab-btn.active {
-    color: var(--color-primary);
-    border-bottom-color: var(--color-primary);
-  }
-
-  .tab-btn:hover {
-    color: var(--color-text);
   }
 
   .report-list {
@@ -346,17 +323,5 @@
     padding-top: 0.5rem;
     border-top: 1px solid var(--color-border);
     font-size: 0.85rem;
-  }
-
-  /* A strip wider than a phone scrolls instead of running past the edge,
-     where the body's overflow clip cut "Dismissed" in half. */
-  .tabs {
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .tab-btn {
-    white-space: nowrap;
-    flex-shrink: 0;
   }
 </style>

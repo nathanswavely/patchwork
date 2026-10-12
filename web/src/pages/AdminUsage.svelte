@@ -11,6 +11,7 @@
    * pages. The privacy policy reads the same switch.
    */
   import { api } from '../lib/api.js';
+  import SegmentedControl from '../components/SegmentedControl.svelte';
   import { showToast } from '../stores/toast.svelte.js';
   import Skeleton from '../components/Skeleton.svelte';
   import ErrorState from '../components/ErrorState.svelte';
@@ -116,19 +117,12 @@
     </section>
 
     <div class="range-row">
-      <div class="range-tabs" role="tablist" aria-label="Window">
-        {#each WINDOWS as n (n)}
-          <button
-            role="tab"
-            aria-selected={days === n}
-            class="range-tab"
-            class:active={days === n}
-            onclick={() => { days = n; }}
-          >
-            {n === 365 ? 'Year' : `${n} days`}
-          </button>
-        {/each}
-      </div>
+      <SegmentedControl
+        options={WINDOWS.map((n) => ({ value: n, label: n === 365 ? 'Year' : `${n} days` }))}
+        value={days}
+        label="Window"
+        onchange={(n) => { days = n; }}
+      />
       <span class="lt-muted since">Since {data.since}, in UTC days</span>
     </div>
 
@@ -263,28 +257,6 @@
     justify-content: space-between;
     gap: 1rem;
     flex-wrap: wrap;
-  }
-
-  .range-tabs {
-    display: flex;
-    gap: 0.25rem;
-  }
-
-  .range-tab {
-    border: 1px solid var(--color-border, #e3e0da);
-    background: transparent;
-    padding: 0.35rem 0.75rem;
-    border-radius: var(--radius);
-    cursor: pointer;
-    font: inherit;
-    color: inherit;
-    min-height: var(--lt-target);
-  }
-
-  .range-tab.active {
-    background: var(--color-primary, #333);
-    color: var(--color-btn-on-primary);
-    border-color: var(--color-primary, #333);
   }
 
   .since {

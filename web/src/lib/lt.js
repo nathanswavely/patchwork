@@ -11,7 +11,7 @@
  *
  *   <button use:ltConfirm={{ onConfirm, confirmLabel, tone }}>
  */
-import { confirmAction, dialog, menu } from '../vendor/liquid-textile/behaviors.js';
+import { confirmAction, dialog, menu, segmented, tabs } from '../vendor/liquid-textile/behaviors.js';
 
 export { media, viewport, toast } from '../vendor/liquid-textile/behaviors.js';
 
@@ -83,5 +83,43 @@ export function ltDialog(el, opts) {
       current = { open: false };
       handle.close();
     },
+  };
+}
+
+/**
+ * A few mutually exclusive choices side by side (segmented()): a radio
+ * group of its .lt-segment buttons, one tab stop, arrows move and choose,
+ * aria-checked marks the choice. A segment's value is its data-value.
+ *
+ *   <div class="lt-segmented" use:ltSegmented={{ value, onChange }}>
+ *
+ * The page owns the value: a new `value` is shown without calling onChange.
+ */
+export function ltSegmented(group, opts) {
+  let current = opts;
+  const handle = segmented(group, { value: opts.value, onChange: (v) => current.onChange?.(v) });
+  return {
+    update(next) {
+      current = next;
+      if (next.value !== handle.value) handle.value = next.value;
+    },
+  };
+}
+
+/**
+ * A row of .lt-tab in .lt-tabs (tabs()). Buttons with role="tab" and
+ * aria-selected switch in place: one tab stop, Left, Right, Home and End
+ * move and choose, and onSelect(tab) hands the chosen tab to the page. Links
+ * with aria-current="page" just scroll into view. Either way the row keeps
+ * data-overflow, which fades an edge with more tabs beyond it.
+ *
+ *   <div class="lt-tabs" role="tablist" use:ltTabs={{ onSelect }}>
+ */
+export function ltTabs(row, opts = {}) {
+  let current = opts;
+  const handle = tabs(row, { onSelect: (t) => current.onSelect?.(t) });
+  return {
+    update(next) { current = next || {}; },
+    destroy() { handle.destroy(); },
   };
 }

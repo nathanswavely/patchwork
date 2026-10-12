@@ -5,6 +5,7 @@
   import { showToast } from '../stores/toast.svelte.js';
   import { formatRelative } from '../lib/datetime.js';
   import MarkdownRenderer from '../components/MarkdownRenderer.svelte';
+  import SegmentedControl from '../components/SegmentedControl.svelte';
 
   // The noticeboard (docs/adr/081): the room's, and only the room's. The
   // server refuses everyone else; this page just says so kindly.
@@ -108,10 +109,12 @@
       <div class="field">
         <label class="lt-label" for="notice-body">
           <span>Notice</span>
-          <div class="toggle-group">
-            <button type="button" class="toggle-btn" class:active={!previewMode} onclick={() => previewMode = false}>Write</button>
-            <button type="button" class="toggle-btn" class:active={previewMode} onclick={() => previewMode = true}>Preview</button>
-          </div>
+          <SegmentedControl
+            options={[{ value: 'write', label: 'Write' }, { value: 'preview', label: 'Preview' }]}
+            value={previewMode ? 'preview' : 'write'}
+            label="Write or preview"
+            onchange={(v) => { previewMode = v === 'preview'; }}
+          />
         </label>
         {#if previewMode}
           <div class="preview-pane">
@@ -261,18 +264,6 @@
     align-items: center;
   }
   .hint { font-size: 0.78rem; margin: 0; }
-  .toggle-group { display: inline-flex; gap: 0.25rem; }
-  .toggle-btn {
-    border: 1px solid var(--color-border);
-    background: transparent;
-    color: var(--color-text-muted);
-    font-size: 0.75rem;
-    padding: 0.15rem 0.5rem;
-    border-radius: var(--radius);
-    cursor: pointer;
-    min-height: var(--lt-target);
-  }
-  .toggle-btn.active { color: var(--color-text); border-color: var(--color-primary); }
   .preview-pane {
     min-height: 8rem;
     padding: 0.65rem;
@@ -294,10 +285,4 @@
   .board-header { flex-wrap: wrap; }
   .board-hint { flex: 1 1 16rem; min-width: 0; }
   .board-header .lt-btn { white-space: nowrap; }
-
-  @media (pointer: coarse) {
-    .toggle-btn {
-      padding-inline: 0.9rem;
-    }
-  }
 </style>
