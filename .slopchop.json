@@ -21,7 +21,8 @@
     "**/*.test.js",
     "**/*.spec.js",
     "**/e2e/**",
-    "**/*_test.go"
+    "**/*_test.go",
+    "web/src/vendor/**"
   ],
   "languages": {
     "internal/handler/legal_defaults.go": "go",
@@ -32,6 +33,7 @@
   "outOfScope": [
     { "path": "docs/adr/", "reason": "Engineering records: the project's reasoning, not its voice. Rewriting 50k words of decision history by hand would buy nothing." },
     { "path": "CODE_OF_CONDUCT.md", "reason": "The Contributor Covenant, a standard text authored by neither a person here nor a model. Rewriting it to sound like us would defeat the point of adopting it." },
+    { "path": "web/src/vendor/", "reason": "Liquid Textile, vendored: copied in by scripts/sync-lt.sh and never edited here. Its own strings (a combobox's empty list, a failed copy) are reviewed in Liquid Textile, which is where a fix would go." },
     { "path": "internal/**/*.go", "reason": "Only the files listed in include ship prose, and every handler is read for its {\"error\":\"...\"} bodies alone, so log lines and SQL stay out." }
   ]
 }

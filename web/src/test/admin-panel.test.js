@@ -217,7 +217,7 @@ describe('the narrow screen drills down, one level on screen at a time', () => {
   const viewport = source('stores/viewport.svelte.js');
 
   it('agrees with SettingsShell on what narrow means', () => {
-    expect(viewport).toContain("NARROW_QUERY = '(max-width: 640px)'");
+    expect(viewport).toContain('NARROW_QUERY = media.narrow');
     expect(settingsShell).toContain('@media (max-width: 640px)');
     expect(shell).toContain('@media (max-width: 640px)');
   });

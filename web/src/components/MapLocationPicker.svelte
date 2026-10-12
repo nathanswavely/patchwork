@@ -3,6 +3,7 @@
   import L from 'leaflet';
   import 'leaflet/dist/leaflet.css';
   import { blockPageZoom } from '../lib/pageZoom.js';
+  import { isCoarse } from '../stores/viewport.svelte.js';
   import { formatCoord, roundCoord, hasMapLocation } from '../lib/mapLocation.js';
   import { addBasemap, BASEMAP_MAX_ZOOM } from '../lib/basemap.js';
 
@@ -113,7 +114,7 @@
     // long form caught every swipe that started on it and the page stopped
     // scrolling there. Pinching still pans and zooms together, a tap still
     // places the marker, and the marker still drags.
-    const coarse = window.matchMedia?.('(pointer: coarse)').matches;
+    const coarse = isCoarse();
     const instance = L.map(mapContainer, {
       fadeAnimation: false,
       maxZoom: BASEMAP_MAX_ZOOM,

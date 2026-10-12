@@ -2,6 +2,7 @@
   import { onMount, untrack } from 'svelte';
   import * as d3 from 'd3';
   import { api } from '../lib/api.js';
+  import { canHover } from '../stores/viewport.svelte.js';
   import { identityColorForPatch, paletteForPatch, ghostPalette, darken, textOnColor } from '../lib/quiltTheme.js';
   import { renderBlock, blockPieces, getRotation, blockKeyAt } from '../lib/quiltBlocks.js';
   import {
@@ -2402,7 +2403,7 @@
     // the patch's card rather than a box that outlives its own hover. Built
     // or not built rather than guarded at each call site: with no element,
     // every showTooltip is already a no-op.
-    if (interactive && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    if (interactive && canHover()) {
       tooltip = document.createElement('div');
       tooltip.className = 'canvas-tooltip';
       document.body.appendChild(tooltip);

@@ -15,6 +15,7 @@
    * prop. `glass` and `bordered` are mutually exclusive by contract.
    */
   import { navigate, getPath } from '../stores/router.svelte.js';
+  import { isHandheld } from '../stores/viewport.svelte.js';
   import { isLoggedIn, isAdmin as isGlobalAdmin, getUser, logout } from '../stores/auth.svelte.js';
   import { Plus, Sliders } from 'phosphor-svelte';
   import DisplayMenu from './DisplayMenu.svelte';
@@ -43,7 +44,7 @@
 
   function handleBellOpen() {
     // On mobile, notifications are a page, not an overlay.
-    if (window.matchMedia('(max-width: 768px)').matches) {
+    if (isHandheld()) {
       navigate('/notifications');
       return;
     }

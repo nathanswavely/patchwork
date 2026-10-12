@@ -3,6 +3,7 @@
   import L from 'leaflet';
   import 'leaflet/dist/leaflet.css';
   import { getResolvedTheme } from '../stores/theme.svelte.js';
+  import { media } from '../lib/lt.js';
   import { identityColorForPatch, textOnColor } from '../lib/quiltTheme.js';
   import { blockPageZoom } from '../lib/pageZoom.js';
   import { addBasemap, BASEMAP_MAX_ZOOM } from '../lib/basemap.js';
@@ -101,7 +102,7 @@
     // the right, and the rail never reaches the foot. On mobile the rail is
     // the bottom bar and the filter FAB stacks above it at the bottom-left,
     // so there the control keeps the top-left, under the glass top bar.
-    const narrow = window.matchMedia('(max-width: 768px)');
+    const narrow = window.matchMedia(media.handheld);
     const zoomCorner = (isNarrow) => (isNarrow ? 'topleft' : 'bottomleft');
     const zoomControl = L.control.zoom({ position: zoomCorner(narrow.matches) }).addTo(instance);
     const onBreakpoint = (e) => zoomControl.setPosition(zoomCorner(e.matches));

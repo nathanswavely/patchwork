@@ -3,6 +3,7 @@
   import { api } from '../lib/api.js';
   import { navigate, replaceRoute } from '../stores/router.svelte.js';
   import { scopedPath, surfaceForRoute } from '../lib/scope.js';
+  import { canHover } from '../stores/viewport.svelte.js';
   import { identityColorForPatch } from '../lib/quiltTheme.js';
   import { textMatches } from '../lib/textMatch.js';
   import { motifComponentForPatch } from '../lib/patchIcons.js';
@@ -385,7 +386,7 @@
   // decides whether that address is a page or a profile docked over this
   // surface (docs/adr/094). The sheet, its two heights and its pull live
   // in the dock, which is the thing being pulled.
-  let hasPointer = $state(window.matchMedia('(hover: hover) and (pointer: fine)').matches);
+  let hasPointer = $derived(canHover());
 
   // The previewed patch, shared by both surfaces: whichever one the pointer
   // is over sets it, and both render emphasis from it (docs/adr/078). One

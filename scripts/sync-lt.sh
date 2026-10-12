@@ -10,14 +10,15 @@
 # it is public, this folder becomes a package and the imports in
 # web/src/main.js are the only lines that move.
 #
-# FILES is what Patchwork imports, nothing more. base.css and behaviors.js
-# join it when a migration step starts using them.
+# FILES is what Patchwork imports, nothing more. behaviors.js joined with
+# step 4b (viewport, through web/src/lib/lt.js); base.css joins when a
+# migration step starts using it.
 set -euo pipefail
 
 src="${1:?usage: scripts/sync-lt.sh <path-to-liquid-textile>}"
 here="$(cd "$(dirname "$0")/.." && pwd)"
 dest="$here/web/src/vendor/liquid-textile"
-FILES=(foundation.css liquid-textile.css patterns.css textures.css LICENSE)
+FILES=(foundation.css liquid-textile.css patterns.css textures.css behaviors.js LICENSE)
 
 for f in "${FILES[@]}"; do
   [ -f "$src/$f" ] || { echo "sync-lt: $src/$f not found" >&2; exit 1; }

@@ -38,7 +38,7 @@ describe('previewing a patch', () => {
     // synthesised mouseover on tap must not preview as well, or a tap would
     // do two things at once.
     expect(home).toMatch(/hasPointer && preview\(/);
-    expect(home).toMatch(/hasPointer = \$state\(window\.matchMedia/);
+    expect(home).toMatch(/hasPointer = \$derived\(canHover\(\)\)/);
   });
 
   it('brings a card to the reader only when the pointer is elsewhere', () => {
@@ -67,7 +67,7 @@ describe('previewing a patch', () => {
     // the surface the tap was meant to be reading. Not built rather than
     // guarded at each call site: with no element every showTooltip is a no-op.
     expect(quilt).toMatch(
-      /if \(interactive && window\.matchMedia\('\(hover: hover\) and \(pointer: fine\)'\)\.matches\)/,
+      /if \(interactive && canHover\(\)\)/,
     );
     expect(quilt).toMatch(/function showTooltip[\s\S]{0,60}if \(!tooltip\) return;/);
   });

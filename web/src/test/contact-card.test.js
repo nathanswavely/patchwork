@@ -164,7 +164,7 @@ describe('The person card is one rendering, and follows the patch card', () => {
   it('previews on point where there is a pointer, opens on tap where there is not', () => {
     // CONTEXT.md pairs this with the patch card deliberately: a second
     // gesture rule for the same job is how two surfaces stop agreeing.
-    expect(src).toContain("window.matchMedia('(hover: hover) and (pointer: fine)')");
+    expect(src).toContain('let hasPointer = $derived(canHover());');
     expect(src).toMatch(/onmouseenter=\{\(\) => hasPointer && show\(\)\}/);
     expect(src).toContain('onclick={activate}');
     // Clicking with a pointer opens the person, not the card — the card is
