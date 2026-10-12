@@ -45,6 +45,7 @@ smtp:
 }
 
 func TestPortAndDBPathFromEnv(t *testing.T) {
+	t.Setenv("PATCHWORK_HOST", "127.0.0.1")
 	t.Setenv("PATCHWORK_PORT", "8190")
 	t.Setenv("PATCHWORK_DB_PATH", "data/e2e/patchwork.db")
 	cfg, err := Load(writeConfig(t, `
@@ -60,6 +61,12 @@ database:
 	}
 	if cfg.Server.Port != "8190" {
 		t.Errorf("Server.Port = %q, want env override", cfg.Server.Port)
+	}
+	if cfg.Server.Host != "127.0.0.1" {
+		t.Errorf("Server.Host = %q, want env override", cfg.Server.Host)
+	}
+	if got := cfg.Server.Addr(); got != "127.0.0.1:8190" {
+		t.Errorf("Server.Addr() = %q, want host joined to port", got)
 	}
 	if cfg.Database.Path != "data/e2e/patchwork.db" {
 		t.Errorf("Database.Path = %q, want env override", cfg.Database.Path)
@@ -221,5 +228,29 @@ func TestExampleBootstrapTokenRoundTrips(t *testing.T) {
 	}
 	if cfg.Instance.BootstrapToken != "x" {
 		t.Errorf("Instance.BootstrapToken = %q, want %q — bootstrap_token must live under instance: in patchwork.yaml.example", cfg.Instance.BootstrapToken, "x")
+	}
+}
+
+// A config that names no host listens on every interface, exactly as it did
+// before server.host existed, so no deployment changes behaviour on upgrade.
+func TestNoHostMeansEveryInterface(t *testing.T) {
+	t.Setenv("PATCHWORK_HOST", "")
+	cfg, err := Load(writeConfig(t, `
+instance:
+  name: "Test"
+server:
+  port: "8080"
+`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if cfg.Server.Host != "" {
+		t.Errorf("Server.Host = %q, want empty", cfg.Server.Host)
+	}
+	if got := cfg.Server.Addr(); got != ":8080" {
+		t.Errorf("Server.Addr() = %q, want \":8080\"", got)
+	}
+	if got := cfg.Server.ProbeHost(); got != "127.0.0.1" {
+		t.Errorf("Server.ProbeHost() = %q, want loopback for a wildcard bind", got)
 	}
 }
