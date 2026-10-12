@@ -3,6 +3,7 @@
   import { docLabel } from '../lib/docLabel.js';
   import MarkdownRenderer from './MarkdownRenderer.svelte';
   import Skeleton from './Skeleton.svelte';
+  import { ltDialog } from '../lib/lt.js';
 
   let { templateId = '', onClose = () => {} } = $props();
 
@@ -87,16 +88,20 @@
   let ruleExplanations = $derived(explainRules(rules));
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="drawer-backdrop" onclick={onClose}>
-  <div class="drawer" onclick={(e) => e.stopPropagation()}>
-    <div class="drawer-header">
+<!-- Liquid Textile's drawer on a native <dialog> (ltDialog in lib/lt.js):
+     open while mounted, closed by Escape, the backdrop or the close
+     button, which hand focus back to the Preview link. -->
+<dialog
+  class="lt-drawer template-drawer"
+  aria-label="{data?.template?.name || 'Template'} Template"
+  use:ltDialog={{ open: true, onClose }}
+>
+    <div class="lt-drawer-head drawer-header">
       <h2>{data?.template?.name || 'Template'} Template</h2>
-      <button class="close-btn" onclick={onClose}>&times;</button>
+      <button class="lt-dialog-close close-btn" data-close aria-label="Close">&times;</button>
     </div>
 
-    <div class="drawer-body">
+    <div class="lt-drawer-body drawer-body">
       {#if loading}
         <Skeleton lines={6} height="1rem" />
       {:else if !data}
@@ -149,69 +154,17 @@
         {/if}
       {/if}
     </div>
-  </div>
-</div>
+</dialog>
 
 <style>
-  .drawer-backdrop {
-    position: fixed;
-    inset: 0;
-    background: var(--color-scrim);
-    z-index: 300;
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .drawer {
-    width: min(560px, 90vw);
-    height: 100vh;
-    background: var(--color-surface);
-    border-left: 1px solid var(--color-border);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    animation: slideIn 200ms ease;
-  }
-
-  @keyframes slideIn {
-    from { transform: translateX(100%); }
-    to { transform: translateX(0); }
-  }
-
-  .drawer-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.25rem;
-    border-bottom: 1px solid var(--color-border);
-    flex-shrink: 0;
-  }
-
   .drawer-header h2 {
     font-size: 1.1rem;
     margin: 0;
   }
 
+  /* The × reads small at Liquid Textile's close size. */
   .close-btn {
-    border: none;
-    background: none;
     font-size: 1.5rem;
-    color: var(--color-text-muted);
-    cursor: pointer;
-    padding: 0 0.25rem;
-    line-height: 1;
-    min-width: var(--lt-target);
-    min-height: var(--lt-target);
-  }
-
-  .close-btn:hover {
-    color: var(--color-text);
-  }
-
-  .drawer-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 1.25rem;
   }
 
   .template-desc {
@@ -322,20 +275,5 @@
     font-size: 0.85rem;
     line-height: 1.7;
     border-top: 1px solid var(--color-border);
-  }
-
-  /* A phone gets the whole width; a 39px strip of backdrop was not worth
-     the 39px of preview it cost. */
-  @media (max-width: 640px) {
-    .drawer {
-      width: 100vw;
-      border-left: none;
-    }
-  }
-
-  @media (pointer: coarse) {
-    .close-btn {
-      margin-right: -0.5rem;
-    }
   }
 </style>

@@ -71,7 +71,9 @@ describe('a finger gets a finger-sized target', () => {
   // 24px under a mouse, 44px under a finger (step 4b; segments up from 40).
   it('in the shared controls', () => {
     expect(source('components/SegmentedControl.svelte')).toMatch(/\.seg button \{[^}]*min-height: var\(--lt-target\);/);
-    expect(coarse('components/Modal.svelte')).toContain('width: 44px');
+    // Modal's close is Liquid Textile's .lt-dialog-close, sized by --lt-target.
+    expect(source('components/Modal.svelte')).toContain('class="lt-dialog-close"');
+    expect(source('vendor/liquid-textile/foundation.css')).toMatch(/\.lt-dialog-close \{[^}]*width: max\(28px, var\(--lt-target\)\);/);
     expect(source('components/GlobalBar.svelte')).toMatch(/\.user-dropdown button \{[^}]*min-height: var\(--lt-target\);/);
     expect(source('components/PatchOverflow.svelte')).toMatch(/\.overflow-menu > a \{[^}]*min-height: var\(--lt-target\);/);
     expect(source('components/PatchRelationship.svelte')).toMatch(/\.standing-menu button \{[^}]*min-height: var\(--lt-target\);/);

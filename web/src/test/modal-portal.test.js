@@ -8,23 +8,18 @@ const read = (p) => readFileSync(resolve(__dirname, '..', p), 'utf8');
 // component was mounted. Mounted inside the docked profile — which sits in
 // the cards pane, a positioned box at z-index 10 — the scrim was pinned to
 // that layer, and the global bar, the rail and the filter chips all drew
-// on top of it while the dialog sat in the middle.
+// on top of it while the dialog sat in the middle. A portal to <body> fixed
+// that; a native modal <dialog> fixes it by construction, since
+// showModal() puts it in the top layer, above every stacking context.
 describe('the modal scrim', () => {
-  it('is moved to <body>, out of every stacking context it was mounted in', () => {
+  it('is a native modal dialog, in the top layer', () => {
     const modal = read('components/Modal.svelte');
-    expect(modal).toMatch(/import \{ portal \} from '\.\.\/lib\/portal\.js'/);
-    expect(modal).toMatch(/<div class="modal-backdrop" use:portal/);
-    const portalSrc = read('lib/portal.js');
-    expect(portalSrc).toMatch(/document\.body\.appendChild\(node\)/);
-    expect(portalSrc).toMatch(/destroy\(\) \{\s*node\.remove\(\);/);
+    expect(modal).toMatch(/<dialog class="lt-dialog modal"[^>]*use:ltDialog=\{\{ open, onClose \}\}/);
+    expect(read('lib/lt.js')).toMatch(/export function ltDialog\(el, opts\)/);
+    expect(read('vendor/liquid-textile/behaviors.js')).toMatch(/el\.showModal\(\)/);
   });
 
-  it('keeps the backdrop as the only node of its block', () => {
-    // Svelte tears a block down by walking siblings from its first node to
-    // its last; a moved node's siblings are body's.
-    const modal = read('components/Modal.svelte');
-    const block = modal.match(/\{#if open\}([\s\S]*?)\{\/if\}/)[1];
-    const roots = block.trim().match(/^<div class="modal-backdrop"[\s\S]*<\/div>$/);
-    expect(roots).not.toBeNull();
+  it('needs no portal', () => {
+    expect(read('components/Modal.svelte')).not.toContain('use:portal');
   });
 });

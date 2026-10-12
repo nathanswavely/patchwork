@@ -160,12 +160,13 @@
     else if (isSheet) expanded = false;
   }
 
-  // Escape closes the dock — unless a dialog is open above it, which owns
-  // the key: both listen on the window, so without this one Escape closed
-  // the join sheet and the profile it was joining from together.
+  // Escape closes the dock — unless a modal dialog is open above it, which
+  // owns the key (a native <dialog> closes itself on Escape): the keydown
+  // still reaches the window, so without this one Escape closed the join
+  // sheet and the profile it was joining from together.
   function onKeydown(e) {
     if (e.key !== 'Escape') return;
-    if (document.querySelector('[role="dialog"][aria-modal="true"]')) return;
+    if (document.querySelector('dialog:modal')) return;
     onClose();
   }
 

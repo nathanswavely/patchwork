@@ -633,6 +633,10 @@ textarea.lt-field { line-height: 1.55; resize: vertical; }
    ================================================================ */
 
 .lt-dialog {
+  /* Centred by the browser's own margin: auto for a modal <dialog>; set
+     here too, so an app's * { margin: 0 } reset does not pin it to the
+     top-left corner. */
+  margin: auto;
   max-width: min(32rem, calc(100vw - 2rem));
   max-height: calc(100vh - 2rem);
   padding: var(--lt-pad);
