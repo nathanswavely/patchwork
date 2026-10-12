@@ -357,8 +357,8 @@
   {#if loading}
     <p class="lt-muted">Loading events...</p>
   {:else if events.length === 0}
-    <div class="empty-state">
-      <p>No events scheduled.</p>
+    <div class="lt-empty">
+      <p class="lt-empty-title">No events scheduled.</p>
       <p class="lt-muted">Members can create events for meetups, shows, or gatherings.</p>
     </div>
   {:else}
@@ -561,16 +561,6 @@
   .decline-form textarea {
     resize: vertical;
     font-size: 0.85rem;
-  }
-
-  .empty-state {
-    text-align: center;
-    padding: 2rem 0;
-  }
-
-  .empty-state p:first-child {
-    font-weight: 500;
-    margin-bottom: 0.25rem;
   }
 
   .event-list {

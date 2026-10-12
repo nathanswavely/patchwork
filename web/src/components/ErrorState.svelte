@@ -1,23 +1,17 @@
 <script>
-  let { message = 'Something went wrong.', retry = null } = $props();
+  // `onRetry` is the name two admin pages passed; it was never read, so
+  // their Try Again button never showed. Both names work.
+  let { message = 'Something went wrong.', retry = null, onRetry = null } = $props();
+  let again = $derived(retry ?? onRetry);
 </script>
 
-<div class="error-state">
-  <p class="error-message">{message}</p>
-  {#if retry}
-    <button class="lt-btn lt-btn-secondary" onclick={retry}>Try Again</button>
+<!-- A load that failed: Liquid Textile's empty state, its title in the
+     error tone, announced as it appears. -->
+<div class="lt-empty" role="alert">
+  <p class="lt-empty-title lt-tone-error">{message}</p>
+  {#if again}
+    <div class="lt-empty-actions">
+      <button class="lt-btn lt-btn-secondary" onclick={again}>Try Again</button>
+    </div>
   {/if}
 </div>
-
-<style>
-  .error-state {
-    text-align: center;
-    padding: 2rem 1rem;
-  }
-
-  .error-message {
-    color: var(--color-error);
-    margin-bottom: 1rem;
-    font-size: 0.95rem;
-  }
-</style>

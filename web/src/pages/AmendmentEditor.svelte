@@ -166,8 +166,8 @@
      the form's line length, and a centered notice inheriting it would center
      on the column instead of the page. -->
 {#if !canPropose}
-  <div class="permission-notice lt-fade-in">
-    <p>Only members can propose a change to this charter.</p>
+  <div class="lt-empty lt-fade-in">
+    <p class="lt-empty-title">Only members can propose a change to this charter.</p>
     <p class="lt-muted">Become a member to take part in how this patch governs itself.</p>
   </div>
 {:else}
@@ -289,16 +289,6 @@
 <style>
   .amendment-editor {
     max-width: var(--pw-measure-wide);
-  }
-
-  .permission-notice {
-    text-align: center;
-    padding: 3rem 1rem;
-  }
-
-  .permission-notice p:first-child {
-    font-weight: 500;
-    margin-bottom: 0.25rem;
   }
 
   .editor-header {

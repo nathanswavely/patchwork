@@ -21,7 +21,7 @@
 
 <div class="danger-zone">
   <h3 class="danger-heading">Danger Zone</h3>
-  <div class="danger-card">
+  <div class="lt-banner lt-tone-error danger-card">
     <p class="danger-warning">
       Archiving hides this patch from the quilt and closes its workspace. Nothing is deleted, but only an instance admin can restore it.
     </p>
@@ -47,8 +47,8 @@
   }
 
   .danger-card {
-    border: 1px solid var(--color-error);
-    border-radius: 6px;
+    /* A banner's small type is for a notice; this holds a form. */
+    font-size: inherit;
     padding: 1.25rem;
   }
 

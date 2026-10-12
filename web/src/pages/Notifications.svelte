@@ -154,8 +154,8 @@
     {#if loading}
       <p class="lt-muted center-text">Loading...</p>
     {:else if notifications.length === 0}
-      <div class="empty-state">
-        <p>You're all caught up</p>
+      <div class="lt-empty">
+        <p class="lt-empty-title">You're all caught up</p>
         <p class="lt-muted">No {categoryFilter ? categoryFilter : ''} notifications{unreadOnly ? ' (unread)' : ''}.</p>
       </div>
     {:else}
@@ -298,15 +298,6 @@
     font-size: 0.72rem;
     flex-shrink: 0;
     white-space: nowrap;
-  }
-
-  .empty-state {
-    text-align: center;
-    padding: 3rem 1rem;
-  }
-  .empty-state p:first-child {
-    font-weight: 500;
-    margin-bottom: 0.25rem;
   }
 
   .center-text { text-align: center; padding: 2rem 0; }

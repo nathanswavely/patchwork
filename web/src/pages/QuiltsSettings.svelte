@@ -173,8 +173,8 @@
           </div>
         </div>
       {:else}
-        <div class="empty-state">
-          <p>No quilts followed yet.</p>
+        <div class="lt-empty">
+          <p class="lt-empty-title">No quilts followed yet.</p>
           <p class="lt-muted" style="font-size: 0.85rem;">Add a Patchwork instance URL above to start exploring.</p>
         </div>
       {/each}
@@ -287,17 +287,6 @@
     font-size: 0.8rem;
     color: var(--color-error);
     margin-top: 0.25rem;
-  }
-
-  .empty-state {
-    text-align: center;
-    padding: 2rem 1rem;
-    color: var(--color-text-muted);
-  }
-
-  .empty-state p:first-child {
-    font-size: 1rem;
-    margin-bottom: 0.25rem;
   }
 
   @media (max-width: 640px) {

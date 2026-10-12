@@ -48,8 +48,8 @@
   {#if loading}
     <p class="lt-muted">Loading…</p>
   {:else if nodes.length === 0}
-    <div class="empty-state">
-      <p>No archived patches.</p>
+    <div class="lt-empty">
+      <p class="lt-empty-title">No archived patches.</p>
     </div>
   {:else}
     <div class="node-list">
@@ -119,12 +119,6 @@
   .node-meta {
     display: block;
     font-size: 0.82rem;
-    color: var(--color-text-muted);
-  }
-
-  .empty-state {
-    text-align: center;
-    padding: 2rem 1rem;
     color: var(--color-text-muted);
   }
 </style>

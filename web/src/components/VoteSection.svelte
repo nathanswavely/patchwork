@@ -202,7 +202,7 @@
         onclick={() => castVote('approve')}
         disabled={voting}
       >
-        {#if voting}<span class="spinner-inline"></span>{:else}{userVote === 'approve' ? 'Approved' : 'Approve'}{/if}
+        {#if voting}<span class="lt-spinner"></span>{:else}{userVote === 'approve' ? 'Approved' : 'Approve'}{/if}
       </button>
       <button
         class="vote-btn reject"
@@ -210,7 +210,7 @@
         onclick={() => castVote('reject')}
         disabled={voting}
       >
-        {#if voting}<span class="spinner-inline"></span>{:else}{userVote === 'reject' ? 'Rejected' : 'Reject'}{/if}
+        {#if voting}<span class="lt-spinner"></span>{:else}{userVote === 'reject' ? 'Rejected' : 'Reject'}{/if}
       </button>
       <button
         class="vote-btn abstain"
@@ -218,7 +218,7 @@
         onclick={() => castVote('abstain')}
         disabled={voting}
       >
-        {#if voting}<span class="spinner-inline"></span>{:else}{userVote === 'abstain' ? 'Abstained' : 'Abstain'}{/if}
+        {#if voting}<span class="lt-spinner"></span>{:else}{userVote === 'abstain' ? 'Abstained' : 'Abstain'}{/if}
       </button>
     </div>
   {/if}
@@ -435,17 +435,7 @@
   }
 
 
-  .spinner-inline {
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    border: 2px solid var(--color-border);
-    border-top-color: var(--color-text-muted);
-    border-radius: 50%;
-    animation: spin 0.6s linear infinite;
-  }
-
-  @keyframes spin {
-    to { transform: rotate(360deg); }
+  .lt-spinner {
+    border-top-color: currentColor;
   }
 </style>

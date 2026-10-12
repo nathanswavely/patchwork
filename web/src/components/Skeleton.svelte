@@ -2,40 +2,11 @@
   let { lines = 3, width = '100%', height = '1rem' } = $props();
 </script>
 
-<div class="skeleton-container" style="width: {width};">
+<!-- Liquid Textile's skeleton: it spaces the lines and shortens the last
+     one itself, and its shimmer is drawn from theme tokens, where this used
+     to hard-code a light stripe that ran pale across dark mode. -->
+<div style:width={width}>
   {#each Array(lines) as _, i (i)}
-    <div
-      class="skeleton-line"
-      style="height: {height}; width: {i === lines - 1 && lines > 1 ? '60%' : '100%'};"
-    ></div>
+    <span class="lt-skeleton" style:height={height}></span>
   {/each}
 </div>
-
-<style>
-  .skeleton-container {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-
-  .skeleton-line {
-    background: linear-gradient(
-      90deg,
-      var(--color-border) 25%,
-      #f0ece8 50%,
-      var(--color-border) 75%
-    );
-    background-size: 200% 100%;
-    border-radius: var(--radius);
-    animation: shimmer 1.5s ease-in-out infinite;
-  }
-
-  @keyframes shimmer {
-    0% {
-      background-position: 200% 0;
-    }
-    100% {
-      background-position: -200% 0;
-    }
-  }
-</style>

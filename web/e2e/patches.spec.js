@@ -177,7 +177,7 @@ test.describe('Patches — Dashboard', () => {
     const hasManaging = await managingSection.isVisible().catch(() => false);
     const hasMember = await memberSection.isVisible().catch(() => false);
     const hasFollowing = await followingSection.isVisible().catch(() => false);
-    const hasEmpty = await page.locator('.empty-state').isVisible().catch(() => false);
+    const hasEmpty = await page.locator('.lt-empty').isVisible().catch(() => false);
 
     // Either role-grouped sections or empty state should appear
     expect(hasManaging || hasMember || hasFollowing || hasEmpty).toBeTruthy();

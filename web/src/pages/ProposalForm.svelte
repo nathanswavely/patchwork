@@ -170,8 +170,8 @@
 <!-- Outside .container-narrow on purpose: a centered notice inheriting that
      column would center on the column instead of the page. -->
 {#if !canPropose}
-  <div class="permission-notice lt-fade-in">
-    <p>Only members can create proposals.</p>
+  <div class="lt-empty lt-fade-in">
+    <p class="lt-empty-title">Only members can create proposals.</p>
     <p class="lt-muted">Become a member to take part in how this patch governs itself.</p>
   </div>
 {:else}
@@ -348,15 +348,6 @@
 {/if}
 
 <style>
-  .permission-notice {
-    text-align: center;
-    padding: 3rem 1rem;
-  }
-
-  .permission-notice p:first-child {
-    font-weight: 500;
-    margin-bottom: 0.25rem;
-  }
 
   form {
     display: flex;
