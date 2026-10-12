@@ -67,7 +67,7 @@
                 onclick={(e) => { e.preventDefault(); navigate(`/patches/${claim.node_slug}`); }}
               >{claim.node_name}</a>
             </h3>
-            <span class="badge">{claim.method}</span>
+            <span class="lt-tag">{claim.method}</span>
           </div>
           <!-- One fact per line on a phone: the domain and the email are the
                evidence being weighed, and run together they were one muted
@@ -113,7 +113,7 @@
           <div class="claim-card lt-card">
             <div class="claim-header">
               <h3>{claim.node_name}</h3>
-              <span class="badge">{claim.method}</span>
+              <span class="lt-tag">{claim.method}</span>
             </div>
             <div class="claim-meta lt-muted">
               Claimed by {claim.claimant_display_name || claim.claimant_username}

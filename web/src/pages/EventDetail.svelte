@@ -204,7 +204,7 @@
           onclick={(e) => { e.preventDefault(); navigate(`/patches/${event.node_slug}`); }}
         >Hosted by {event.node_name}</a>
         {#if event.node_status === 'unclaimed'}
-          <span class="badge">Community-submitted</span>
+          <span class="lt-pill">Community-submitted</span>
         {/if}
         <EventTierChip visibility={event.visibility} />
       </div>

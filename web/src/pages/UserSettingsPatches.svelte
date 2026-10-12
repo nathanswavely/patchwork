@@ -324,11 +324,11 @@
                      unclaimed to every visitor, and this is the claimant
                      reading their own claim. -->
                 <span
-                  class="badge ready-badge"
+                  class="lt-pill lt-tone-primary"
                   title="Your claim cleared. Setup is where the patch becomes active and you become its admin. Until you submit it, the patch still reads as unclaimed to everyone else."
                 >ready to set up</span>
               {:else}
-                <span class="badge state-badge" title="Nobody has answered this claim yet.">claim under review</span>
+                <span class="lt-pill state-badge" title="Nobody has answered this claim yet.">claim under review</span>
               {/if}
               <span class="lt-muted joined-date">
                 {#if c.status === 'approved' && c.setup_expires_at}
@@ -364,7 +364,7 @@
                    one here would be a door onto the refusal this section
                    exists to explain. -->
               <span class="patch-name plain">{m.node_name || m.node_slug}</span>
-              <span class="badge state-badge" title="Archived patches are hidden from everyone, including you.">archived</span>
+              <span class="lt-pill state-badge" title="Archived patches are hidden from everyone, including you.">archived</span>
               <!-- The address, because the patch that lands here is very
                    often a duplicate of one still running and the name is
                    then the same on both rows. It is the only thing that
@@ -398,7 +398,7 @@
                 <a href="/patches/{m.node_slug}" class="patch-name" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}`); }}>
                   {m.node_name || m.node_slug}
                 </a>
-                <span class="badge">admin</span>
+                <span class="lt-pill">admin</span>
                 <span class="lt-muted joined-date">{formatDate(m.joined_at)}</span>
               </div>
               <div class="patch-actions">
@@ -422,7 +422,7 @@
                 <a href="/patches/{m.node_slug}" class="patch-name" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}`); }}>
                   {m.node_name || m.node_slug}
                 </a>
-                <span class="badge">member</span>
+                <span class="lt-pill">member</span>
                 <span class="lt-muted joined-date">{formatDate(m.joined_at)}</span>
               </div>
               <div class="patch-actions">
@@ -446,7 +446,7 @@
               <a href="/patches/{m.node_slug}" class="patch-name" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}`); }}>
                 {m.node_name || m.node_slug}
               </a>
-              <span class="badge" title="This patch's admins have not answered your request yet.">awaiting approval</span>
+              <span class="lt-pill" title="This patch's admins have not answered your request yet.">awaiting approval</span>
               <span class="lt-muted joined-date">asked {formatDate(m.joined_at)}</span>
             </div>
             <!-- No contact control: a pending request is not standing in the
@@ -470,9 +470,9 @@
               <a href="/patches/{m.node_slug}" class="patch-name" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}`); }}>
                 {m.node_name || m.node_slug}
               </a>
-              <span class="badge">following</span>
+              <span class="lt-pill">following</span>
               {#if note}
-                <span class="badge state-badge" title={note.title}>{note.label}</span>
+                <span class="lt-pill state-badge" title={note.title}>{note.label}</span>
               {/if}
               <span class="lt-muted joined-date">{formatDate(m.joined_at)}</span>
             </div>
@@ -613,12 +613,6 @@
   /* An act still owed, not a state being endured: this one is the only
      badge on the page that asks for something, so it is the only one that
      carries the page's own colour. */
-  .ready-badge {
-    background: transparent;
-    border: 1px solid var(--color-primary);
-    color: var(--color-primary);
-    font-weight: 600;
-  }
 
   .contact-hint {
     font-size: 0.85rem;

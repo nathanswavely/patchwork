@@ -22,7 +22,7 @@
   <button class="bell-btn" onclick={onOpen} aria-label="Notifications">
     <Bell size={18} weight="duotone" />
     {#if getUnread() > 0}
-      <span class="badge-count">{getUnread() > 99 ? '99+' : getUnread()}</span>
+      <span class="lt-count lt-count-corner lt-tone-error badge-count">{getUnread() > 99 ? '99+' : getUnread()}</span>
     {/if}
   </button>
 </div>
@@ -50,19 +50,8 @@
   }
 
   .badge-count {
-    position: absolute;
     top: -2px;
     right: -4px;
-    background: var(--color-error);
-    color: var(--color-on-error);
-    font-size: 0.6rem;
-    font-weight: 700;
-    min-width: 16px;
-    height: 16px;
-    line-height: 16px;
-    text-align: center;
-    border-radius: 8px;
-    padding: 0 3px;
   }
 
   @media (pointer: coarse) {

@@ -207,7 +207,7 @@
     <span class="lt-muted">
       {events.length} {events.length === 1 ? 'event' : 'events'}
       {#if isUnclaimed}
-        <span class="badge">Community-submitted</span>
+        <span class="lt-pill">Community-submitted</span>
       {/if}
       {#if feedAvailable}
         <button class="subscribe-toggle" onclick={() => (showSubscribe = !showSubscribe)}>Subscribe</button>

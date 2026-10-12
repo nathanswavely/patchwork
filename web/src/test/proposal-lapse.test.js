@@ -57,7 +57,7 @@ describe('ProposalList — the row says what happened, not what the column holds
     expect(src).toMatch(/if \(p\.state === 'lapsed'\) return 'lapsed'/);
     expect(src).toMatch(/if \(st === 'lapsed'\) return 'not decided'/);
     expect(src).toMatch(/<span class="lt-muted">\{rowLabel\(proposal\)\}<\/span>/);
-    expect(src).toMatch(/<span class="badge \{statusClass\(rowStatus\(proposal\)\)\}">\{rowLabel\(proposal\)\}<\/span>/);
+    expect(src).toMatch(/<span class="lt-pill \{statusClass\(rowStatus\(proposal\)\)\} \{STATUS_TONES\[statusClass\(rowStatus\(proposal\)\)\] \|\| ''\}">\{rowLabel\(proposal\)\}<\/span>/);
   });
 
   it('keeps the direct-change row green and mutes the lapsed one', () => {

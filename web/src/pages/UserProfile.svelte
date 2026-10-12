@@ -129,7 +129,7 @@
           {#each adminOf as m (m.node_id)}
             <a href="/patches/{m.node_slug}" class="patch-item" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}`); }}>
               <span class="patch-item-name">{m.node_name}</span>
-              <span class="badge badge-admin">admin</span>
+              <span class="lt-pill lt-tone-primary">admin</span>
             </a>
           {/each}
         </div>
@@ -143,7 +143,7 @@
           {#each memberOf as m (m.node_id)}
             <a href="/patches/{m.node_slug}" class="patch-item" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}`); }}>
               <span class="patch-item-name">{m.node_name}</span>
-              <span class="badge">member</span>
+              <span class="lt-pill">member</span>
             </a>
           {/each}
         </div>
@@ -314,11 +314,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-
-  .badge-admin {
-    color: var(--color-primary);
-    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
   }
 
   .profile-empty {

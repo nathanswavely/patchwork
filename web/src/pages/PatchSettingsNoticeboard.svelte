@@ -135,7 +135,7 @@
       {#each reports as r (r.id)}
         <li class="report-row">
           <div class="report-head">
-            <span class="badge">{r.entity_type}</span>
+            <span class="lt-tag">{r.entity_type}</span>
             <span class="lt-muted">{formatDate(r.created_at)}</span>
             <span class="lt-muted">reported by {r.reporter_name}</span>
           </div>

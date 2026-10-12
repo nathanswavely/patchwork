@@ -124,6 +124,8 @@
     if (st === 'unsettled') return 'nobody elected';
     return st;
   }
+  // The state class stays the hook the filter and the tests read; the tone draws it.
+  const STATUS_TONES = { 'status-approved': 'lt-tone-success', 'status-rejected': 'lt-tone-error', 'status-open': 'lt-tone-primary', 'status-withdrawn': 'lt-tone-muted' };
 </script>
 
 <GovernanceShell activeSection="proposals">
@@ -194,7 +196,7 @@
                 <div class="proposal-title-row">
                   <h3>{proposal.title}</h3>
                   {#if proposal.target_doc}
-                    <span class="badge badge-amendment">{isDirectRow(proposal) ? 'Change' : 'Amendment'}: {docLabel(proposal.target_doc)}</span>
+                    <span class="lt-pill lt-tone-primary">{isDirectRow(proposal) ? 'Change' : 'Amendment'}: {docLabel(proposal.target_doc)}</span>
                   {:else if proposal.proposal_type && proposal.proposal_type !== 'other'}
                     <span class="type-badge">{typeLabel(proposal.proposal_type)}</span>
                   {/if}
@@ -226,7 +228,7 @@
                   </div>
                 {/if}
               </div>
-              <span class="badge {statusClass(rowStatus(proposal))}">{rowLabel(proposal)}</span>
+              <span class="lt-pill {statusClass(rowStatus(proposal))} {STATUS_TONES[statusClass(rowStatus(proposal))] || ''}">{rowLabel(proposal)}</span>
             </a>
           {/each}
         </div>
@@ -331,15 +333,6 @@
     white-space: nowrap;
   }
 
-  .badge-amendment {
-    background: var(--color-primary);
-    color: var(--color-btn-on-primary);
-    font-size: 0.7rem;
-    padding: 0.1rem 0.4rem;
-    border-radius: 4px;
-    white-space: nowrap;
-  }
-
   .proposal-meta {
     display: flex;
     gap: 0.75rem;
@@ -386,29 +379,6 @@
 
   .reject-label {
     color: var(--color-error);
-  }
-
-  .status-approved {
-    background: color-mix(in srgb, var(--color-success) 10%, var(--color-surface));
-    color: var(--color-success);
-    border-color: color-mix(in srgb, var(--color-success) 25%, var(--color-border));
-  }
-
-  .status-rejected {
-    background: color-mix(in srgb, var(--color-error) 10%, var(--color-surface));
-    color: var(--color-error);
-    border-color: color-mix(in srgb, var(--color-error) 25%, var(--color-border));
-  }
-
-  .status-open {
-    background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
-    color: var(--color-primary);
-    border-color: color-mix(in srgb, var(--color-primary) 25%, var(--color-border));
-  }
-
-  .status-withdrawn {
-    background: var(--color-bg);
-    color: var(--color-text-muted);
   }
 
   @media (max-width: 640px) {

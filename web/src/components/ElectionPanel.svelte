@@ -280,9 +280,9 @@
                  an answer, and on a closed contest the reader has no other
                  way to tell "lost" from "still being counted". -->
             {#if isSeated(c, i)}
-              <span class="tag">seated</span>
+              <span class="lt-pill lt-tone-success">seated</span>
             {:else if phase === 'closed'}
-              <span class="tag tag-quiet">not seated</span>
+              <span class="lt-pill">not seated</span>
             {/if}
             <!-- Beside the name, on the ballot, which is the whole point:
                  voters were reading a Discussion tab they opened by accident
@@ -508,20 +508,8 @@
     font-size: 0.78rem;
     color: var(--color-text-muted);
   }
-
-  .tag {
-    font-size: 0.72rem;
-    padding: 0.05rem 0.35rem;
-    border-radius: var(--radius);
-    background: color-mix(in srgb, var(--color-success) 18%, transparent);
-    color: var(--color-text);
-  }
   /* Losing is an outcome, not a warning: the row states it and does not
      shout it. */
-  .tag-quiet {
-    background: color-mix(in srgb, var(--color-text) 8%, transparent);
-    color: var(--color-text-muted);
-  }
   /* The same two colours the ordinary proposal's quorum line uses, because
      it is the same sentence about the same thing. */
   .turnout { margin: 0.35rem 0 0; }

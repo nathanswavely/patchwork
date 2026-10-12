@@ -164,7 +164,7 @@
       {#each entries as entry (entry.id)}
         <li class="entry">
           <div class="entry-head">
-            <span class="badge">{entry.action}</span>
+            <span class="lt-tag">{entry.action}</span>
             <span class="lt-muted entry-time">{formatTimestamp(entry.created_at)}</span>
           </div>
           <div class="entry-meta">
@@ -198,7 +198,7 @@
             <tr>
               <td class="lt-muted nowrap">{formatTimestamp(entry.created_at)}</td>
               <td>{entry.display_name || entry.username || entry.user_id || '--'}</td>
-              <td><span class="badge">{entry.action}</span></td>
+              <td><span class="lt-tag">{entry.action}</span></td>
               <td class="lt-muted">{formatTarget(entry)}</td>
               <td>{@render details(entry)}</td>
             </tr>
@@ -327,7 +327,7 @@
     gap: 0.75rem;
   }
 
-  .entry-head .badge {
+  .entry-head .lt-tag {
     min-width: 0;
     overflow-wrap: anywhere;
   }

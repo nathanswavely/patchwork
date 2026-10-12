@@ -193,7 +193,7 @@
                   {m.node_name}
                 </a>
                 {#if pendingCounts[m.node_slug]}
-                  <span class="badge badge-attention">{pendingCounts[m.node_slug]} pending</span>
+                  <span class="lt-pill lt-tone-accent">{pendingCounts[m.node_slug]} pending</span>
                 {/if}
               </div>
               <div class="patch-card-actions">
@@ -219,7 +219,7 @@
                   {m.node_name}
                 </a>
                 {#if proposalCounts[m.node_slug]}
-                  <span class="badge" title="Open proposals here that you have not voted on yet.">{proposalCounts[m.node_slug].count} to vote on</span>
+                  <span class="lt-pill" title="Open proposals here that you have not voted on yet.">{proposalCounts[m.node_slug].count} to vote on</span>
                 {/if}
               </div>
               <div class="patch-card-actions">
@@ -406,11 +406,6 @@
 
   .patch-name:hover {
     color: var(--color-primary);
-  }
-
-  .badge-attention {
-    background: var(--color-accent);
-    color: var(--color-on-accent);
   }
 
   .patch-card-actions {
