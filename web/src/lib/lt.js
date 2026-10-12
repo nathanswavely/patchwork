@@ -10,10 +10,12 @@
  * per behaviour, each rebuilt when its options change:
  *
  *   <button use:ltConfirm={{ onConfirm, confirmLabel, tone }}>
+ *
+ * Step 6 hands initTheme to the theme store (stores/theme.svelte.js).
  */
 import { confirmAction, dialog, fold, inlineEdit, menu, segmented, tabs } from '../vendor/liquid-textile/behaviors.js';
 
-export { media, viewport, toast } from '../vendor/liquid-textile/behaviors.js';
+export { initTheme, media, viewport, toast } from '../vendor/liquid-textile/behaviors.js';
 
 /** A behaviour whose function takes (node, options) and returns { destroy }. */
 function action(make) {
