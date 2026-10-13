@@ -220,3 +220,53 @@ END:VEVENT
 		t.Errorf("untitled fallback: %q", items[0].Title)
 	}
 }
+
+// go-ical panics, rather than erroring, on two shapes of malformed
+// param that a web page contains as a matter of course. Auto-detection
+// reads every pasted address as ICS first, so a page served at a stored
+// URL must come back as an error that falls through to the other
+// probes, never as a crash of the hourly worker.
+func TestParseICS_DecoderPanicIsAnErrorNotAPanic(t *testing.T) {
+	cases := []struct {
+		name, body, want string
+	}{
+		{
+			// The head of pocketbooksshop.com on 2026-10-13. The `&#039;`
+			// entity's `;` opens a param, `name="keywords"` is its quoted
+			// value, and the space after the closing quote is where the
+			// decoder panicked with `unexpected character ' '`.
+			name: "quoted param value followed by a space",
+			body: `<!doctype html><html lang="en"><head><meta name="description" content="Lancaster&#039;s eclectic feminist indie bookstore since 2022"/><meta name="keywords" content="bookstore, books"/>`,
+			want: "the address returned a web page, not a calendar",
+		},
+		{
+			// The decoder peeks past the closing quote without checking
+			// for end of line: an index-out-of-range panic.
+			name: "quoted param value ending the line",
+			body: "BEGIN:VCALENDAR\r\nX-THING;NAME=\"a\"\r\nEND:VCALENDAR\r\n",
+			want: "parse ics: ",
+		},
+		{
+			// westartlanc.com's shape, a double-quote inside an unquoted
+			// value, was already a returned error; kept here so the two
+			// paths stay the same kind of thing.
+			name: "double-quote inside an unquoted param value",
+			body: `<html><body data-x;a=b"c:d>`,
+			want: "the address returned a web page, not a calendar",
+		},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			items, err := ParseICS([]byte(tc.body), testNow, testZone())
+			if err == nil {
+				t.Fatalf("expected an error, got %d items", len(items))
+			}
+			if !strings.Contains(err.Error(), tc.want) {
+				t.Errorf("error %q should contain %q", err.Error(), tc.want)
+			}
+			if items != nil {
+				t.Errorf("an error must come with no items, got %d", len(items))
+			}
+		})
+	}
+}

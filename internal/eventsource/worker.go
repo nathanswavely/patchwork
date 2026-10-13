@@ -73,6 +73,8 @@ func syncAll(ctx context.Context, db *database.DB, notifier *notifications.Notif
 		if ctx.Err() != nil {
 			return
 		}
+		// Sync recovers its own panics (recoverSync), so one feed that
+		// trips a parser ends that source's turn, not this loop.
 		if err := Sync(ctx, db, notifier, id); err != nil {
 			// Already recorded on the source row; the log line is for
 			// the operator tailing the server.
