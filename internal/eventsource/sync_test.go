@@ -449,3 +449,59 @@ func TestSync_SkipListRespected(t *testing.T) {
 		t.Errorf("expected only the kept event, got %d", total)
 	}
 }
+
+// A page whose markup trips the ICS decoder (pocketbooksshop.com,
+// 2026-10-13) must end as an ordinary recorded failure: detection falls
+// through the JSON-LD and Squarespace probes and the source wears the
+// original "not a calendar" error, with nothing touched.
+func TestSync_PageThatTripsTheDecoderIsRecordedNotFatal(t *testing.T) {
+	db := setupTestDB(t)
+	feed := newFeedServer(t, `<!doctype html><html lang="en"><head><meta name="description" content="Lancaster&#039;s eclectic feminist indie bookstore since 2022"/><meta name="keywords" content="bookstore, books"/></head><body></body></html>`)
+	sourceID := seedSource(t, db, feed.srv.URL)
+
+	err := Sync(context.Background(), db, nil, sourceID)
+	if err == nil {
+		t.Fatal("expected an error from a web page")
+	}
+	if !strings.Contains(err.Error(), "web page, not a calendar") {
+		t.Errorf("the admin should read the ICS story, got %q", err)
+	}
+	status, lastError := sourceState(t, db, sourceID)
+	if status != "error" || lastError == nil {
+		t.Errorf("source must record the failure: %s / %v", status, lastError)
+	}
+	if n := countEvents(t, db, sourceID); n != 0 {
+		t.Errorf("nothing may be imported from a web page; have %d", n)
+	}
+}
+
+// recoverSync is the guard under every per-source sync. A panic inside
+// becomes the returned error and is handed to the recorder, so the
+// hourly loop and a handler's background sync both survive it.
+func TestRecoverSync_TurnsAPanicIntoARecordedError(t *testing.T) {
+	var recorded error
+	run := func() (err error) {
+		defer recoverSync("sync", "src-1", &err, func(e error) { recorded = e })
+		panic("decoder blew up")
+	}
+	err := run()
+	if err == nil {
+		t.Fatal("the panic must come back as an error")
+	}
+	if !strings.Contains(err.Error(), "sync src-1: panic: decoder blew up") {
+		t.Errorf("error should name the source and the panic, got %q", err)
+	}
+	if recorded == nil || recorded.Error() != err.Error() {
+		t.Errorf("the failure must be recorded on the row, got %v", recorded)
+	}
+
+	// And it stays out of the way when nothing panics.
+	recorded = nil
+	quiet := func() (err error) {
+		defer recoverSync("sync", "src-2", &err, func(e error) { recorded = e })
+		return nil
+	}
+	if err := quiet(); err != nil || recorded != nil {
+		t.Errorf("no panic, no error: %v / %v", err, recorded)
+	}
+}

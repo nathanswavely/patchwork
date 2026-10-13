@@ -78,14 +78,15 @@ func displayName(location string) string {
 // itself and routes nothing: the cached listings from the last good
 // fetch stay exactly as they were, so an unreachable city calendar can't
 // empty forty patches (docs/adr/031's rule, inherited).
-func SyncAggregator(ctx context.Context, db *database.DB, notifier *notifications.Notifier, aggregatorID string) error {
+func SyncAggregator(ctx context.Context, db *database.DB, notifier *notifications.Notifier, aggregatorID string) (err error) {
+	defer recoverSync("sync aggregator", aggregatorID, &err, func(e error) { recordAggregatorFailure(db, aggregatorID, e) })
 	mu, _ := aggregatorLocks.LoadOrStore(aggregatorID, &sync.Mutex{})
 	mu.(*sync.Mutex).Lock()
 	defer mu.(*sync.Mutex).Unlock()
 
 	var src Source
 	var paused bool
-	err := db.QueryRow(
+	err = db.QueryRow(
 		`SELECT id, type, url, added_by, etag, last_modified, last_success_at, paused
 		 FROM aggregators WHERE id = ?`, aggregatorID,
 	).Scan(&src.ID, &src.Type, &src.URL, &src.AddedBy, &src.Etag,

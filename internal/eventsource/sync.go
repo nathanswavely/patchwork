@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"runtime/debug"
 	"strings"
 	"sync"
 	"time"
@@ -73,14 +74,15 @@ var sourceLocks sync.Map
 // and touches no events; only a successful parse may insert, update, or
 // delete. The first successful sync is silent; later syncs announce new
 // events exactly like a directly posted one.
-func Sync(ctx context.Context, db *database.DB, notifier *notifications.Notifier, sourceID string) error {
+func Sync(ctx context.Context, db *database.DB, notifier *notifications.Notifier, sourceID string) (err error) {
+	defer recoverSync("sync", sourceID, &err, func(e error) { recordFailure(db, sourceID, e) })
 	mu, _ := sourceLocks.LoadOrStore(sourceID, &sync.Mutex{})
 	mu.(*sync.Mutex).Lock()
 	defer mu.(*sync.Mutex).Unlock()
 
 	var src Source
 	var zoneName string
-	err := db.QueryRow(
+	err = db.QueryRow(
 		`SELECT s.id, s.node_id, s.type, s.url, s.added_by, s.etag, s.last_modified,
 		 s.last_success_at, s.aggregator_id, s.name_key, s.suggests,
 		 s.local_time_stamped_utc, s.visibility, COALESCE(NULLIF(n.timezone,''), ?)
@@ -282,6 +284,29 @@ func loadItemsFor(ctx context.Context, src *Source) ([]Item, *fetchResult, error
 	}
 	src.Type = "squarespace"
 	return ssItems, ssResult, nil
+}
+
+// recoverSync is deferred first in Sync and SyncAggregator, so a panic
+// anywhere under one source's sync becomes the error that sync returns:
+// recorded on the row for the admin, logged with its stack for the
+// operator, and fatal to nothing. It guards every caller at once. The
+// hourly worker (worker.go) is the one whose loop a panic would end for
+// good, but the `go eventsource.Sync(...)` a handler starts after
+// attaching runs outside net/http's recovery too, and either would take
+// the process with it. The decoder panic this was written for is now
+// an error at decodeICS; this is for the next one.
+//
+// It must be the deferred call itself (recover only works there), and
+// it must be deferred before the per-source lock so the lock is
+// released first.
+func recoverSync(what, id string, err *error, record func(error)) {
+	r := recover()
+	if r == nil {
+		return
+	}
+	*err = fmt.Errorf("%s %s: panic: %v", what, id, r)
+	log.Printf("eventsource: %v\n%s", *err, debug.Stack())
+	record(*err)
 }
 
 func nowStamp() string {

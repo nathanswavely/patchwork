@@ -76,7 +76,7 @@ func ParseICS(data []byte, now time.Time, zone *time.Location) ([]Item, error) {
 	if len(trimmed) == 0 {
 		return nil, errors.New("the address returned an empty page, not a calendar")
 	}
-	cal, err := ical.NewDecoder(bytes.NewReader(data)).Decode()
+	cal, err := decodeICS(data)
 	if err != nil {
 		if trimmed[0] == '<' {
 			return nil, errors.New("the address returned a web page, not a calendar")
@@ -282,4 +282,26 @@ func itemFromEvent(e *ical.Event, uid, occurrence string, zone *time.Location) (
 		}
 	}
 	return it, start, true
+}
+
+// decodeICS runs the ical decoder and returns its panics as errors.
+//
+// go-ical reports most malformed input as an error, but its param
+// decoder panics on two shapes that a web page produces as a matter of
+// course: a quoted param value followed by anything other than `,`,
+// `;` or `:` (a space, in `content="x" name="y"`), and a quoted value
+// that ends the line (it peeks at an empty string). Pocket Books' home
+// page tripped the first on 2026-10-13: an `&#039;` entity opens a
+// param, the next `="keywords"` is a quoted value, and the space after
+// it is the panic. Auto-detection (docs/adr/031) reads every pasted
+// address as ICS first, so without this the hourly worker would take the
+// process down the day a stored URL started answering with such a page.
+func decodeICS(data []byte) (cal *ical.Calendar, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			cal = nil
+			err = fmt.Errorf("%v", r)
+		}
+	}()
+	return ical.NewDecoder(bytes.NewReader(data)).Decode()
 }
