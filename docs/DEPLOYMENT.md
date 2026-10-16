@@ -9,6 +9,10 @@ one.
 - A server with Docker and Docker Compose (a Raspberry Pi 4 with 2GB RAM is
   plenty, and any small VPS works).
 - A domain name with an A/AAAA record pointing at the server.
+- Optionally a `www` record pointing at the same server. Patchwork answers on
+  one hostname, so the `Caddyfile` ships a commented `www` block that
+  redirects to it: add the record first, then uncomment, because Caddy can
+  only get a certificate for a name that already resolves.
 - Ports 80 and 443 reachable from the internet (Caddy needs both for
   automatic HTTPS via Let's Encrypt).
 
