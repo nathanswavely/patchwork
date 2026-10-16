@@ -53,6 +53,10 @@ notes/
 # Start from docker-compose.override.yml.example.
 docker-compose.override.yml
 docker-compose.override.yaml
+# Per-deployment Caddy config, imported by the Caddyfile. Only the tracked
+# recipes travel; the copies a deployer makes from them stay on the server.
+/caddy.d/*
+!/caddy.d/*.example
 
 # Playwright artifacts (screenshots, traces, .last-run.json)
 test-results/
