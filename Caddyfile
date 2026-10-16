@@ -31,20 +31,3 @@ import caddy.d/*.caddy
 	# recipe for one is caddy.d/access-log.site.example.
 	import caddy.d/*.site
 }
-
-# Patchwork answers on one hostname. If you want www to work too, point a www
-# record at this server and uncomment this, in that order: Caddy can only get
-# a certificate for a name that already resolves, and until the record exists
-# it retries a doomed order for as long as the server runs. A www record
-# without this block does not help: Caddy has no certificate for the name and
-# refuses the TLS handshake, so the browser trades an unknown-host error for a
-# connection error.
-#
-# Redirect rather than serve the app on a second name. Session cookies are
-# host-only and every emailed link is built from instance.domain, so an
-# instance answering on both would sign someone in on one name and mail them
-# links to the other.
-#
-# www.{$DOMAIN:localhost} {
-# 	redir https://{$DOMAIN:localhost}{uri} permanent
-# }
