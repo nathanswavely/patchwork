@@ -26,3 +26,19 @@
 	# 	}
 	# }
 }
+
+# Patchwork answers on one hostname. If you want www to work too, point a www
+# record at this server and uncomment this, in that order: Caddy can only get
+# a certificate for a name that already resolves, and until the record exists
+# it retries a doomed order for as long as the server runs. A www record with
+# no redirect is worse than none, because the browser then shows a
+# certificate-mismatch warning instead of an unknown-host error.
+#
+# Redirect rather than serve the app on a second name. Session cookies are
+# host-only and every emailed link is built from instance.domain, so an
+# instance answering on both would sign someone in on one name and mail them
+# links to the other.
+#
+# www.{$DOMAIN:localhost} {
+# 	redir https://{$DOMAIN:localhost}{uri} permanent
+# }
