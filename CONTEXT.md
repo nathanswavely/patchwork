@@ -20,6 +20,18 @@ lining: agreement by an organization that hasn't arrived is fabricated
 consent. Claiming turns it into that owner's patch.
 _Avoid_: ghost patch, placeholder, stub
 
+**Intro**:
+The one email a quilt sends to an unclaimed patch's owner to say the page
+exists (docs/adr/2026-10-16-a-page-made-for-someone-tells-them-so.md).
+Sent by an instance admin, after reading the whole message, to a contact
+address a person entered; never on creation, never to an address the
+software found. Its calendar paragraph is picked by reading the site once
+and can be overruled. Sent to the verification domain, it carries a claim
+link that stands in for the email proof. One per address; a second is a
+resend, chosen on purpose.
+_Avoid_: outreach email (the admin page is "Outreach"; the thing sent is
+an intro), campaign, drip, notification (it goes to someone with no account)
+
 **Claim**:
 An assertion of ownership over an unclaimed patch, pending proof — never a
 reservation. One person's unproven claim doesn't stop anyone else from

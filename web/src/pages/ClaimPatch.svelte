@@ -1,13 +1,39 @@
 <script>
   import { api } from '../lib/api.js';
   import { getContext } from 'svelte';
-  import { navigate } from '../stores/router.svelte.js';
+  import { navigate, getQuery } from '../stores/router.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
   import Skeleton from '../components/Skeleton.svelte';
 
   const patch = getContext('patch');
   let node = $derived(patch.value.node);
   let slug = $derived(patch.value.slug);
+
+  // The claim shortcut a sent intro carried
+  // (docs/adr/2026-10-16-a-page-made-for-someone-tells-them-so.md,
+  // decision 6). The token vouches for the address the intro went to;
+  // the account is whoever signs in and follows the link. This route is
+  // auth-gated in App.svelte, and the gate's Log In carries the whole
+  // path, query included, so a signed-out visitor comes back here with
+  // the token still on the URL. Nothing about that is this page's to do.
+  let introToken = $derived(getQuery().get('intro') || '');
+  let introClaiming = $state(false);
+
+  async function handleIntroClaim() {
+    if (!introToken) return;
+    introClaiming = true;
+    error = '';
+    try {
+      const result = await api(`nodes/${slug}/claim`, { method: 'POST', body: { intro_token: introToken } });
+      claim = result;
+      showToast('Claim approved. Finish setup to activate this patch.', 'success');
+      navigate(`/patches/${slug}/setup`);
+    } catch (e) {
+      error = e.message || 'This intro link did not work';
+    } finally {
+      introClaiming = false;
+    }
+  }
 
   // Server state: the caller's open claim (survives reloads) and which
   // methods this patch supports.
@@ -157,6 +183,23 @@
 
   {#if loading}
     <Skeleton lines={4} height="1rem" />
+
+  {:else if introToken && !claim}
+    <div class="lt-card verify-card">
+      <div class="verify-header">
+        <h2>Claim with your intro link</h2>
+      </div>
+      <p>This link came in an email to {node?.name || 'this patch'}'s address. Following it stands in for proving that address, so there is nothing else to verify: the page becomes yours to set up.</p>
+      {#if error}
+        <p class="lt-error-text">{error}</p>
+      {/if}
+      <div class="lt-actions form-actions" style="margin-top: 1rem;">
+        <button class="lt-btn lt-btn-primary" onclick={handleIntroClaim} disabled={introClaiming}>
+          {introClaiming ? 'Claiming…' : 'Claim this patch'}
+        </button>
+        <button class="lt-btn lt-btn-secondary" onclick={() => navigate(`/patches/${slug}/claim`)}>Claim another way</button>
+      </div>
+    </div>
 
   {:else if claim && claim.status === 'approved'}
     <!-- Approved: a single-use, expiring right to enter setup — not yet an

@@ -46,6 +46,9 @@ export const ADMIN_TABS = [
       { id: 'tags', label: 'Tags' },
       { id: 'neighbors', label: 'Neighbors' },
       { id: 'aggregators', label: 'Aggregators' },
+      // Intro emails to the owners of unclaimed patches: the backlog and
+      // the template (docs/adr/2026-10-16-a-page-made-for-someone-tells-them-so.md).
+      { id: 'outreach', label: 'Outreach' },
       // Visitor counting: the switch that turns it on lives on this page,
       // which is what makes it a setting rather than a report.
       { id: 'usage', label: 'Usage' },
@@ -112,6 +115,7 @@ const LEGACY = {
   tags: '/admin/settings/tags',
   neighbors: '/admin/settings/neighbors',
   aggregators: '/admin/settings/aggregators',
+  outreach: '/admin/settings/outreach',
   usage: '/admin/settings/usage',
   archived: '/admin/settings/archived',
   attestation: '/admin/settings/attestation',

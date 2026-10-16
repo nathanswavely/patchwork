@@ -12,6 +12,7 @@
   import PatchSettingsNoticeboard from './PatchSettingsNoticeboard.svelte';
   import PatchSettingsSources from './PatchSettingsSources.svelte';
   import PatchSettingsVerification from './PatchSettingsVerification.svelte';
+  import PatchSettingsIntro from './PatchSettingsIntro.svelte';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -46,9 +47,13 @@
   // Notifications and gain Verification (docs/adr/030). patchSettingsSections
   // owns that decision. A sources-only trusted contributor gets a sidebar of
   // one, since every other section is still this patch's admin's business.
+  // A trusted contributor also gets Intro, where the one thing their
+  // grant reaches is entering the owner's address
+  // (docs/adr/2026-10-16-a-page-made-for-someone-tells-them-so.md,
+  // decision 2); sending stays the instance admin's.
   let sectionDefs = $derived(
     sourcesOnly
-      ? [{ id: 'sources', label: 'Event Sources' }]
+      ? [{ id: 'sources', label: 'Event Sources' }, { id: 'intro', label: 'Intro' }]
       : patchSettingsSections({ isUnclaimed })
   );
   let sections = $derived(
@@ -62,6 +67,7 @@
     if (currentPath.endsWith('/notifications')) return 'notifications';
     if (currentPath.endsWith('/noticeboard')) return 'noticeboard';
     if (currentPath.endsWith('/verification')) return 'verification';
+    if (currentPath.endsWith('/intro')) return 'intro';
     if (currentPath.endsWith('/danger')) return 'danger';
     return 'info';
   });
@@ -110,10 +116,12 @@
     </p>
   {/if}
   <SettingsShell title="Patch Settings" {sections} {indexHref}>
-    {#if sourcesOnly}
-      <!-- Always Sources, regardless of what activePage resolved to: a
-           trusted contributor with no patch-admin standing gets exactly the
-           one section, and the redirect effect above only runs after this
+    {#if sourcesOnly && activePage === 'intro'}
+      <PatchSettingsIntro />
+    {:else if sourcesOnly}
+      <!-- Sources for anything else activePage resolved to: a trusted
+           contributor with no patch-admin standing gets exactly these two
+           sections, and the redirect effect above only runs after this
            first render. -->
       <PatchSettingsSources />
     {:else if activePage === 'info'}
@@ -130,6 +138,8 @@
       <PatchSettingsNoticeboard />
     {:else if activePage === 'verification'}
       <PatchSettingsVerification />
+    {:else if activePage === 'intro'}
+      <PatchSettingsIntro />
     {:else if activePage === 'danger'}
       <PatchSettingsDanger />
     {/if}

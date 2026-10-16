@@ -78,6 +78,7 @@
   import Lining from './pages/Lining.svelte';
   import Governance from './pages/Governance.svelte';
   import AdminLegal from './pages/AdminLegal.svelte';
+  import AdminOutreach from './pages/AdminOutreach.svelte';
   import AdminUsage from './pages/AdminUsage.svelte';
   import AdminAttestation from './pages/AdminAttestation.svelte';
   import AdminApps from './pages/AdminApps.svelte';
@@ -183,6 +184,7 @@
   addRoute('/patches/:slug/settings/notifications', 'patchSettingsNotifications');
   addRoute('/patches/:slug/settings/noticeboard', 'patchSettingsNoticeboard');
   addRoute('/patches/:slug/settings/verification', 'patchSettingsVerification');
+  addRoute('/patches/:slug/settings/intro', 'patchSettingsIntro');
   addRoute('/patches/:slug/settings/danger', 'patchSettingsDanger');
   addRoute('/patches/:slug/settings', 'patchSettings');
 
@@ -242,6 +244,7 @@
   addRoute('/admin/settings/quilt', 'adminQuilt');
   addRoute('/admin/settings/label', 'adminLabel');
   addRoute('/admin/settings/legal', 'adminLegal');
+  addRoute('/admin/settings/outreach', 'adminOutreach');
   addRoute('/admin/settings/tags', 'adminTags');
   addRoute('/admin/settings/neighbors', 'adminNeighbors');
   addRoute('/admin/settings/aggregators', 'adminAggregators');
@@ -308,12 +311,12 @@
     'governanceDocs', 'governanceDocNew', 'governanceDocDetail', 'governanceDocHistory', 'governanceDocPropose', 'governanceRulesPropose', 'governanceRules',
     'patchMembers', 'patchEvents',
     'patchNoticeboard', 'patchNoticeNew', 'patchNotice',
-    'patchSettings', 'patchSettingsInfo', 'patchSettingsAppearance', 'patchSettingsMembers', 'patchSettingsSources', 'patchSettingsNotifications', 'patchSettingsNoticeboard', 'patchSettingsVerification', 'patchSettingsDanger',
+    'patchSettings', 'patchSettingsInfo', 'patchSettingsAppearance', 'patchSettingsMembers', 'patchSettingsSources', 'patchSettingsNotifications', 'patchSettingsNoticeboard', 'patchSettingsVerification', 'patchSettingsIntro', 'patchSettingsDanger',
   ]);
   let isPatchShellRoute = $derived(patchShellRoutes.has(routeName));
 
   const settingsRoutes = new Set(['settings', 'settingsNotifications', 'settingsSecurity', 'settingsPatches', 'quilts']);
-  const adminRoutes = new Set(['adminDashboard', 'adminReviewIndex', 'adminReports', 'adminTags', 'adminTagSuggestions', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminSettingsIndex', 'adminArchived', 'adminQuilt', 'adminNeighbors', 'adminAggregators', 'adminUsage', 'adminLabel', 'adminLegal', 'adminAttestation', 'adminApps']);
+  const adminRoutes = new Set(['adminDashboard', 'adminReviewIndex', 'adminReports', 'adminTags', 'adminTagSuggestions', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminSettingsIndex', 'adminArchived', 'adminQuilt', 'adminNeighbors', 'adminAggregators', 'adminOutreach', 'adminUsage', 'adminLabel', 'adminLegal', 'adminAttestation', 'adminApps']);
   let isSettingsRoute = $derived(settingsRoutes.has(routeName));
   let isAdminRoute = $derived(adminRoutes.has(routeName));
 
@@ -347,7 +350,7 @@
     ['settings', 'settingsNotifications', 'settingsSecurity', 'settingsPatches', 'notifications', 'activity', 'dashboard', 'submitPatch', 'claimPatch', 'patchSetup', 'patchNew', 'eventNew', 'eventEdit',
      'governanceProposalNew', 'governanceDocNew',
      'patchNoticeboard', 'patchNoticeNew', 'patchNotice',
-     'adminDashboard', 'adminReviewIndex', 'adminReports', 'adminTags', 'adminTagSuggestions', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminSettingsIndex', 'adminArchived', 'adminQuilt', 'adminNeighbors', 'adminAggregators', 'adminUsage', 'adminLabel', 'adminLegal', 'adminAttestation', 'adminApps'].includes(routeName)
+     'adminDashboard', 'adminReviewIndex', 'adminReports', 'adminTags', 'adminTagSuggestions', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminSettingsIndex', 'adminArchived', 'adminQuilt', 'adminNeighbors', 'adminAggregators', 'adminOutreach', 'adminUsage', 'adminLabel', 'adminLegal', 'adminAttestation', 'adminApps'].includes(routeName)
   );
 
   // The gate is a detour, not a destination, so it carries where the person
@@ -611,6 +614,8 @@
           <AdminLabel />
         {:else if routeName === 'adminLegal'}
           <AdminLegal />
+        {:else if routeName === 'adminOutreach'}
+          <AdminOutreach />
         {:else if routeName === 'adminUsage'}
           <AdminUsage />
         {:else if routeName === 'adminQuilt'}

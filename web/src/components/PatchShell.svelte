@@ -53,9 +53,13 @@
   let breadcrumbExtra = $state([]);
 
   let verificationDomain = $state('');
+  // The intro address, present only for a viewer who may enter it
+  // (docs/adr/2026-10-16-a-page-made-for-someone-tells-them-so.md).
+  let contactEmail = $state('');
 
   // Expose to child pages via context
   const patchContext = $derived({
+    contactEmail,
     node,
     slug,
     isMember,
@@ -133,6 +137,7 @@
       viewerTrusted = data.viewer_trusted === true;
       isBanned = data.is_banned || false;
       verificationDomain = data.verification_domain || '';
+      contactEmail = data.contact_email || '';
       setPatchName(node?.name || slug);
     } catch (e) {
       error = patchLoadError(e);

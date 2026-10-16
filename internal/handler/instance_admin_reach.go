@@ -154,9 +154,18 @@ var instanceAdminReach = map[string]struct {
 			"whose seats were vacated (docs/adr/102), which is why it narrows to zero-active-admins " +
 			"rather than disappearing."},
 
-	"nodes.go:GetNode": {reachNone, 1, false,
+	"nodes.go:GetNode": {reachNone, 2, false,
 		"Sets is_admin on the payload for any instance admin. Not a display bug: it truthfully reports " +
-			"UpdateNode's authz. Twelve sites across Go and Svelte work around this one flag."},
+			"UpdateNode's authz. Twelve sites across Go and Svelte work around this one flag. The second " +
+			"comparison is custody of an unclaimed patch's contact address " +
+			"(docs/adr/2026-10-16-a-page-made-for-someone-tells-them-so.md): shown to the instance admin " +
+			"who may write to it, inside the is_unclaimed branch, so it ends when the patch is claimed."},
+
+	"outreach.go:SetNodeContact": {reachCustodyUnclaimed, 1, true,
+		"The address an intro goes to, on an unclaimed patch only (loadIntroNode selects on status). " +
+			"The instance admin holds the listing in trust and may write to its owner; a trusted " +
+			"contributor whose grant reaches the patch may enter the address beside them " +
+			"(docs/adr/2026-10-16-a-page-made-for-someone-tells-them-so.md, decision 2)."},
 
 	"nodes.go:UpdateNode": {reachNone, 1, false,
 		"Renaming a patch, moving it, changing its membership policy, its visibility, its appearance."},

@@ -542,6 +542,19 @@ func buildRoutes(d serverDeps) (*http.ServeMux, []route) {
 	t.handleFunc("POST /api/v1/admin/nodes/{slug}/assign", middleware.AdminRequired(d.db, handler.AdminAssignOwner(d.db)))
 	t.handleFunc("PATCH /api/v1/admin/nodes/{slug}/verification-domain", middleware.AdminRequired(d.db, handler.AdminSetVerificationDomain(d.db)))
 
+	// Intro emails to the owners of unclaimed patches
+	// (docs/adr/2026-10-16-a-page-made-for-someone-tells-them-so.md). The
+	// address may be entered by a trusted contributor whose grant reaches
+	// the patch; everything that sends, previews, or lists is the instance
+	// admin's, because the message goes out on the quilt's own domain.
+	t.handleFunc("PUT /api/v1/nodes/{slug}/contact", middleware.AuthRequired(d.db, handler.SetNodeContact(d.db)))
+	t.handleFunc("GET /api/v1/nodes/{slug}/intro", middleware.AdminRequired(d.db, handler.IntroState(d.db, d.cfg)))
+	t.handleFunc("POST /api/v1/nodes/{slug}/intro/preview", middleware.AdminRequired(d.db, handler.IntroPreview(d.db, d.cfg)))
+	t.handleFunc("POST /api/v1/nodes/{slug}/intro/send", middleware.AdminRequired(d.db, handler.IntroSend(d.db, d.cfg)))
+	t.handleFunc("GET /api/v1/admin/outreach", middleware.AdminRequired(d.db, handler.AdminOutreach(d.db, d.cfg)))
+	t.handleFunc("PATCH /api/v1/admin/outreach", middleware.AdminRequired(d.db, handler.AdminUpdateOutreach(d.db)))
+	t.handleFunc("DELETE /api/v1/admin/outreach/template", middleware.AdminRequired(d.db, handler.AdminResetOutreachTemplate(d.db)))
+
 	// Governance templates + overview.
 	t.handleFunc("GET /api/v1/templates/{id}", handler.GetTemplate())
 	t.handleFunc("GET /api/v1/nodes/{slug}/governance/overview", middleware.AuthOptional(d.db, handler.GovernanceOverview(d.db)))
