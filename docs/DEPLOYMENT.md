@@ -9,6 +9,10 @@ one.
 - A server with Docker and Docker Compose (a Raspberry Pi 4 with 2GB RAM is
   plenty, and any small VPS works).
 - A domain name with an A/AAAA record pointing at the server.
+- Optionally a `www` record pointing at the same server. Patchwork answers on
+  one hostname, so the `Caddyfile` ships a commented `www` block that
+  redirects to it: add the record first, then uncomment, because Caddy can
+  only get a certificate for a name that already resolves.
 - Ports 80 and 443 reachable from the internet (Caddy needs both for
   automatic HTTPS via Let's Encrypt).
 
@@ -361,7 +365,7 @@ Three things, and it is easy to notice only the first:
    budget during the incident where you're already restoring from backup.
 3. **The host config directory** (`/opt/patchwork` or wherever your compose
    file lives) — `patchwork.yaml`, `docker-compose.override.yml`, `.env`,
-   `Caddyfile`. These are gitignored or untracked by design, so a repo clone
+   `caddy.d/`. These are gitignored or untracked by design, so a repo clone
    will *not* bring them back. Without them you can restore the data and
    still not reproduce the deployment. **`patchwork.yaml` and `.env` can hold
    SMTP credentials — keep this archive `600` and never commit it.**
@@ -716,9 +720,10 @@ same tab deletes them now. Details are in
 `docs/adr/2026-09-18-counting-visitors-without-watching-anyone.md`.
 
 **Access logs (in Caddy).** The bundled Caddyfile writes no access log. If you
-want one for troubleshooting, the Caddyfile carries a commented recipe that
-masks the client address to its /24 (or /48 for IPv6) and rolls the file
-after seven days. Turning it on is a change to what the site keeps about
+want one for troubleshooting, `caddy.d/access-log.site.example` is a recipe
+that masks the client address to its /24 (or /48 for IPv6) and rolls the file
+after seven days; [Your own Caddy config](#your-own-caddy-config) says how to
+turn it on. Turning it on is a change to what the site keeps about
 people, so edit the privacy policy's "Technical records" paragraph at
 Administration → Legal in the same sitting: the shipped text says the server
 keeps no log of visits, and once it does that sentence is false.
@@ -868,6 +873,42 @@ from `android:apk-key-hash:<base64url of the raw certificate hash>`, derived
 from the fingerprints you entered, which is why Patchwork loads those origins
 at startup and again after every add and remove — no restart needed.
 
+## Your own Caddy config
+
+Do not edit the `Caddyfile`. It is tracked, so a local edit makes the next
+`git pull` refuse to update as soon as the project changes that file, and
+`git reset --hard` throws the edit away without saying so. Your own Caddy
+config goes in `caddy.d/` instead, which git ignores and the compose file
+mounts read-only into the caddy container. The `Caddyfile` imports two
+kinds of file from it:
+
+| File | Where Caddy reads it | For |
+|---|---|---|
+| `caddy.d/*.caddy` | at the top level, beside the Patchwork site | blocks of their own: another site, such as a redirect to this one |
+| `caddy.d/*.site` | inside the Patchwork site's block | directives for this site: an access log, extra headers |
+
+Putting a directive in a `*.caddy` file fails with Caddy saying it parsed
+the directive "as a site address". That means it belongs in a `*.site`
+file. A global options block (an ACME contact `email`, say) works only in
+the `*.caddy` file that sorts first, so name that one `00-global.caddy`.
+
+The tracked `*.example` files in `caddy.d/` are recipes. Copy one without the
+`.example` suffix to use it, then reload Caddy:
+
+```bash
+cp caddy.d/access-log.site.example caddy.d/access-log.site
+docker compose exec -w /etc/caddy caddy caddy reload
+```
+
+A reload with a broken config is refused and Caddy keeps serving the one it
+had, so the reload's output is where a typo shows up. With nothing in
+`caddy.d/` but the recipes, Caddy logs a warning for each of the two
+patterns ("No files matching import glob pattern") and starts normally;
+those two lines are expected.
+
+Back `caddy.d/` up with the rest of the host config (see
+[What to back up](#what-to-back-up)): git will not bring it back.
+
 ## Updating
 
 Take a backup first. Database migrations run automatically at startup.
@@ -891,6 +932,22 @@ Do not add `--build` to the second one. Check which kind you have before
 updating — `grep image: docker-compose.override.yml 2>/dev/null` tells you.
 `docker compose config | grep -A1 patchwork:` shows what compose will
 actually use after merging.
+
+**If the pull changed the `Caddyfile`, restart Caddy as well:**
+
+```bash
+docker compose restart caddy
+```
+
+The `Caddyfile` is mounted as a single file, and a single-file mount follows
+the file rather than its name. `git pull` writes the new version as a new
+file, so the running container goes on reading the old one, and a
+`caddy reload` inside it reloads the old one too. A restart mounts the file
+afresh. (`docker compose up -d` only does this for you when the compose file
+itself changed.) `git pull` lists the files it changed; if you missed it,
+`git diff --stat HEAD@{1} -- Caddyfile` shows whether the last pull touched
+it. Files in `caddy.d/` do not have this problem, since that mount is the
+directory.
 
 To roll back a prebuilt-image deployment, pin the previous tag in the
 override file (instead of `:latest`) and re-run `docker compose up -d`.

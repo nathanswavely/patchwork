@@ -1,3 +1,24 @@
+# Your own Caddy config goes in caddy.d/, not in this file. This file is
+# tracked: an edit here makes the next `git pull` refuse to update, and
+# `git reset --hard` undoes it without a word. caddy.d/ is ignored by git
+# and mounted read-only into the caddy container, and Caddy reads two kinds
+# of file from it:
+#
+#   caddy.d/*.caddy  blocks of their own, read here at the top level, such
+#                    as a second site that redirects to this one
+#   caddy.d/*.site   directives for the Patchwork site, read inside its
+#                    block below, such as an access log
+#
+# The *.example files beside them are tracked recipes: copy one without the
+# .example suffix to use it. A pattern that matches no file only logs a
+# warning. A global options block works in the *.caddy file that sorts
+# first, so name it something like 00-global.caddy.
+#
+# After changing anything in caddy.d/, reload Caddy:
+#   docker compose exec -w /etc/caddy caddy caddy reload
+# See docs/DEPLOYMENT.md, "Your own Caddy config".
+import caddy.d/*.caddy
+
 {$DOMAIN:localhost} {
 	# Caddy's reverse_proxy ignores client-supplied X-Forwarded-For by
 	# default and sets it from the connecting address itself; only
@@ -6,23 +27,24 @@
 	# patchwork.yaml is the setting that matters.
 	reverse_proxy patchwork:8080
 
-	# No access log ships, and the shipped privacy policy says so. If you
-	# need one for troubleshooting, this keeps it short-lived and masks the
-	# client address; then edit the policy's "Technical records" paragraph
-	# (Administration → Legal), because it currently says there is no log.
-	# See docs/DEPLOYMENT.md, "Visitor counts and access logs".
-	#
-	# log {
-	# 	output file /data/access.log {
-	# 		roll_size 20mb
-	# 		roll_keep 7
-	# 		roll_keep_for 168h
-	# 	}
-	# 	format filter {
-	# 		request>remote_ip ip_mask 24 48
-	# 		request>client_ip ip_mask 24 48
-	# 		request>headers>Cookie delete
-	# 		request>headers>Authorization delete
-	# 	}
-	# }
+	# No access log ships, and the shipped privacy policy says so. The
+	# recipe for one is caddy.d/access-log.site.example.
+	import caddy.d/*.site
 }
+
+# Patchwork answers on one hostname. If you want www to work too, point a www
+# record at this server and uncomment this, in that order: Caddy can only get
+# a certificate for a name that already resolves, and until the record exists
+# it retries a doomed order for as long as the server runs. A www record
+# without this block does not help: Caddy has no certificate for the name and
+# refuses the TLS handshake, so the browser trades an unknown-host error for a
+# connection error.
+#
+# Redirect rather than serve the app on a second name. Session cookies are
+# host-only and every emailed link is built from instance.domain, so an
+# instance answering on both would sign someone in on one name and mail them
+# links to the other.
+#
+# www.{$DOMAIN:localhost} {
+# 	redir https://{$DOMAIN:localhost}{uri} permanent
+# }

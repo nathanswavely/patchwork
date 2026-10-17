@@ -41,7 +41,15 @@ services:
       - "80:80"
       - "443:443"
     volumes:
+      # A single-file mount follows the file, not the path: when `git pull`
+      # replaces the Caddyfile, this container keeps reading the old one,
+      # and so does `caddy reload`. After an update that changes it, run
+      # `docker compose restart caddy`. Files inside caddy.d/ have no such
+      # trap, because that mount is the directory. See docs/DEPLOYMENT.md.
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      # Your own Caddy config: ignored by git, so it survives `git pull`
+      # and `git reset --hard`. The Caddyfile imports from it.
+      - ./caddy.d:/etc/caddy/caddy.d:ro
       - caddy_data:/data
       - caddy_config:/config
     logging:
