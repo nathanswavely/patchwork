@@ -233,16 +233,21 @@ jobs:
 
   e2e:
     # The full Playwright suites — seeded instance and empty instance — against
-    # a real backend (`go run`, cgo/sqlite) plus Vite. The suites boot their own
-    # isolated stacks on checkout-derived ports (web/e2e/ports.js) and fall back
-    # to patchwork.yaml.example, so the job needs no services and no setup
-    # beyond toolchains and a Chromium.
+    # a real backend (cgo/sqlite) plus Vite. The suites boot their own isolated
+    # stacks on checkout-derived ports (web/e2e/ports.js) and fall back to
+    # patchwork.yaml.example, so the job needs no services and no setup beyond
+    # toolchains and a Chromium.
     #
-    # Not gated on `test` either, for the same reason as `smoke` above: the
-    # Playwright config builds web/dist itself when it's missing, so this job
-    # depends on no earlier artifact. All three jobs now start at once.
+    # Not gated on `test` either, for the same reason as `smoke` above: this
+    # job builds web/dist and the backend itself, so it depends on no earlier
+    # artifact. All three jobs start at once.
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      # Both suites run this one binary and seeder (web/e2e/backend.js)
+      # instead of compiling under Playwright's webServer timer. Built below.
+      PATCHWORK_E2E_BIN: ${{ github.workspace }}/patchwork
+      PATCHWORK_E2E_SEED_BIN: ${{ github.workspace }}/seed
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -256,12 +261,38 @@ jobs:
         with:
           go-version-file: go.mod
           check-latest: true
+          # A cache key of this job's own. setup-go keys its module and build
+          # cache on the hash of these files, and a key is saved by whichever
+          # job finishes first: with go.sum alone, every Go job in this file
+          # shared one key, `release-notes` (which compiles a few hundred
+          # lines) won the race on main, and this job then restored an 11 MB
+          # cache and fetched every module again on every PR (run 39063472666:
+          # attempt 1 timed out compiling under the webServer budget, the rerun
+          # booted in 39s). Adding a file only this job lists gives it a key
+          # only this job writes, so the saved cache is the one that carries
+          # the cgo/sqlite build.
+          cache-dependency-path: |
+            go.sum
+            web/playwright.config.js
 
       - name: Install frontend deps
         run: cd web && npm ci
 
       - name: Install Playwright Chromium
         run: cd web && npx playwright install --with-deps chromium
+
+      # The backend embeds web/dist (embed.FS), so the SPA is built first. The
+      # Playwright config would do both builds itself when nothing has, but
+      # here they are steps of their own: a compile that fails or stalls is
+      # then a red step with the compiler's output, not a webServer timeout
+      # with a go-module download log, and the two suites share one binary.
+      - name: Build SPA for embed.FS
+        run: cd web && npx vite build
+
+      - name: Build backend and seeder
+        run: |
+          go build -o "$PATCHWORK_E2E_BIN" ./cmd/patchwork
+          go build -o "$PATCHWORK_E2E_SEED_BIN" ./cmd/seed
 
       - name: e2e (seeded instance)
         run: cd web && npx playwright test
