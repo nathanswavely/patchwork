@@ -68,7 +68,7 @@ func (f *introFixture) preview(t *testing.T, cfg *config.Config, body map[string
 	r := authedRequest("POST", "/api/v1/nodes/the-venue/intro/preview", body, f.adminTok)
 	w := serveMux(t, f.db, "POST", "/api/v1/nodes/{slug}/intro/preview", middleware.AdminRequired(f.db, handler.IntroPreview(f.db, cfg)), r)
 	var resp map[string]any
-	json.Unmarshal(w.Body.Bytes(), &resp)
+	_ = json.Unmarshal(w.Body.Bytes(), &resp)
 	return resp, w.Code
 }
 
@@ -77,7 +77,7 @@ func (f *introFixture) send(t *testing.T, cfg *config.Config, tok string, body m
 	r := authedRequest("POST", "/api/v1/nodes/the-venue/intro/send", body, tok)
 	w := serveMux(t, f.db, "POST", "/api/v1/nodes/{slug}/intro/send", middleware.AdminRequired(f.db, handler.IntroSend(f.db, cfg)), r)
 	var resp map[string]any
-	json.Unmarshal(w.Body.Bytes(), &resp)
+	_ = json.Unmarshal(w.Body.Bytes(), &resp)
 	return resp, w.Code
 }
 
@@ -91,7 +91,7 @@ func TestIntro_WhoMayEnterTheAddress(t *testing.T) {
 		t.Fatalf("a trusted contributor whose grant reaches the patch could not enter it: %d", code)
 	}
 	var stored string
-	f.db.QueryRow(`SELECT contact_email FROM nodes WHERE id = ?`, f.nodeID).Scan(&stored)
+	_ = f.db.QueryRow(`SELECT contact_email FROM nodes WHERE id = ?`, f.nodeID).Scan(&stored)
 	if stored != "info@venue.test" {
 		t.Fatalf("address not normalized: %q", stored)
 	}
@@ -101,7 +101,7 @@ func TestIntro_WhoMayEnterTheAddress(t *testing.T) {
 	if code := f.setContact(t, f.adminTok, ""); code != 200 {
 		t.Fatalf("clearing failed: %d", code)
 	}
-	f.db.QueryRow(`SELECT contact_email FROM nodes WHERE id = ?`, f.nodeID).Scan(&stored)
+	_ = f.db.QueryRow(`SELECT contact_email FROM nodes WHERE id = ?`, f.nodeID).Scan(&stored)
 	if stored != "" {
 		t.Fatalf("address not cleared: %q", stored)
 	}
@@ -187,13 +187,13 @@ func TestIntro_SendIsRecordedOnceAndResendIsExplicit(t *testing.T) {
 		t.Fatalf("explicit resend refused: %d", code)
 	}
 	var n int
-	f.db.QueryRow(`SELECT COUNT(*) FROM intro_sends WHERE node_id = ?`, f.nodeID).Scan(&n)
+	_ = f.db.QueryRow(`SELECT COUNT(*) FROM intro_sends WHERE node_id = ?`, f.nodeID).Scan(&n)
 	if n != 2 {
 		t.Fatalf("sends recorded: %d", n)
 	}
 
 	// Switched off, nothing sends.
-	f.db.Exec(`INSERT INTO instance_settings (key, value) VALUES ('outreach_enabled', 'false')`)
+	_, _ = f.db.Exec(`INSERT INTO instance_settings (key, value) VALUES ('outreach_enabled', 'false')`)
 	if _, code := f.send(t, cfg, f.adminTok, again); code != 403 {
 		t.Fatalf("send while disabled: %d", code)
 	}
@@ -244,7 +244,7 @@ func TestIntro_ClaimShortcutRoundTrip(t *testing.T) {
 		t.Fatalf("claim by intro token: %d %v", code, claim)
 	}
 	var status, email string
-	f.db.QueryRow(`SELECT status, email FROM claim_requests WHERE node_id = ? AND user_id = ?`, f.nodeID, f.ownerID).Scan(&status, &email)
+	_ = f.db.QueryRow(`SELECT status, email FROM claim_requests WHERE node_id = ? AND user_id = ?`, f.nodeID, f.ownerID).Scan(&status, &email)
 	if status != "approved" || email != "booking@venue.test" {
 		t.Fatalf("claim row: %s %s", status, email)
 	}
@@ -256,14 +256,14 @@ func TestIntro_ClaimShortcutRoundTrip(t *testing.T) {
 
 	// Spent before the claim was approved, so it can approve at most one.
 	var usedAt string
-	f.db.QueryRow(`SELECT COALESCE(claim_token_used_at,'') FROM intro_sends WHERE claim_token = ?`, token).Scan(&usedAt)
+	_ = f.db.QueryRow(`SELECT COALESCE(claim_token_used_at,'') FROM intro_sends WHERE claim_token = ?`, token).Scan(&usedAt)
 	if usedAt == "" {
 		t.Fatal("token not marked used")
 	}
 	// Even once the approved claim is out of the way (withdrawn, so the
 	// patch is claimable again), the same link opens nothing for the next
 	// person who follows it.
-	f.db.Exec(`UPDATE claim_requests SET status = 'withdrawn' WHERE node_id = ?`, f.nodeID)
+	_, _ = f.db.Exec(`UPDATE claim_requests SET status = 'withdrawn' WHERE node_id = ?`, f.nodeID)
 	_, memberTok := createTestUser(t, f.db, "second", "member")
 	if _, code := openClaim(t, f.db, cfg, memberTok, "the-venue", map[string]any{"intro_token": token}); code != 400 {
 		t.Fatalf("a used token opened a claim: %d", code)
@@ -281,7 +281,7 @@ func TestIntro_ChangingTheAddressRevokesTheToken(t *testing.T) {
 	resp, _ := f.preview(t, cfg, nil)
 	f.send(t, cfg, f.adminTok, map[string]any{"subject": resp["subject"], "body": resp["body"], "situation": resp["situation"], "delivery": "smtp"})
 	var token string
-	f.db.QueryRow(`SELECT claim_token FROM intro_sends WHERE node_id = ?`, f.nodeID).Scan(&token)
+	_ = f.db.QueryRow(`SELECT claim_token FROM intro_sends WHERE node_id = ?`, f.nodeID).Scan(&token)
 	if token == "" {
 		t.Fatal("no token minted")
 	}
@@ -303,7 +303,7 @@ func TestIntro_AdminBacklogAndTemplate(t *testing.T) {
 		t.Fatalf("list: %d", w.Code)
 	}
 	var list map[string]any
-	json.Unmarshal(w.Body.Bytes(), &list)
+	_ = json.Unmarshal(w.Body.Bytes(), &list)
 	patches, _ := list["patches"].([]any)
 	if len(patches) != 1 {
 		t.Fatalf("patches: %v", list["patches"])

@@ -725,8 +725,9 @@ func GetNode(db *database.DB) http.HandlerFunc {
 			// is_admin check below rather than letting it ride in unseen.
 			if u := viewer; u != nil && (u.Role == "admin" || userTrustedOn(db, u, n.ID)) {
 				var ce string
-				db.QueryRow("SELECT contact_email FROM nodes WHERE id = ?", n.ID).Scan(&ce)
-				resp["contact_email"] = ce
+				if err := db.QueryRow("SELECT contact_email FROM nodes WHERE id = ?", n.ID).Scan(&ce); err == nil {
+					resp["contact_email"] = ce
+				}
 			}
 		}
 		if !isUnclaimed {

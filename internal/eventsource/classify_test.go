@@ -26,8 +26,8 @@ func classifyDB(t *testing.T) *database.DB {
 	if err != nil {
 		t.Fatal(err)
 	}
-	f.Close()
-	t.Cleanup(func() { os.Remove(f.Name()) })
+	_ = f.Close()
+	t.Cleanup(func() { _ = os.Remove(f.Name()) })
 	migrations, err := fs.Sub(patchwork.MigrationsFS, "migrations")
 	if err != nil {
 		t.Fatal(err)
@@ -36,7 +36,7 @@ func classifyDB(t *testing.T) *database.DB {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Cleanup(func() { db.Close() })
+	t.Cleanup(func() { _ = db.Close() })
 	if _, err := db.Exec(`INSERT INTO users (id, username, display_name, role) VALUES ('u1','u1','u1','admin')`); err != nil {
 		t.Fatal(err)
 	}
@@ -126,10 +126,10 @@ func TestClassifyBody_SquarespacePlainPageIsNotACollection(t *testing.T) {
 		if r.URL.Query().Get("format") == "json" {
 			// A regular page's JSON view: no items.
 			w.Header().Set("Content-Type", "application/json")
-			w.Write([]byte(`{"collection":{"typeName":"page"},"mainContent":"<p>Shows every Friday.</p>"}`))
+			_, _ = w.Write([]byte(`{"collection":{"typeName":"page"},"mainContent":"<p>Shows every Friday.</p>"}`))
 			return
 		}
-		w.Write([]byte(`<html><head><script src="https://static1.squarespace.com/x.js"></script></head><body>Shows every Friday.</body></html>`))
+		_, _ = w.Write([]byte(`<html><head><script src="https://static1.squarespace.com/x.js"></script></head><body>Shows every Friday.</body></html>`))
 	}))
 	defer srv.Close()
 

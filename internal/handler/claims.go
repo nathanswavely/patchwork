@@ -390,9 +390,7 @@ func RequestClaim(db *database.DB, cfg *config.Config) http.HandlerFunc {
 				http.Error(w, `{"error":"failed to approve claim"}`, http.StatusInternalServerError)
 				return
 			}
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusCreated)
-			json.NewEncoder(w).Encode(map[string]interface{}{
+			writeJSONStatus(w, http.StatusCreated, map[string]interface{}{
 				"id":             id,
 				"method":         "email",
 				"status":         "approved",

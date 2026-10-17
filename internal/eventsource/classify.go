@@ -83,10 +83,12 @@ const classifyFetchTimeout = 15 * time.Second
 // is about to write to the patch.
 func Classify(ctx context.Context, db *database.DB, nodeID, website string) Classification {
 	var own int
-	db.QueryRow(
+	if err := db.QueryRow(
 		`SELECT COUNT(*) FROM event_sources WHERE node_id = ? AND aggregator_id IS NULL AND status = 'ok'`,
 		nodeID,
-	).Scan(&own)
+	).Scan(&own); err != nil {
+		return Classification{Situation: SituationNone, Reason: "could not read the patch's sources: " + err.Error()}
+	}
 	if own > 0 {
 		return Classification{Situation: SituationOwn, Reason: "a source on the patch's own site is attached and syncing"}
 	}

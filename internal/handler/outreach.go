@@ -202,7 +202,7 @@ func listIntroSends(db *database.DB, nodeID string) []introSend {
 	if err != nil {
 		return []introSend{}
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	out := []introSend{}
 	for rows.Next() {
 		var s introSend
@@ -252,12 +252,14 @@ func SetNodeContact(db *database.DB) http.HandlerFunc {
 			return
 		}
 		if email != n.ContactEmail {
-			db.Exec(`UPDATE intro_sends SET claim_token = NULL, claim_token_expires_at = NULL
-			         WHERE node_id = ? AND claim_token IS NOT NULL AND claim_token_used_at IS NULL`, n.ID)
+			if _, err := db.Exec(`UPDATE intro_sends SET claim_token = NULL, claim_token_expires_at = NULL
+			         WHERE node_id = ? AND claim_token IS NOT NULL AND claim_token_used_at IS NULL`, n.ID); err != nil {
+				http.Error(w, `{"error":"failed to revoke the old address's claim link"}`, http.StatusInternalServerError)
+				return
+			}
 		}
 		auth.LogAuditEventJSON(db, user.ID, "node.contact_set", "node", n.ID, map[string]any{"set": email != ""}, clientIP(r))
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]any{"contact_email": email})
+		writeJSONStatus(w, http.StatusOK, map[string]any{"contact_email": email})
 	}
 }
 
@@ -271,8 +273,7 @@ func IntroState(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			http.Error(w, `{"error":"node not found"}`, http.StatusNotFound)
 			return
 		}
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]any{
+		writeJSONStatus(w, http.StatusOK, map[string]any{
 			"contact_email":       n.ContactEmail,
 			"verification_domain": n.VerificationDomain,
 			"claim_shortcut":      n.ContactEmail != "" && n.VerificationDomain != "" && emailDomain(n.ContactEmail) == n.VerificationDomain,
@@ -285,10 +286,13 @@ func IntroState(db *database.DB, cfg *config.Config) http.HandlerFunc {
 
 // introFactsFor gathers what the placeholders name.
 func introFactsFor(db *database.DB, cfg *config.Config, n introNode, senderID, aggregatorName string) introFacts {
+	// A missing sender reads as a blank name and a failed count as zero:
+	// both are placeholder values the admin sees in the preview and can
+	// fix by hand, not reasons to refuse to render.
 	var sender string
-	db.QueryRow(`SELECT COALESCE(NULLIF(display_name,''), username) FROM users WHERE id = ?`, senderID).Scan(&sender)
+	_ = db.QueryRow(`SELECT COALESCE(NULLIF(display_name,''), username) FROM users WHERE id = ?`, senderID).Scan(&sender)
 	var upcoming int
-	db.QueryRow(
+	_ = db.QueryRow(
 		`SELECT COUNT(*) FROM events WHERE node_id = ? AND removed_at IS NULL AND status = 'active'
 		   AND starts_at >= strftime('%Y-%m-%dT%H:%M:%SZ','now')`, n.ID,
 	).Scan(&upcoming)
@@ -322,7 +326,8 @@ func IntroPreview(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			Situation string `json:"situation"`
 		}
 		if r.Body != nil {
-			json.NewDecoder(r.Body).Decode(&req)
+			// An empty or absent body means "the probe decides".
+			_ = json.NewDecoder(r.Body).Decode(&req)
 		}
 
 		class := eventsource.Classify(r.Context(), db, n.ID, n.Website)
@@ -342,8 +347,7 @@ func IntroPreview(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		facts := introFactsFor(db, cfg, n, user.ID, class.AggregatorName)
 		subject, body := renderIntro(tpl, chosen, facts)
 
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]any{
+		writeJSONStatus(w, http.StatusOK, map[string]any{
 			"classification": class,
 			"situation":      chosen,
 			"subject":        subject,
@@ -418,7 +422,10 @@ func IntroSend(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		// One send per patch per address (decision 5). A second one is an
 		// explicit resend, never a double click.
 		var prior int
-		db.QueryRow(`SELECT COUNT(*) FROM intro_sends WHERE node_id = ? AND email = ?`, n.ID, n.ContactEmail).Scan(&prior)
+		if err := db.QueryRow(`SELECT COUNT(*) FROM intro_sends WHERE node_id = ? AND email = ?`, n.ID, n.ContactEmail).Scan(&prior); err != nil {
+			http.Error(w, `{"error":"failed to check earlier sends"}`, http.StatusInternalServerError)
+			return
+		}
 		if prior > 0 && !req.Resend {
 			http.Error(w, `{"error":"an intro already went to this address; resend it on purpose"}`, http.StatusConflict)
 			return
@@ -440,8 +447,10 @@ func IntroSend(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		}
 
 		if req.Delivery == "smtp" {
+			// No address on the sender's account means no Reply-To, which
+			// the message survives.
 			var replyTo string
-			db.QueryRow(`SELECT COALESCE(email,'') FROM users WHERE id = ?`, user.ID).Scan(&replyTo)
+			_ = db.QueryRow(`SELECT COALESCE(email,'') FROM users WHERE id = ?`, user.ID).Scan(&replyTo)
 			if err := sendIntroMail(cfg, n.ContactEmail, replyTo, req.Subject, body); err != nil {
 				http.Error(w, `{"error":"the relay refused the message; nothing was recorded"}`, http.StatusBadGateway)
 				return
@@ -465,9 +474,7 @@ func IntroSend(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			"situation": req.Situation, "delivery": req.Delivery, "claim_link": claimToken != nil,
 		}, clientIP(r))
 
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(map[string]any{
+		writeJSONStatus(w, http.StatusCreated, map[string]any{
 			"id":         id,
 			"delivery":   req.Delivery,
 			"claim_link": claimToken != nil,
@@ -549,7 +556,7 @@ func AdminOutreach(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			http.Error(w, `{"error":"failed to list patches"}`, http.StatusInternalServerError)
 			return
 		}
-		defer rows.Close()
+		defer func() { _ = rows.Close() }()
 		patches := []map[string]any{}
 		for rows.Next() {
 			var id, name, slug, website, email, last string
@@ -565,8 +572,7 @@ func AdminOutreach(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			})
 		}
 		tpl, customized, updatedAt := effectiveIntroTemplate(db)
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]any{
+		writeJSONStatus(w, http.StatusOK, map[string]any{
 			"enabled":          settings.OutreachEnabled(db),
 			"smtp":             cfg.SMTP.Configured(),
 			"patches":          patches,
@@ -623,8 +629,7 @@ func AdminUpdateOutreach(db *database.DB) http.HandlerFunc {
 		auth.LogAuditEventJSON(db, adminUser.ID, "admin.outreach_update", "instance", "", map[string]any{
 			"enabled": req.Enabled, "template": req.Template != nil,
 		}, clientIP(r))
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+		writeJSONStatus(w, http.StatusOK, map[string]any{"status": "ok"})
 	}
 }
 
@@ -638,7 +643,6 @@ func AdminResetOutreachTemplate(db *database.DB) http.HandlerFunc {
 			return
 		}
 		auth.LogAuditEvent(db, adminUser.ID, "admin.outreach_template_reset", "instance", "", "{}", clientIP(r))
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+		writeJSONStatus(w, http.StatusOK, map[string]any{"status": "ok"})
 	}
 }
