@@ -4208,28 +4208,28 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 769,
+          "line": 767,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1051,
+          "line": 1049,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1107,
+          "line": 1105,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1361,
+          "line": 1359,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4376,14 +4376,14 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 832,
+          "line": 833,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1086,
+          "line": 1087,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4446,14 +4446,14 @@
         },
         {
           "file": "internal/handler/outreach.go",
-          "line": 389,
+          "line": 393,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/outreach.go",
-          "line": 590,
+          "line": 596,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4877,21 +4877,21 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 522,
+          "line": 520,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1119,
+          "line": 1117,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1158,
+          "line": 1156,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -5045,14 +5045,14 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1074,
+          "line": 1075,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1467,
+          "line": 1468,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -5066,21 +5066,21 @@
         },
         {
           "file": "internal/handler/outreach.go",
-          "line": 271,
+          "line": 273,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/outreach.go",
-          "line": 317,
+          "line": 321,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/outreach.go",
-          "line": 369,
+          "line": 373,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -5306,7 +5306,7 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1170,
+          "line": 1168,
           "kind": "go-error-body",
           "raw": "user not found",
           "quote": null
@@ -5499,7 +5499,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1367,
+          "line": 1368,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -6015,14 +6015,14 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1080,
+          "line": 1081,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1473,
+          "line": 1474,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -7311,7 +7311,7 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1150,
+          "line": 1148,
           "kind": "go-error-body",
           "raw": "user_id is required",
           "quote": null
@@ -8017,7 +8017,7 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 466,
+          "line": 464,
           "kind": "go-error-body",
           "raw": "you already have an open claim for this patch",
           "quote": null
@@ -8060,7 +8060,7 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 469,
+          "line": 467,
           "kind": "go-error-body",
           "raw": "failed to create claim",
           "quote": null
@@ -8085,21 +8085,21 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 783,
+          "line": 781,
           "kind": "go-error-body",
           "raw": "failed to approve claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 901,
+          "line": 899,
           "kind": "go-error-body",
           "raw": "failed to approve claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1074,
+          "line": 1072,
           "kind": "go-error-body",
           "raw": "failed to approve claim",
           "quote": null
@@ -8117,7 +8117,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 406,
+          "line": 404,
           "kind": "go-error-body",
           "raw": "method must be dns, meta_tag, did, email, or admin",
           "quote": null
@@ -8135,7 +8135,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 413,
+          "line": 411,
           "kind": "go-error-body",
           "raw": "this patch has no verified domain. Choose admin review",
           "quote": null
@@ -8157,7 +8157,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 429,
+          "line": 427,
           "kind": "go-error-body",
           "raw": "a valid email address is required for email verification",
           "quote": null
@@ -8175,7 +8175,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 558,
+          "line": 556,
           "kind": "go-error-body",
           "raw": "failed to load claim",
           "quote": null
@@ -8193,7 +8193,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 596,
+          "line": 594,
           "kind": "go-error-body",
           "raw": "failed to load claims",
           "quote": null
@@ -8211,35 +8211,35 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 640,
+          "line": 638,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 680,
+          "line": 678,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 812,
+          "line": 810,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1060,
+          "line": 1058,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1391,
+          "line": 1389,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
@@ -8257,28 +8257,28 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 644,
+          "line": 642,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 684,
+          "line": 682,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 817,
+          "line": 815,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1395,
+          "line": 1393,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
@@ -8296,7 +8296,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 688,
+          "line": 686,
           "kind": "go-error-body",
           "raw": "this claim has no email verification to resend",
           "quote": null
@@ -8314,7 +8314,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 705,
+          "line": 703,
           "kind": "go-error-body",
           "raw": "resend limit reached",
           "quote": null
@@ -8336,14 +8336,14 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 748,
+          "line": 746,
           "kind": "go-error-body",
           "raw": "invalid or already-used verification link",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 774,
+          "line": 772,
           "kind": "go-error-body",
           "raw": "invalid or already-used verification link",
           "quote": null
@@ -8361,7 +8361,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 778,
+          "line": 776,
           "kind": "go-error-body",
           "raw": "this verification link has expired. Request a new email from the claim page",
           "quote": null
@@ -8383,7 +8383,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 989,
+          "line": 987,
           "kind": "go-error-body",
           "raw": "failed to query claims",
           "quote": null
@@ -8401,7 +8401,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1064,
+          "line": 1062,
           "kind": "go-error-body",
           "raw": "claim is not pending",
           "quote": null
@@ -8419,7 +8419,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1087,
+          "line": 1085,
           "kind": "go-error-body",
           "raw": "action must be 'approve' or 'reject'",
           "quote": null
@@ -8451,7 +8451,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1123,
+          "line": 1121,
           "kind": "go-error-body",
           "raw": "verification domains only apply to unclaimed patches",
           "quote": null
@@ -8469,7 +8469,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1162,
+          "line": 1160,
           "kind": "go-error-body",
           "raw": "patch is not unclaimed",
           "quote": null
@@ -8487,7 +8487,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1187,
+          "line": 1185,
           "kind": "go-error-body",
           "raw": "failed to assign owner",
           "quote": null
@@ -8505,7 +8505,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1378,
+          "line": 1376,
           "kind": "go-error-body",
           "raw": "unknown governance template",
           "quote": null
@@ -8523,7 +8523,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1408,
+          "line": 1406,
           "kind": "go-error-body",
           "raw": "this claim's setup window has expired. The patch is claimable again",
           "quote": null
@@ -8545,14 +8545,14 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1417,
+          "line": 1415,
           "kind": "go-error-body",
           "raw": "this patch is no longer unclaimed",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1423,
+          "line": 1421,
           "kind": "go-error-body",
           "raw": "this patch is no longer unclaimed",
           "quote": null
@@ -8570,7 +8570,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1426,
+          "line": 1424,
           "kind": "go-error-body",
           "raw": "failed to complete setup",
           "quote": null
@@ -13884,7 +13884,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 836,
+          "line": 837,
           "kind": "go-error-body",
           "raw": "name is required",
           "quote": null
@@ -13930,7 +13930,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 936,
+          "line": 937,
           "kind": "go-error-body",
           "raw": "failed to create node",
           "quote": null
@@ -13948,7 +13948,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1160,
+          "line": 1161,
           "kind": "go-error-body",
           "raw": "failed to read this patch's calendar",
           "quote": null
@@ -13966,7 +13966,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1218,
+          "line": 1219,
           "kind": "go-error-body",
           "raw": "notice_posting must be admins or members",
           "quote": null
@@ -13984,7 +13984,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1224,
+          "line": 1225,
           "kind": "go-error-body",
           "raw": "notice_replies_default must be true or false",
           "quote": null
@@ -14002,14 +14002,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1270,
+          "line": 1271,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1277,
+          "line": 1278,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
@@ -14027,7 +14027,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1291,
+          "line": 1292,
           "kind": "go-error-body",
           "raw": "failed to update tags",
           "quote": null
@@ -14045,14 +14045,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1300,
+          "line": 1301,
           "kind": "go-error-body",
           "raw": "suggest_tags must be an array of tag names",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1307,
+          "line": 1308,
           "kind": "go-error-body",
           "raw": "suggest_tags must be an array of tag names",
           "quote": null
@@ -14070,7 +14070,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1379,
+          "line": 1380,
           "kind": "go-error-body",
           "raw": "failed to update node",
           "quote": null
@@ -14088,7 +14088,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1388,
+          "line": 1389,
           "kind": "go-error-body",
           "raw": "the timezone saved, but this patch's events could not be moved",
           "quote": null
@@ -14106,7 +14106,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1481,
+          "line": 1482,
           "kind": "go-error-body",
           "raw": "failed to archive node",
           "quote": null
@@ -14696,6 +14696,24 @@
       ]
     },
     {
+      "id": "f98c4cc9331e",
+      "text": "failed to revoke the old address's claim link",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/outreach.go",
+          "line": 257,
+          "kind": "go-error-body",
+          "raw": "failed to revoke the old address's claim link",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "62b5b1a2b8f2",
       "text": "unknown situation",
       "words": 2,
@@ -14706,14 +14724,14 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 335,
+          "line": 340,
           "kind": "go-error-body",
           "raw": "unknown situation",
           "quote": null
         },
         {
           "file": "internal/handler/outreach.go",
-          "line": 403,
+          "line": 407,
           "kind": "go-error-body",
           "raw": "unknown situation",
           "quote": null
@@ -14731,7 +14749,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 373,
+          "line": 377,
           "kind": "go-error-body",
           "raw": "intro emails are turned off on this quilt",
           "quote": null
@@ -14749,7 +14767,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 377,
+          "line": 381,
           "kind": "go-error-body",
           "raw": "enter a contact address first",
           "quote": null
@@ -14767,7 +14785,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 395,
+          "line": 399,
           "kind": "go-error-body",
           "raw": "the message needs a subject and a body",
           "quote": null
@@ -14785,7 +14803,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 399,
+          "line": 403,
           "kind": "go-error-body",
           "raw": "the message is too long",
           "quote": null
@@ -14803,7 +14821,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 410,
+          "line": 414,
           "kind": "go-error-body",
           "raw": "delivery must be smtp or copied",
           "quote": null
@@ -14821,9 +14839,27 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 414,
+          "line": 418,
           "kind": "go-error-body",
           "raw": "this quilt cannot send email; copy the message and send it yourself",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0316680ddeeb",
+      "text": "failed to check earlier sends",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/outreach.go",
+          "line": 426,
+          "kind": "go-error-body",
+          "raw": "failed to check earlier sends",
           "quote": null
         }
       ]
@@ -14839,7 +14875,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 423,
+          "line": 430,
           "kind": "go-error-body",
           "raw": "an intro already went to this address; resend it on purpose",
           "quote": null
@@ -14857,7 +14893,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 446,
+          "line": 455,
           "kind": "go-error-body",
           "raw": "the relay refused the message; nothing was recorded",
           "quote": null
@@ -14875,7 +14911,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 457,
+          "line": 466,
           "kind": "go-error-body",
           "raw": "failed to record the send",
           "quote": null
@@ -14893,7 +14929,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 549,
+          "line": 556,
           "kind": "go-error-body",
           "raw": "failed to list patches",
           "quote": null
@@ -14911,7 +14947,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 599,
+          "line": 605,
           "kind": "go-error-body",
           "raw": "failed to save setting",
           "quote": null
@@ -14929,7 +14965,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 608,
+          "line": 614,
           "kind": "go-error-body",
           "raw": "unknown situation in template",
           "quote": null
@@ -14947,7 +14983,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 614,
+          "line": 620,
           "kind": "go-error-body",
           "raw": "template is too large",
           "quote": null
@@ -14965,7 +15001,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 619,
+          "line": 625,
           "kind": "go-error-body",
           "raw": "failed to save template",
           "quote": null
@@ -14983,7 +15019,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 637,
+          "line": 642,
           "kind": "go-error-body",
           "raw": "failed to reset template",
           "quote": null
