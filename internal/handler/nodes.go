@@ -717,6 +717,18 @@ func GetNode(db *database.DB) http.HandlerFunc {
 			var vd string
 			db.QueryRow("SELECT COALESCE(verification_domain,'') FROM nodes WHERE id = ?", n.ID).Scan(&vd)
 			resp["verification_domain"] = vd
+			// The intro address is workspace-only
+			// (docs/adr/2026-10-16-a-page-made-for-someone-tells-them-so.md,
+			// decision 3): the instance admin who may send to it, and a
+			// trusted contributor who may enter it, see it; nobody else does.
+			// Bound as `u` so the docs/adr/115 guard counts it beside the
+			// is_admin check below rather than letting it ride in unseen.
+			if u := viewer; u != nil && (u.Role == "admin" || userTrustedOn(db, u, n.ID)) {
+				var ce string
+				if err := db.QueryRow("SELECT contact_email FROM nodes WHERE id = ?", n.ID).Scan(&ce); err == nil {
+					resp["contact_email"] = ce
+				}
+			}
 		}
 		if !isUnclaimed {
 			var owner model.User

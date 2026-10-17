@@ -81,11 +81,13 @@ describe('#6: workspace tabs for claimed patches are unchanged', () => {
 });
 
 describe('#6: settings sections filter on claim state', () => {
-  it('unclaimed patches show Info, Appearance, Sources, Verification, Danger', () => {
+  it('unclaimed patches show Info, Appearance, Sources, Verification, Intro, Danger', () => {
     const secs = patchSettingsSections({ isUnclaimed: true });
     // Event sources appear here too: the instance admin holds unclaimed
-    // calendars in trust and may attach feeds (docs/adr/031).
-    expect(secs.map((s) => s.id)).toEqual(['info', 'appearance', 'sources', 'verification', 'danger']);
+    // calendars in trust and may attach feeds (docs/adr/031). Intro is
+    // the one email to the owner who has not arrived yet
+    // (docs/adr/2026-10-16-a-page-made-for-someone-tells-them-so.md).
+    expect(secs.map((s) => s.id)).toEqual(['info', 'appearance', 'sources', 'verification', 'intro', 'danger']);
   });
 
   it('unclaimed patches drop Members and Notifications', () => {

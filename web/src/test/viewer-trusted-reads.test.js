@@ -87,7 +87,11 @@ describe('a trusted contributor reaches Event Sources without needing a Settings
     );
     expect(settings).toMatch(/canViewSettings = \$derived\(isAdmin \|\| sourcesOnly\)/);
     expect(settings).toMatch(/\{#if !canViewSettings\}/);
-    expect(settings).toMatch(/\{#if sourcesOnly\}[\s\S]{0,400}<PatchSettingsSources \/>/);
+    // Intro sits in front of it only for its own path: the address field
+    // is the one thing there a trusted contributor's grant reaches
+    // (docs/adr/2026-10-16-a-page-made-for-someone-tells-them-so.md).
+    expect(settings).toMatch(/\{#if sourcesOnly && activePage === 'intro'\}\s*<PatchSettingsIntro \/>/);
+    expect(settings).toMatch(/\{:else if sourcesOnly\}[\s\S]{0,400}<PatchSettingsSources \/>/);
     // Every other section stays behind the admin-only branches below it.
     expect(settings).toMatch(/\{:else if activePage === 'info'\}/);
   });
@@ -97,9 +101,9 @@ describe('a trusted contributor reaches Event Sources without needing a Settings
     expect(settings).toMatch(/replaceRoute\(`\/patches\/\$\{slug\}\/settings\/\$\{defaultSection\}`\)/);
   });
 
-  it('gives a sources-only viewer a sidebar of one section', () => {
+  it('gives a sources-only viewer a sidebar of two sections, Sources and Intro', () => {
     expect(settings).toMatch(
-      /sectionDefs = \$derived\(\s*sourcesOnly\s*\?\s*\[\{ id: 'sources', label: 'Event Sources' \}\]/
+      /sectionDefs = \$derived\(\s*sourcesOnly\s*\?\s*\[\{ id: 'sources', label: 'Event Sources' \}, \{ id: 'intro', label: 'Intro' \}\]/
     );
   });
 });

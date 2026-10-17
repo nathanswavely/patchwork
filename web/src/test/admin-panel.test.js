@@ -34,7 +34,7 @@ describe('docs/adr/2026-09-17-an-admin-tab-answers-one-question.md: the tab row'
 
   it('puts every configuration page under Settings, with the two rare step-up tools last', () => {
     const settings = adminTabs().find((t) => t.id === 'settings');
-    expect(settings.sections.map((s) => s.id)).toEqual(['quilt', 'label', 'legal', 'tags', 'neighbors', 'aggregators', 'usage', 'archived', 'attestation', 'apps']);
+    expect(settings.sections.map((s) => s.id)).toEqual(['quilt', 'label', 'legal', 'tags', 'neighbors', 'aggregators', 'outreach', 'usage', 'archived', 'attestation', 'apps']);
     expect(settings.sections.map((s) => s.label).slice(-2)).toEqual(['Prove admin', 'Apps']);
   });
 

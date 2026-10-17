@@ -180,6 +180,10 @@ export function patchSettingsSections({ isUnclaimed = false } = {}) {
       { id: 'appearance', label: 'Appearance' },
       { id: 'sources', label: 'Event Sources' },
       { id: 'verification', label: 'Verification' },
+      // Writing to the listing's owner
+      // (docs/adr/2026-10-16-a-page-made-for-someone-tells-them-so.md).
+      // Unclaimed only: an active patch has its owner already.
+      { id: 'intro', label: 'Intro' },
       { id: 'danger', label: 'Danger Zone' },
     ];
   }

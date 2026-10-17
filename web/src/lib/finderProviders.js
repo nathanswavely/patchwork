@@ -121,6 +121,7 @@ export function adminFinderProvider() {
       { label: 'Tags', sublabel: 'the tag vocabulary and per-tag motifs', href: '/admin/settings/tags' },
       { label: 'Neighbors', sublabel: 'quilts listed beside this one', href: '/admin/settings/neighbors' },
       { label: 'Aggregators', sublabel: 'calendar feeds routed onto patches', href: '/admin/settings/aggregators' },
+      { label: 'Outreach', sublabel: 'intro emails to unclaimed patches’ owners', href: '/admin/settings/outreach' },
       { label: 'Usage', sublabel: 'daily page views and visitors, counted on the server', href: '/admin/settings/usage' },
       { label: 'Archived patches', sublabel: 'restore a patch that was archived', href: '/admin/settings/archived' },
       { label: 'Prove admin', sublabel: 'sign an outside party’s nonce as this quilt', href: '/admin/settings/attestation' },

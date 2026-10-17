@@ -51,7 +51,24 @@ const (
 	// day on the server. Off by default: the shipped privacy policy says
 	// what the switch says, and a fork starts by counting nothing.
 	KeyUsageStats = "usage_stats"
+
+	// Intro emails to the owners of unclaimed patches
+	// (docs/adr/2026-10-16-a-page-made-for-someone-tells-them-so.md).
+	// "false" turns the feature off for a quilt that would rather write to
+	// nobody who did not ask first; absent or anything else means on. The
+	// template key holds a JSON object replacing the shipped text wholesale,
+	// the way the legal documents do; no key means the default is in effect.
+	KeyOutreachEnabled  = "outreach_enabled"
+	KeyOutreachTemplate = "outreach_template"
 )
+
+// OutreachEnabled reports whether intro emails may be sent on this quilt.
+// On unless an admin switched it off: the default matches the assumption
+// a young quilt starts with, which is that its listings want their owners.
+func OutreachEnabled(db *database.DB) bool {
+	v, ok := Get(db, KeyOutreachEnabled)
+	return !ok || v != "false"
+}
 
 // UsageStatsEnabled reports whether the admin has turned visitor counting on.
 func UsageStatsEnabled(db *database.DB) bool {

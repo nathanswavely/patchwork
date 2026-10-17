@@ -349,9 +349,53 @@ func RequestClaim(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			Method   string `json:"method"`   // dns, meta_tag, email, admin
 			Evidence string `json:"evidence"` // for admin method
 			Email    string `json:"email"`    // for email method
+			// IntroToken is the claim shortcut a sent intro carried
+			// (docs/adr/2026-10-16-a-page-made-for-someone-tells-them-so.md,
+			// decision 6). It stands in for the email leg: the message
+			// went to an address at the verification domain, and
+			// whoever followed its link holds that mailbox.
+			IntroToken string `json:"intro_token"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
+			return
+		}
+
+		if req.IntroToken != "" {
+			// The token vouches for the address; the account is whoever is
+			// signed in and followed the link. Nothing here signs anyone
+			// in, and the token is spent before the claim is approved, so
+			// it can approve at most one.
+			claimEmail, ok := consumeIntroToken(db, nodeID, req.IntroToken)
+			if !ok {
+				http.Error(w, `{"error":"this intro link is invalid, expired, or already used. Claim the patch another way"}`, http.StatusBadRequest)
+				return
+			}
+			id := auth.NewUUIDv7()
+			now := clock.Now()
+			if _, err := db.Exec(
+				`INSERT INTO claim_requests (id, node_id, user_id, method, evidence, verification_token, email, created_at, updated_at)
+				 VALUES (?, ?, ?, 'email', 'intro link', '', ?, ?, ?)`,
+				id, nodeID, user.ID, claimEmail, now, now,
+			); err != nil {
+				if strings.Contains(err.Error(), "UNIQUE") {
+					http.Error(w, `{"error":"you already have an open claim for this patch"}`, http.StatusConflict)
+					return
+				}
+				http.Error(w, `{"error":"failed to create claim"}`, http.StatusInternalServerError)
+				return
+			}
+			auth.LogAuditEventJSON(db, user.ID, "node.claim_requested", "node", nodeID, map[string]any{"method": "intro"}, r.RemoteAddr)
+			if err := approveClaim(db, id, user.ID, r.RemoteAddr); err != nil {
+				http.Error(w, `{"error":"failed to approve claim"}`, http.StatusInternalServerError)
+				return
+			}
+			writeJSONStatus(w, http.StatusCreated, map[string]interface{}{
+				"id":             id,
+				"method":         "email",
+				"status":         "approved",
+				"setup_required": true,
+			})
 			return
 		}
 
