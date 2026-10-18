@@ -10,6 +10,7 @@
 package governance
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -366,6 +367,38 @@ func GetDocumentAtVersion(dataDir, nodeID, filename, commitSHA string) (string, 
 	}
 
 	return content, nil
+}
+
+// GetDocumentBefore returns a file's content as it stood immediately before
+// commitSHA: at the commit's first parent, which on main is the text that
+// commit replaced (a fast-forward's parent is the branch point; a merge's
+// first parent is main as it was). A file absent there — or a root commit,
+// which has no parent — is the empty string with no error, since the commit
+// created it. An unreadable commit is an error.
+func GetDocumentBefore(dataDir, nodeID, filename, commitSHA string) (string, error) {
+	repo, err := openBare(NodeRepoPath(dataDir, nodeID))
+	if err != nil {
+		return "", fmt.Errorf("open repo: %w", err)
+	}
+	commit, err := repo.CommitObject(plumbing.NewHash(commitSHA))
+	if err != nil {
+		return "", fmt.Errorf("commit %s: %w", commitSHA, err)
+	}
+	if commit.NumParents() == 0 {
+		return "", nil
+	}
+	parent, err := commit.Parent(0)
+	if err != nil {
+		return "", fmt.Errorf("parent of %s: %w", commitSHA, err)
+	}
+	file, err := parent.File(filename)
+	if errors.Is(err, object.ErrFileNotFound) {
+		return "", nil
+	}
+	if err != nil {
+		return "", fmt.Errorf("file %s before %s: %w", filename, commitSHA, err)
+	}
+	return file.Contents()
 }
 
 // GetHistory returns the commit log for a specific file (most recent first).

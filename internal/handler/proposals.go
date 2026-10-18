@@ -1501,6 +1501,25 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			if !docTextHidden {
 				currentContent, _ := governance.GetDocument(governance.GetDataDir(), p.NodeID, p.TargetDoc)
 				result["current_doc_content"] = currentContent
+				// Once the amendment is in effect the current text *is* the
+				// proposed text, so a diff against it shows nothing changed
+				// on the page of the change itself. `base_doc_content` is the
+				// text the amendment replaced: the document at the first
+				// parent of the commit applying it put on main, which is the
+				// text it was written against when nothing moved in between
+				// and the text it actually displaced when something did.
+				// Revisions rebuild the branch, so `base_sha` would be stale
+				// for those; the applied commit never is. An empty string
+				// means the amendment created the document. Omitted where
+				// the commit cannot be read — a repo rebuilt from the
+				// database (docs/adr/084) carries synthetic history — so a
+				// client falls back to the current text rather than a false
+				// "everything was added".
+				if p.State == "in_effect" && p.GitSHA != "" {
+					if base, err := governance.GetDocumentBefore(governance.GetDataDir(), p.NodeID, p.TargetDoc, p.GitSHA); err == nil {
+						result["base_doc_content"] = base
+					}
+				}
 			}
 			// Whether this document was adopted elsewhere since the draft was
 			// written, which makes the diff below a comparison against
