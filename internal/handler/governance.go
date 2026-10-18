@@ -100,6 +100,39 @@ func canReadPatchDocs(db *database.DB, r *http.Request, nodeID string) bool {
 	return fp.Charters
 }
 
+// patchDocReadableSQL is the read rule for one charter as a boolean
+// expression — `visibility = 'public'` or canReadPatchDocs — for a listing
+// that joins the viewer's own active membership row (memberAlias) to the
+// patch (nodeAlias) beside the governance_docs row (docAlias). The activity
+// feed spans every patch the viewer has a relationship with, so it cannot ask
+// the per-node Go helper, and before this it asked nothing: a follower's feed
+// listed the title of every members-only charter (issue #398).
+//
+// Published is readable by everyone. The members-only shelf is the room's,
+// plus a follower whose patch grants `follower_permissions.charters`
+// (docs/adr/116, off unless granted). As with governanceRecordReadableSQL
+// there is no instance-admin branch: the feed is about the viewer's own
+// relationships, and narrowing it is the safe direction (docs/adr/115).
+func patchDocReadableSQL(memberAlias, docAlias, nodeAlias string) string {
+	return `(` + docAlias + `.visibility = 'public'
+		OR ` + memberAlias + `.role IN ('member','admin')
+		OR (` + memberAlias + `.role = 'follower' AND ` + followerChartersAllowedSQL(nodeAlias) + `))`
+}
+
+// followerChartersAllowedSQL renders `follower_permissions.charters` as a
+// boolean over the nodes row aliased `alias`, with canReadPatchDocs's
+// defaults rather than its neighbours': absent means **not** granted, because
+// canReadPatchDocs unmarshals "{}" into a zero struct, and malformed means
+// not granted too. That is the opposite of followerEventsAllowedSQL, and it
+// is deliberate — this is the one follower key that gates a read of
+// something withheld (docs/adr/050, docs/adr/116), so a blob nobody can read
+// must not open the shelf.
+func followerChartersAllowedSQL(alias string) string {
+	return `CASE WHEN json_valid(COALESCE(` + alias + `.follower_permissions, '')) ` +
+		`THEN COALESCE(json_extract(` + alias + `.follower_permissions, '$.charters'), 0) ` +
+		`ELSE 0 END = 1`
+}
+
 // GovernanceRepoNodeID resolves a patch slug for the git transport
 // (internal/governance/http.go), and refuses anybody who is not in the patch.
 //
