@@ -252,12 +252,12 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 		// patch they cannot vote in.
 		//
 		// No `user.Role == "admin"` bypass either. Instance admins keep one for
-		// commenting, which is speech, and for stewardship — withdrawing,
-		// applying, moderating. Proposing is neither: once it became a member
-		// act, an instance admin holding no role here proposing in a patch's
-		// governance was instance authority reaching into a per-patch choice,
-		// which CONTEXT.md ("Instance admin") and ADR 026 both refuse. Wanting
-		// a voice in a patch is what joining is for (docs/adr/044).
+		// commenting, which is speech (docs/adr/115 names it as an exception).
+		// Proposing is not speech: once it became a member act, an instance
+		// admin holding no role here proposing in a patch's governance was
+		// instance authority reaching into a per-patch choice, which
+		// CONTEXT.md ("Instance admin") and ADR 026 both refuse. Wanting a
+		// voice in a patch is what joining is for (docs/adr/044).
 		if !mayPropose(db, user.ID, nodeID) {
 			http.Error(w, `{"error":"must be member of node"}`, http.StatusForbidden)
 			return
