@@ -494,6 +494,11 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 				// The sha travels with it: settleApplied writes both together.
 				if err := settleApplied(db, id, mergedSHA, user.ID, createdAt); err != nil {
 					applyIncomplete(db, id, mergedSHA, "settle", err)
+				} else if req.ProposalType == "membership" && req.TargetUserID != "" {
+					// An admin's own nomination on an admin-decides patch
+					// is their decision, made at creation, so it promotes
+					// here and not on a vote that will never run.
+					ratifyNomination(db, id, nodeID, req.TargetUserID, user.ID)
 				}
 			} else {
 				// The INSERT above stamped state 'in_effect'; roll it back so
@@ -1067,7 +1072,7 @@ func resolveProposal(db *database.DB, proposalID string) string {
 	// and leaving it to an admin afterwards would be a veto over the
 	// ratification the admins themselves asked for.
 	if newStatus == "approved" && p.ProposalType == "membership" && p.TargetUserID != "" {
-		ratifyNomination(db, proposalID, p.NodeID, p.TargetUserID)
+		ratifyNomination(db, proposalID, p.NodeID, p.TargetUserID, "")
 		now := clock.Now()
 		// The promotion has already happened by here, so a failure to record
 		// it leaves a new admin whose proposal still reads as merely
@@ -1881,9 +1886,11 @@ func ApplyProposal(db *database.DB) http.HandlerFunc {
 		// string fields turns that NULL into a bogus "proposal not found".
 		err := db.QueryRow(
 			`SELECT id, node_id, author_id, status, COALESCE(state,'voting'), proposal_type,
-			 COALESCE(target_doc,''), COALESCE(proposed_branch,''), COALESCE(proposed_body,''), COALESCE(proposed_title,'')
+			 COALESCE(target_doc,''), COALESCE(proposed_branch,''), COALESCE(proposed_body,''), COALESCE(proposed_title,''),
+			 COALESCE(target_user_id,'')
 			 FROM proposals WHERE id = ?`, proposalID,
-		).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Status, &p.State, &p.ProposalType, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle)
+		).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Status, &p.State, &p.ProposalType, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle,
+			&p.TargetUserID)
 		if err != nil {
 			http.Error(w, `{"error":"proposal not found"}`, http.StatusNotFound)
 			return
@@ -1922,6 +1929,14 @@ func ApplyProposal(db *database.DB) http.HandlerFunc {
 			log.Printf("proposal %s: apply failed: %v", proposalID, err)
 			http.Error(w, `{"error":"`+applyFailureMessage+`"}`, http.StatusInternalServerError)
 			return
+		}
+		// Applying an open proposal on an admin-decides patch is the
+		// maintainer deciding it, so a nomination promotes here. The
+		// approved → in_effect step does not: resolution already ratified
+		// that one, and running it again is how a vote that found no seat
+		// would be quietly carried out later.
+		if maintainersToDecide {
+			ratifyMaintainerApproval(db, p, user)
 		}
 
 		auth.LogAuditEvent(db, user.ID, "proposal.applied", "proposal", proposalID, "{}", clientIP(r))
