@@ -1410,8 +1410,16 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 		// proposal whose frozen terms are admin-decides, while it is open.
 		// Both from the terms rather than the patch's live rules, like
 		// everything else that decides a proposal (docs/adr/047).
-		advisory := gc.DecisionMethod == "admin"
-		canDecide := advisory && p.Status == "open" && viewerID != "" &&
+		//
+		// Neither is true of an election. The electorate closes a contest on
+		// every patch, admin-decides included (docs/adr/051), so its ballot is
+		// binding and decide refuses it; a payload offering Approve and
+		// Decline on one is the contradiction docs/adr/044 was written to end.
+		// The state test is decide's too: an `elsewhere` proposal is open and
+		// no admin decides it here.
+		advisory := gc.DecisionMethod == "admin" && seatsContested == 0
+		canDecide := advisory && p.Status == "open" &&
+			(p.State == "voting" || p.State == "awaiting_admin") && viewerID != "" &&
 			userHasNodeRole(db, viewerID, p.NodeID, "admin")
 		var declinedBy string
 		db.QueryRow(`SELECT COALESCE(`+displayNameExpr("u")+`,'') FROM proposals p
@@ -1884,13 +1892,14 @@ func ApplyProposal(db *database.DB) http.HandlerFunc {
 		// COALESCE like every other proposal query here: the amendment
 		// columns are NULL on non-amendment proposals, and a bare Scan into
 		// string fields turns that NULL into a bogus "proposal not found".
+		var seatsContested int
 		err := db.QueryRow(
 			`SELECT id, node_id, author_id, status, COALESCE(state,'voting'), proposal_type,
 			 COALESCE(target_doc,''), COALESCE(proposed_branch,''), COALESCE(proposed_body,''), COALESCE(proposed_title,''),
-			 COALESCE(target_user_id,'')
+			 COALESCE(target_user_id,''), COALESCE(seats_contested,0)
 			 FROM proposals WHERE id = ?`, proposalID,
 		).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Status, &p.State, &p.ProposalType, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle,
-			&p.TargetUserID)
+			&p.TargetUserID, &seatsContested)
 		if err != nil {
 			http.Error(w, `{"error":"proposal not found"}`, http.StatusNotFound)
 			return
@@ -1912,10 +1921,19 @@ func ApplyProposal(db *database.DB) http.HandlerFunc {
 		// from any admin, which on a majority patch was an apply-before-the-
 		// vote-ends bypass the rules never granted; docs/adr/041 says every
 		// voting method votes, admins included, and the endpoint now agrees.
+		//
+		// An election is never the maintainer's, here any more than at decide
+		// (docs/adr/051): the electorate closes it. Without this, apply was
+		// the door around decide's refusal, settling a contest `in_effect`
+		// with nobody seated.
 		terms := votingTerms(db, proposalID, p.NodeID)
 		electorateApproved := p.State == "approved" || p.Status == "approved"
 		maintainersToDecide := terms.DecisionMethod == "admin" && p.Status == "open" &&
-			(p.State == "voting" || p.State == "awaiting_admin")
+			(p.State == "voting" || p.State == "awaiting_admin") && seatsContested == 0
+		if seatsContested > 0 && p.Status == "open" {
+			http.Error(w, `{"error":"an election is closed by the electorate, not by an admin (docs/adr/051)"}`, http.StatusConflict)
+			return
+		}
 		if !electorateApproved && !maintainersToDecide {
 			if p.Status == "open" {
 				http.Error(w, `{"error":"this patch decides proposals by vote; wait for the window to close"}`, http.StatusConflict)
