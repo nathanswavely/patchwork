@@ -66,10 +66,26 @@
     return ` for ${hours} hours`;
   });
 
+  // The two paths besides a direct change and a vote, in CreateProposal's
+  // order. On a patch that decides elsewhere the server refuses a rules
+  // proposal from anyone but an admin (docs/adr/053), so the page says so
+  // and does not offer a button that can only fail. On an admin-decides
+  // patch a member's change is a request to the maintainer, born
+  // `awaiting_admin` with no ballot (docs/adr/092): telling them it "opens a
+  // vote" described a vote that never runs.
+  let refusedHere = $derived(!directChange && currentRules?.proposal_venue === 'elsewhere');
+  let toMaintainer = $derived(
+    !directChange && !refusedHere && currentRules?.decision_method === 'admin'
+  );
+
   let submitConsequence = $derived(
     directChange
       ? 'Saving changes these rules now. Nobody votes on it.'
-      : `This goes to the members as a proposal and opens a vote${voteLength}. These rules do not change unless it carries.`
+      : refusedHere
+        ? 'This patch decides at its meetings, and the rules are not something a meeting adopts, so an admin applies a rules change directly. Ask an admin to make this one.'
+        : toMaintainer
+          ? "This goes to this patch's maintainer, who decides whether to apply it and may ask the members first. These rules do not change unless they approve it."
+          : `This goes to the members as a proposal and opens a vote${voteLength}. These rules do not change unless it carries.`
   );
 
   // Step: 'editing' or 'reviewing'
@@ -222,7 +238,7 @@
       };
       const result = await api(`nodes/${slug}/proposals`, { method: 'POST', body: payload });
       if (draftKey) localStorage.removeItem(draftKey);
-      showToast(directChange ? 'Change applied' : 'Proposal created', 'success');
+      showToast(directChange ? 'Change applied' : toMaintainer ? 'Sent to the maintainer' : 'Proposal created', 'success');
       navigate(`/patches/${slug}/governance/${result.id}`);
     } catch (e) {
       showToast(e.message || 'Failed to create proposal', 'error');
@@ -315,9 +331,11 @@
             <p class="submit-consequence lt-muted">{submitConsequence}</p>
 
             <div class="review-actions">
-              <button class="lt-btn lt-btn-primary" onclick={handleSubmit} disabled={submitting || !title.trim()}>
+              <button class="lt-btn lt-btn-primary" onclick={handleSubmit} disabled={submitting || !title.trim() || refusedHere}>
                 {#if directChange}
                   {submitting ? 'Applying...' : 'Apply change'}
+                {:else if toMaintainer}
+                  {submitting ? 'Sending...' : 'Send to the maintainer'}
                 {:else}
                   {submitting ? 'Submitting...' : 'Submit proposal'}
                 {/if}

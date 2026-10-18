@@ -2,6 +2,7 @@
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
   import { docLabel } from '../lib/docLabel.js';
+  import { allMembers } from '../lib/patchMembers.js';
   import { getParams } from '../stores/router.svelte.js';
   import { isLoggedIn, getUser } from '../stores/auth.svelte.js';
   import Skeleton from '../components/Skeleton.svelte';
@@ -65,16 +66,20 @@
   let isRulesChange = $derived(
     proposal?.target_doc === 'governance-rules.json' || proposal?.target_doc === 'Governance Rules'
   );
-  // A record born applied under admin-decides rules — no vote ever happened,
-  // so the page shows an applied change, not a proposal (docs/adr/041).
+  // A record born applied — no vote and no waiting, so the page shows an
+  // applied change by its author, not a proposal (docs/adr/041).
   //
-  // This reads "no vote ever happened" off an empty voter list, which is only
-  // true while that list is the complete record. It is (docs/adr/044): the
-  // tally drops ballots that no longer count, the list never does. Should the
-  // list ever be filtered again, a proposal that was voted on and passed would
-  // claim here that it never was.
+  // Born applied is the test, not "in effect with no voters". A member's
+  // request the maintainer approved without asking anybody is in effect
+  // with no voters too (docs/adr/092), and reading it that way credited the
+  // change to its author: "Applied by" the member who asked. CreateProposal
+  // stamps a direct change's applied_at with its own created_at
+  // (settleApplied), so the two are equal exactly when nothing happened in
+  // between; an approval is stamped when the maintainer decides.
   let isDirectChange = $derived(
-    effectiveState === 'in_effect' && (proposal?.voters || []).length === 0
+    effectiveState === 'in_effect' &&
+      !!proposal?.applied_at &&
+      proposal.applied_at === proposal.created_at
   );
   // The maintainer's patch (docs/adr/092): the server says whether this
   // proposal's tally is advice, and whether this viewer is the one who
@@ -161,21 +166,10 @@
   async function loadElectionMembers() {
     const slug = patch.value.slug;
     if (!slug) return;
-    const found = [];
-    let cursor = '';
     try {
-      for (let page = 0; page < 20; page++) {
-        const q = cursor ? `?limit=100&cursor=${encodeURIComponent(cursor)}` : '?limit=100';
-        const data = await api(`nodes/${slug}/members${q}`);
-        for (const m of data.items || []) {
-          // Anyone the server would accept as a candidate: an active member
-          // or admin of this patch. A follower is not on the ladder.
-          if (m.role === 'member' || m.role === 'admin') found.push(m);
-        }
-        cursor = data.next_cursor || '';
-        if (!cursor) break;
-      }
-      electionMembers = found;
+      // Anyone the server would accept as a candidate: an active member or
+      // admin of this patch. A follower is not on the ladder.
+      electionMembers = (await allMembers(slug)).filter((m) => m.role === 'member' || m.role === 'admin');
     } catch {
       // The picker is missing and nothing else is; standing still works.
       electionMembers = [];

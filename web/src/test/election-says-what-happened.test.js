@@ -118,9 +118,14 @@ describe('Putting somebody forward, and taking your own name back', () => {
 
   it('pages the member list, so the twenty-first member can be nominated', () => {
     // docs/adr/095 pages that endpoint; a picker that ignores next_cursor
-    // makes everyone below the first page un-nominatable.
-    expect(page).toMatch(/next_cursor/);
-    expect(page).toMatch(/limit=100/);
+    // makes everyone below the first page un-nominatable. The loop lives in
+    // lib/patchMembers.js, shared with the proposal form, and sends the
+    // cursor as after= (#367); governance-says-what-happens.test.js runs it.
+    expect(page).toMatch(/await allMembers\(slug\)/);
+    const pager = source('lib/patchMembers.js');
+    expect(pager).toMatch(/next_cursor/);
+    expect(pager).toMatch(/limit: '100'/);
+    expect(pager).toMatch(/params\.set\('after', after\)/);
   });
 
   it('loads the list only while it can be used', () => {
