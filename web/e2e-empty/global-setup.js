@@ -3,8 +3,8 @@
  *
  * 1. Wipes data/e2e-empty/ so every run starts from a genuinely fresh,
  *    unseeded database (zero users, zero patches).
- * 2. Builds the backend and spawns it on this checkout's empty-suite port
- *    (see e2e/ports.js).
+ * 2. Spawns the backend (CI's prebuilt binary, or one built here; see
+ *    e2e/backend.js) on this checkout's empty-suite port (see e2e/ports.js).
  * 3. Creates the instance's first user through the REAL production path:
  *    requests a magic link (no SMTP configured, so the backend prints the
  *    verify URL to its log), extracts the token from captured output,
@@ -27,6 +27,7 @@ import { existsSync, mkdirSync, rmSync, writeFileSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { EMPTY_API_PORT, EMPTY_API_URL, REPO_ROOT } from '../e2e/ports.js';
+import { backendBinary } from '../e2e/backend.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = REPO_ROOT;
@@ -66,11 +67,11 @@ export default async function globalSetup() {
     execSync('npx vite build', { cwd: path.join(repoRoot, 'web'), stdio: 'pipe', timeout: 180000 });
   }
 
-  // Build once and run the binary directly: killing a `go run` wrapper on
-  // Windows would orphan the actual server process.
-  const bin = path.join(dataDir, process.platform === 'win32' ? 'patchwork-e2e.exe' : 'patchwork-e2e');
-  console.log('Building backend for empty-instance suite...');
-  execSync(`go build -o "${bin}" ./cmd/patchwork`, { cwd: repoRoot, stdio: 'pipe', timeout: 180000 });
+  // CI's prebuilt binary, or one built here into this suite's own directory
+  // (e2e/backend.js). Either way it is a binary run directly, never a
+  // `go run` wrapper, which on Windows would leave the real server orphaned
+  // when teardown kills the wrapper.
+  const bin = backendBinary(path.relative(repoRoot, dataDir));
 
   let output = '';
   // PATCHWORK_PORT overrides the port in the yaml so this stack lands on the
