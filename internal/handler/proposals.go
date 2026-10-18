@@ -1474,6 +1474,21 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			"declined_by":      declinedBy,
 		}
 
+		// The Discussion tab's badge (#368). The page read `comment_count`
+		// from this payload for as long as the tab has had a badge, and
+		// nothing ever sent it, so the badge was always 0 and never drawn.
+		// Every comment, replies included: deletion is a hard delete that
+		// cascades to replies, so the rows are exactly the thread. The
+		// thread itself is behind the same canReadGovernanceRecord gate this
+		// handler has already passed, so the number tells nobody anything
+		// the comments endpoint would not. A failed count is left out of
+		// the payload rather than sent as 0, which would state "nobody has
+		// said anything" about a thread nobody counted.
+		var commentCount int
+		if err := db.QueryRow(`SELECT COUNT(*) FROM proposal_comments WHERE proposal_id = ?`, proposalID).Scan(&commentCount); err == nil {
+			result["comment_count"] = commentCount
+		}
+
 		// Include amendment-specific fields if this is a governance amendment.
 		// The two text fields — the proposed body and the current text it would
 		// replace — are the charter itself, so they carry its visibility; the

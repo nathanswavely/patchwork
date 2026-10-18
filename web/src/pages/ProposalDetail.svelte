@@ -113,11 +113,14 @@
 
   // Tabs.
   let activeTab = $state('overview');
+  // The server's count until the thread has loaded, then the thread's own,
+  // so posting a comment moves the badge without reloading the proposal.
+  let threadCount = $state(null);
 
   let tabs = $derived.by(() => {
     const t = [{ id: 'overview', label: 'Overview' }];
     if (hasAmendment) t.push({ id: 'changes', label: 'Changes' });
-    t.push({ id: 'discussion', label: 'Discussion', count: proposal?.comment_count || 0 });
+    t.push({ id: 'discussion', label: 'Discussion', count: threadCount ?? proposal?.comment_count ?? 0 });
     t.push({ id: 'history', label: 'History' });
     return t;
   });
@@ -141,6 +144,7 @@
   async function loadProposal() {
     loading = true;
     error = '';
+    threadCount = null;
     try {
       proposal = await api(`proposals/${proposalId}`);
     } catch (e) {
@@ -417,7 +421,7 @@
 
       {:else if activeTab === 'discussion'}
         <section class="proposal-section">
-          <CommentThread proposalId={proposal.id} isMember={hasStanding} isAdmin={!!patchIsAdmin} />
+          <CommentThread proposalId={proposal.id} isMember={hasStanding} isAdmin={!!patchIsAdmin} oncount={(n) => (threadCount = n)} />
         </section>
 
       {:else if activeTab === 'history'}

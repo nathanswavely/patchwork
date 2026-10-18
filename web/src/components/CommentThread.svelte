@@ -4,7 +4,9 @@
   import { showToast } from '../stores/toast.svelte.js';
   import { getUser } from '../stores/auth.svelte.js';
 
-  let { proposalId = '', isMember = false, isAdmin = false } = $props();
+  // `oncount` hears how many comments the thread holds each time it loads,
+  // so a badge counting them moves when somebody posts or deletes (#368).
+  let { proposalId = '', isMember = false, isAdmin = false, oncount = undefined } = $props();
 
   let comments = $state([]);
   let loading = $state(true);
@@ -28,6 +30,10 @@
     return !!viewer?.id && !!c?.author_id && c.author_id === viewer.id;
   }
 
+  function countComments(list) {
+    return (list || []).reduce((n, c) => n + 1 + countComments(c.replies), 0);
+  }
+
   const REACTION_EMOJIS = ['\u{1F44D}', '\u{1F44E}', '\u{2764}\u{FE0F}', '\u{1F914}', '\u{1F389}', '\u{1F440}'];
 
   $effect(() => {
@@ -42,6 +48,7 @@
     try {
       const res = await api(`proposals/${proposalId}/comments`);
       comments = res.items || [];
+      oncount?.(countComments(comments));
     } catch (e) {
       error = e.message || 'Failed to load comments';
       comments = [];
