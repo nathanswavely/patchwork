@@ -158,22 +158,25 @@
 
   // Paged, because the members endpoint is (docs/adr/095) and a picker that
   // stops at twenty silently hides the twenty-first person from nomination.
+  // The page token goes back as `after`, the name parsePaginationParams
+  // reads. Sent as `cursor` it was ignored, every request returned page one,
+  // and the hundred-and-first member could not be nominated (#367).
   async function loadElectionMembers() {
     const slug = patch.value.slug;
     if (!slug) return;
     const found = [];
-    let cursor = '';
+    let after = '';
     try {
       for (let page = 0; page < 20; page++) {
-        const q = cursor ? `?limit=100&cursor=${encodeURIComponent(cursor)}` : '?limit=100';
+        const q = after ? `?limit=100&after=${encodeURIComponent(after)}` : '?limit=100';
         const data = await api(`nodes/${slug}/members${q}`);
         for (const m of data.items || []) {
           // Anyone the server would accept as a candidate: an active member
           // or admin of this patch. A follower is not on the ladder.
           if (m.role === 'member' || m.role === 'admin') found.push(m);
         }
-        cursor = data.next_cursor || '';
-        if (!cursor) break;
+        after = data.next_cursor || '';
+        if (!after) break;
       }
       electionMembers = found;
     } catch {
