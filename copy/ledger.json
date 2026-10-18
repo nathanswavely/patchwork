@@ -21792,7 +21792,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 35,
+          "line": 46,
           "kind": "js-string",
           "raw": "Failed to load comments",
           "quote": "'"
@@ -21810,7 +21810,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 52,
+          "line": 63,
           "kind": "js-string",
           "raw": "Comment posted",
           "quote": "'"
@@ -21828,7 +21828,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 54,
+          "line": 65,
           "kind": "js-string",
           "raw": "Failed to post comment",
           "quote": "'"
@@ -21846,7 +21846,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 71,
+          "line": 82,
           "kind": "js-string",
           "raw": "Reply posted",
           "quote": "'"
@@ -21864,7 +21864,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 73,
+          "line": 84,
           "kind": "js-string",
           "raw": "Failed to post reply",
           "quote": "'"
@@ -21882,7 +21882,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 90,
+          "line": 101,
           "kind": "js-string",
           "raw": "Comment updated",
           "quote": "'"
@@ -21900,7 +21900,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 92,
+          "line": 103,
           "kind": "js-string",
           "raw": "Failed to update comment",
           "quote": "'"
@@ -21918,7 +21918,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 108,
+          "line": 119,
           "kind": "js-string",
           "raw": "Comment deleted",
           "quote": "'"
@@ -21936,7 +21936,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 110,
+          "line": 121,
           "kind": "js-string",
           "raw": "Failed to delete comment",
           "quote": "'"
@@ -21954,7 +21954,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 130,
+          "line": 141,
           "kind": "js-string",
           "raw": "Failed to update reaction",
           "quote": "'"
@@ -21972,7 +21972,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 163,
+          "line": 174,
           "kind": "markup",
           "raw": "Loading comments...",
           "quote": null
@@ -21990,7 +21990,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 168,
+          "line": 179,
           "kind": "markup",
           "raw": "No comments yet.",
           "quote": null
@@ -22008,7 +22008,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 231,
+          "line": 242,
           "kind": "attr:placeholder",
           "raw": "Write a reply...",
           "quote": "\""
@@ -22026,7 +22026,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 338,
+          "line": 349,
           "kind": "attr:placeholder",
           "raw": "Add a comment...",
           "quote": "\""
