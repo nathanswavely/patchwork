@@ -35,8 +35,10 @@ const (
 
 // androidLoginCredsRelation is the one permission an assetlinks entry
 // delegates here: may this app use the domain's login credentials. Patchwork
-// publishes no app-links relation — opening a Patchwork URL in an app is a
-// separate decision nobody has made.
+// publishes no handle_all_urls relation. Opening this quilt's URLs in an app
+// was decided for Apple only
+// (docs/adr/2026-10-18-a-listed-app-may-open-the-quilts-links.md); the
+// Android half is a later decision on the same column.
 const androidLoginCredsRelation = "delegate_permission/common.get_login_creds"
 
 // associationCacheControl is an hour. Apple's own fetcher caches the file for
@@ -228,19 +230,193 @@ func AdminDeleteNativeApp(db *database.DB, wa *auth.WebAuthnService) http.Handle
 	}
 }
 
+// AdminSetNativeAppOpenLinks handles PATCH /api/v1/admin/native-apps/{id},
+// whose one field is {"open_links": bool}: whether iPhones with this app
+// installed open this quilt's links in it rather than in the browser
+// (docs/adr/2026-10-18-a-listed-app-may-open-the-quilts-links.md).
+//
+// Admin, and deliberately no step-up. The grant that needed proof of presence
+// was listing the app, which already let it hold this domain's passkeys; this
+// switch names no new party and hands over no credential, it only says where
+// a tapped link lands among apps the quilt already vouches for. Turning it
+// off is always the safe direction. Both directions are audited.
+func AdminSetNativeAppOpenLinks(db *database.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		adminUser := middleware.UserFromContext(r.Context())
+		id := r.PathValue("id")
+
+		var req struct {
+			// A pointer, so a body that forgot the field is a 400 rather
+			// than a quiet "turn it off".
+			OpenLinks *bool `json:"open_links"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			writeJSONError(w, http.StatusBadRequest, "invalid request body")
+			return
+		}
+		if req.OpenLinks == nil {
+			writeJSONError(w, http.StatusBadRequest, "open_links is required")
+			return
+		}
+
+		var platform, identifier string
+		var current bool
+		err := db.QueryRow(`SELECT platform, identifier, open_links FROM native_apps WHERE id = ?`, id).
+			Scan(&platform, &identifier, &current)
+		if errors.Is(err, sql.ErrNoRows) {
+			writeJSONError(w, http.StatusNotFound, "no such app")
+			return
+		} else if err != nil {
+			writeJSONError(w, http.StatusInternalServerError, "failed to load the app")
+			return
+		}
+		if platform != "apple" && *req.OpenLinks {
+			// Android's handle_all_urls is a separate decision, not yet
+			// made. Turning it off is allowed everywhere, since off is the
+			// only state an Android row can be in.
+			writeJSONError(w, http.StatusBadRequest, "only an Apple app can open this quilt's links for now")
+			return
+		}
+
+		if current != *req.OpenLinks {
+			if _, err := db.Exec(`UPDATE native_apps SET open_links = ? WHERE id = ?`, *req.OpenLinks, id); err != nil {
+				writeJSONError(w, http.StatusInternalServerError, "failed to update the app")
+				return
+			}
+			// Only a change is an act. Setting the switch to where it
+			// already is writes nothing and says nothing in the log.
+			auth.LogAuditEventJSON(db, adminUser.ID, "admin.native_app_open_links", "native_app", id,
+				map[string]interface{}{"platform": platform, "identifier": identifier, "open_links": *req.OpenLinks},
+				clientIP(r))
+		}
+
+		apps, err := loadNativeApps(db, id)
+		if err != nil || len(apps) == 0 {
+			writeJSONError(w, http.StatusInternalServerError, "the app was updated but could not be read back")
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(apps[0]); err != nil {
+			log.Printf("native apps: write the updated row: %v", err)
+		}
+	}
+}
+
+// appleLinkComponent is one entry in an applinks "components" array, in the
+// format Apple has read since iOS 13. "/" is matched against the URL's path:
+// "*" is zero or more characters, "?" exactly one, and "?*" one or more.
+// Both wildcards cross "/", so "/patches/?*" alone would claim every path
+// under a patch. The system walks the array in order and the first match
+// decides, which is what lets an exclusion stand in front of a wider claim.
+type appleLinkComponent struct {
+	Path    string `json:"/"`
+	Exclude bool   `json:"exclude,omitempty"`
+}
+
+// appleLinkComponents is the path claim an opted-in Apple app makes on this
+// quilt's links (docs/adr/2026-10-18-a-listed-app-may-open-the-quilts-links.md).
+//
+// It mirrors the native clients' route coverage: every path here is one the
+// iOS client renders natively, and a web route the client does not handle is
+// left to the browser. When a client learns a route, or the web grows one
+// under a claimed prefix, this list changes with it. Matching against the
+// SPA's own routes is in web/src/App.svelte.
+//
+// Order matters. First come the paths that stay the browser's whatever
+// follows (writes, settings, sign-in, the admin panel, the API). Then the
+// claim, in which each include ending in a "?*" parameter is preceded by an
+// exclusion of anything deeper, because a wildcard crosses "/" and would
+// otherwise claim sub-pages the client has never seen.
+var appleLinkComponents = []appleLinkComponent{
+	// Never the app's. Sign-in links (/login/link/{token}) are here on
+	// purpose: routing them into an app is a later decision.
+	{Path: "/api/*", Exclude: true},
+	{Path: "/.well-known/*", Exclude: true},
+	{Path: "/admin*", Exclude: true},
+	{Path: "/settings*", Exclude: true},
+	{Path: "/login*", Exclude: true},
+	{Path: "/signup*", Exclude: true},
+	{Path: "/welcome", Exclude: true},
+	{Path: "/submit", Exclude: true},
+	{Path: "/activity", Exclude: true},
+	{Path: "/claims/*", Exclude: true},
+	{Path: "/events/new", Exclude: true},
+	{Path: "/events/?*/edit", Exclude: true},
+	{Path: "/patches/new", Exclude: true},
+	{Path: "/patches/?*/settings*", Exclude: true},
+	{Path: "/patches/?*/manage*", Exclude: true},
+	{Path: "/patches/?*/governance/new", Exclude: true},
+	{Path: "/patches/?*/governance/rules*", Exclude: true},
+	{Path: "/patches/?*/governance/record", Exclude: true},
+	{Path: "/patches/?*/governance/docs/new", Exclude: true},
+	{Path: "/patches/?*/governance/docs/?*/*", Exclude: true}, // propose, history
+	{Path: "/patches/?*/noticeboard/new", Exclude: true},
+
+	// The quilt's own pages, matched exactly.
+	{Path: "/"},
+	{Path: "/my"},
+	{Path: "/map"},
+	{Path: "/map/my"},
+	{Path: "/events"},
+	{Path: "/events/my"},
+	{Path: "/discover"},
+	{Path: "/dashboard"},
+	{Path: "/notifications"},
+	{Path: "/about"},
+	{Path: "/label"},
+	{Path: "/lining"},
+	{Path: "/governance"},
+	{Path: "/privacy"},
+	{Path: "/terms"},
+
+	// One event, one person, one invite, one patch on another quilt.
+	{Path: "/events/?*/*", Exclude: true},
+	{Path: "/events/?*"},
+	{Path: "/users/?*/*", Exclude: true},
+	{Path: "/users/?*"},
+	{Path: "/invite/?*/*", Exclude: true},
+	{Path: "/invite/?*"},
+	{Path: "/quilts/?*/patches/?*/*", Exclude: true},
+	{Path: "/quilts/?*/patches/?*"},
+
+	// A patch and the pages under it the client renders.
+	{Path: "/patches/?*/events"},
+	{Path: "/patches/?*/members"},
+	{Path: "/patches/?*/governance"},
+	{Path: "/patches/?*/noticeboard"},
+	{Path: "/patches/?*/claim"},
+	{Path: "/patches/?*/setup"},
+	// The governance lists are web pages; one proposal or one document is
+	// the client's.
+	{Path: "/patches/?*/governance/docs", Exclude: true},
+	{Path: "/patches/?*/governance/proposals", Exclude: true},
+	{Path: "/patches/?*/governance/proposals/?*/*", Exclude: true},
+	{Path: "/patches/?*/governance/proposals/?*"},
+	{Path: "/patches/?*/governance/docs/?*"},
+	{Path: "/patches/?*/governance/?*/*", Exclude: true},
+	{Path: "/patches/?*/governance/?*"},
+	{Path: "/patches/?*/noticeboard/?*/*", Exclude: true},
+	{Path: "/patches/?*/noticeboard/?*"},
+	// Anything else under a patch (the legacy redirects among them) stays
+	// the browser's, and then the patch page itself.
+	{Path: "/patches/?*/*", Exclude: true},
+	{Path: "/patches/?*"},
+}
+
 // AppleAppSiteAssociation handles GET /.well-known/apple-app-site-association.
 //
 // Public and unauthenticated, because the fetcher is an app store's, which
 // has no account here. Content-Type is application/json and the path carries
 // no extension, which is exactly what Apple requires.
 //
-// The document carries webcredentials and nothing else. An applinks block
-// would tell every iPhone to open this quilt's URLs in an app, which is a
-// different decision from "this app may hold our passkeys" and has not been
-// made.
+// The document always carries webcredentials for every listed Apple app. It
+// carries an applinks block only when an admin has turned on "open this
+// quilt's links" for at least one of them, and that block names only those
+// apps (docs/adr/2026-10-18-a-listed-app-may-open-the-quilts-links.md):
+// holding the passkeys and claiming the URLs are two grants.
 func AppleAppSiteAssociation(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		rows, err := db.Query(`SELECT identifier FROM native_apps WHERE platform = 'apple' ORDER BY created_at`)
+		rows, err := db.Query(`SELECT identifier, open_links FROM native_apps WHERE platform = 'apple' ORDER BY created_at`)
 		if err != nil {
 			writeJSONError(w, http.StatusInternalServerError, "failed to load native apps")
 			return
@@ -248,10 +424,15 @@ func AppleAppSiteAssociation(db *database.DB) http.HandlerFunc {
 		defer rows.Close()
 
 		apps := []string{}
+		linkApps := []string{}
 		for rows.Next() {
 			var identifier string
-			if rows.Scan(&identifier) == nil {
+			var openLinks bool
+			if rows.Scan(&identifier, &openLinks) == nil {
 				apps = append(apps, identifier)
+				if openLinks {
+					linkApps = append(linkApps, identifier)
+				}
 			}
 		}
 		if len(apps) == 0 {
@@ -261,11 +442,23 @@ func AppleAppSiteAssociation(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+		doc := map[string]interface{}{
+			"webcredentials": map[string]interface{}{"apps": apps},
+		}
+		if len(linkApps) > 0 {
+			doc["applinks"] = map[string]interface{}{
+				"details": []map[string]interface{}{{
+					"appIDs":     linkApps,
+					"components": appleLinkComponents,
+				}},
+			}
+		}
+
 		w.Header().Set("Cache-Control", associationCacheControl)
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]interface{}{
-			"webcredentials": map[string]interface{}{"apps": apps},
-		})
+		if err := json.NewEncoder(w).Encode(doc); err != nil {
+			log.Printf("native apps: write %s: %v", AppleAssociationPath, err)
+		}
 	}
 }
 
@@ -311,7 +504,7 @@ func AssetLinks(db *database.DB) http.HandlerFunc {
 // id is given. Fingerprints come back as a decoded array so nothing above
 // this line has to know they are stored as JSON.
 func loadNativeApps(db *database.DB, id string) ([]model.NativeApp, error) {
-	query := `SELECT id, platform, identifier, fingerprints, label, created_at
+	query := `SELECT id, platform, identifier, fingerprints, label, open_links, created_at
 	          FROM native_apps`
 	args := []interface{}{}
 	if id != "" {
@@ -330,7 +523,7 @@ func loadNativeApps(db *database.DB, id string) ([]model.NativeApp, error) {
 	for rows.Next() {
 		var app model.NativeApp
 		var encoded string
-		if err := rows.Scan(&app.ID, &app.Platform, &app.Identifier, &encoded, &app.Label, &app.CreatedAt); err != nil {
+		if err := rows.Scan(&app.ID, &app.Platform, &app.Identifier, &encoded, &app.Label, &app.OpenLinks, &app.CreatedAt); err != nil {
 			continue
 		}
 		app.Fingerprints = []string{}
