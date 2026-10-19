@@ -26,56 +26,63 @@ import (
 // does give. The page's half is in
 // web/src/test/when-two-pages-disagree.test.js.
 
-func TestWarning_NamesTheDayTheSeatGoes(t *testing.T) {
+// The warning is counted from a proposal, so it names the proposal and links
+// to it (docs/adr/2026-10-19-you-cannot-miss-a-meeting-that-never-happened.md).
+// "You have not taken part for 90 days" told a band's admin nothing he could
+// act on, because there was nothing to take part in; a named proposal is
+// something to open and answer.
+func TestWarning_NamesTheProposalAndTheDayTheSeatGoes(t *testing.T) {
 	db := sweepDB(t)
 	n := NewNotifier(db)
 	nodeID := seedPatch(t, db, "names-the-day", "longest_tenure", 30)
 	admin := seedPerson(t, db, "namesadmin")
 	seat := seedSeat(t, db, admin, nodeID, "admin", 400)
-	seedProposalBy(t, db, nodeID, admin, 40) // past 30, short of 60
-	other := seedPerson(t, db, "namesactive")
-	seedSeat(t, db, other, nodeID, "admin", 400)
-	seedProposalBy(t, db, nodeID, other, 1)
+	seedProposalBy(t, db, nodeID, admin, 50)
+	missed := seedTitledOccasion(t, db, nodeID, "Buy a new practice amp", 40) // past 30, short of 60
 
 	SweepInactiveAdmins(n)
 
-	var body string
-	db.QueryRow(`SELECT body FROM notifications WHERE user_id = ? AND type = ?`,
-		admin, string(GovernanceInactivityWarning)).Scan(&body)
+	var body, link string
+	db.QueryRow(`SELECT body, COALESCE(link,'') FROM notifications WHERE user_id = ? AND type = ?`,
+		admin, string(GovernanceInactivityWarning)).Scan(&body, &link)
 	if body == "" {
 		t.Fatalf("no warning reached the admin (seat %s)", seat)
 	}
-	if !strings.Contains(body, "60 days") {
+	if !strings.Contains(body, "Buy a new practice amp") {
+		t.Errorf("the warning does not name the proposal it counts from: %q", body)
+	}
+	if !strings.HasSuffix(link, "/governance/"+missed) {
+		t.Errorf("the warning should open the proposal, links to %q", link)
+	}
+	// How long it has waited, and how long is left: both counted from the
+	// proposal, so neither asks the reader to multiply (F-115).
+	if !strings.Contains(body, "40 days ago") {
+		t.Errorf("the warning does not say how long the proposal has waited: %q", body)
+	}
+	if !strings.Contains(body, "vacant in 20 days") {
 		t.Errorf("the warning does not say when the seat goes: %q", body)
 	}
 	if strings.Contains(body, "twice that long") {
 		t.Errorf("the warning still asks the reader to multiply: %q", body)
 	}
-	// The number it is warning from stays, since "you have been quiet for
-	// 30 days" is what makes the 60 mean anything.
-	if !strings.Contains(body, "30 days") {
-		t.Errorf("the warning dropped how long they have been away: %q", body)
-	}
 }
 
-// A patch with a different rule gets its own two numbers, not the default's.
+// A patch with a different rule gets its own numbers, not the default's.
 func TestWarning_TheDaysComeFromThePatchsOwnRule(t *testing.T) {
 	db := sweepDB(t)
 	n := NewNotifier(db)
 	nodeID := seedPatch(t, db, "own-rule", "longest_tenure", 45)
 	admin := seedPerson(t, db, "ownruleadmin")
 	seedSeat(t, db, admin, nodeID, "admin", 400)
-	seedProposalBy(t, db, nodeID, admin, 60) // past 45, short of 90
-	other := seedPerson(t, db, "ownruleactive")
-	seedSeat(t, db, other, nodeID, "admin", 400)
-	seedProposalBy(t, db, nodeID, other, 1)
+	seedProposalBy(t, db, nodeID, admin, 70)
+	seedOccasion(t, db, nodeID, 60) // past 45, short of 90
 
 	SweepInactiveAdmins(n)
 
 	var body string
 	db.QueryRow(`SELECT body FROM notifications WHERE user_id = ? AND type = ?`,
 		admin, string(GovernanceInactivityWarning)).Scan(&body)
-	if !strings.Contains(body, "90 days") {
+	if !strings.Contains(body, "vacant in 30 days") {
 		t.Errorf("expected this patch's own vacate day in %q", body)
 	}
 }

@@ -2,6 +2,7 @@ package notifications
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"time"
 
@@ -59,6 +60,46 @@ import (
 // this reads that word as the plan means it: still around in this patch. To
 // lose a seat you must stop governing; to be handed one you must still be
 // here.
+//
+// # You cannot miss a meeting that never happened
+//
+// Absence used to be elapsed time: no vote, proposal or comment for
+// `inactivity_days`, and the warning went out. On a band that keeps its
+// calendar here and has never raised a proposal, that is every admin, every
+// 90 days, for ever, and at twice that the whole council is vacated for not
+// governing a patch that had nothing to govern. Absence is now counted from
+// the first proposal an admin let pass: one raised here after their last
+// governance act that they have not taken part in since. No proposal, no
+// clock (docs/adr/2026-10-19-you-cannot-miss-a-meeting-that-never-happened.md).
+
+// governanceActs is every act that counts as taking part in a patch's
+// governance, one row per act: who, where, when. The sweep measures an
+// admin's absence against it, and interim promotion reads it as one part of
+// presence.
+//
+// An election ballot is a vote and counts. Deciding a proposal on an
+// admin-decides patch (docs/adr/092) counts, because it is the act that
+// proposal was waiting for, and an admin who answers every member by deciding
+// would otherwise be absent from the occasions they answered. Standing as a
+// candidate does not: a candidacy row can be put there by somebody else
+// (docs/adr/107), so it is not evidence its subject was here.
+const governanceActs = `
+	SELECT v.user_id, p.node_id, v.created_at AS at FROM votes v
+	  JOIN proposals p ON p.id = v.proposal_id
+	UNION ALL
+	SELECT author_id, node_id, created_at FROM proposals
+	UNION ALL
+	SELECT c.author_id, p2.node_id, c.created_at
+	  FROM proposal_comments c JOIN proposals p2 ON p2.id = c.proposal_id
+	UNION ALL
+	SELECT b.voter_id, p3.node_id, b.created_at
+	  FROM election_ballots b JOIN proposals p3 ON p3.id = b.proposal_id
+	UNION ALL
+	SELECT applied_by, node_id, applied_at FROM proposals
+	  WHERE applied_by IS NOT NULL AND applied_at IS NOT NULL
+	UNION ALL
+	SELECT declined_by, node_id, updated_at FROM proposals
+	  WHERE declined_by IS NOT NULL`
 
 // governanceRules is the slice of a node's config this sweep needs.
 type governanceRules struct {
@@ -119,7 +160,9 @@ func sweepNode(n *Notifier, nodeID, slug, name string, rules governanceRules) {
 	// Last time each admin took part in governance. The succession plan names
 	// the three things that count — votes, proposals, discussions — so posting
 	// events or editing the patch is deliberately not participation here. It
-	// is a seat on the council that goes quiet, not an account.
+	// is a seat on the council that goes quiet, not an account. That date is
+	// not the absence itself: it is where the search for a missed occasion
+	// starts (firstMissedOccasion).
 	//
 	// Two floors, both read as a date this person was demonstrably present:
 	// `joined_at`, because someone who joined last week has not been absent
@@ -134,22 +177,15 @@ func sweepNode(n *Notifier, nodeID, slug, name string, rules governanceRules) {
 	// rather than nested as max(max(...), ...), because one of those two is
 	// an aggregate and the other is not and the reader should not have to
 	// work out which.
-	adminRows, err := db.Query(`
+	adminRows, err := db.Query(fmt.Sprintf(`
 		SELECT m.id, m.user_id,
 		       MAX(COALESCE(act.at, m.joined_at)) AS last_act,
 		       MAX(COALESCE(m.role_since, m.joined_at), m.joined_at) AS floor_at
 		FROM memberships m
-		LEFT JOIN (
-			SELECT v.user_id, p.node_id, v.created_at AS at FROM votes v
-			  JOIN proposals p ON p.id = v.proposal_id
-			UNION ALL
-			SELECT author_id, node_id, created_at FROM proposals
-			UNION ALL
-			SELECT c.author_id, p2.node_id, c.created_at
-			  FROM proposal_comments c JOIN proposals p2 ON p2.id = c.proposal_id
+		LEFT JOIN (%s
 		) act ON act.user_id = m.user_id AND act.node_id = m.node_id
 		WHERE m.node_id = ? AND m.role = 'admin' AND m.status = 'active'
-		GROUP BY m.id, m.user_id`, nodeID)
+		GROUP BY m.id, m.user_id`, governanceActs), nodeID)
 	if err != nil {
 		log.Printf("inactivity: %s: %v", slug, err)
 		return
@@ -176,20 +212,21 @@ func sweepNode(n *Notifier, nodeID, slug, name string, rules governanceRules) {
 
 	var vacatedUsers []string
 	for _, a := range admins {
+		missed, found := firstMissedOccasion(db, nodeID, a.lastAt)
 		switch {
-		case a.lastAt < vacateBefore:
+		case found && missed.at < vacateBefore:
 			if vacateSeat(n, nodeID, slug, name, a.memID, a.userID) {
 				vacatedUsers = append(vacatedUsers, a.userID)
 			}
-		case a.lastAt < warnBefore:
-			warnInactive(n, nodeID, slug, name, a.memID, a.userID, rules.InactivityDays)
+		case found && missed.at < warnBefore:
+			warnInactive(n, nodeID, slug, name, a.memID, a.userID, rules.InactivityDays, missed)
 		default:
-			// Back in the room, or newly seated: clear both notices so a
-			// future absence starts its own cycle rather than being silently
-			// skipped. A person promoted since the last pass lands here,
-			// because their `role_since` is today — which is also how the
-			// record of "they were told their seat went" is cleared when the
-			// seat comes back.
+			// Back in the room, newly seated, or nothing here to govern:
+			// clear both notices so a future absence starts its own cycle
+			// rather than being silently skipped. A person promoted since the
+			// last pass lands here, because their `role_since` is today —
+			// which is also how the record of "they were told their seat
+			// went" is cleared when the seat comes back.
 			forgetTold(db, "membership", a.memID, "inactivity_warning")
 			forgetTold(db, "membership", a.memID, "inactivity_vacated")
 		}
@@ -205,21 +242,63 @@ func sweepNode(n *Notifier, nodeID, slug, name string, rules governanceRules) {
 	}
 }
 
-// warnInactive tells someone their seat is at risk, once per absence.
-func warnInactive(n *Notifier, nodeID, slug, name, memID, userID string, days int) {
+// occasion is a proposal an admin let pass: the thing their absence is
+// counted from, and the thing the warning names.
+type occasion struct{ id, title, at string }
+
+// firstMissedOccasion is the earliest proposal raised here after `since` —
+// the later of an admin's last governance act and the floors that say they
+// were present — and whether there is one.
+//
+// After, strictly, and that does three jobs. The admin's own proposal is an
+// act, so it is never an occasion they missed. A proposal raised before they
+// joined or took the seat is not one either: they could not have answered it,
+// and counting it would put a newcomer on a clock from the day they arrived,
+// which is the fault migration 072 fixed. And any act at all moves `since`
+// past every occasion before it, so taking part in one proposal answers for
+// the ones it was raised alongside. A proposal already open when somebody
+// took the seat starts no clock; the next one does.
+//
+// A withdrawn proposal is no occasion. Its author took it back, and a
+// proposal raised by mistake and pulled a minute later must not start a
+// clock that runs for months.
+func firstMissedOccasion(db *database.DB, nodeID, since string) (occasion, bool) {
+	var o occasion
+	err := db.QueryRow(`SELECT id, title, created_at FROM proposals
+	                    WHERE node_id = ? AND created_at > ? AND state != 'withdrawn'
+	                    ORDER BY created_at ASC LIMIT 1`, nodeID, since).Scan(&o.id, &o.title, &o.at)
+	if err != nil {
+		return occasion{}, false
+	}
+	return o, true
+}
+
+// warnInactive tells someone their seat is at risk, once per absence, and
+// names the proposal the absence is counted from.
+func warnInactive(n *Notifier, nodeID, slug, name, memID, userID string, days int, missed occasion) {
 	if !tellOnce(n.DB, "membership", memID, "inactivity_warning") {
 		return
 	}
+	// The day, not "twice that long". A reader who has to multiply before
+	// they know when they lose a seat is a reader who will not, and this
+	// notice is the only warning there is (F-115). Both numbers are counted
+	// from the proposal, because that is where the clock started; a rule
+	// switched on over an old proposal can find it well past the warning
+	// day, so the remainder is worked out rather than assumed to be `days`.
+	age := days
+	if t, err := clock.Parse(missed.at); err == nil {
+		age = int(time.Since(t).Hours() / 24)
+	}
+	left := days*2 - age
+	if left < 1 {
+		left = 1
+	}
 	n.Notify(Event{
 		Type: GovernanceInactivityWarning, NodeID: nodeID, NodeSlug: slug, NodeName: name,
-		TargetID: userID,
-		Title:    "Your admin seat in " + name + " is inactive",
-		// The day, not "twice that long". A reader who has to multiply
-		// before they know when they lose a seat is a reader who will not,
-		// and this notice is the only warning there is. The council page
-		// states the same two numbers off the same rule (F-115).
-		Body:     "You have not taken part in governance here for " + itoaDays(days) + ". Vote, propose, or comment to keep the seat; otherwise it is declared vacant at " + itoaDays(days*2) + ".",
-		Link:     weblink.PatchGovernance(slug),
+		TargetID: userID, EntityID: missed.id,
+		Title: "Your admin seat in " + name + " is inactive",
+		Body:  "You have not voted, proposed, or commented here since this proposal was raised " + itoaDays(age) + " ago: " + missed.title + ". Take part in governance here to keep the seat; otherwise it is declared vacant in " + itoaDays(left) + ".",
+		Link:  weblink.Proposal(slug, missed.id),
 	})
 }
 
@@ -522,17 +601,10 @@ func promoteLongestTenured(n *Notifier, nodeID, slug, name string, howMany int, 
 	json.Unmarshal([]byte(gcJSON), &rules)
 	presentSince := daysAgo(rules.InactivityDays * 2)
 
-	rows, err := db.Query(`
+	rows, err := db.Query(fmt.Sprintf(`
 		SELECT m.id, m.user_id, MAX(COALESCE(act.at, m.joined_at)) AS last_at
 		FROM memberships m
-		LEFT JOIN (
-			SELECT v.user_id, p.node_id, v.created_at AS at FROM votes v
-			  JOIN proposals p ON p.id = v.proposal_id
-			UNION ALL
-			SELECT author_id, node_id, created_at FROM proposals
-			UNION ALL
-			SELECT c.author_id, p2.node_id, c.created_at
-			  FROM proposal_comments c JOIN proposals p2 ON p2.id = c.proposal_id
+		LEFT JOIN (%s
 			UNION ALL
 			SELECT created_by, node_id, created_at FROM events
 			UNION ALL
@@ -544,7 +616,7 @@ func promoteLongestTenured(n *Notifier, nodeID, slug, name string, howMany int, 
 		WHERE m.node_id = ? AND m.role = 'member' AND m.status = 'active'
 		GROUP BY m.id, m.user_id
 		HAVING MAX(COALESCE(act.at, m.joined_at)) >= ?
-		ORDER BY m.joined_at ASC`, nodeID, presentSince)
+		ORDER BY m.joined_at ASC`, governanceActs), nodeID, presentSince)
 	if err != nil {
 		return 0
 	}

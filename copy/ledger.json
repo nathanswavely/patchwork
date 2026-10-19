@@ -1081,7 +1081,7 @@
         },
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 406,
+          "line": 409,
           "kind": "js-string",
           "raw": "Elected Council",
           "quote": "'"
@@ -1585,11 +1585,11 @@
       }
     },
     {
-      "id": "0f70468538b4",
-      "text": "- Membership requires approval. Apply and an admin will review your request.\n- Members who haven't participated in 60 days may be contacted about their status.\n- Admins inactive for 60 days will be asked to step down or re-engage.",
-      "words": 40,
+      "id": "029f0f91b3f1",
+      "text": "- Membership requires approval. Apply and an admin will review your request.\n- Members who haven't participated in 60 days may be contacted about their status.\n- An admin who takes no part in governance for 60 days after a proposal is raised is warned, and the seat is declared vacant at 120 days.",
+      "words": 54,
       "tier": "prose",
-      "status": "human",
+      "status": "unreviewed",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1597,13 +1597,10 @@
           "file": "internal/governance/defaults.go",
           "line": 293,
           "kind": "go-doc-block",
-          "raw": "- Membership requires approval. Apply and an admin will review your request.\n- Members who haven't participated in 60 days may be contacted about their status.\n- Admins inactive for 60 days will be asked to step down or re-engage.",
+          "raw": "- Membership requires approval. Apply and an admin will review your request.\n- Members who haven't participated in 60 days may be contacted about their status.\n- An admin who takes no part in governance for 60 days after a proposal is raised is warned, and the seat is declared vacant at 120 days.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "399c4bd71f25",
@@ -1637,7 +1634,7 @@
         },
         {
           "file": "internal/governance/defaults.go",
-          "line": 639,
+          "line": 640,
           "kind": "go-doc-block",
           "raw": "## Amendments",
           "quote": null
@@ -3830,11 +3827,11 @@
       ]
     },
     {
-      "id": "6c707c126d7c",
-      "text": "### Detection\nCouncil members who have not participated in governance (votes, proposals, discussions) for 30 consecutive days are contacted.",
-      "words": 19,
+      "id": "6052a75ca51e",
+      "text": "### Detection\nA council member is inactive when a proposal is raised and they take no part in governance (votes, proposals, discussions) for 30 days after it. A council with nothing before it has no inactive members.",
+      "words": 37,
       "tier": "prose",
-      "status": "human",
+      "status": "unreviewed",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3842,20 +3839,17 @@
           "file": "internal/governance/defaults.go",
           "line": 627,
           "kind": "go-doc-block",
-          "raw": "### Detection\nCouncil members who have not participated in governance (votes, proposals, discussions) for 30 consecutive days are contacted.",
+          "raw": "### Detection\nA council member is inactive when a proposal is raised and they take no part in governance (votes, proposals, discussions) for 30 days after it. A council with nothing before it has no inactive members.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
-      "id": "bd770537db58",
-      "text": "### Process\n- Day 30: Notification sent to inactive council member.\n- Day 45: If no response, the council discusses the situation.\n- Day 60: If still inactive, the seat is declared vacant and succession procedures begin.",
-      "words": 37,
+      "id": "8dc2b99757ef",
+      "text": "### Process\nDays are counted from the proposal the member let pass.\n- Day 30: Notification sent to inactive council member.\n- Day 45: If no response, the council discusses the situation.\n- Day 60: If still inactive, the seat is declared vacant and succession procedures begin.",
+      "words": 47,
       "tier": "prose",
-      "status": "human",
+      "status": "unreviewed",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3863,13 +3857,10 @@
           "file": "internal/governance/defaults.go",
           "line": 630,
           "kind": "go-doc-block",
-          "raw": "### Process\n- Day 30: Notification sent to inactive council member.\n- Day 45: If no response, the council discusses the situation.\n- Day 60: If still inactive, the seat is declared vacant and succession procedures begin.",
+          "raw": "### Process\nDays are counted from the proposal the member let pass.\n- Day 30: Notification sent to inactive council member.\n- Day 45: If no response, the council discusses the situation.\n- Day 60: If still inactive, the seat is declared vacant and succession procedures begin.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "95dd5e82c640",
@@ -3882,7 +3873,7 @@
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
-          "line": 635,
+          "line": 636,
           "kind": "go-doc-block",
           "raw": "## Seamrip Succession",
           "quote": null
@@ -3900,7 +3891,7 @@
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
-          "line": 637,
+          "line": 638,
           "kind": "go-doc-block",
           "raw": "If a group of members seamrips to create a new patch, they carry their governance documents with them. The original patch's succession plan continues to operate independently.",
           "quote": null
@@ -3921,7 +3912,7 @@
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
-          "line": 641,
+          "line": 642,
           "kind": "go-doc-block",
           "raw": "Changes to the succession plan require consensus. If consensus cannot be reached, a supermajority (2/3) with 50% quorum is required.",
           "quote": null
@@ -18431,14 +18422,14 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 216,
+          "line": 299,
           "kind": "go-string",
           "raw": "Your admin seat in ",
           "quote": "\""
         },
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 261,
+          "line": 340,
           "kind": "go-string",
           "raw": "Your admin seat in ",
           "quote": "\""
@@ -18446,19 +18437,19 @@
       ]
     },
     {
-      "id": "fafb415b3097",
-      "text": "You have not taken part in governance here for",
-      "words": 9,
+      "id": "b8d5083c33ed",
+      "text": "You have not voted, proposed, or commented here since this proposal was raised",
+      "words": 13,
       "tier": "helper",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 221,
+          "line": 300,
           "kind": "go-string",
-          "raw": "You have not taken part in governance here for ",
+          "raw": "You have not voted, proposed, or commented here since this proposal was raised ",
           "quote": "\""
         }
       ]
@@ -18474,7 +18465,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 262,
+          "line": 341,
           "kind": "go-string",
           "raw": "The seat was vacant for inactivity. You are still a member and can take part again at any time.",
           "quote": "\""
@@ -18495,7 +18486,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 314,
+          "line": 393,
           "kind": "go-string",
           "raw": "This patch records its leadership decisions elsewhere, so Patchwork has appointed nobody. When the community decides who runs it, an admin records that decision here.",
           "quote": "\""
@@ -18513,7 +18504,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 316,
+          "line": 395,
           "kind": "go-string",
           "raw": "Its seats were vacated for inactivity, and this patch decides its leadership elsewhere, so Patchwork appointed nobody.",
           "quote": "\""
@@ -18531,7 +18522,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 342,
+          "line": 421,
           "kind": "go-string",
           "raw": "Every seat was vacated for inactivity, so this patch has no admins. It elects its council, and that election is now due: it opens shortly, and any member of this patch may stand.",
           "quote": "\""
@@ -18549,7 +18540,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 346,
+          "line": 425,
           "kind": "go-string",
           "raw": "Every seat was vacated for inactivity, so this patch has no admins. It elects its council, and no election can be scheduled — its seats carry no term end. An instance admin has been told.",
           "quote": "\""
@@ -18567,7 +18558,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 348,
+          "line": 427,
           "kind": "go-string",
           "raw": "Its seats were vacated for inactivity. It elects its council and no election can be scheduled, so nothing will refill it on its own.",
           "quote": "\""
@@ -18585,7 +18576,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 355,
+          "line": 434,
           "kind": "go-string",
           "raw": "Its admin seats were vacated for inactivity, so this patch has no admins. Here a new admin is nominated by an admin and ratified by the members, so an instance admin has been told.",
           "quote": "\""
@@ -18603,7 +18594,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 357,
+          "line": 436,
           "kind": "go-string",
           "raw": "Its admin seats were vacated for inactivity. Here admins are nominated by an admin and ratified by the members, so with none left nobody can start one.",
           "quote": "\""
@@ -18621,7 +18612,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 450,
+          "line": 529,
           "kind": "go-string",
           "raw": "You now run ",
           "quote": "\""
@@ -18639,7 +18630,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 451,
+          "line": 530,
           "kind": "go-string",
           "raw": "Its admin seat was vacated for inactivity, and you were named as the successor. You can hand the patch on, or step down, from Settings.",
           "quote": "\""
@@ -18657,7 +18648,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 466,
+          "line": 545,
           "kind": "go-string",
           "raw": "Its admin seat was vacated for inactivity, so this patch has no admins. Its succession policy asks an instance admin to step in, and one has been told.",
           "quote": "\""
@@ -18675,7 +18666,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 468,
+          "line": 547,
           "kind": "go-string",
           "raw": "Its last admin seat was vacated for inactivity, and its succession policy asks an instance admin to step in.",
           "quote": "\""
@@ -18696,7 +18687,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 473,
+          "line": 552,
           "kind": "go-string",
           "raw": "Its admin seat was vacated for inactivity, so this patch has no admins. Its succession policy is to stop rather than hand the patch to somebody else, so nobody has been appointed.",
           "quote": "\""
@@ -18714,7 +18705,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 483,
+          "line": 562,
           "kind": "go-string",
           "raw": "Its admin seat was vacated for inactivity, so this patch has no admins. Its succession policy hands the patch to its longest-standing active members, and nobody here has taken part recently enough to be one. An instance admin has been told.",
           "quote": "\""
@@ -18732,7 +18723,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 485,
+          "line": 564,
           "kind": "go-string",
           "raw": "Its last admin seat was vacated for inactivity, and nobody in the patch has taken part recently enough to be made an interim admin.",
           "quote": "\""
@@ -18750,7 +18741,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 581,
+          "line": 653,
           "kind": "go-string",
           "raw": "You are now an interim admin of ",
           "quote": "\""
@@ -18768,7 +18759,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 582,
+          "line": 654,
           "kind": "go-string",
           "raw": "Its admin seats were vacated for inactivity, and this patch's succession policy hands them to its longest-standing active members.",
           "quote": "\""
@@ -24382,7 +24373,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 433,
+          "line": 436,
           "kind": "markup",
           "raw": "Failed to load governance overview.",
           "quote": null
@@ -24400,7 +24391,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 442,
+          "line": 445,
           "kind": "markup",
           "raw": "{overview.needs_vote} proposal{overview.needs_vote > 1 ? 's' : ''} need{overview.needs_vote === 1 ? 's' : ''} your vote",
           "quote": null
@@ -24421,7 +24412,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 461,
+          "line": 464,
           "kind": "markup",
           "raw": "Nominations are open for {election.seats} seat{election.seats === 1 ? '' : 's'}",
           "quote": null
@@ -24439,7 +24430,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 468,
+          "line": 471,
           "kind": "markup",
           "raw": "Closing {formatDay(election.nominations_close_at)}.",
           "quote": null
@@ -24457,7 +24448,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 480,
+          "line": 483,
           "kind": "markup",
           "raw": "How decisions are made",
           "quote": null
@@ -24475,7 +24466,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 486,
+          "line": 489,
           "kind": "markup",
           "raw": "Proposals are decided outside Patchwork. They stay open here for discussion, and adoption is recorded on the charter.",
           "quote": null
@@ -24497,7 +24488,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 493,
+          "line": 496,
           "kind": "markup",
           "raw": "An admin changes these rules directly.",
           "quote": null
@@ -24515,7 +24506,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 517,
+          "line": 520,
           "kind": "markup",
           "raw": "Leadership: {leadershipLabel(rules?.leadership_model)}",
           "quote": null
@@ -24533,7 +24524,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 535,
+          "line": 538,
           "kind": "markup",
           "raw": "This patch does not list its admins publicly.",
           "quote": null
@@ -24551,7 +24542,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 560,
+          "line": 563,
           "kind": "markup",
           "raw": "Member since {formatDate(admin.joined_at)}",
           "quote": null
@@ -24569,7 +24560,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 581,
+          "line": 584,
           "kind": "markup",
           "raw": "This council has no seats yet. Until a seat exists there is nothing to elect and nothing to nominate anyone into.",
           "quote": null
@@ -24587,7 +24578,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 583,
+          "line": 586,
           "kind": "markup",
           "raw": "{seats.length} seat{seats.length === 1 ? '' : 's'} on the council,\n              {vacantSeats.length === 0\n                ? 'all held'\n                : `${seats.length - vacantSeats.length} held and ${vacantSeats.length} vacant`}.",
           "quote": null
@@ -24605,7 +24596,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 601,
+          "line": 604,
           "kind": "markup",
           "raw": "Vacant",
           "quote": null
@@ -24623,7 +24614,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 601,
+          "line": 604,
           "kind": "markup",
           "raw": "Held",
           "quote": null
@@ -24641,7 +24632,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 617,
+          "line": 620,
           "kind": "attr:aria-label",
           "raw": "Term end",
           "quote": "\""
@@ -24659,7 +24650,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 668,
+          "line": 671,
           "kind": "markup",
           "raw": "Add a seat",
           "quote": null
@@ -24677,7 +24668,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 670,
+          "line": 673,
           "kind": "markup",
           "raw": "Adding a seat does not make anybody an admin. The community fills it.",
           "quote": null
@@ -24695,7 +24686,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 674,
+          "line": 677,
           "kind": "markup",
           "raw": "A seat's term end is this patch's election calendar. A vacant seat takes any future date; a held one can only be brought\n              forward, because pushing it back would extend a term nobody voted for. A term ending takes nobody's seat away: the\n              holder serves until a successor is elected.",
           "quote": null
@@ -24713,7 +24704,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 676,
+          "line": 679,
           "kind": "markup",
           "raw": "{' '}Inactivity is the only thing that empties a held\n              seat early, and it is the warning in the bell rather than anything on this calendar.",
           "quote": null
@@ -24731,7 +24722,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 694,
+          "line": 697,
           "kind": "markup",
           "raw": "This council's term ended {formatDay(nextTermEnd)}. It serves until a successor is elected.",
           "quote": null
@@ -24749,7 +24740,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 696,
+          "line": 699,
           "kind": "markup",
           "raw": "Next seat comes up {formatDay(nextTermEnd)}.",
           "quote": null
@@ -24767,7 +24758,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 707,
+          "line": 710,
           "kind": "markup",
           "raw": "A ballot is open for {election.seats} seat{election.seats === 1 ? '' : 's'}.",
           "quote": null
@@ -24785,7 +24776,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 719,
+          "line": 722,
           "kind": "markup",
           "raw": "Admins are chosen outside Patchwork. What the community decided is\n          recorded below.",
           "quote": null
@@ -24803,7 +24794,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 733,
+          "line": 736,
           "kind": "markup",
           "raw": "Successor:",
           "quote": null
@@ -24821,7 +24812,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 733,
+          "line": 736,
           "kind": "markup",
           "raw": ". If the current admin steps away, the patch passes to them.",
           "quote": null
@@ -24843,7 +24834,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 736,
+          "line": 739,
           "kind": "markup",
           "raw": "No successor named.",
           "quote": null
@@ -24861,7 +24852,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 742,
+          "line": 745,
           "kind": "markup",
           "raw": "Nobody",
           "quote": null
@@ -24879,7 +24870,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 756,
+          "line": 759,
           "kind": "markup",
           "raw": "Naming a successor is also what lets you leave a patch you run alone.",
           "quote": null
@@ -24897,14 +24888,14 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 768,
+          "line": 771,
           "kind": "markup",
           "raw": "&middot;",
           "quote": null
         },
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 781,
+          "line": 784,
           "kind": "markup",
           "raw": "&middot;",
           "quote": null
@@ -24992,7 +24983,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 775,
+          "line": 778,
           "kind": "markup",
           "raw": "Proposals are members-only",
           "quote": null
@@ -25010,7 +25001,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 782,
+          "line": 785,
           "kind": "markup",
           "raw": "{overview.member_count} member{overview.member_count !== 1 ? 's' : ''}",
           "quote": null
@@ -63611,6 +63602,87 @@
           "kind": "markup",
           "raw": "It came in an email to {node?.name || 'this patch'}'s address, and it lets whoever holds that mailbox take the page over. Sign in, or make an account, and the claim completes from here.",
           "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0f70468538b4",
+      "text": "- Membership requires approval. Apply and an admin will review your request.\n- Members who haven't participated in 60 days may be contacted about their status.\n- Admins inactive for 60 days will be asked to step down or re-engage.",
+      "words": 40,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/governance/defaults.go",
+          "line": 293,
+          "kind": "go-doc-block",
+          "raw": "- Membership requires approval. Apply and an admin will review your request.\n- Members who haven't participated in 60 days may be contacted about their status.\n- Admins inactive for 60 days will be asked to step down or re-engage.",
+          "quote": null
+        }
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
+    },
+    {
+      "id": "6c707c126d7c",
+      "text": "### Detection\nCouncil members who have not participated in governance (votes, proposals, discussions) for 30 consecutive days are contacted.",
+      "words": 19,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/governance/defaults.go",
+          "line": 627,
+          "kind": "go-doc-block",
+          "raw": "### Detection\nCouncil members who have not participated in governance (votes, proposals, discussions) for 30 consecutive days are contacted.",
+          "quote": null
+        }
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
+    },
+    {
+      "id": "bd770537db58",
+      "text": "### Process\n- Day 30: Notification sent to inactive council member.\n- Day 45: If no response, the council discusses the situation.\n- Day 60: If still inactive, the seat is declared vacant and succession procedures begin.",
+      "words": 37,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/governance/defaults.go",
+          "line": 630,
+          "kind": "go-doc-block",
+          "raw": "### Process\n- Day 30: Notification sent to inactive council member.\n- Day 45: If no response, the council discusses the situation.\n- Day 60: If still inactive, the seat is declared vacant and succession procedures begin.",
+          "quote": null
+        }
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
+    },
+    {
+      "id": "fafb415b3097",
+      "text": "You have not taken part in governance here for",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/notifications/inactivity.go",
+          "line": 221,
+          "kind": "go-string",
+          "raw": "You have not taken part in governance here for ",
+          "quote": "\""
         }
       ]
     }

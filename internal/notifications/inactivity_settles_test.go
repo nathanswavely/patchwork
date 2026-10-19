@@ -71,7 +71,10 @@ func advanceDays(t *testing.T, db *database.DB, days int) {
 		{"memberships", "joined_at"},
 		{"memberships", "role_since"},
 		{"proposals", "created_at"},
+		{"proposals", "applied_at"},
+		{"proposals", "updated_at"},
 		{"votes", "created_at"},
+		{"election_ballots", "created_at"},
 		{"proposal_comments", "created_at"},
 		{"events", "created_at"},
 		{"notices", "created_at"},
@@ -116,23 +119,39 @@ func worstDuplicateNotice(t *testing.T, db *database.DB) (int, string) {
 	return worst, title
 }
 
+// seedEventBy records presence that is not governance: an event posted at a
+// given age.
+func seedEventBy(t *testing.T, db *database.DB, nodeID, userID string, daysAgo int) {
+	t.Helper()
+	if _, err := db.Exec(
+		`INSERT INTO events (id, node_id, created_by, title, starts_at, created_at)
+		 VALUES (?, ?, ?, 'a show', ?, ?)`,
+		auth.NewUUIDv7(), nodeID, userID, ago(daysAgo-7), ago(daysAgo)); err != nil {
+		t.Fatalf("seed event: %v", err)
+	}
+}
+
 // The regression that matters. A patch left alone for a year settles: the
-// absent admin loses the seat once, whoever is still around picks it up once,
-// and when they lapse too the patch stops rather than handing the role round
-// the membership for ever.
+// admin who let a proposal pass loses the seat once, whoever is still around
+// picks it up once, and with nothing raised after that, nobody is absent from
+// anything and the role stays where it landed. The old sweep handed it round
+// the membership for ever; the elapsed-time sweep after it emptied the
+// council a second time for not governing a year in which nothing came up.
 func TestSweep_AQuietYearSettlesInsteadOfChurning(t *testing.T) {
 	db := sweepDB(t)
 	n := NewNotifier(db)
 	nodeID := seedPatch(t, db, "quiet-year", "longest_tenure", 30)
 
-	// The founder, last seen in governance ten weeks ago.
+	// The founder, last seen in governance ten weeks ago, and a proposal
+	// raised just after that they never answered.
 	founder := seedPerson(t, db, "yearfounder")
 	founderSeat := seedSeat(t, db, founder, nodeID, "admin", 500)
 	seedProposalBy(t, db, nodeID, founder, 70)
+	seedOccasion(t, db, nodeID, 65)
 
-	// Five members. Two were around last week; three have not been seen
+	// Five members. Two posted events last week; three have not been seen
 	// since long before the vacate threshold.
-	var memberSeats []string
+	var presentSeats, goneSeats []string
 	for _, spec := range []struct {
 		name       string
 		joinedDays int
@@ -145,9 +164,12 @@ func TestSweep_AQuietYearSettlesInsteadOfChurning(t *testing.T) {
 		{"yeargonethree", 90, -1},
 	} {
 		uid := seedPerson(t, db, spec.name)
-		memberSeats = append(memberSeats, seedSeat(t, db, uid, nodeID, "member", spec.joinedDays))
+		seat := seedSeat(t, db, uid, nodeID, "member", spec.joinedDays)
 		if spec.activeDays >= 0 {
-			seedProposalBy(t, db, nodeID, uid, spec.activeDays)
+			seedEventBy(t, db, nodeID, uid, spec.activeDays)
+			presentSeats = append(presentSeats, seat)
+		} else {
+			goneSeats = append(goneSeats, seat)
 		}
 	}
 
@@ -162,30 +184,31 @@ func TestSweep_AQuietYearSettlesInsteadOfChurning(t *testing.T) {
 
 	// Two people were present on day one, so the role moves exactly twice.
 	// What matters is that the number is bounded by the patch rather than by
-	// the length of the simulation: the old sweep produced hundreds.
+	// the length of the simulation: the first sweep produced hundreds.
 	if successions != 2 {
 		t.Errorf("expected the role to move twice in a year, got %d successions", successions)
 	}
-	// The founder, then the two interims. Nobody else, ever.
-	if vacated != 3 {
-		t.Errorf("expected three seats vacated in a year, got %d", vacated)
+	// The founder, and nobody else. The interims were seated after the only
+	// proposal there was, so there is nothing they could have let pass.
+	if vacated != 1 {
+		t.Errorf("expected one seat vacated in a year, got %d", vacated)
 	}
 
-	// The end state is stable and honest: nobody is left holding a seat they
-	// never asked for, and the record says the patch has no admins.
-	if got := adminsOf(t, db, nodeID); got != 0 {
-		t.Errorf("expected the patch to settle with no admins, got %d", got)
-	}
 	if got := roleOfSeat(t, db, founderSeat); got != "member" {
 		t.Errorf("the founder should end as a member, got %q", got)
 	}
-	for _, seat := range memberSeats {
-		if got := roleOfSeat(t, db, seat); got != "member" {
-			t.Errorf("every member should end as a member, got %q", got)
+	for _, seat := range presentSeats {
+		if got := roleOfSeat(t, db, seat); got != "admin" {
+			t.Errorf("an interim with nothing to answer keeps the seat, got %q", got)
 		}
 	}
-	if got := countRows(t, db, `SELECT COUNT(*) FROM audit_log WHERE action = 'node.council_empty'`); got != 1 {
-		t.Errorf("expected the emptiness recorded once, got %d", got)
+	for _, seat := range goneSeats {
+		if got := roleOfSeat(t, db, seat); got != "member" {
+			t.Errorf("an absent member is never handed the patch, got %q", got)
+		}
+	}
+	if got := countRows(t, db, `SELECT COUNT(*) FROM audit_log WHERE action = 'node.council_empty'`); got != 0 {
+		t.Errorf("the council never emptied, but it was recorded %d times", got)
 	}
 
 	// And nobody was told the same thing twice.
@@ -204,6 +227,7 @@ func TestSweep_PromotedAdminIsNotVacatedOnSight(t *testing.T) {
 	gone := seedPerson(t, db, "clockgone")
 	seedSeat(t, db, gone, nodeID, "admin", 500)
 	seedProposalBy(t, db, nodeID, gone, 200)
+	seedOccasion(t, db, nodeID, 199)
 
 	// A member of well over a year's standing who was around last week. Under
 	// the old floor — the later of activity and *joining* — promoting them
@@ -212,18 +236,22 @@ func TestSweep_PromotedAdminIsNotVacatedOnSight(t *testing.T) {
 	heirSeat := seedSeat(t, db, heir, nodeID, "member", 500)
 	seedProposalBy(t, db, nodeID, heir, 3)
 
+	// Raised after the heir's last act and before they were promoted. As a
+	// member they let it pass; as an admin they were never in a position to.
+	seedOccasion(t, db, nodeID, 2)
+
 	SweepInactiveAdmins(n)
 	if got := roleOfSeat(t, db, heirSeat); got != "admin" {
 		t.Fatalf("expected the present member promoted, got %q", got)
 	}
 
-	// Their last governance act is now older than the vacate threshold, and
-	// their joining older still. Only role_since keeps the seat.
-	advanceDays(t, db, 50)
+	// That proposal is now older than the vacate threshold, and so is their
+	// last governance act. Only role_since keeps the seat.
+	advanceDays(t, db, 70)
 	SweepInactiveAdmins(n)
 
 	if got := roleOfSeat(t, db, heirSeat); got != "admin" {
-		t.Errorf("a promotion must reset the clock, got %q after 50 days", got)
+		t.Errorf("a promotion must reset the clock, got %q after 70 days", got)
 	}
 	if got := countRows(t, db, `SELECT COUNT(*) FROM audit_log WHERE action = 'membership.succession'`); got != 1 {
 		t.Errorf("expected exactly one succession, got %d", got)
@@ -240,6 +268,7 @@ func TestSweep_VacatingAnAdminEmptiesTheirChair(t *testing.T) {
 	chair := seedPerson(t, db, "chairholder")
 	memID := seedSeat(t, db, chair, nodeID, "admin", 500)
 	seedProposalBy(t, db, nodeID, chair, 200)
+	seedOccasion(t, db, nodeID, 199)
 	seatID := seedChair(t, db, nodeID, chair, time.Now().UTC().AddDate(1, 0, 0).Format("2006-01-02"))
 
 	SweepInactiveAdmins(n)
@@ -273,6 +302,7 @@ func TestSweep_ElectedPatchElectsRatherThanPromoting(t *testing.T) {
 	gone := seedPerson(t, db, "electedgone")
 	seedSeat(t, db, gone, nodeID, "admin", 500)
 	seedProposalBy(t, db, nodeID, gone, 200)
+	seedOccasion(t, db, nodeID, 199)
 	seatID := seedChair(t, db, nodeID, gone, time.Now().UTC().AddDate(1, 0, 0).Format("2006-01-02"))
 
 	// A member who is plainly around, and would have been promoted by tenure.
@@ -313,6 +343,7 @@ func TestSweep_ElsewhereAppointsNobody(t *testing.T) {
 	gone := seedPerson(t, db, "elsewheregone")
 	goneSeat := seedSeat(t, db, gone, nodeID, "admin", 500)
 	seedProposalBy(t, db, nodeID, gone, 200)
+	seedOccasion(t, db, nodeID, 199)
 	present := seedPerson(t, db, "elsewherepresent")
 	presentSeat := seedSeat(t, db, present, nodeID, "member", 400)
 	seedProposalBy(t, db, nodeID, present, 2)
@@ -342,6 +373,7 @@ func TestSweep_MeritocraticAsksAnInstanceAdmin(t *testing.T) {
 	gone := seedPerson(t, db, "meritgone")
 	seedSeat(t, db, gone, nodeID, "admin", 500)
 	seedProposalBy(t, db, nodeID, gone, 200)
+	seedOccasion(t, db, nodeID, 199)
 	present := seedPerson(t, db, "meritpresent")
 	presentSeat := seedSeat(t, db, present, nodeID, "member", 400)
 	seedProposalBy(t, db, nodeID, present, 2)
@@ -368,6 +400,7 @@ func TestSweep_MaintainerPassesToTheNamedSuccessor(t *testing.T) {
 	gone := seedPerson(t, db, "maintgone")
 	seedSeat(t, db, gone, nodeID, "admin", 500)
 	seedProposalBy(t, db, nodeID, gone, 200)
+	seedOccasion(t, db, nodeID, 199)
 
 	// The named successor is not the longest-standing member, so this also
 	// says the designation outranks the tenure rule.
@@ -405,6 +438,7 @@ func TestSweep_AbsentMembersAreNotMadeInterimAdmins(t *testing.T) {
 	gone := seedPerson(t, db, "allgoneadmin")
 	seedSeat(t, db, gone, nodeID, "admin", 500)
 	seedProposalBy(t, db, nodeID, gone, 200)
+	seedOccasion(t, db, nodeID, 199)
 	for _, name := range []string{"absentone", "absenttwo", "absentthree"} {
 		uid := seedPerson(t, db, name)
 		seedSeat(t, db, uid, nodeID, "member", 400)
@@ -435,15 +469,11 @@ func TestSweep_PostingAnEventCountsAsBeingHere(t *testing.T) {
 	gone := seedPerson(t, db, "eventgone")
 	seedSeat(t, db, gone, nodeID, "admin", 500)
 	seedProposalBy(t, db, nodeID, gone, 200)
+	seedOccasion(t, db, nodeID, 199)
 
 	poster := seedPerson(t, db, "eventposter")
 	posterSeat := seedSeat(t, db, poster, nodeID, "member", 400)
-	if _, err := db.Exec(
-		`INSERT INTO events (id, node_id, created_by, title, starts_at, created_at)
-		 VALUES (?, ?, ?, 'a show', ?, ?)`,
-		auth.NewUUIDv7(), nodeID, poster, ago(-7), ago(6)); err != nil {
-		t.Fatalf("seed event: %v", err)
-	}
+	seedEventBy(t, db, nodeID, poster, 6)
 
 	SweepInactiveAdmins(n)
 
@@ -462,9 +492,11 @@ func TestSweep_NobodyIsToldTwice(t *testing.T) {
 	warned := seedPerson(t, db, "twicewarned")
 	seedSeat(t, db, warned, nodeID, "admin", 500)
 	seedProposalBy(t, db, nodeID, warned, 40)
+	seedOccasion(t, db, nodeID, 39)
 	gone := seedPerson(t, db, "twicegone")
 	seedSeat(t, db, gone, nodeID, "admin", 500)
 	seedProposalBy(t, db, nodeID, gone, 200)
+	seedOccasion(t, db, nodeID, 199)
 
 	for i := 0; i < 6; i++ {
 		SweepInactiveAdmins(n)
