@@ -1589,9 +1589,9 @@
       "text": "- Membership requires approval. Apply and an admin will review your request.\n- Members who haven't participated in 60 days may be contacted about their status.\n- An admin who takes no part in governance for 60 days after a proposal is raised is warned, and the seat is declared vacant at 120 days.",
       "words": 54,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Drafted with AI for the missed-occasion inactivity rule (docs/adr/2026-10-19-you-cannot-miss-a-meeting-that-never-happened.md, PR #419).",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3831,9 +3831,9 @@
       "text": "### Detection\nA council member is inactive when a proposal is raised and they take no part in governance (votes, proposals, discussions) for 30 days after it. A council with nothing before it has no inactive members.",
       "words": 37,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Drafted with AI for the missed-occasion inactivity rule (docs/adr/2026-10-19-you-cannot-miss-a-meeting-that-never-happened.md, PR #419).",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3849,9 +3849,9 @@
       "text": "### Process\nDays are counted from the proposal the member let pass.\n- Day 30: Notification sent to inactive council member.\n- Day 45: If no response, the council discusses the situation.\n- Day 60: If still inactive, the seat is declared vacant and succession procedures begin.",
       "words": 47,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Drafted with AI for the missed-occasion inactivity rule (docs/adr/2026-10-19-you-cannot-miss-a-meeting-that-never-happened.md, PR #419).",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -18441,9 +18441,9 @@
       "text": "You have not voted, proposed, or commented here since this proposal was raised",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Drafted with AI for the missed-occasion inactivity rule (docs/adr/2026-10-19-you-cannot-miss-a-meeting-that-never-happened.md, PR #419).",
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",

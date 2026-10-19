@@ -43,10 +43,9 @@ func TestWarning_NamesTheProposalAndTheDayTheSeatGoes(t *testing.T) {
 	SweepInactiveAdmins(n)
 
 	var body, link string
-	db.QueryRow(`SELECT body, COALESCE(link,'') FROM notifications WHERE user_id = ? AND type = ?`,
-		admin, string(GovernanceInactivityWarning)).Scan(&body, &link)
-	if body == "" {
-		t.Fatalf("no warning reached the admin (seat %s)", seat)
+	if err := db.QueryRow(`SELECT body, COALESCE(link,'') FROM notifications WHERE user_id = ? AND type = ?`,
+		admin, string(GovernanceInactivityWarning)).Scan(&body, &link); err != nil {
+		t.Fatalf("no warning reached the admin (seat %s): %v", seat, err)
 	}
 	if !strings.Contains(body, "Buy a new practice amp") {
 		t.Errorf("the warning does not name the proposal it counts from: %q", body)

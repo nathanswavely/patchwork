@@ -109,7 +109,9 @@ func TestSweep_AWithdrawnProposalIsNoOccasion(t *testing.T) {
 	admin := seedPerson(t, db, "withdrawnadmin")
 	seat := seedSeat(t, db, admin, nodeID, "admin", 400)
 	pid := seedOccasion(t, db, nodeID, 90)
-	db.Exec(`UPDATE proposals SET status = 'withdrawn', state = 'withdrawn' WHERE id = ?`, pid)
+	if _, err := db.Exec(`UPDATE proposals SET status = 'withdrawn', state = 'withdrawn' WHERE id = ?`, pid); err != nil {
+		t.Fatalf("withdraw: %v", err)
+	}
 
 	SweepInactiveAdmins(n)
 
