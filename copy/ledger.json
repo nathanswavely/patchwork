@@ -1081,7 +1081,7 @@
         },
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 406,
+          "line": 413,
           "kind": "js-string",
           "raw": "Elected Council",
           "quote": "'"
@@ -11019,6 +11019,92 @@
       ]
     },
     {
+      "id": "5629273e0b59",
+      "text": "no offer to answer",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Agent-written for F-085 (governance simulation): an interim admin is asked first.",
+      "occurrences": [
+        {
+          "file": "internal/handler/interim_offers.go",
+          "line": 38,
+          "kind": "go-error-body",
+          "raw": "no offer to answer",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/interim_offers.go",
+          "line": 48,
+          "kind": "go-error-body",
+          "raw": "no offer to answer",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "1f6068998053",
+      "text": "you are no longer a member of this patch, so the offer has been passed on",
+      "words": 16,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Agent-written for F-085 (governance simulation): an interim admin is asked first.",
+      "occurrences": [
+        {
+          "file": "internal/handler/interim_offers.go",
+          "line": 51,
+          "kind": "go-error-body",
+          "raw": "you are no longer a member of this patch, so the offer has been passed on",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "450138ac2fb8",
+      "text": "failed to answer the offer",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Agent-written for F-085 (governance simulation): an interim admin is asked first.",
+      "occurrences": [
+        {
+          "file": "internal/handler/interim_offers.go",
+          "line": 54,
+          "kind": "go-error-body",
+          "raw": "failed to answer the offer",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "70831684f0e1",
+      "text": "failed to list offers",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "internal/handler/interim_offers.go",
+          "line": 88,
+          "kind": "go-error-body",
+          "raw": "failed to list offers",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/programs.go",
+          "line": 234,
+          "kind": "go-error-body",
+          "raw": "failed to list offers",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "907ba78b4545",
       "text": "not found",
       "words": 2,
@@ -15145,24 +15231,6 @@
       ]
     },
     {
-      "id": "70831684f0e1",
-      "text": "failed to list offers",
-      "words": 4,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
-      "occurrences": [
-        {
-          "file": "internal/handler/programs.go",
-          "line": 234,
-          "kind": "go-error-body",
-          "raw": "failed to list offers",
-          "quote": null
-        }
-      ]
-    },
-    {
       "id": "2feee4f3ae8d",
       "text": "only this patch can be credited with a program by you",
       "words": 11,
@@ -18474,14 +18542,14 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 216,
+          "line": 221,
           "kind": "go-string",
           "raw": "Your admin seat in ",
           "quote": "\""
         },
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 261,
+          "line": 266,
           "kind": "go-string",
           "raw": "Your admin seat in ",
           "quote": "\""
@@ -18499,7 +18567,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 221,
+          "line": 226,
           "kind": "go-string",
           "raw": "You have not taken part in governance here for ",
           "quote": "\""
@@ -18517,7 +18585,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 262,
+          "line": 267,
           "kind": "go-string",
           "raw": "The seat was vacant for inactivity. You are still a member and can take part again at any time.",
           "quote": "\""
@@ -18538,7 +18606,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 314,
+          "line": 319,
           "kind": "go-string",
           "raw": "This patch records its leadership decisions elsewhere, so Patchwork has appointed nobody. When the community decides who runs it, an admin records that decision here.",
           "quote": "\""
@@ -18556,7 +18624,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 316,
+          "line": 321,
           "kind": "go-string",
           "raw": "Its seats were vacated for inactivity, and this patch decides its leadership elsewhere, so Patchwork appointed nobody.",
           "quote": "\""
@@ -18574,7 +18642,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 342,
+          "line": 347,
           "kind": "go-string",
           "raw": "Every seat was vacated for inactivity, so this patch has no admins. It elects its council, and that election is now due: it opens shortly, and any member of this patch may stand.",
           "quote": "\""
@@ -18592,7 +18660,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 346,
+          "line": 351,
           "kind": "go-string",
           "raw": "Every seat was vacated for inactivity, so this patch has no admins. It elects its council, and no election can be scheduled — its seats carry no term end. An instance admin has been told.",
           "quote": "\""
@@ -18610,7 +18678,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 348,
+          "line": 353,
           "kind": "go-string",
           "raw": "Its seats were vacated for inactivity. It elects its council and no election can be scheduled, so nothing will refill it on its own.",
           "quote": "\""
@@ -18628,7 +18696,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 355,
+          "line": 360,
           "kind": "go-string",
           "raw": "Its admin seats were vacated for inactivity, so this patch has no admins. Here a new admin is nominated by an admin and ratified by the members, so an instance admin has been told.",
           "quote": "\""
@@ -18646,7 +18714,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 357,
+          "line": 362,
           "kind": "go-string",
           "raw": "Its admin seats were vacated for inactivity. Here admins are nominated by an admin and ratified by the members, so with none left nobody can start one.",
           "quote": "\""
@@ -18664,7 +18732,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 450,
+          "line": 455,
           "kind": "go-string",
           "raw": "You now run ",
           "quote": "\""
@@ -18682,7 +18750,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 451,
+          "line": 456,
           "kind": "go-string",
           "raw": "Its admin seat was vacated for inactivity, and you were named as the successor. You can hand the patch on, or step down, from Settings.",
           "quote": "\""
@@ -18700,7 +18768,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 466,
+          "line": 471,
           "kind": "go-string",
           "raw": "Its admin seat was vacated for inactivity, so this patch has no admins. Its succession policy asks an instance admin to step in, and one has been told.",
           "quote": "\""
@@ -18718,7 +18786,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 468,
+          "line": 473,
           "kind": "go-string",
           "raw": "Its last admin seat was vacated for inactivity, and its succession policy asks an instance admin to step in.",
           "quote": "\""
@@ -18739,9 +18807,27 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 473,
+          "line": 478,
           "kind": "go-string",
           "raw": "Its admin seat was vacated for inactivity, so this patch has no admins. Its succession policy is to stop rather than hand the patch to somebody else, so nobody has been appointed.",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "6bf8af9b0fb5",
+      "text": "Its admin seat was vacated for inactivity, so this patch has no admins. Its succession policy asks its longest-standing active members to step in, and they have been asked.",
+      "words": 29,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Agent-written for F-085 (governance simulation): an interim admin is asked first.",
+      "occurrences": [
+        {
+          "file": "internal/notifications/inactivity.go",
+          "line": 489,
+          "kind": "go-string",
+          "raw": "Its admin seat was vacated for inactivity, so this patch has no admins. Its succession policy asks its longest-standing active members to step in, and they have been asked.",
           "quote": "\""
         }
       ]
@@ -18757,7 +18843,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 483,
+          "line": 493,
           "kind": "go-string",
           "raw": "Its admin seat was vacated for inactivity, so this patch has no admins. Its succession policy hands the patch to its longest-standing active members, and nobody here has taken part recently enough to be one. An instance admin has been told.",
           "quote": "\""
@@ -18775,45 +18861,9 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 485,
+          "line": 495,
           "kind": "go-string",
           "raw": "Its last admin seat was vacated for inactivity, and nobody in the patch has taken part recently enough to be made an interim admin.",
-          "quote": "\""
-        }
-      ]
-    },
-    {
-      "id": "7fb57150bb98",
-      "text": "You are now an interim admin of",
-      "words": 7,
-      "tier": "helper",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/notifications/inactivity.go",
-          "line": 581,
-          "kind": "go-string",
-          "raw": "You are now an interim admin of ",
-          "quote": "\""
-        }
-      ]
-    },
-    {
-      "id": "4f6315bc0493",
-      "text": "Its admin seats were vacated for inactivity, and this patch's succession policy hands them to its longest-standing active members.",
-      "words": 19,
-      "tier": "prose",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "The succession churn fix (docs/adr/102, F-082..F-085). Left as drafted; listed for a later voice review.",
-      "occurrences": [
-        {
-          "file": "internal/notifications/inactivity.go",
-          "line": 582,
-          "kind": "go-string",
-          "raw": "Its admin seats were vacated for inactivity, and this patch's succession policy hands them to its longest-standing active members.",
           "quote": "\""
         }
       ]
@@ -19009,7 +19059,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 293,
+          "line": 298,
           "kind": "go-string",
           "raw": "New proposal in your patch",
           "quote": "\""
@@ -19027,7 +19077,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 294,
+          "line": 299,
           "kind": "go-string",
           "raw": "Voting has started",
           "quote": "\""
@@ -19045,7 +19095,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 295,
+          "line": 300,
           "kind": "go-string",
           "raw": "Vote received on your proposal",
           "quote": "\""
@@ -19063,7 +19113,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 296,
+          "line": 301,
           "kind": "go-string",
           "raw": "Proposal approved",
           "quote": "\""
@@ -19081,7 +19131,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 297,
+          "line": 302,
           "kind": "go-string",
           "raw": "Proposal rejected",
           "quote": "\""
@@ -19099,7 +19149,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 298,
+          "line": 303,
           "kind": "go-string",
           "raw": "Amendment applied",
           "quote": "\""
@@ -19117,7 +19167,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 299,
+          "line": 304,
           "kind": "go-string",
           "raw": "Comment on a proposal you're in",
           "quote": "\""
@@ -19135,7 +19185,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 307,
+          "line": 312,
           "kind": "go-string",
           "raw": "Voting ends in 24 hours and you have not voted",
           "quote": "\""
@@ -19153,7 +19203,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 314,
+          "line": 319,
           "kind": "go-string",
           "raw": "An open vote you can take part in",
           "quote": "\""
@@ -19171,7 +19221,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 315,
+          "line": 320,
           "kind": "go-string",
           "raw": "A vote you have not cast is short of quorum",
           "quote": "\""
@@ -19189,7 +19239,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 317,
+          "line": 322,
           "kind": "go-string",
           "raw": "Document updated",
           "quote": "\""
@@ -19207,7 +19257,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 322,
+          "line": 327,
           "kind": "go-string",
           "raw": "Rules changed",
           "quote": "\""
@@ -19225,7 +19275,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 323,
+          "line": 328,
           "kind": "go-string",
           "raw": "Rules changed while votes are open",
           "quote": "\""
@@ -19243,7 +19293,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 324,
+          "line": 329,
           "kind": "go-string",
           "raw": "The lining was updated",
           "quote": "\""
@@ -19261,7 +19311,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 329,
+          "line": 334,
           "kind": "go-string",
           "raw": "Followers can no longer read members-only charters",
           "quote": "\""
@@ -19279,7 +19329,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 330,
+          "line": 335,
           "kind": "go-string",
           "raw": "Your admin seat is inactive",
           "quote": "\""
@@ -19297,7 +19347,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 331,
+          "line": 336,
           "kind": "go-string",
           "raw": "A ratified nomination had no seat",
           "quote": "\""
@@ -19315,7 +19365,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 332,
+          "line": 337,
           "kind": "go-string",
           "raw": "This patch has no admins",
           "quote": "\""
@@ -19333,7 +19383,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 333,
+          "line": 338,
           "kind": "go-string",
           "raw": "A patch has no admins left",
           "quote": "\""
@@ -19351,7 +19401,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 335,
+          "line": 340,
           "kind": "go-string",
           "raw": "New member joined",
           "quote": "\""
@@ -19369,7 +19419,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 336,
+          "line": 341,
           "kind": "go-string",
           "raw": "Membership request pending",
           "quote": "\""
@@ -19387,7 +19437,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 337,
+          "line": 342,
           "kind": "go-string",
           "raw": "Your membership was approved",
           "quote": "\""
@@ -19405,7 +19455,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 338,
+          "line": 343,
           "kind": "go-string",
           "raw": "Your role was changed",
           "quote": "\""
@@ -19423,7 +19473,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 339,
+          "line": 344,
           "kind": "go-string",
           "raw": "You have been removed",
           "quote": "\""
@@ -19441,7 +19491,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 340,
+          "line": 345,
           "kind": "go-string",
           "raw": "You have been reinstated",
           "quote": "\""
@@ -19459,9 +19509,27 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 341,
+          "line": 346,
           "kind": "go-string",
           "raw": "You're invited to join a patch",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "0d93996d967f",
+      "text": "You're asked to step in as an interim admin",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Agent-written for F-085 (governance simulation): an interim admin is asked first.",
+      "occurrences": [
+        {
+          "file": "internal/notifications/types.go",
+          "line": 347,
+          "kind": "go-string",
+          "raw": "You're asked to step in as an interim admin",
           "quote": "\""
         }
       ]
@@ -19477,7 +19545,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 343,
+          "line": 349,
           "kind": "go-string",
           "raw": "Event suggested to your patch",
           "quote": "\""
@@ -19495,7 +19563,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 344,
+          "line": 350,
           "kind": "go-string",
           "raw": "Your event was approved",
           "quote": "\""
@@ -19513,7 +19581,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 345,
+          "line": 351,
           "kind": "go-string",
           "raw": "Your event was declined",
           "quote": "\""
@@ -19531,7 +19599,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 350,
+          "line": 356,
           "kind": "go-string",
           "raw": "A tag you suggested was approved",
           "quote": "\""
@@ -19549,7 +19617,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 351,
+          "line": 357,
           "kind": "go-string",
           "raw": "A tag you suggested was declined",
           "quote": "\""
@@ -19567,7 +19635,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 353,
+          "line": 359,
           "kind": "go-string",
           "raw": "Event link request for your patch",
           "quote": "\""
@@ -19585,7 +19653,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 354,
+          "line": 360,
           "kind": "go-string",
           "raw": "Event link confirmed",
           "quote": "\""
@@ -19603,7 +19671,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 358,
+          "line": 364,
           "kind": "go-string",
           "raw": "A listing matched one of your programs",
           "quote": "\""
@@ -19621,7 +19689,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 363,
+          "line": 369,
           "kind": "go-string",
           "raw": "A notice for your patch",
           "quote": "\""
@@ -19639,7 +19707,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 364,
+          "line": 370,
           "kind": "go-string",
           "raw": "Reply on a notice you're in",
           "quote": "\""
@@ -19657,7 +19725,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 365,
+          "line": 371,
           "kind": "go-string",
           "raw": "A notice or reply was reported",
           "quote": "\""
@@ -19675,7 +19743,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 367,
+          "line": 373,
           "kind": "go-string",
           "raw": "New patch claim request",
           "quote": "\""
@@ -19693,7 +19761,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 368,
+          "line": 374,
           "kind": "go-string",
           "raw": "New patch submission",
           "quote": "\""
@@ -19711,7 +19779,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 369,
+          "line": 375,
           "kind": "go-string",
           "raw": "A tag was suggested",
           "quote": "\""
@@ -19729,7 +19797,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 375,
+          "line": 381,
           "kind": "go-string",
           "raw": "Your patch suggestion was approved",
           "quote": "\""
@@ -19747,7 +19815,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 376,
+          "line": 382,
           "kind": "go-string",
           "raw": "Your patch suggestion was declined",
           "quote": "\""
@@ -19765,7 +19833,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 377,
+          "line": 383,
           "kind": "go-string",
           "raw": "New event submission",
           "quote": "\""
@@ -19783,7 +19851,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 378,
+          "line": 384,
           "kind": "go-string",
           "raw": "Event link request (unclaimed patch)",
           "quote": "\""
@@ -19801,7 +19869,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 379,
+          "line": 385,
           "kind": "go-string",
           "raw": "Someone asked to be a trusted contributor",
           "quote": "\""
@@ -19819,7 +19887,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 387,
+          "line": 393,
           "kind": "go-string",
           "raw": "Your trust request was approved",
           "quote": "\""
@@ -19837,7 +19905,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 388,
+          "line": 394,
           "kind": "go-string",
           "raw": "Your trust request was declined",
           "quote": "\""
@@ -19855,7 +19923,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 389,
+          "line": 395,
           "kind": "go-string",
           "raw": "Your trust request no longer applies",
           "quote": "\""
@@ -19873,7 +19941,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 391,
+          "line": 397,
           "kind": "go-string",
           "raw": "Your claim was approved",
           "quote": "\""
@@ -19891,7 +19959,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 396,
+          "line": 402,
           "kind": "go-string",
           "raw": "New patches this month",
           "quote": "\""
@@ -19909,7 +19977,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 397,
+          "line": 403,
           "kind": "go-string",
           "raw": "Your claim's setup window is closing",
           "quote": "\""
@@ -23796,7 +23864,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 106,
+          "line": 107,
           "kind": "js-string",
           "raw": "In the election running now. Whoever the members approve takes it.",
           "quote": "'"
@@ -23814,7 +23882,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 110,
+          "line": 111,
           "kind": "js-string",
           "raw": "Filled by nomination: an admin puts a member forward and the members ratify it. That can happen today.",
           "quote": "'"
@@ -23832,7 +23900,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 124,
+          "line": 125,
           "kind": "js-string",
           "raw": "Vacant, and this patch has no admins to put a name forward.",
           "quote": "'"
@@ -23850,7 +23918,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 137,
+          "line": 138,
           "kind": "js-string",
           "raw": "No term end, so nothing brings this seat up for election.",
           "quote": "'"
@@ -23868,7 +23936,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 146,
+          "line": 147,
           "kind": "js-string",
           "raw": "Nominations are open. You can stand, or put another member forward.",
           "quote": "'"
@@ -23886,7 +23954,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 147,
+          "line": 148,
           "kind": "js-string",
           "raw": "Nominations are open. Members of this patch can stand for a seat.",
           "quote": "'"
@@ -23904,7 +23972,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 150,
+          "line": 151,
           "kind": "js-string",
           "raw": "The ballot is open. The members are choosing between the candidates.",
           "quote": "'"
@@ -23922,7 +23990,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 173,
+          "line": 174,
           "kind": "js-string",
           "raw": "Only an admin can put a name forward for a vacant seat. Ask one to nominate you.",
           "quote": "'"
@@ -23940,7 +24008,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 177,
+          "line": 178,
           "kind": "js-string",
           "raw": "Every seat is held and no election is scheduled. Nothing changes on this council until a seat is added or a term end is set.",
           "quote": "'"
@@ -23958,9 +24026,27 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 180,
+          "line": 181,
           "kind": "js-string",
           "raw": "Every seat is held and the next election is due now. It opens shortly, and any member may stand.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "d564529393a3",
+      "text": "Nobody holds the admin role here. Its longest-standing active members have been asked to step in as interim admins.",
+      "words": 19,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Agent-written for F-085 (governance simulation): an interim admin is asked first.",
+      "occurrences": [
+        {
+          "file": "web/src/components/GovernanceOverview.svelte",
+          "line": 217,
+          "kind": "js-string",
+          "raw": "Nobody holds the admin role here. Its longest-standing active members have been asked to step in as interim admins.",
           "quote": "'"
         }
       ]
@@ -23976,7 +24062,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 212,
+          "line": 219,
           "kind": "js-string",
           "raw": "Nobody holds the admin role here. This patch records its leadership decisions elsewhere, so a decision made there is what puts somebody back.",
           "quote": "'"
@@ -23994,7 +24080,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 213,
+          "line": 220,
           "kind": "js-string",
           "raw": "Nobody holds the admin role here. This council is filled by election.",
           "quote": "'"
@@ -24012,7 +24098,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 215,
+          "line": 222,
           "kind": "js-string",
           "raw": "Nobody holds the admin role here. An admin is nominated by an admin and ratified by the members, so this patch cannot start one on its own until an instance admin puts somebody back.",
           "quote": "'"
@@ -24030,7 +24116,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 216,
+          "line": 223,
           "kind": "js-string",
           "raw": "Nobody holds the admin role here, so nobody can manage this patch until an instance admin puts somebody back.",
           "quote": "'"
@@ -24048,7 +24134,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 244,
+          "line": 251,
           "kind": "js-string",
           "raw": "Could not set the term end",
           "quote": "'"
@@ -24066,7 +24152,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 257,
+          "line": 264,
           "kind": "js-string",
           "raw": "Could not add a seat",
           "quote": "'"
@@ -24084,7 +24170,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 270,
+          "line": 277,
           "kind": "js-string",
           "raw": "Could not remove the seat",
           "quote": "'"
@@ -24102,7 +24188,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 333,
+          "line": 340,
           "kind": "js-string",
           "raw": "Naming a successor needs a passkey. Enroll one in Security settings first.",
           "quote": "'"
@@ -24120,7 +24206,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 334,
+          "line": 341,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
@@ -24285,7 +24371,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 351,
+          "line": 358,
           "kind": "js-string",
           "raw": "The maintainer makes all decisions for this patch, and may ask the members before deciding.",
           "quote": "'"
@@ -24303,7 +24389,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 352,
+          "line": 359,
           "kind": "js-string",
           "raw": "Your patch decides things by majority vote. More than half must agree.",
           "quote": "'"
@@ -24321,7 +24407,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 353,
+          "line": 360,
           "kind": "js-string",
           "raw": "Decisions require a supermajority: at least 2 out of 3 voters must agree.",
           "quote": "'"
@@ -24339,7 +24425,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 359,
+          "line": 366,
           "kind": "js-string",
           "raw": "Decisions are by consensus: one reject blocks a proposal, and a proposal nobody rejects carries.",
           "quote": "'"
@@ -24357,7 +24443,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 366,
+          "line": 373,
           "kind": "js-string",
           "raw": " Any number of votes counts. No minimum participation required.",
           "quote": "'"
@@ -24375,7 +24461,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 385,
+          "line": 392,
           "kind": "js-string",
           "raw": "One person maintains this patch. They handle day-to-day decisions and can designate a successor.",
           "quote": "'"
@@ -24393,7 +24479,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 386,
+          "line": 393,
           "kind": "js-string",
           "raw": "Admins earn their role through sustained contribution. When a seat opens, existing admins nominate from active members and the community ratifies.",
           "quote": "'"
@@ -24414,7 +24500,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 387,
+          "line": 394,
           "kind": "js-string",
           "raw": "The community elects admins for fixed terms. Regular elections ensure power rotates.",
           "quote": "'"
@@ -24432,7 +24518,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 433,
+          "line": 440,
           "kind": "markup",
           "raw": "Failed to load governance overview.",
           "quote": null
@@ -24450,7 +24536,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 442,
+          "line": 454,
           "kind": "markup",
           "raw": "{overview.needs_vote} proposal{overview.needs_vote > 1 ? 's' : ''} need{overview.needs_vote === 1 ? 's' : ''} your vote",
           "quote": null
@@ -24471,7 +24557,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 461,
+          "line": 473,
           "kind": "markup",
           "raw": "Nominations are open for {election.seats} seat{election.seats === 1 ? '' : 's'}",
           "quote": null
@@ -24489,7 +24575,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 468,
+          "line": 480,
           "kind": "markup",
           "raw": "Closing {formatDay(election.nominations_close_at)}.",
           "quote": null
@@ -24507,7 +24593,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 480,
+          "line": 492,
           "kind": "markup",
           "raw": "How decisions are made",
           "quote": null
@@ -24525,7 +24611,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 486,
+          "line": 498,
           "kind": "markup",
           "raw": "Proposals are decided outside Patchwork. They stay open here for discussion, and adoption is recorded on the charter.",
           "quote": null
@@ -24547,7 +24633,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 493,
+          "line": 505,
           "kind": "markup",
           "raw": "An admin changes these rules directly.",
           "quote": null
@@ -24565,7 +24651,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 517,
+          "line": 529,
           "kind": "markup",
           "raw": "Leadership: {leadershipLabel(rules?.leadership_model)}",
           "quote": null
@@ -24583,7 +24669,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 535,
+          "line": 547,
           "kind": "markup",
           "raw": "This patch does not list its admins publicly.",
           "quote": null
@@ -24601,7 +24687,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 560,
+          "line": 572,
           "kind": "markup",
           "raw": "Member since {formatDate(admin.joined_at)}",
           "quote": null
@@ -24619,7 +24705,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 581,
+          "line": 593,
           "kind": "markup",
           "raw": "This council has no seats yet. Until a seat exists there is nothing to elect and nothing to nominate anyone into.",
           "quote": null
@@ -24637,7 +24723,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 583,
+          "line": 595,
           "kind": "markup",
           "raw": "{seats.length} seat{seats.length === 1 ? '' : 's'} on the council,\n              {vacantSeats.length === 0\n                ? 'all held'\n                : `${seats.length - vacantSeats.length} held and ${vacantSeats.length} vacant`}.",
           "quote": null
@@ -24655,7 +24741,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 601,
+          "line": 613,
           "kind": "markup",
           "raw": "Vacant",
           "quote": null
@@ -24673,7 +24759,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 601,
+          "line": 613,
           "kind": "markup",
           "raw": "Held",
           "quote": null
@@ -24691,7 +24777,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 617,
+          "line": 629,
           "kind": "attr:aria-label",
           "raw": "Term end",
           "quote": "\""
@@ -24709,7 +24795,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 668,
+          "line": 680,
           "kind": "markup",
           "raw": "Add a seat",
           "quote": null
@@ -24727,7 +24813,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 670,
+          "line": 682,
           "kind": "markup",
           "raw": "Adding a seat does not make anybody an admin. The community fills it.",
           "quote": null
@@ -24745,7 +24831,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 674,
+          "line": 686,
           "kind": "markup",
           "raw": "A seat's term end is this patch's election calendar. A vacant seat takes any future date; a held one can only be brought\n              forward, because pushing it back would extend a term nobody voted for. A term ending takes nobody's seat away: the\n              holder serves until a successor is elected.",
           "quote": null
@@ -24763,7 +24849,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 676,
+          "line": 688,
           "kind": "markup",
           "raw": "{' '}Inactivity is the only thing that empties a held\n              seat early, and it is the warning in the bell rather than anything on this calendar.",
           "quote": null
@@ -24781,7 +24867,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 694,
+          "line": 706,
           "kind": "markup",
           "raw": "This council's term ended {formatDay(nextTermEnd)}. It serves until a successor is elected.",
           "quote": null
@@ -24799,7 +24885,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 696,
+          "line": 708,
           "kind": "markup",
           "raw": "Next seat comes up {formatDay(nextTermEnd)}.",
           "quote": null
@@ -24817,7 +24903,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 707,
+          "line": 719,
           "kind": "markup",
           "raw": "A ballot is open for {election.seats} seat{election.seats === 1 ? '' : 's'}.",
           "quote": null
@@ -24835,7 +24921,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 719,
+          "line": 731,
           "kind": "markup",
           "raw": "Admins are chosen outside Patchwork. What the community decided is\n          recorded below.",
           "quote": null
@@ -24853,7 +24939,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 733,
+          "line": 745,
           "kind": "markup",
           "raw": "Successor:",
           "quote": null
@@ -24871,7 +24957,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 733,
+          "line": 745,
           "kind": "markup",
           "raw": ". If the current admin steps away, the patch passes to them.",
           "quote": null
@@ -24893,7 +24979,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 736,
+          "line": 748,
           "kind": "markup",
           "raw": "No successor named.",
           "quote": null
@@ -24911,7 +24997,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 742,
+          "line": 754,
           "kind": "markup",
           "raw": "Nobody",
           "quote": null
@@ -24929,7 +25015,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 756,
+          "line": 768,
           "kind": "markup",
           "raw": "Naming a successor is also what lets you leave a patch you run alone.",
           "quote": null
@@ -24947,14 +25033,14 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 768,
+          "line": 780,
           "kind": "markup",
           "raw": "&middot;",
           "quote": null
         },
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 781,
+          "line": 793,
           "kind": "markup",
           "raw": "&middot;",
           "quote": null
@@ -25042,7 +25128,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 775,
+          "line": 787,
           "kind": "markup",
           "raw": "Proposals are members-only",
           "quote": null
@@ -25060,7 +25146,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 782,
+          "line": 794,
           "kind": "markup",
           "raw": "{overview.member_count} member{overview.member_count !== 1 ? 's' : ''}",
           "quote": null
@@ -25127,6 +25213,96 @@
           "line": 203,
           "kind": "markup",
           "raw": "Edit",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "5dcfcba72b15",
+      "text": "You are now an interim admin",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Agent-written for F-085 (governance simulation): an interim admin is asked first.",
+      "occurrences": [
+        {
+          "file": "web/src/components/InterimOffer.svelte",
+          "line": 38,
+          "kind": "js-string",
+          "raw": "You are now an interim admin",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "8e85aa53bfd4",
+      "text": "Could not answer",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Agent-written for F-085 (governance simulation): an interim admin is asked first.",
+      "occurrences": [
+        {
+          "file": "web/src/components/InterimOffer.svelte",
+          "line": 41,
+          "kind": "js-string",
+          "raw": "Could not answer",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "21920d133731",
+      "text": "Interim admin",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Agent-written for F-085 (governance simulation): an interim admin is asked first.",
+      "occurrences": [
+        {
+          "file": "web/src/components/InterimOffer.svelte",
+          "line": 49,
+          "kind": "attr:aria-label",
+          "raw": "Interim admin",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "2d402e84d354",
+      "text": "Will you step in as an interim admin?",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Agent-written for F-085 (governance simulation): an interim admin is asked first.",
+      "occurrences": [
+        {
+          "file": "web/src/components/InterimOffer.svelte",
+          "line": 51,
+          "kind": "markup",
+          "raw": "Will you step in as an interim admin?",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "aef85eee3da1",
+      "text": "This patch has had no admins since its seats were vacated for inactivity, and its succession policy asks its longest-standing active members. Nothing changes unless you accept.",
+      "words": 27,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Agent-written for F-085 (governance simulation): an interim admin is asked first.",
+      "occurrences": [
+        {
+          "file": "web/src/components/InterimOffer.svelte",
+          "line": 52,
+          "kind": "markup",
+          "raw": "This patch has had no admins since its seats were vacated for inactivity,\n      and its succession policy asks its longest-standing active members.\n      Nothing changes unless you accept.",
           "quote": null
         }
       ]
@@ -64093,6 +64269,42 @@
           "kind": "markup",
           "raw": "Save a contact address first.",
           "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7fb57150bb98",
+      "text": "You are now an interim admin of",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/notifications/inactivity.go",
+          "line": 581,
+          "kind": "go-string",
+          "raw": "You are now an interim admin of ",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "4f6315bc0493",
+      "text": "Its admin seats were vacated for inactivity, and this patch's succession policy hands them to its longest-standing active members.",
+      "words": 19,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The succession churn fix (docs/adr/102, F-082..F-085). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "internal/notifications/inactivity.go",
+          "line": 582,
+          "kind": "go-string",
+          "raw": "Its admin seats were vacated for inactivity, and this patch's succession policy hands them to its longest-standing active members.",
+          "quote": "\""
         }
       ]
     }
