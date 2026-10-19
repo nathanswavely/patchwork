@@ -175,7 +175,8 @@ func NotificationCount(db *database.DB) http.HandlerFunc {
 		user := middleware.UserFromContext(r.Context())
 
 		var count int
-		db.QueryRow("SELECT COUNT(*) FROM notifications WHERE user_id = ? AND read_at IS NULL AND "+notificationReachable, user.ID).Scan(&count)
+		// A badge that cannot be counted shows none, as it always has.
+		_ = db.QueryRow("SELECT COUNT(*) FROM notifications WHERE user_id = ? AND read_at IS NULL AND "+notificationReachable, user.ID).Scan(&count)
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]int{"unread": count})

@@ -59,7 +59,9 @@ func TestNotifications_AnArchivedPatchLeavesTheBell(t *testing.T) {
 		t.Fatalf("before archiving every line shows, got %d", got)
 	}
 
-	db.Exec(`UPDATE nodes SET archived_from = status, status = 'archived' WHERE id = ?`, press)
+	if _, err := db.Exec(`UPDATE nodes SET archived_from = status, status = 'archived' WHERE id = ?`, press); err != nil {
+		t.Fatalf("archive: %v", err)
+	}
 
 	titles := list()
 	if len(titles) != 2 {
@@ -86,7 +88,9 @@ func TestNotifications_AnArchivedPatchLeavesTheBell(t *testing.T) {
 
 	// Restore is silent (docs/adr/034): the lines come back as they were,
 	// unread, because nobody ever saw them.
-	db.Exec(`UPDATE nodes SET status = archived_from, archived_from = NULL WHERE id = ?`, press)
+	if _, err := db.Exec(`UPDATE nodes SET status = archived_from, archived_from = NULL WHERE id = ?`, press); err != nil {
+		t.Fatalf("restore: %v", err)
+	}
 	if got := len(list()); got != 5 {
 		t.Fatalf("a restore brings every line back, got %d", got)
 	}
