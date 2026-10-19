@@ -4376,14 +4376,14 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 833,
+          "line": 834,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1087,
+          "line": 1088,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4439,21 +4439,21 @@
         },
         {
           "file": "internal/handler/outreach.go",
-          "line": 237,
+          "line": 307,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/outreach.go",
-          "line": 393,
+          "line": 490,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/outreach.go",
-          "line": 596,
+          "line": 715,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -5045,42 +5045,42 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1075,
+          "line": 1076,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1468,
+          "line": 1469,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/outreach.go",
-          "line": 226,
+          "line": 293,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/outreach.go",
-          "line": 273,
+          "line": 357,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/outreach.go",
-          "line": 321,
+          "line": 408,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/outreach.go",
-          "line": 373,
+          "line": 474,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -5499,7 +5499,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1368,
+          "line": 1369,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -6015,14 +6015,14 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1081,
+          "line": 1082,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1474,
+          "line": 1475,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -6050,7 +6050,7 @@
         },
         {
           "file": "internal/handler/outreach.go",
-          "line": 230,
+          "line": 297,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -13884,7 +13884,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 837,
+          "line": 838,
           "kind": "go-error-body",
           "raw": "name is required",
           "quote": null
@@ -13930,7 +13930,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 937,
+          "line": 938,
           "kind": "go-error-body",
           "raw": "failed to create node",
           "quote": null
@@ -13948,7 +13948,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1161,
+          "line": 1162,
           "kind": "go-error-body",
           "raw": "failed to read this patch's calendar",
           "quote": null
@@ -13966,7 +13966,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1219,
+          "line": 1220,
           "kind": "go-error-body",
           "raw": "notice_posting must be admins or members",
           "quote": null
@@ -13984,7 +13984,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1225,
+          "line": 1226,
           "kind": "go-error-body",
           "raw": "notice_replies_default must be true or false",
           "quote": null
@@ -14002,14 +14002,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1271,
+          "line": 1272,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1278,
+          "line": 1279,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
@@ -14027,7 +14027,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1292,
+          "line": 1293,
           "kind": "go-error-body",
           "raw": "failed to update tags",
           "quote": null
@@ -14045,14 +14045,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1301,
+          "line": 1302,
           "kind": "go-error-body",
           "raw": "suggest_tags must be an array of tag names",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1308,
+          "line": 1309,
           "kind": "go-error-body",
           "raw": "suggest_tags must be an array of tag names",
           "quote": null
@@ -14070,7 +14070,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1380,
+          "line": 1381,
           "kind": "go-error-body",
           "raw": "failed to update node",
           "quote": null
@@ -14088,7 +14088,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1389,
+          "line": 1390,
           "kind": "go-error-body",
           "raw": "the timezone saved, but this patch's events could not be moved",
           "quote": null
@@ -14106,7 +14106,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1482,
+          "line": 1483,
           "kind": "go-error-body",
           "raw": "failed to archive node",
           "quote": null
@@ -14670,7 +14670,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 245,
+          "line": 317,
           "kind": "go-error-body",
           "raw": "a valid email address is required",
           "quote": null
@@ -14688,7 +14688,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 251,
+          "line": 335,
           "kind": "go-error-body",
           "raw": "failed to save contact",
           "quote": null
@@ -14706,7 +14706,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 257,
+          "line": 341,
           "kind": "go-error-body",
           "raw": "failed to revoke the old address's claim link",
           "quote": null
@@ -14724,16 +14724,41 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 340,
+          "line": 429,
           "kind": "go-error-body",
           "raw": "unknown situation",
           "quote": null
         },
         {
           "file": "internal/handler/outreach.go",
-          "line": 407,
+          "line": 517,
           "kind": "go-error-body",
           "raw": "unknown situation",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ad27ef4f1688",
+      "text": "channel must be email or dm",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/outreach.go",
+          "line": 440,
+          "kind": "go-error-body",
+          "raw": "channel must be email or dm",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/outreach.go",
+          "line": 498,
+          "kind": "go-error-body",
+          "raw": "channel must be email or dm",
           "quote": null
         }
       ]
@@ -14749,7 +14774,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 377,
+          "line": 478,
           "kind": "go-error-body",
           "raw": "intro emails are turned off on this quilt",
           "quote": null
@@ -14757,19 +14782,19 @@
       ]
     },
     {
-      "id": "fcebf6f746b2",
-      "text": "enter a contact address first",
-      "words": 5,
-      "tier": "label",
+      "id": "afd36f754b18",
+      "text": "enter somewhere to reach them first",
+      "words": 6,
+      "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 381,
+          "line": 503,
           "kind": "go-error-body",
-          "raw": "enter a contact address first",
+          "raw": "enter somewhere to reach them first",
           "quote": null
         }
       ]
@@ -14785,7 +14810,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 399,
+          "line": 509,
           "kind": "go-error-body",
           "raw": "the message needs a subject and a body",
           "quote": null
@@ -14803,7 +14828,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 403,
+          "line": 513,
           "kind": "go-error-body",
           "raw": "the message is too long",
           "quote": null
@@ -14821,9 +14846,27 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 414,
+          "line": 527,
           "kind": "go-error-body",
           "raw": "delivery must be smtp or copied",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0a51d5be2a08",
+      "text": "a message on a link is copied and sent by hand",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/outreach.go",
+          "line": 531,
+          "kind": "go-error-body",
+          "raw": "a message on a link is copied and sent by hand",
           "quote": null
         }
       ]
@@ -14839,7 +14882,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 418,
+          "line": 535,
           "kind": "go-error-body",
           "raw": "this quilt cannot send email; copy the message and send it yourself",
           "quote": null
@@ -14857,7 +14900,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 426,
+          "line": 543,
           "kind": "go-error-body",
           "raw": "failed to check earlier sends",
           "quote": null
@@ -14865,9 +14908,9 @@
       ]
     },
     {
-      "id": "c7799dc7da0c",
-      "text": "an intro already went to this address; resend it on purpose",
-      "words": 11,
+      "id": "aac8a544a139",
+      "text": "an intro already went there; resend it on purpose",
+      "words": 9,
       "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
@@ -14875,9 +14918,9 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 430,
+          "line": 547,
           "kind": "go-error-body",
-          "raw": "an intro already went to this address; resend it on purpose",
+          "raw": "an intro already went there; resend it on purpose",
           "quote": null
         }
       ]
@@ -14893,7 +14936,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 455,
+          "line": 573,
           "kind": "go-error-body",
           "raw": "the relay refused the message; nothing was recorded",
           "quote": null
@@ -14911,7 +14954,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 466,
+          "line": 584,
           "kind": "go-error-body",
           "raw": "failed to record the send",
           "quote": null
@@ -14929,7 +14972,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 556,
+          "line": 675,
           "kind": "go-error-body",
           "raw": "failed to list patches",
           "quote": null
@@ -14947,7 +14990,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 605,
+          "line": 724,
           "kind": "go-error-body",
           "raw": "failed to save setting",
           "quote": null
@@ -14965,7 +15008,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 614,
+          "line": 733,
           "kind": "go-error-body",
           "raw": "unknown situation in template",
           "quote": null
@@ -14983,7 +15026,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 620,
+          "line": 739,
           "kind": "go-error-body",
           "raw": "template is too large",
           "quote": null
@@ -15001,7 +15044,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 625,
+          "line": 744,
           "kind": "go-error-body",
           "raw": "failed to save template",
           "quote": null
@@ -15019,7 +15062,7 @@
       "occurrences": [
         {
           "file": "internal/handler/outreach.go",
-          "line": 642,
+          "line": 761,
           "kind": "go-error-body",
           "raw": "failed to reset template",
           "quote": null
@@ -24133,7 +24176,7 @@
         },
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 97,
+          "line": 99,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
@@ -24176,6 +24219,13 @@
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
           "line": 341,
+          "kind": "js-string",
+          "raw": "Failed to save",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/PatchSettingsIntro.svelte",
+          "line": 59,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
@@ -25869,14 +25919,14 @@
         },
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 249,
+          "line": 252,
           "kind": "attr:title",
           "raw": "View the public profile",
           "quote": "\""
         },
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 250,
+          "line": 253,
           "kind": "attr:aria-label",
           "raw": "View the public profile",
           "quote": "\""
@@ -26890,7 +26940,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 257,
+          "line": 260,
           "kind": "attr:placeholder",
           "raw": "Search this patch…",
           "quote": "\""
@@ -26908,7 +26958,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 275,
+          "line": 278,
           "kind": "markup",
           "raw": "Retry",
           "quote": null
@@ -38426,7 +38476,7 @@
         },
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 72,
+          "line": 74,
           "kind": "js-string",
           "raw": "Save failed",
           "quote": "'"
@@ -38451,7 +38501,7 @@
         },
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 85,
+          "line": 87,
           "kind": "js-string",
           "raw": "Reset failed",
           "quote": "'"
@@ -38591,7 +38641,7 @@
         },
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 205,
+          "line": 219,
           "kind": "markup",
           "raw": "Unsaved changes",
           "quote": null
@@ -38799,14 +38849,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 30,
+          "line": 31,
           "kind": "js-string",
           "raw": "Their own calendar is syncing",
           "quote": "'"
         },
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 86,
+          "line": 110,
           "kind": "js-string",
           "raw": "Their own calendar is syncing",
           "quote": "'"
@@ -38824,14 +38874,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 31,
+          "line": 32,
           "kind": "js-string",
           "raw": "Events arrive through an aggregator",
           "quote": "'"
         },
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 87,
+          "line": 111,
           "kind": "js-string",
           "raw": "Events arrive through an aggregator",
           "quote": "'"
@@ -38849,14 +38899,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 32,
+          "line": 33,
           "kind": "js-string",
           "raw": "Squarespace, one page type away",
           "quote": "'"
         },
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 88,
+          "line": 112,
           "kind": "js-string",
           "raw": "Squarespace, one page type away",
           "quote": "'"
@@ -38874,14 +38924,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 33,
+          "line": 34,
           "kind": "js-string",
           "raw": "WordPress, no feed",
           "quote": "'"
         },
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 89,
+          "line": 113,
           "kind": "js-string",
           "raw": "WordPress, no feed",
           "quote": "'"
@@ -38899,14 +38949,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 34,
+          "line": 35,
           "kind": "js-string",
           "raw": "A site with nothing to subscribe to",
           "quote": "'"
         },
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 90,
+          "line": 114,
           "kind": "js-string",
           "raw": "A site with nothing to subscribe to",
           "quote": "'"
@@ -38924,14 +38974,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 35,
+          "line": 36,
           "kind": "js-string",
           "raw": "No site to read",
           "quote": "'"
         },
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 91,
+          "line": 115,
           "kind": "js-string",
           "raw": "No site to read",
           "quote": "'"
@@ -38949,7 +38999,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 69,
+          "line": 71,
           "kind": "js-string",
           "raw": "Intro template saved",
           "quote": "'"
@@ -38967,7 +39017,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 78,
+          "line": 80,
           "kind": "js-string",
           "raw": "Replace the custom intro text with the default that ships with Patchwork? Your text will be gone.",
           "quote": "'"
@@ -38985,7 +39035,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 82,
+          "line": 84,
           "kind": "js-string",
           "raw": "Intro template restored to the shipped default",
           "quote": "'"
@@ -39003,7 +39053,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 95,
+          "line": 97,
           "kind": "js-string",
           "raw": "Intro emails on",
           "quote": "'"
@@ -39021,7 +39071,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 95,
+          "line": 97,
           "kind": "js-string",
           "raw": "Intro emails off",
           "quote": "'"
@@ -39039,14 +39089,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 117,
+          "line": 123,
           "kind": "markup",
           "raw": "Outreach",
           "quote": null
         },
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 138,
+          "line": 144,
           "kind": "attr:aria-label",
           "raw": "Outreach",
           "quote": "\""
@@ -39054,9 +39104,9 @@
       ]
     },
     {
-      "id": "d0fcdf5bc289",
-      "text": "A page made for someone should tell them so. Each unclaimed patch can get one intro, sent by you after you have read it, to an address a person entered. Nothing here sends on its own.",
-      "words": 36,
+      "id": "2f1efcbd24d4",
+      "text": "A page made for someone should tell them so. Each unclaimed patch can get one intro, sent by you after you have read it, to an address or a message link a person entered. Nothing here sends on its own.",
+      "words": 40,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
@@ -39064,27 +39114,45 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 119,
+          "line": 125,
           "kind": "markup",
-          "raw": "A page made for someone should tell them so. Each unclaimed patch can get one intro, sent by you after you have read it, to an address a person entered. Nothing here sends on its own.",
+          "raw": "A page made for someone should tell them so. Each unclaimed patch can get one intro, sent by you after you have read it, to an address or a message link a person entered. Nothing here sends on its own.",
           "quote": null
         }
       ]
     },
     {
-      "id": "fcf7055025d9",
-      "text": "No email relay is configured, so intros are copied out and sent by hand.",
-      "words": 14,
-      "tier": "helper",
+      "id": "ead7db74fd6e",
+      "text": "Intros on for this quilt",
+      "words": 5,
+      "tier": "label",
       "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 134,
+          "line": 137,
           "kind": "markup",
-          "raw": "No email relay is configured, so intros are copied out and sent by hand.",
+          "raw": "Intros on for this quilt",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f464d67edbaf",
+      "text": "No email relay is configured, so email intros are copied out and sent by hand, as messages on a link always are.",
+      "words": 22,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminOutreach.svelte",
+          "line": 140,
+          "kind": "markup",
+          "raw": "No email relay is configured, so email intros are copied out and sent by hand, as messages on a link always are.",
           "quote": null
         }
       ]
@@ -39100,7 +39168,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 140,
+          "line": 146,
           "kind": "markup",
           "raw": "Patches",
           "quote": null
@@ -39125,7 +39193,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 140,
+          "line": 146,
           "kind": "markup",
           "raw": "{uncontacted} not yet written to",
           "quote": null
@@ -39143,7 +39211,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 143,
+          "line": 149,
           "kind": "markup",
           "raw": "Template",
           "quote": null
@@ -39161,7 +39229,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 149,
+          "line": 155,
           "kind": "markup",
           "raw": "No unclaimed patches.",
           "quote": null
@@ -39179,7 +39247,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 153,
+          "line": 159,
           "kind": "markup",
           "raw": "Patch",
           "quote": null
@@ -39197,7 +39265,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 153,
+          "line": 159,
           "kind": "markup",
           "raw": "Calendar",
           "quote": null
@@ -39205,40 +39273,19 @@
       ]
     },
     {
-      "id": "56ef8f20955f",
-      "text": "Address",
-      "words": 1,
+      "id": "3ea17999785d",
+      "text": "Reach them",
+      "words": 2,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 153,
+          "line": 159,
           "kind": "markup",
-          "raw": "Address",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/PatchForm.svelte",
-          "line": 430,
-          "kind": "markup",
-          "raw": "Address",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/PatchForm.svelte",
-          "line": 450,
-          "kind": "markup",
-          "raw": "Address",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 118,
-          "kind": "markup",
-          "raw": "Address",
+          "raw": "Reach them",
           "quote": null
         }
       ]
@@ -39254,14 +39301,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 153,
+          "line": 159,
           "kind": "markup",
           "raw": "Intro",
           "quote": null
         },
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 164,
+          "line": 214,
           "kind": "markup",
           "raw": "Intro",
           "quote": null
@@ -39279,7 +39326,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 163,
+          "line": 173,
           "kind": "markup",
           "raw": "sent {when(p.last_sent_at)}{p.sends > 1 ? ` (${p.sends})` : ''}",
           "quote": null
@@ -39297,7 +39344,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 165,
+          "line": 175,
           "kind": "markup",
           "raw": "claim open",
           "quote": null
@@ -39315,7 +39362,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 167,
+          "line": 177,
           "kind": "markup",
           "raw": "not yet",
           "quote": null
@@ -39333,7 +39380,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 177,
+          "line": 187,
           "kind": "markup",
           "raw": "Placeholders:",
           "quote": null
@@ -39351,7 +39398,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 177,
+          "line": 187,
           "kind": "markup",
           "raw": ". A part left empty falls back to the shipped text.",
           "quote": null
@@ -39369,14 +39416,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 180,
+          "line": 190,
           "kind": "markup",
           "raw": "Subject",
           "quote": null
         },
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 207,
+          "line": 268,
           "kind": "markup",
           "raw": "Subject",
           "quote": null
@@ -39394,7 +39441,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 183,
+          "line": 193,
           "kind": "markup",
           "raw": "Opener",
           "quote": null
@@ -39412,9 +39459,45 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminOutreach.svelte",
-          "line": 191,
+          "line": 201,
           "kind": "markup",
           "raw": "Sign-off",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a63816ffe981",
+      "text": "Opener for a message on a link",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminOutreach.svelte",
+          "line": 204,
+          "kind": "markup",
+          "raw": "Opener for a message on a link",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "27e62aa76da3",
+      "text": "Used instead of the subject, opener and sign-off when the intro is a message on a link such as Instagram. The first two lines are all a message preview shows. The calendar paragraph follows it as in the email; the claim link is the ordinary claim page, never the one-click one.",
+      "words": 51,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminOutreach.svelte",
+          "line": 206,
+          "kind": "markup",
+          "raw": "Used instead of the subject, opener and sign-off when the intro is a message on a link such as Instagram. The first two lines are all a message preview shows. The calendar paragraph follows it as in the email; the claim link is the ordinary claim page, never the one-click one.",
           "quote": null
         }
       ]
@@ -48881,7 +48964,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 67,
+          "line": 85,
           "kind": "js-string",
           "raw": "Failed to load",
           "quote": "'"
@@ -49228,6 +49311,13 @@
         {
           "file": "web/src/pages/Login.svelte",
           "line": 190,
+          "kind": "markup",
+          "raw": "Email address",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchSettingsIntro.svelte",
+          "line": 181,
           "kind": "markup",
           "raw": "Email address",
           "quote": null
@@ -50597,6 +50687,38 @@
           "line": 423,
           "kind": "markup",
           "raw": "Not yours to run?",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "56ef8f20955f",
+      "text": "Address",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchForm.svelte",
+          "line": 430,
+          "kind": "markup",
+          "raw": "Address",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchForm.svelte",
+          "line": 450,
+          "kind": "markup",
+          "raw": "Address",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/SubmitPatch.svelte",
+          "line": 118,
+          "kind": "markup",
+          "raw": "Address",
           "quote": null
         }
       ]
@@ -52950,7 +53072,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 42,
+          "line": 53,
           "kind": "js-string",
           "raw": "Contact address saved",
           "quote": "'"
@@ -52968,7 +53090,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 42,
+          "line": 53,
           "kind": "js-string",
           "raw": "Contact address cleared",
           "quote": "'"
@@ -52976,9 +53098,9 @@
       ]
     },
     {
-      "id": "40a968d4e677",
-      "text": "Failed to save the address",
-      "words": 5,
+      "id": "a3749f7ac42e",
+      "text": "Message link saved",
+      "words": 3,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
@@ -52986,9 +53108,27 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 47,
+          "line": 54,
           "kind": "js-string",
-          "raw": "Failed to save the address",
+          "raw": "Message link saved",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "77776a7070db",
+      "text": "Message link cleared",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsIntro.svelte",
+          "line": 54,
+          "kind": "js-string",
+          "raw": "Message link cleared",
           "quote": "'"
         }
       ]
@@ -53004,7 +53144,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 107,
+          "line": 132,
           "kind": "js-string",
           "raw": "Preview failed",
           "quote": "'"
@@ -53012,9 +53152,9 @@
       ]
     },
     {
-      "id": "5d537c024e49",
-      "text": "An intro already went to this address. Send another one?",
-      "words": 10,
+      "id": "9ecfbd801846",
+      "text": "An intro already went there. Send another one?",
+      "words": 8,
       "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
@@ -53022,9 +53162,9 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 115,
+          "line": 140,
           "kind": "js-string",
-          "raw": "An intro already went to this address. Send another one?",
+          "raw": "An intro already went there. Send another one?",
           "quote": "'"
         }
       ]
@@ -53040,7 +53180,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 122,
+          "line": 147,
           "kind": "js-string",
           "raw": "Intro sent",
           "quote": "'"
@@ -53058,7 +53198,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 122,
+          "line": 147,
           "kind": "js-string",
           "raw": "Recorded as sent",
           "quote": "'"
@@ -53076,7 +53216,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 126,
+          "line": 151,
           "kind": "js-string",
           "raw": "Send failed",
           "quote": "'"
@@ -53094,7 +53234,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 137,
+          "line": 162,
           "kind": "js-string",
           "raw": "Could not copy; select the text instead",
           "quote": "'"
@@ -53102,9 +53242,9 @@
       ]
     },
     {
-      "id": "2b750e0afe0a",
-      "text": "Contact address",
-      "words": 2,
+      "id": "e2abf71c9fc2",
+      "text": "Where to reach them",
+      "words": 4,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
@@ -53112,24 +53252,17 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 149,
+          "line": 178,
           "kind": "markup",
-          "raw": "Contact address",
+          "raw": "Where to reach them",
           "quote": null
-        },
-        {
-          "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 152,
-          "kind": "attr:aria-label",
-          "raw": "Contact address",
-          "quote": "\""
         }
       ]
     },
     {
-      "id": "eedec101da39",
-      "text": "Where an intro about this page goes. Enter one you chose to write to; it never shows publicly.",
-      "words": 18,
+      "id": "dd5f042d07c5",
+      "text": "An email address, a link to message them on, or both. Enter what you chose to write to; neither shows publicly.",
+      "words": 21,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
@@ -53137,9 +53270,9 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 150,
+          "line": 179,
           "kind": "markup",
-          "raw": "Where an intro about this page goes. Enter one you chose to write to; it never shows publicly.",
+          "raw": "An email address, a link to message them on, or both. Enter what you chose to write to; neither shows publicly.",
           "quote": null
         }
       ]
@@ -53155,7 +53288,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 158,
+          "line": 189,
           "kind": "markup",
           "raw": "At the verified domain, so the intro can carry a one-click claim link.",
           "quote": null
@@ -53163,26 +53296,8 @@
       ]
     },
     {
-      "id": "0b426674d4f9",
-      "text": "Intro emails are turned off for this quilt.",
-      "words": 8,
-      "tier": "helper",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 170,
-          "kind": "markup",
-          "raw": "Intro emails are turned off for this quilt.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "4c7f4fe8a9c8",
-      "text": "Save a contact address first.",
+      "id": "4aa6faa04c6a",
+      "text": "Link to message them on",
       "words": 5,
       "tier": "label",
       "status": "ai-fine",
@@ -53191,9 +53306,99 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 172,
+          "line": 192,
           "kind": "markup",
-          "raw": "Save a contact address first.",
+          "raw": "Link to message them on",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "871785c44bba",
+      "text": "https://instagram.com/…",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsIntro.svelte",
+          "line": 194,
+          "kind": "attr:placeholder",
+          "raw": "https://instagram.com/…",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "4c88d9469e05",
+      "text": "On the patch:",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsIntro.svelte",
+          "line": 201,
+          "kind": "markup",
+          "raw": "On the patch:",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "246ff84f8013",
+      "text": "A message on a link is copied out and sent by hand, and carries the ordinary claim page rather than a one-click link: an account there proves nothing about the domain.",
+      "words": 31,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsIntro.svelte",
+          "line": 209,
+          "kind": "markup",
+          "raw": "A message on a link is copied out and sent by hand, and carries the ordinary claim page rather than a one-click link: an account there proves nothing about the domain.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "6875d51bb14d",
+      "text": "Intros are turned off for this quilt.",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsIntro.svelte",
+          "line": 220,
+          "kind": "markup",
+          "raw": "Intros are turned off for this quilt.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "20451574e55e",
+      "text": "Save somewhere to reach them first.",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsIntro.svelte",
+          "line": 222,
+          "kind": "markup",
+          "raw": "Save somewhere to reach them first.",
           "quote": null
         }
       ]
@@ -53209,9 +53414,63 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 190,
+          "line": 240,
           "kind": "markup",
           "raw": "Reads the website once to pick the calendar paragraph, then shows the whole message before anything is sent.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "957ad0708f88",
+      "text": "Send it",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsIntro.svelte",
+          "line": 244,
+          "kind": "markup",
+          "raw": "Send it",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "34e9234f547b",
+      "text": "by email, to {state.contact_email}",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsIntro.svelte",
+          "line": 246,
+          "kind": "markup",
+          "raw": "by email, to {state.contact_email}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "6f4a6219066a",
+      "text": "as a message on {host(state.contact_url)}",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsIntro.svelte",
+          "line": 247,
+          "kind": "markup",
+          "raw": "as a message on {host(state.contact_url)}",
           "quote": null
         }
       ]
@@ -53227,7 +53486,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 193,
+          "line": 253,
           "kind": "markup",
           "raw": "Calendar paragraph",
           "quote": null
@@ -53245,7 +53504,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 200,
+          "line": 260,
           "kind": "markup",
           "raw": "Picked because {preview.classification?.reason}.",
           "quote": null
@@ -53263,7 +53522,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 202,
+          "line": 262,
           "kind": "markup",
           "raw": "Attach it under",
           "quote": null
@@ -53281,7 +53540,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 202,
+          "line": 262,
           "kind": "markup",
           "raw": "first and the intro will say so.",
           "quote": null
@@ -53299,7 +53558,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 209,
+          "line": 271,
           "kind": "markup",
           "raw": "Message",
           "quote": null
@@ -53317,9 +53576,45 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 212,
+          "line": 274,
           "kind": "markup",
           "raw": "The claim link is a one-click claim for this address, since it is at the verified domain. Cut the link and it goes without one.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ea448e9b38f7",
+      "text": "Copy it, send it on",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsIntro.svelte",
+          "line": 288,
+          "kind": "markup",
+          "raw": "Copy it, send it on",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e73c1fc011d7",
+      "text": ", then record it here.",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsIntro.svelte",
+          "line": 288,
+          "kind": "markup",
+          "raw": ", then record it here.",
           "quote": null
         }
       ]
@@ -53335,7 +53630,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 228,
+          "line": 290,
           "kind": "markup",
           "raw": "This quilt has no email relay, so copy the message into your own mail and record it here.",
           "quote": null
@@ -63610,6 +63905,193 @@
           "line": 196,
           "kind": "markup",
           "raw": "It came in an email to {node?.name || 'this patch'}'s address, and it lets whoever holds that mailbox take the page over. Sign in, or make an account, and the claim completes from here.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "fcebf6f746b2",
+      "text": "enter a contact address first",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/outreach.go",
+          "line": 381,
+          "kind": "go-error-body",
+          "raw": "enter a contact address first",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "c7799dc7da0c",
+      "text": "an intro already went to this address; resend it on purpose",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/outreach.go",
+          "line": 430,
+          "kind": "go-error-body",
+          "raw": "an intro already went to this address; resend it on purpose",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d0fcdf5bc289",
+      "text": "A page made for someone should tell them so. Each unclaimed patch can get one intro, sent by you after you have read it, to an address a person entered. Nothing here sends on its own.",
+      "words": 36,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminOutreach.svelte",
+          "line": 119,
+          "kind": "markup",
+          "raw": "A page made for someone should tell them so. Each unclaimed patch can get one intro, sent by you after you have read it, to an address a person entered. Nothing here sends on its own.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "fcf7055025d9",
+      "text": "No email relay is configured, so intros are copied out and sent by hand.",
+      "words": 14,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminOutreach.svelte",
+          "line": 134,
+          "kind": "markup",
+          "raw": "No email relay is configured, so intros are copied out and sent by hand.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "40a968d4e677",
+      "text": "Failed to save the address",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsIntro.svelte",
+          "line": 47,
+          "kind": "js-string",
+          "raw": "Failed to save the address",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "5d537c024e49",
+      "text": "An intro already went to this address. Send another one?",
+      "words": 10,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsIntro.svelte",
+          "line": 115,
+          "kind": "js-string",
+          "raw": "An intro already went to this address. Send another one?",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "2b750e0afe0a",
+      "text": "Contact address",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsIntro.svelte",
+          "line": 149,
+          "kind": "markup",
+          "raw": "Contact address",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchSettingsIntro.svelte",
+          "line": 152,
+          "kind": "attr:aria-label",
+          "raw": "Contact address",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "eedec101da39",
+      "text": "Where an intro about this page goes. Enter one you chose to write to; it never shows publicly.",
+      "words": 18,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsIntro.svelte",
+          "line": 150,
+          "kind": "markup",
+          "raw": "Where an intro about this page goes. Enter one you chose to write to; it never shows publicly.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0b426674d4f9",
+      "text": "Intro emails are turned off for this quilt.",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsIntro.svelte",
+          "line": 170,
+          "kind": "markup",
+          "raw": "Intro emails are turned off for this quilt.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "4c7f4fe8a9c8",
+      "text": "Save a contact address first.",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsIntro.svelte",
+          "line": 172,
+          "kind": "markup",
+          "raw": "Save a contact address first.",
           "quote": null
         }
       ]

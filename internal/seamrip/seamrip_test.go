@@ -728,6 +728,7 @@ func TestEveryColumnHasABoundaryDecision(t *testing.T) {
 			"suggested_feed_count": "the count one fetch found for that pending feed, for the admin reading the queue",
 			"contact_email": "an address a person gave this steward for one correspondence; a fork is a steward the giver never heard of " +
 				"(docs/adr/2026-10-16-a-page-made-for-someone-tells-them-so.md)",
+			"contact_url": "the link to message them on, given for the same one correspondence; same reason",
 		},
 		"events": {
 			"ap_id":      "names an object on the old domain",
