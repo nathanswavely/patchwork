@@ -13,6 +13,7 @@
   import { navigate } from '../stores/router.svelte.js';
   import Skeleton from '../components/Skeleton.svelte';
   import ErrorState from '../components/ErrorState.svelte';
+  import ToggleSwitch from '../components/ToggleSwitch.svelte';
   import { ArrowCounterClockwise } from 'phosphor-svelte';
 
   let loading = $state(true);
@@ -126,9 +127,9 @@
     <ErrorState message={error} retry={load} />
   {:else}
     <div class="switch-row">
-      <label class="lt-label">
-        <input type="checkbox" checked={data.enabled} disabled={togglingEnabled} onchange={(e) => setEnabled(e.currentTarget.checked)} />
-        Intro emails on for this quilt
+      <label class="lt-check">
+        <ToggleSwitch checked={data.enabled} disabled={togglingEnabled} onchange={(e) => setEnabled(e.currentTarget.checked)} />
+        <span>Intro emails on for this quilt</span>
       </label>
       {#if !data.smtp}
         <span class="lt-muted">No email relay is configured, so intros are copied out and sent by hand.</span>
@@ -232,11 +233,6 @@
     flex-wrap: wrap;
     margin-bottom: 16px;
     font-size: 0.9rem;
-  }
-  .switch-row .lt-label {
-    display: inline-flex;
-    gap: 8px;
-    align-items: center;
   }
   .doc-tabs {
     display: flex;
