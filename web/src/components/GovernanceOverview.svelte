@@ -5,7 +5,7 @@
   import { formatDay } from '../lib/datetime.js';
   import { navigate } from '../stores/router.svelte.js';
   import { isLoggedIn, getUser } from '../stores/auth.svelte.js';
-  import { markGovernanceHubVisited } from '../lib/onboarding.js';
+  import { markGovernanceDecided } from '../lib/onboarding.js';
   import { withStepUp, stepUpStatus, PasskeyRequiredError } from '../lib/stepUp.js';
   import PasskeyNotice from './PasskeyNotice.svelte';
   import AttestationRecords from './AttestationRecords.svelte';
@@ -30,12 +30,18 @@
   let isPatchAdmin = $derived(membershipRole === 'admin');
 
   // Setup checklist fallback (docs/adr/040, CONTEXT.md "Setup checklist"):
-  // "decide how you govern" has no single derivable signal for a patch
-  // that never amends anything, so an admin actually reaching this page
-  // counts as having decided.
-  $effect(() => {
-    if (isAdmin && nodeId) markGovernanceHubVisited(getUser()?.id, nodeId);
-  });
+  // "decide how you govern" has no single derivable signal for a patch that
+  // never writes a charter, so a governance act performed here stands in for
+  // one. Opening the page used to be the signal, and a founder watched the
+  // item tick itself done on arrival: "I haven't decided anything." It is
+  // now written by the decisions below — successor, seats, seat terms — each
+  // after its write lands. Looking is not deciding, and an admin with
+  // nothing to decide skips the item instead.
+  // isPatchAdmin, not isAdmin: the checklist is a patch's own admins' list,
+  // and an instance admin passing through has no setup to do here.
+  function markDecided() {
+    if (isPatchAdmin && nodeId) markGovernanceDecided(getUser()?.id, nodeId);
+  }
 
   let overview = $state(null);
   let loading = $state(true);
@@ -238,6 +244,7 @@
     seatError = '';
     try {
       await api(`nodes/${slug}/seats/${seatId}`, { method: 'PATCH', body: { term_ends_at: termDraft } });
+      markDecided();
       editingSeat = '';
       await loadOverview();
     } catch (e) {
@@ -252,6 +259,7 @@
     seatError = '';
     try {
       await api(`nodes/${slug}/seats`, { method: 'POST' });
+      markDecided();
       await loadOverview();
     } catch (e) {
       seatError = e.message || 'Could not add a seat';
@@ -265,6 +273,7 @@
     seatError = '';
     try {
       await api(`nodes/${slug}/seats/${seatId}`, { method: 'DELETE' });
+      markDecided();
       await loadOverview();
     } catch (e) {
       seatError = e.message || 'Could not remove the seat';
@@ -327,6 +336,7 @@
       } else {
         await api(`nodes/${slug}/successor`, { method: 'DELETE' });
       }
+      markDecided();
       await loadOverview();
     } catch (e) {
       successorError = e instanceof PasskeyRequiredError

@@ -3,6 +3,8 @@
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
+  import { getUser } from '../stores/auth.svelte.js';
+  import { markGovernanceDecided } from '../lib/onboarding.js';
   import StructuredRulesEditor from '../components/StructuredRulesEditor.svelte';
   import StructuredRulesDiff from '../components/StructuredRulesDiff.svelte';
   import Skeleton from '../components/Skeleton.svelte';
@@ -221,6 +223,13 @@
         change_summary: title.trim(),
       };
       const result = await api(`nodes/${slug}/proposals`, { method: 'POST', body: payload });
+      // Changing the rules is the plainest answer to "decide how you
+      // govern", so it ticks that checklist item (lib/onboarding.js). Only
+      // for this patch's own admins, who are the only people the checklist
+      // is shown to, and only once the write has landed.
+      if (membershipRole === 'admin' && patch.value.node?.id) {
+        markGovernanceDecided(getUser()?.id, patch.value.node.id);
+      }
       if (draftKey) localStorage.removeItem(draftKey);
       showToast(directChange ? 'Change applied' : 'Proposal created', 'success');
       navigate(`/patches/${slug}/governance/${result.id}`);

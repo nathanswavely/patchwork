@@ -40,7 +40,11 @@ export function dismissOnboarding(userId) {
 const UNLOCK_PREFIX = 'patchwork_unlock_dismissed:';
 const CHECKLIST_DISMISSED_PREFIX = 'patchwork_setup_checklist_dismissed:';
 const CHECKLIST_SHARED_PREFIX = 'patchwork_setup_checklist_shared:';
-const CHECKLIST_GOVERNANCE_PREFIX = 'patchwork_setup_checklist_governance_visited:';
+// Renamed from …_governance_visited, and the key changes with it on
+// purpose: the old flag was written by opening the governance hub, so every
+// admin who ever looked is carrying a tick they never earned. A new key
+// retires those rather than grandfathering a false one.
+const CHECKLIST_GOVERNANCE_PREFIX = 'patchwork_setup_checklist_governance_decided:';
 
 function patchScopedKey(prefix, userId, patchId) {
   return `${prefix}${userId}:${patchId}`;
@@ -94,12 +98,22 @@ export function markPatchLinkShared(userId, patchId) {
 /**
  * "Decide how you govern" checklist item: primarily derived from real
  * governance state (a published charter beyond the lining), but a patch
- * that never amends anything would nag forever without this fallback — an
- * admin who has actually visited the governance hub counts as decided.
+ * that never writes a charter would nag forever without this fallback, so
+ * a governance act performed on the hub counts as decided too.
+ *
+ * Written by an act, never by a visit. Opening the hub used to set it, on
+ * the reasoning that an admin who got there had considered the question;
+ * what a founder saw instead was the checklist ticking "Decide how you
+ * govern" off the moment the page rendered, having decided nothing. The
+ * callers are the hub's own decisions — naming or clearing a successor,
+ * adding or removing a seat, setting a seat's term, proposing a rules
+ * change — each marking only after the write succeeds. The item is
+ * `skippable`, which is the out for a patch that governs nothing; a tick
+ * is for a patch that did something.
  */
-export function isGovernanceHubVisited(userId, patchId) {
+export function isGovernanceDecided(userId, patchId) {
   return readFlag(CHECKLIST_GOVERNANCE_PREFIX, userId, patchId);
 }
-export function markGovernanceHubVisited(userId, patchId) {
+export function markGovernanceDecided(userId, patchId) {
   writeFlag(CHECKLIST_GOVERNANCE_PREFIX, userId, patchId);
 }
