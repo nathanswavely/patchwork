@@ -292,7 +292,7 @@ Admins can step down at any time. When an admin steps down, remaining admins nom
 
 - Membership requires approval. Apply and an admin will review your request.
 - Members who haven't participated in 60 days may be contacted about their status.
-- Admins inactive for 60 days will be asked to step down or re-engage.
+- An admin who takes no part in governance for 60 days after a proposal is raised is warned, and the seat is declared vacant at 120 days.
 
 ## Amendments
 
@@ -625,9 +625,10 @@ If all council seats are vacant (the "bus factor" scenario), the three longest-t
 ## Inactivity
 
 ### Detection
-Council members who have not participated in governance (votes, proposals, discussions) for 30 consecutive days are contacted.
+A council member is inactive when a proposal is raised and they take no part in governance (votes, proposals, discussions) for 30 days after it. A council with nothing before it has no inactive members.
 
 ### Process
+Days are counted from the proposal the member let pass.
 - Day 30: Notification sent to inactive council member.
 - Day 45: If no response, the council discusses the situation.
 - Day 60: If still inactive, the seat is declared vacant and succession procedures begin.

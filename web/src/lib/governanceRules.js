@@ -201,7 +201,7 @@ export function readableRules(rules, followerPermissions = null) {
       // the ledger and reviewed.
       out.push({
         label: 'An admin who stops taking part',
-        value: `Warned at ${days(rules.inactivity_days)}, seat declared vacant at ${days(rules.inactivity_days * 2)}`,
+        value: `Warned ${days(rules.inactivity_days)} after a proposal they take no part in, seat declared vacant at ${days(rules.inactivity_days * 2)}`,
       });
     }
     out.push({

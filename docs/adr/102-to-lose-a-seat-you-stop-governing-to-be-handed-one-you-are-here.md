@@ -1,6 +1,9 @@
 # 102. To lose a seat you stop governing; to be handed one you are here
 
-**Status:** accepted, 2026-09-15
+**Status:** accepted, 2026-09-15. Amended by
+docs/adr/2026-10-19-you-cannot-miss-a-meeting-that-never-happened.md:
+absence is now counted from the first proposal an admin let pass, not from
+their last act.
 
 ## Context
 

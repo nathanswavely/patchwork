@@ -97,6 +97,8 @@ describe('one vocabulary, read and write (F-117)', () => {
       .find((l) => l.label === 'An admin who stops taking part');
     expect(line.value).toContain('30 days');
     expect(line.value).toContain('60 days');
+    // Counted from a proposal, not from the calendar.
+    expect(line.value).toContain('after a proposal they take no part in');
   });
 
   it('names the follower permissions the notice is about', () => {

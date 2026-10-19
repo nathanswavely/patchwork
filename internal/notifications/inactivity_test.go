@@ -93,6 +93,28 @@ func seedProposalBy(t *testing.T, db *database.DB, nodeID, authorID string, days
 	}
 }
 
+// seedOccasion raises a proposal at a given age, authored by the patch's
+// owner, who holds no seat in these fixtures. It is something to govern: an
+// admin who has taken no part in governance since it was raised has let it
+// pass, and their absence is counted from it
+// (docs/adr/2026-10-19-you-cannot-miss-a-meeting-that-never-happened.md).
+func seedOccasion(t *testing.T, db *database.DB, nodeID string, daysAgo int) string {
+	t.Helper()
+	return seedTitledOccasion(t, db, nodeID, "Something to decide", daysAgo)
+}
+
+func seedTitledOccasion(t *testing.T, db *database.DB, nodeID, title string, daysAgo int) string {
+	t.Helper()
+	id := auth.NewUUIDv7()
+	if _, err := db.Exec(
+		`INSERT INTO proposals (id, node_id, author_id, title, body, status, proposal_type, duration_hours, created_at)
+		 SELECT ?, id, owner_id, ?, '', 'open', 'action', 72, ? FROM nodes WHERE id = ?`,
+		id, title, ago(daysAgo), nodeID); err != nil {
+		t.Fatalf("seed occasion: %v", err)
+	}
+	return id
+}
+
 func roleOfSeat(t *testing.T, db *database.DB, memID string) string {
 	t.Helper()
 	var role string
@@ -108,6 +130,7 @@ func TestSweep_WarnsBeforeItVacates(t *testing.T) {
 	admin := seedPerson(t, db, "quietadmin")
 	seat := seedSeat(t, db, admin, nodeID, "admin", 400)
 	seedProposalBy(t, db, nodeID, admin, 40) // quiet 40 days: past 30, short of 60
+	seedOccasion(t, db, nodeID, 39)          // raised the next day, and let pass
 	// A second admin so nothing here depends on the last-admin case.
 	other := seedPerson(t, db, "activeadmin")
 	seedSeat(t, db, other, nodeID, "admin", 400)
@@ -140,6 +163,7 @@ func TestSweep_VacatesAfterTwiceTheWindow(t *testing.T) {
 	gone := seedPerson(t, db, "goneadmin")
 	goneSeat := seedSeat(t, db, gone, nodeID, "admin", 400)
 	seedProposalBy(t, db, nodeID, gone, 90)
+	seedOccasion(t, db, nodeID, 89)
 	here := seedPerson(t, db, "hereadmin")
 	hereSeat := seedSeat(t, db, here, nodeID, "admin", 400)
 	seedProposalBy(t, db, nodeID, here, 2)
@@ -163,6 +187,7 @@ func TestSweep_ActivityClearsTheWarning(t *testing.T) {
 	seat := seedSeat(t, db, admin, nodeID, "admin", 400)
 	seedProposalBy(t, db, nodeID, admin, 40)
 	other := seedPerson(t, db, "steadyadmin")
+	seedOccasion(t, db, nodeID, 39)
 	seedSeat(t, db, other, nodeID, "admin", 400)
 	seedProposalBy(t, db, nodeID, other, 1)
 
@@ -191,6 +216,8 @@ func TestSweep_NewAdminIsNotAbsent(t *testing.T) {
 	nodeID := seedPatch(t, db, "quiet-four", "longest_tenure", 30)
 	fresh := seedPerson(t, db, "freshadmin")
 	seat := seedSeat(t, db, fresh, nodeID, "admin", 2) // joined two days ago
+	// A proposal from long before they arrived is not one they let pass.
+	seedOccasion(t, db, nodeID, 100)
 
 	SweepInactiveAdmins(n)
 
@@ -214,6 +241,7 @@ func TestSweep_EmptiedPatchGetsLongestTenuredInterims(t *testing.T) {
 	gone := seedPerson(t, db, "vanishedadmin")
 	goneSeat := seedSeat(t, db, gone, nodeID, "admin", 400)
 	seedProposalBy(t, db, nodeID, gone, 120)
+	seedOccasion(t, db, nodeID, 119)
 
 	// All four are around: the plan says "the three longest-tenured *active*
 	// members", and a member who has not been seen since before the vacate
@@ -261,6 +289,7 @@ func TestSweep_FreezePolicyPromotesNobody(t *testing.T) {
 	gone := seedPerson(t, db, "frozenadmin")
 	seedSeat(t, db, gone, nodeID, "admin", 400)
 	seedProposalBy(t, db, nodeID, gone, 120)
+	seedOccasion(t, db, nodeID, 119)
 	member := seedPerson(t, db, "frozenmember")
 	memberSeat := seedSeat(t, db, member, nodeID, "member", 300)
 
@@ -285,6 +314,7 @@ func TestSweep_SkipsPatchesWithNoRule(t *testing.T) {
 	gone := seedPerson(t, db, "untouchedadmin")
 	seat := seedSeat(t, db, gone, nodeID, "admin", 400)
 	seedProposalBy(t, db, nodeID, gone, 500)
+	seedOccasion(t, db, nodeID, 499)
 
 	SweepInactiveAdmins(n)
 

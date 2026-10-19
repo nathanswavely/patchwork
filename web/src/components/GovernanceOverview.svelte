@@ -395,8 +395,11 @@
     // co-op's only admin held that sentence against the warning in his bell
     // and the absolute in the council block below, and could not tell which
     // of the three was true of him.
+    //
+    // Counted from a proposal, not from the calendar: a patch that raises
+    // none has nobody to warn (docs/adr/2026-10-19-you-cannot-miss-a-meeting-that-never-happened.md).
     if (rules.inactivity_days > 0) {
-      desc += ` An admin who does not vote, propose or comment here for ${rules.inactivity_days} days is warned, and the seat is declared vacant at ${rules.inactivity_days * 2} days.`;
+      desc += ` When a proposal is raised here, an admin who takes no part in governance for ${rules.inactivity_days} days after it is warned, and the seat is declared vacant at ${rules.inactivity_days * 2} days. With no proposals, nobody is warned.`;
     }
 
     return desc;

@@ -49,6 +49,14 @@ describe('a seat, and what takes it away (F-115)', () => {
     expect(overview).not.toContain('may be asked to step down');
     expect(overview).toContain('is warned, and the seat is declared vacant at ${rules.inactivity_days * 2} days');
   });
+
+  // The clock starts at a proposal, so the page says so, and says what a
+  // patch that raises none should expect: nothing.
+  it('counts from a proposal, and says a patch without one warns nobody', () => {
+    expect(overview).toContain('When a proposal is raised here, an admin who takes no part in governance');
+    expect(overview).toContain('With no proposals, nobody is warned.');
+    expect(overview).not.toContain('An admin who does not vote, propose or comment here for');
+  });
 });
 
 describe('consensus, above a button labelled Reject (F-129)', () => {
