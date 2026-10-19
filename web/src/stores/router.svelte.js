@@ -116,11 +116,18 @@ function moreSpecific(a, b) {
 
 /**
  * Navigate to a new path.
+ *
+ * A new page opens at its top. pushState leaves the window where the last
+ * page had it, so without this a page opened from far down a long one
+ * arrived scrolled, clamped to its own bottom, with its tab row off screen.
+ * The same path (a forced reload of it) keeps its place, and back/forward
+ * is handlePopState's, which leaves the browser to restore the position.
  */
 export function navigate(path, options = {}) {
   const [pathname, search] = path.split('?');
   if (pathname === currentPath && !options.force) return;
   window.history.pushState({}, '', path);
+  if (pathname !== currentPath) window.scrollTo(0, 0);
   currentPath = pathname;
   currentQuery = new URLSearchParams(search || '');
   updateParams();

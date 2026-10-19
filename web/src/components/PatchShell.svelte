@@ -364,7 +364,10 @@
      ================================================================ */
   .workspace-nav {
     position: sticky;
-    top: 0;
+    /* Stick under the fixed global bar, not at the viewport's top: at
+       top: 0 the bar (z-index 60) covers the row the moment the page
+       scrolls. */
+    top: 56px;
     margin-top: 56px; /* clear the fixed global bar */
     z-index: 50;
     display: flex;

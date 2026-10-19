@@ -17,6 +17,7 @@ describe('router', () => {
     // Mock history
     window.history.pushState = vi.fn();
     window.history.replaceState = vi.fn();
+    window.scrollTo = vi.fn();
 
     routerModule = await import('../stores/router.svelte.js');
   });
@@ -62,6 +63,26 @@ describe('router', () => {
     routerModule.navigate('/test');
     // Should only push once (second call is a no-op)
     expect(window.history.pushState).toHaveBeenCalledTimes(1);
+  });
+
+  // pushState leaves the window where the last page had it, so a page
+  // opened from far down a long one arrived scrolled with its tab row
+  // under the global bar.
+  it('navigate opens a new page at its top', () => {
+    routerModule.navigate('/admin/review');
+    expect(window.scrollTo).toHaveBeenCalledWith(0, 0);
+  });
+
+  it('a forced navigate to the same path keeps its place', () => {
+    routerModule.navigate('/admin/review');
+    window.scrollTo.mockClear();
+    routerModule.navigate('/admin/review?tab=resolved', { force: true });
+    expect(window.scrollTo).not.toHaveBeenCalled();
+  });
+
+  it('replaceRoute does not scroll', () => {
+    routerModule.replaceRoute('/settings');
+    expect(window.scrollTo).not.toHaveBeenCalled();
   });
 
   it('handles multi-segment params', () => {
