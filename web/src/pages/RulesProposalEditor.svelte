@@ -5,6 +5,7 @@
   import { showToast } from '../stores/toast.svelte.js';
   import StructuredRulesEditor from '../components/StructuredRulesEditor.svelte';
   import StructuredRulesDiff from '../components/StructuredRulesDiff.svelte';
+  import { summarizeRuleChanges } from '../lib/rulesDiff.js';
   import Skeleton from '../components/Skeleton.svelte';
 
   const patch = getContext('patch');
@@ -164,43 +165,27 @@
     proposedRules = newRules;
   }
 
-  // Generate title from changed fields.
-  const TITLE_VALUES = {
-    admin: 'admin decides',
-    majority: 'majority vote',
-    supermajority: 'supermajority vote',
-    consensus: 'consensus',
-    approval_required: 'approval-required',
-    invite_only: 'invite-only',
-  };
-  function titleValue(v) {
-    return TITLE_VALUES[v] || String(v).replace(/_/g, ' ');
-  }
-  function generateTitle() {
-    if (!currentRules || !proposedRules) return 'Update governance rules';
-    const changes = [];
-    if (currentRules.decision_method !== proposedRules.decision_method) {
-      changes.push(`decisions by ${titleValue(proposedRules.decision_method)}`);
-    }
-    if (currentRules.quorum_percent !== proposedRules.quorum_percent) {
-      changes.push(`set quorum to ${proposedRules.quorum_percent}%`);
-    }
-    if (currentRules.default_vote_duration_hours !== proposedRules.default_vote_duration_hours) {
-      const days = Math.round(proposedRules.default_vote_duration_hours / 24);
-      changes.push(`${days}-day voting period`);
-    }
-    if (currentRules.membership_policy !== proposedRules.membership_policy) {
-      changes.push(`${titleValue(proposedRules.membership_policy)} membership`);
-    }
-    if (currentRules.leadership_model !== proposedRules.leadership_model) {
-      changes.push(`${titleValue(proposedRules.leadership_model)} leadership`);
-    }
-    if (changes.length === 0) return 'Update governance rules';
-    return changes.join(', ').replace(/^./, c => c.toUpperCase());
-  }
+  // The prefilled Summary of changes, derived from the same answer the diff
+  // beside it renders (web/src/lib/rulesDiff.js). It used to be generated
+  // here from a list of five fields out of eighteen, so a change to either
+  // venue produced "Update governance rules" over a diff naming both, and
+  // three changes at once produced the name of one of them (F-038). The
+  // value is submitted as `change_summary`, which is the entry the
+  // governance Record keeps, so a summary describing a subset as the whole
+  // is a misfiled act rather than a bad placeholder.
+  //
+  // `suggestedTitle` is only ever written into an empty field or over a
+  // suggestion nobody has edited. Going back to editing, changing something
+  // else and returning refreshes it; a sentence the author typed is theirs
+  // and stays.
+  let suggestedTitle = $state('');
 
   function goToReview() {
-    if (!title) title = generateTitle();
+    const suggestion = summarizeRuleChanges(currentRules, proposedRules);
+    if (!title || title === suggestedTitle) {
+      title = suggestion;
+      suggestedTitle = suggestion;
+    }
     step = 'reviewing';
   }
 
