@@ -22707,7 +22707,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 305,
+          "line": 310,
           "kind": "markup",
           "raw": "(optional)",
           "quote": null
@@ -26263,7 +26263,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 322,
+          "line": 361,
           "kind": "markup",
           "raw": "Events",
           "quote": null
@@ -29015,7 +29015,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 78,
+          "line": 86,
           "kind": "js-string",
           "raw": "No quorum: however few people vote, the result stands.",
           "quote": "'"
@@ -29033,7 +29033,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 81,
+          "line": 89,
           "kind": "js-string",
           "raw": "Nobody can vote here today, so no quorum can be met and a proposal would close with nothing decided.",
           "quote": "'"
@@ -29051,7 +29051,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 86,
+          "line": 94,
           "kind": "js-string",
           "raw": "One person can vote here today, so that single ballot is the whole quorum. An abstention counts toward it.",
           "quote": "'"
@@ -29069,7 +29069,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 92,
+          "line": 100,
           "kind": "js-string",
           "raw": "Everybody votes from the day they join.",
           "quote": "'"
@@ -29087,7 +29087,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 188,
+          "line": 227,
           "kind": "markup",
           "raw": "Decision Method",
           "quote": null
@@ -29112,7 +29112,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 201,
+          "line": 240,
           "kind": "markup",
           "raw": "Quorum (%)",
           "quote": null
@@ -29130,7 +29130,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 209,
+          "line": 248,
           "kind": "markup",
           "raw": "Default Voting Period",
           "quote": null
@@ -29155,7 +29155,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 218,
+          "line": 257,
           "kind": "markup",
           "raw": "Amendment Threshold",
           "quote": null
@@ -29180,7 +29180,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 229,
+          "line": 268,
           "kind": "markup",
           "raw": "Auto-Apply Amendments",
           "quote": null
@@ -29205,7 +29205,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 239,
+          "line": 278,
           "kind": "markup",
           "raw": "People don't vote on proposals about themselves",
           "quote": null
@@ -29223,7 +29223,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 246,
+          "line": 285,
           "kind": "markup",
           "raw": "Someone nominated for admin sits their own vote out. They stay in the\n          electorate for everything else.",
           "quote": null
@@ -29244,7 +29244,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 254,
+          "line": 293,
           "kind": "markup",
           "raw": "Where admins are chosen",
           "quote": null
@@ -29276,14 +29276,14 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 256,
+          "line": 295,
           "kind": "markup",
           "raw": "In Patchwork",
           "quote": null
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 271,
+          "line": 310,
           "kind": "markup",
           "raw": "In Patchwork",
           "quote": null
@@ -29308,14 +29308,14 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 257,
+          "line": 296,
           "kind": "markup",
           "raw": "Somewhere else, recorded here",
           "quote": null
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 272,
+          "line": 311,
           "kind": "markup",
           "raw": "Somewhere else, recorded here",
           "quote": null
@@ -29340,7 +29340,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 261,
+          "line": 300,
           "kind": "markup",
           "raw": "Pick the second if your board is elected at a meeting, on paper, or in\n        another tool. Patchwork will stop conducting leadership changes and let\n        an admin record what was decided.",
           "quote": null
@@ -29361,7 +29361,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 269,
+          "line": 308,
           "kind": "markup",
           "raw": "Where proposals are decided",
           "quote": null
@@ -29393,7 +29393,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 276,
+          "line": 315,
           "kind": "markup",
           "raw": "Pick the second if your members decide at meetings. Proposals stay open\n        for discussion and lose the vote buttons, and an admin records the\n        adopted text on the charter afterwards. Rules changes stay a direct\n        change an admin applies.",
           "quote": null
@@ -29411,7 +29411,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 285,
+          "line": 324,
           "kind": "markup",
           "raw": "Succession Policy",
           "quote": null
@@ -29436,7 +29436,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 298,
+          "line": 337,
           "kind": "markup",
           "raw": "Minimum Voting Tenure",
           "quote": null
@@ -29454,7 +29454,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 311,
+          "line": 350,
           "kind": "markup",
           "raw": "Membership Policy",
           "quote": null
@@ -29486,7 +29486,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 320,
+          "line": 359,
           "kind": "markup",
           "raw": "Follower Permissions",
           "quote": null
@@ -29518,7 +29518,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 323,
+          "line": 362,
           "kind": "markup",
           "raw": "Off: followers see this patch's public events only.",
           "quote": null
@@ -29536,7 +29536,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 324,
+          "line": 363,
           "kind": "markup",
           "raw": "Proposals",
           "quote": null
@@ -29561,7 +29561,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 325,
+          "line": 364,
           "kind": "markup",
           "raw": "Charters",
           "quote": null
@@ -29579,7 +29579,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 326,
+          "line": 365,
           "kind": "markup",
           "raw": "Members",
           "quote": null
@@ -43076,7 +43076,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 290,
+          "line": 295,
           "kind": "markup",
           "raw": "Your changes",
           "quote": null
@@ -43101,7 +43101,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 300,
+          "line": 305,
           "kind": "markup",
           "raw": "Summary of changes",
           "quote": null
@@ -43144,7 +43144,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 306,
+          "line": 311,
           "kind": "attr:placeholder",
           "raw": "Help others understand why this change matters.",
           "quote": "\""
@@ -57348,7 +57348,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 282,
+          "line": 287,
           "kind": "markup",
           "raw": "Changes",
           "quote": null

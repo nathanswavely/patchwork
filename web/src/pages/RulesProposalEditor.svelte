@@ -261,8 +261,13 @@
 
     {#if step === 'editing'}
       <div class="editor-card">
+        <!-- Both halves of the change: the stored rules it is measured
+             against, and the change in progress the form opens on. This step
+             is unmounted while the review step is up, so the pending change
+             has to come back in through a prop. -->
         <StructuredRulesEditor
           currentRules={currentRules}
+          proposedRules={proposedRules}
           electorate={electorate}
           onSave={handleRulesChange}
         />
