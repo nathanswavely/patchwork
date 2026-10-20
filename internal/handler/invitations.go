@@ -180,6 +180,7 @@ func InviteMember(db *database.DB) http.HandlerFunc {
 			ActorID:  user.ID,
 			TargetID: targetID,
 			Title:    "You're invited to join " + nodeName,
+			Body:     personName(user) + " invited you.",
 			Link:     weblink.Patch(nodeSlug),
 		})
 
@@ -214,6 +215,7 @@ func acceptInvitedRow(db *database.DB, r *http.Request, user *model.User, memID,
 		NodeName: nodeName,
 		ActorID:  user.ID,
 		Title:    "New member joined " + nodeName,
+		Body:     personName(user) + " joined, accepting an invitation.",
 		Link:     weblink.PatchMembers(nodeSlug),
 	})
 	return nil
