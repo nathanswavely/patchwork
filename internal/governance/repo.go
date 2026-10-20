@@ -368,6 +368,46 @@ func GetDocumentAtVersion(dataDir, nodeID, filename, commitSHA string) (string, 
 	return content, nil
 }
 
+// GetDocumentBefore returns a file's content as it stood just before a
+// commit: at its first parent. For the commit a merge produced that is the
+// main branch the moment before the merge (MergeBranch puts main first, and a
+// fast-forward lands the branch commit, whose only parent is main); for an
+// amendment branch's commit it is main when the branch was cut. Either way it
+// is the text the change was made against, which the live document stops
+// being the moment the change applies.
+//
+// A file the parent does not have was created by the commit, so its prior
+// content is empty rather than an error. A commit the repo does not hold
+// (a repo rebuilt from rows, docs/adr/084) and a root commit are errors: no
+// prior text can be said.
+func GetDocumentBefore(dataDir, nodeID, filename, commitSHA string) (string, error) {
+	repo, err := openBare(NodeRepoPath(dataDir, nodeID))
+	if err != nil {
+		return "", fmt.Errorf("open repo: %w", err)
+	}
+
+	commit, err := repo.CommitObject(plumbing.NewHash(commitSHA))
+	if err != nil {
+		return "", fmt.Errorf("commit %s: %w", commitSHA, err)
+	}
+	if commit.NumParents() == 0 {
+		return "", fmt.Errorf("commit %s has no parent", commitSHA)
+	}
+	parent, err := commit.Parent(0)
+	if err != nil {
+		return "", fmt.Errorf("parent of %s: %w", commitSHA, err)
+	}
+
+	file, err := parent.File(filename)
+	if err == object.ErrFileNotFound {
+		return "", nil
+	}
+	if err != nil {
+		return "", fmt.Errorf("file %s before %s: %w", filename, commitSHA, err)
+	}
+	return file.Contents()
+}
+
 // GetHistory returns the commit log for a specific file (most recent first).
 func GetHistory(dataDir, nodeID, filename string) ([]CommitInfo, error) {
 	repo, err := openBare(NodeRepoPath(dataDir, nodeID))

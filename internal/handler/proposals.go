@@ -1499,6 +1499,30 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			if !docTextHidden {
 				currentContent, _ := governance.GetDocument(governance.GetDataDir(), p.NodeID, p.TargetDoc)
 				result["current_doc_content"] = currentContent
+				// A settled proposal's diff is against the text it was made
+				// against, not the live one. Applied, the live text *is* the
+				// proposed body, and a diff against it said "No changes" for a
+				// change that changed something; closed unapplied, the live
+				// text may have moved since, and the diff would describe a
+				// proposal nobody made. Still pending (open, or approved and
+				// waiting on an admin), the live text is what applying would
+				// change, so it stays the comparison.
+				if p.Status == "rejected" || p.Status == "withdrawn" || p.State == "in_effect" {
+					found := false
+					if p.GitSHA != "" {
+						if prior, err := governance.GetDocumentBefore(governance.GetDataDir(), p.NodeID, p.TargetDoc, p.GitSHA); err == nil {
+							result["prior_doc_content"] = prior
+							found = true
+						}
+					}
+					if !found {
+						// No commit to read it from — a repo rebuilt from rows
+						// (docs/adr/084) holds none of the old ones. Said
+						// rather than papered over with the live text, which
+						// is the wrong answer this field exists to replace.
+						result["prior_doc_unavailable"] = true
+					}
+				}
 			}
 			// Whether this document was adopted elsewhere since the draft was
 			// written, which makes the diff below a comparison against
