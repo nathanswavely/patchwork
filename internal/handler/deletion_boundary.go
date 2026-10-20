@@ -95,8 +95,9 @@ func deletionRules() map[string]deletionRule {
 		"invite_links":                {kept, "instance-scoped and single-use (docs/adr/001); created_by is provenance. NOTE: this records what already happens rather than a decision anybody made — an unspent link outliving the admin who issued it may deserve a second look, and this boundary is where that argument belongs."},
 
 		// Standing offers, which an absent person cannot honour.
-		"election_candidates": {purged, "a candidacy is an offer to serve, and a tombstone must not win a seat."},
-		"claim_requests":      {purged, "a pending claim asks an admin to hand a patch to somebody who will not receive it. Settled claims are a record of a review and are kept, minus the address they carried."},
+		"election_candidates":  {purged, "a candidacy is an offer to serve, and a tombstone must not win a seat."},
+		"interim_admin_offers": {purged, "a question addressed to the person, and an account that no longer exists cannot answer it or step in."},
+		"claim_requests":       {purged, "a pending claim asks an admin to hand a patch to somebody who will not receive it. Settled claims are a record of a review and are kept, minus the address they carried."},
 
 		// Acts of record. The person becomes a tombstone reference and the
 		// row stays: this is the whole design (docs/adr/086).
@@ -141,6 +142,11 @@ func deletionPurges() []string {
 		`DELETE FROM remote_follows WHERE user_id = ?`,
 		`DELETE FROM label_stewards WHERE user_id = ?`,
 		`DELETE FROM election_candidates WHERE user_id = ?`,
+		// An interim admin offer is a question addressed to the person, and
+		// an account that no longer exists cannot answer it or serve (docs/adr/
+		// 2026-10-19-an-interim-admin-is-asked-first.md), for the reason a
+		// standing candidacy goes above.
+		`DELETE FROM interim_admin_offers WHERE user_id = ?`,
 		`DELETE FROM ap_followers WHERE local_actor_type = 'user' AND local_actor_id = ?`,
 		`DELETE FROM claim_requests WHERE user_id = ? AND status = 'pending'`,
 		// Shares first, though the FK would cascade them: this list is the

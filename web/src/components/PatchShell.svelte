@@ -56,10 +56,12 @@
   // The intro address, present only for a viewer who may enter it
   // (docs/adr/2026-10-16-a-page-made-for-someone-tells-them-so.md).
   let contactEmail = $state('');
+  let contactUrl = $state('');
 
   // Expose to child pages via context
   const patchContext = $derived({
     contactEmail,
+    contactUrl,
     node,
     slug,
     isMember,
@@ -138,6 +140,7 @@
       isBanned = data.is_banned || false;
       verificationDomain = data.verification_domain || '';
       contactEmail = data.contact_email || '';
+      contactUrl = data.contact_url || '';
       setPatchName(node?.name || slug);
     } catch (e) {
       error = patchLoadError(e);

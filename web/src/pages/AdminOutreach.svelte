@@ -13,6 +13,7 @@
   import { navigate } from '../stores/router.svelte.js';
   import Skeleton from '../components/Skeleton.svelte';
   import ErrorState from '../components/ErrorState.svelte';
+  import ToggleSwitch from '../components/ToggleSwitch.svelte';
   import { ArrowCounterClockwise } from 'phosphor-svelte';
 
   let loading = $state(true);
@@ -21,7 +22,7 @@
   let active = $state('patches');
 
   // Editable copies of the template parts.
-  let draft = $state({ subject: '', opener: '', calendar: {}, signoff: '' });
+  let draft = $state({ subject: '', opener: '', calendar: {}, signoff: '', dm_opener: '' });
   let saving = $state(false);
   let resetting = $state(false);
   let togglingEnabled = $state(false);
@@ -48,6 +49,7 @@
         opener: p.opener || '',
         calendar: { ...(p.calendar || {}) },
         signoff: p.signoff || '',
+        dm_opener: p.dm_opener || '',
       };
     } catch (e) {
       error = e.message;
@@ -58,7 +60,7 @@
   let dirty = $derived.by(() => {
     const p = data?.template?.parts;
     if (!p) return false;
-    if (draft.subject !== p.subject || draft.opener !== p.opener || draft.signoff !== p.signoff) return true;
+    if (draft.subject !== p.subject || draft.opener !== p.opener || draft.signoff !== p.signoff || draft.dm_opener !== p.dm_opener) return true;
     return Object.keys(situationLabels).some((k) => (draft.calendar[k] || '') !== (p.calendar?.[k] || ''));
   });
 
@@ -104,6 +106,10 @@
     navigate(`/patches/${slug}/settings/intro`);
   }
 
+  function linkHost(href) {
+    try { return new URL(href).host.replace(/^www\./, ''); } catch { return href; }
+  }
+
   function when(iso) {
     if (!iso) return '';
     return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -116,7 +122,7 @@
   <header class="page-head">
     <h1>Outreach</h1>
     <p class="lt-muted">
-      A page made for someone should tell them so. Each unclaimed patch can get one intro, sent by you after you have read it, to an address a person entered. Nothing here sends on its own.
+      A page made for someone should tell them so. Each unclaimed patch can get one intro, sent by you after you have read it, to an address or a message link a person entered. Nothing here sends on its own.
     </p>
   </header>
 
@@ -126,12 +132,12 @@
     <ErrorState message={error} retry={load} />
   {:else}
     <div class="switch-row">
-      <label class="lt-label">
-        <input type="checkbox" checked={data.enabled} disabled={togglingEnabled} onchange={(e) => setEnabled(e.currentTarget.checked)} />
-        Intro emails on for this quilt
+      <label class="lt-check">
+        <ToggleSwitch checked={data.enabled} disabled={togglingEnabled} onchange={(e) => setEnabled(e.currentTarget.checked)} />
+        <span>Intros on for this quilt</span>
       </label>
       {#if !data.smtp}
-        <span class="lt-muted">No email relay is configured, so intros are copied out and sent by hand.</span>
+        <span class="lt-muted">No email relay is configured, so email intros are copied out and sent by hand, as messages on a link always are.</span>
       {/if}
     </div>
 
@@ -150,14 +156,18 @@
       {:else}
         <table class="backlog">
           <thead>
-            <tr><th>Patch</th><th>Calendar</th><th>Address</th><th>Intro</th></tr>
+            <tr><th>Patch</th><th>Calendar</th><th>Reach them</th><th>Intro</th></tr>
           </thead>
           <tbody>
             {#each data.patches as p (p.id)}
               <tr>
                 <td><a href="/patches/{p.slug}/settings/intro" onclick={(e) => openPatch(e, p.slug)}>{p.name}</a></td>
                 <td class="lt-muted">{p.own_source ? 'own site' : p.aggregator_source ? 'aggregator' : p.website ? 'not read' : 'no site'}</td>
-                <td class="lt-muted">{p.contact_email || '—'}</td>
+                <td class="lt-muted">
+                  {#if p.contact_email}<div>{p.contact_email}</div>{/if}
+                  {#if p.contact_url}<div>{linkHost(p.contact_url)}</div>{/if}
+                  {#if !p.contact_email && !p.contact_url}—{/if}
+                </td>
                 <td class="lt-muted">
                   {#if p.sends}
                     sent {when(p.last_sent_at)}{p.sends > 1 ? ` (${p.sends})` : ''}
@@ -190,6 +200,10 @@
 
       <label class="lt-label" for="tpl-signoff">Sign-off</label>
       <textarea class="doc-editor" id="tpl-signoff" bind:value={draft.signoff} rows="2"></textarea>
+
+      <label class="lt-label" for="tpl-dm-opener">Opener for a message on a link</label>
+      <textarea class="doc-editor" id="tpl-dm-opener" bind:value={draft.dm_opener} rows="5" spellcheck="true"></textarea>
+      <p class="lt-muted parts-hint">Used instead of the subject, opener and sign-off when the intro is a message on a link such as Instagram. The first two lines are all a message preview shows. The calendar paragraph follows it as in the email; the claim link is the ordinary claim page, never the one-click one.</p>
 
       <div class="doc-actions">
         <button class="lt-btn lt-btn-primary" onclick={saveTemplate} disabled={saving || !dirty}>
@@ -232,11 +246,6 @@
     flex-wrap: wrap;
     margin-bottom: 16px;
     font-size: 0.9rem;
-  }
-  .switch-row .lt-label {
-    display: inline-flex;
-    gap: 8px;
-    align-items: center;
   }
   .doc-tabs {
     display: flex;
