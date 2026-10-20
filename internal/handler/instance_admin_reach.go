@@ -56,6 +56,9 @@ const (
 	// reachSpeech: commenting, kept deliberately (proposals.go's
 	// CreateProposal comment). Speech is not authority over a patch.
 	reachSpeech
+	// reachRecordsIt: grants nothing. Asks whether the instance role is what
+	// let an act through, so the audit entry can say so (audit_reach.go).
+	reachRecordsIt
 )
 
 // instanceAdminReach is every function in this package that compares a
@@ -74,6 +77,11 @@ var instanceAdminReach = map[string]struct {
 }{
 	"account_deletion.go:DeleteMyAccount": {reachInstanceSurface, 1, true,
 		"Refuses the last instance admin's own deletion. About the instance's roster, never about a patch."},
+
+	"audit_reach.go:actingWithoutRole": {reachRecordsIt, 1, true,
+		"Marks an audit entry acting_without_role when an instance admin's act on a patch went through on " +
+			"the instance role alone. It refuses nothing and allows nothing; it is how the reach stops being " +
+			"silent while #286 waits (docs/adr/2026-10-20-an-act-the-instance-role-let-through-says-so.md)."},
 
 	"aggregators.go:crosswalkAccess": {reachCustodyUnclaimed, 2, true,
 		"The one site that already states ADR 115's rule in full, and states it better than the ADR does: " +

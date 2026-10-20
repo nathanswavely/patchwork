@@ -188,7 +188,7 @@ func BulkCreateEvents(db *database.DB) http.HandlerFunc {
 		}
 
 		auth.LogAuditEventJSON(db, user.ID, "event.bulk_upload", "node", nodeID,
-			map[string]any{"created": created, "skipped": skipped}, clientIP(r))
+			reachDetail(map[string]any{"created": created, "skipped": skipped}, actingWithoutRole(db, user, nodeID)), clientIP(r))
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]int{"created": created, "skipped": skipped})

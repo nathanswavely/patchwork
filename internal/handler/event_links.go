@@ -184,7 +184,8 @@ func CreateEventLink(db *database.DB, cfg *config.Config) http.HandlerFunc {
 				http.Error(w, `{"error":"already mentioned"}`, http.StatusConflict)
 				return
 			}
-			auth.LogAuditEvent(db, user.ID, "event.mention_add", "event", eventID, "{}", clientIP(r))
+			auth.LogAuditEventJSON(db, user.ID, "event.mention_add", "event", eventID,
+				reachDetail(nil, actingWithoutRole(db, user, ownerNodeID)), clientIP(r))
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusCreated)
 			json.NewEncoder(w).Encode(model.EventMention{ID: id, EventID: eventID, Host: remoteHost, Slug: remoteSlug, Name: remoteSlug})
@@ -250,7 +251,12 @@ func CreateEventLink(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			http.Error(w, `{"error":"link already exists"}`, http.StatusConflict)
 			return
 		}
-		auth.LogAuditEvent(db, user.ID, "event.link_request", "event", eventID, `{"node_id":"`+targetNodeID+`"}`, clientIP(r))
+		// Either side spoken for by the instance role alone is the reach, and
+		// when it is both, the handshake above confirmed itself with nobody
+		// on either patch agreeing.
+		auth.LogAuditEventJSON(db, user.ID, "event.link_request", "event", eventID,
+			reachDetail(map[string]any{"node_id": targetNodeID},
+				actingWithoutRole(db, user, ownerNodeID) || actingWithoutRole(db, user, targetNodeID)), clientIP(r))
 
 		var ownerSlug string
 		db.QueryRow("SELECT slug FROM nodes WHERE id = ?", ownerNodeID).Scan(&ownerSlug)
@@ -408,7 +414,8 @@ func ConfirmEventLink(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"failed to confirm link"}`, http.StatusInternalServerError)
 			return
 		}
-		auth.LogAuditEvent(db, user.ID, "event.link_confirm", "event", eventID, `{"node_id":"`+linkedNodeID+`"}`, clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "event.link_confirm", "event", eventID,
+			reachDetail(map[string]any{"node_id": linkedNodeID}, actingWithoutRole(db, user, confirmingNodeID)), clientIP(r))
 
 		var ownerSlug string
 		db.QueryRow("SELECT slug FROM nodes WHERE id = ?", ownerNodeID).Scan(&ownerSlug)
@@ -448,7 +455,9 @@ func RemoveEventLink(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"failed to remove link"}`, http.StatusInternalServerError)
 			return
 		}
-		auth.LogAuditEvent(db, user.ID, "event.link_remove", "event", eventID, `{"node_id":"`+linkedNodeID+`"}`, clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "event.link_remove", "event", eventID,
+			reachDetail(map[string]any{"node_id": linkedNodeID},
+				actingWithoutRole(db, user, ownerNodeID) && actingWithoutRole(db, user, linkedNodeID)), clientIP(r))
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
@@ -479,7 +488,8 @@ func RemoveEventMention(db *database.DB) http.HandlerFunc {
 		}
 
 		db.Exec(`DELETE FROM event_mentions WHERE id = ?`, mentionID)
-		auth.LogAuditEvent(db, user.ID, "event.mention_remove", "event", eventID, "{}", clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "event.mention_remove", "event", eventID,
+			reachDetail(nil, actingWithoutRole(db, user, ownerNodeID)), clientIP(r))
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})

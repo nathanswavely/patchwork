@@ -1407,16 +1407,17 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 		// and the values here run to whole descriptions and appearance blobs;
 		// an audit row is not the place to copy them. Sorted so two edits of
 		// the same fields read the same.
-		auth.LogAuditEvent(db, user.ID, "node.update", "node", nodeID, changedFields(req, allowedFields), clientIP(r))
+		without := actingWithoutRole(db, user, nodeID)
+		auth.LogAuditEventJSON(db, user.ID, "node.update", "node", nodeID,
+			reachDetail(changedFields(req, allowedFields), without), clientIP(r))
 		if zonePlan != nil {
 			// Its own entry, because "node.update" with an empty detail
 			// blob cannot tell a patch that renamed itself from one that
 			// moved four rehearsals by five hours.
-			detail, _ := json.Marshal(map[string]interface{}{
+			auth.LogAuditEventJSON(db, user.ID, "node.timezone", "node", nodeID, reachDetail(map[string]any{
 				"from": zonePlan.From, "to": zonePlan.To, "mode": zonePlan.Mode,
 				"events_affected": zonePlan.EventsAffected, "events_moved": zonePlan.EventsMoved,
-			})
-			auth.LogAuditEvent(db, user.ID, "node.timezone", "node", nodeID, string(detail), clientIP(r))
+			}, without), clientIP(r))
 		}
 
 		var n model.Node
@@ -1483,7 +1484,8 @@ func DeleteNode(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		auth.LogAuditEvent(db, user.ID, "node.delete", "node", nodeID, "{}", clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "node.delete", "node", nodeID,
+			reachDetail(nil, actingWithoutRole(db, user, nodeID)), clientIP(r))
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
@@ -1495,7 +1497,7 @@ func DeleteNode(db *database.DB) http.HandlerFunc {
 //
 // Only allowed ones, because an unknown key is ignored by the update and
 // recording it would claim an edit that never happened.
-func changedFields(req map[string]interface{}, allowed map[string]bool) string {
+func changedFields(req map[string]interface{}, allowed map[string]bool) map[string]any {
 	var names []string
 	for k := range req {
 		if allowed[k] {
@@ -1503,14 +1505,10 @@ func changedFields(req map[string]interface{}, allowed map[string]bool) string {
 		}
 	}
 	if len(names) == 0 {
-		return "{}"
+		return nil
 	}
 	sort.Strings(names)
-	detail, err := json.Marshal(map[string][]string{"fields": names})
-	if err != nil {
-		return "{}"
-	}
-	return string(detail)
+	return map[string]any{"fields": names}
 }
 
 // writeNodeNotFound answers a slug this endpoint will not serve.

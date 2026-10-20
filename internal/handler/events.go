@@ -596,7 +596,8 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			return
 		}
 
-		auth.LogAuditEventJSON(db, user.ID, "event.create", "event", id, map[string]any{"status": status}, clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "event.create", "event", id, reachDetail(map[string]any{"status": status},
+			actingWithoutRole(db, user, req.NodeID, "member", "admin")), clientIP(r))
 
 		var e model.Event
 		db.QueryRow(
@@ -813,7 +814,8 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		auth.LogAuditEvent(db, user.ID, "event.update", "event", eventID, "{}", clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "event.update", "event", eventID,
+			reachDetail(nil, !isCreator && actingWithoutRole(db, user, nodeID)), clientIP(r))
 
 		var e model.Event
 		db.QueryRow(
@@ -900,7 +902,8 @@ func DeleteEvent(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		auth.LogAuditEvent(db, user.ID, "event.delete", "event", eventID, "{}", clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "event.delete", "event", eventID,
+			reachDetail(nil, user.ID != createdBy && actingWithoutRole(db, user, nodeID)), clientIP(r))
 
 		// A cancellation notifies nobody, and refusing this is the point
 		// (docs/adr/093). It is the strongest case for an exception, so

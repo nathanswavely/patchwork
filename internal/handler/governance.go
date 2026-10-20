@@ -265,7 +265,8 @@ func CreateGovernanceDoc(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		auth.LogAuditEvent(db, user.ID, "governance.create", "governance_doc", id, "{}", clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "governance.create", "governance_doc", id,
+			reachDetail(nil, actingWithoutRole(db, user, nodeID)), clientIP(r))
 
 		var doc model.GovernanceDoc
 		db.QueryRow(governanceDocColumns+` WHERE id = ?`, id).Scan(
@@ -520,7 +521,8 @@ func UpdateGovernanceDoc(db *database.DB) http.HandlerFunc {
 		if !contentChanged {
 			action = "governance.visibility"
 		}
-		auth.LogAuditEvent(db, user.ID, action, "governance_doc", docID, `{"visibility":"`+newVisibility+`"}`, clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, action, "governance_doc", docID,
+			reachDetail(map[string]any{"visibility": newVisibility}, actingWithoutRole(db, user, nodeID)), clientIP(r))
 
 		var doc model.GovernanceDoc
 		db.QueryRow(governanceDocColumns+` WHERE id = ?`, docID).Scan(

@@ -1744,7 +1744,8 @@ func WithdrawProposal(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		auth.LogAuditEvent(db, user.ID, "proposal.withdraw", "proposal", proposalID, "{}", clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "proposal.withdraw", "proposal", proposalID,
+			reachDetail(nil, !isAuthor && actingWithoutRole(db, user, nodeID)), clientIP(r))
 
 		var nodeSlug, nodeName, proposalTitle string
 		db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", nodeID).Scan(&nodeSlug, &nodeName)
@@ -1856,7 +1857,8 @@ func UpdateProposal(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		auth.LogAuditEvent(db, user.ID, "proposal.update", "proposal", proposalID, "{}", clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "proposal.update", "proposal", proposalID,
+			reachDetail(nil, !isAuthor && actingWithoutRole(db, user, nodeID)), clientIP(r))
 
 		var p model.Proposal
 		db.QueryRow(

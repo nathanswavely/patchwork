@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
 	"sort"
 	"strings"
@@ -147,6 +148,7 @@ func TestEveryRouteAnInstanceAdminReachesIsDeclared(t *testing.T) {
 	steward := stewardSession(t, f)
 
 	reached := map[string]string{}
+	var unmarked []string
 	var walked int
 	for _, rt := range f.routes {
 		switch rt.Method {
@@ -180,7 +182,11 @@ func TestEveryRouteAnInstanceAdminReachesIsDeclared(t *testing.T) {
 		walked++
 
 		outsiderCode, outsiderBody := f.call(t, rt, f.outsiderToken)
+		before := lastAuditRow(t, f)
 		stewardCode, stewardBody := f.call(t, rt, steward)
+		if rt.Method != http.MethodGet {
+			unmarked = append(unmarked, unmarkedAuditEntries(t, f, before, key)...)
+		}
 
 		switch {
 		case refused(outsiderCode) && !refused(stewardCode):
@@ -238,8 +244,64 @@ func TestEveryRouteAnInstanceAdminReachesIsDeclared(t *testing.T) {
 			strings.Join(stale, "\n  "))
 	}
 
+	sort.Strings(unmarked)
+	if len(unmarked) > 0 {
+		t.Errorf("audit entries an instance admin holding no role wrote without acting_without_role:\n  %s\n\n"+
+			"Every act on a patch that the instance role let through says so in its audit entry "+
+			"(docs/adr/2026-10-20-an-act-the-instance-role-let-through-says-so.md). Wrap the entry's payload "+
+			"in reachDetail with actingWithoutRole, or, if the entry is about no patch at all, name the "+
+			"action in auditAboutNoPatch.",
+			strings.Join(unmarked, "\n  "))
+	}
+
 	t.Logf("docs/adr/115: walked %d routes; an instance admin holding no role reaches %d, of which %d are reaches issue #286 removes from a held patch",
 		walked, len(reached), removable)
+}
+
+// auditAboutNoPatch are audit actions an instance admin may write from a
+// route this walk reaches that are about the instance, not a patch, so there
+// is no patch role they were acting without.
+var auditAboutNoPatch = map[string]string{
+	"invite.generate": "an invitation to the instance (POST /api/v1/auth/invite-link)",
+}
+
+func lastAuditRow(t *testing.T, f *routeFixture) int64 {
+	t.Helper()
+	var rowid int64
+	if err := f.db.QueryRow(`SELECT COALESCE(MAX(rowid), 0) FROM audit_log`).Scan(&rowid); err != nil {
+		t.Fatalf("reading audit_log: %v", err)
+	}
+	return rowid
+}
+
+// unmarkedAuditEntries returns the entries the steward wrote after rowid that
+// do not carry the acting_without_role mark. The steward holds no role
+// anywhere, so every act of theirs on a patch went through on the instance
+// role and every entry about one should say so.
+func unmarkedAuditEntries(t *testing.T, f *routeFixture, after int64, route string) []string {
+	t.Helper()
+	rows, err := f.db.Query(
+		`SELECT a.action, a.metadata FROM audit_log a JOIN users u ON u.id = a.user_id
+		 WHERE a.rowid > ? AND u.username = 'steward'`, after)
+	if err != nil {
+		t.Fatalf("reading audit_log: %v", err)
+	}
+	defer rows.Close()
+	var out []string
+	for rows.Next() {
+		var action, metadata string
+		if err := rows.Scan(&action, &metadata); err != nil {
+			t.Fatalf("scanning audit_log: %v", err)
+		}
+		if _, ok := auditAboutNoPatch[action]; ok {
+			continue
+		}
+		var detail map[string]any
+		if json.Unmarshal([]byte(metadata), &detail) != nil || detail["acting_without_role"] != true {
+			out = append(out, route+": "+action+" "+metadata)
+		}
+	}
+	return out
 }
 
 // stewardSession adds an instance admin who holds no role anywhere and

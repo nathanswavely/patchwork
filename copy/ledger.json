@@ -4243,14 +4243,14 @@
         },
         {
           "file": "internal/handler/comments.go",
-          "line": 304,
+          "line": 310,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/comments.go",
-          "line": 418,
+          "line": 425,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4278,7 +4278,7 @@
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 460,
+          "line": 463,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4306,7 +4306,7 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 706,
+          "line": 707,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4320,7 +4320,7 @@
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 435,
+          "line": 436,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4369,7 +4369,7 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 905,
+          "line": 909,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4481,7 +4481,7 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1803,
+          "line": 1804,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4793,7 +4793,7 @@
         },
         {
           "file": "internal/handler/aggregators.go",
-          "line": 658,
+          "line": 659,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4912,21 +4912,21 @@
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 237,
+          "line": 238,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 274,
+          "line": 276,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 439,
+          "line": 442,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4975,14 +4975,14 @@
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 303,
+          "line": 304,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 667,
+          "line": 669,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -5052,7 +5052,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1468,
+          "line": 1469,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -5485,14 +5485,14 @@
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 464,
+          "line": 467,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 797,
+          "line": 798,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -5506,7 +5506,7 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1843,
+          "line": 1844,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -5910,21 +5910,21 @@
         },
         {
           "file": "internal/handler/aggregators.go",
-          "line": 662,
+          "line": 663,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/aggregators.go",
-          "line": 726,
+          "line": 727,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/comments.go",
-          "line": 358,
+          "line": 364,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -5945,28 +5945,28 @@
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 241,
+          "line": 242,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 278,
+          "line": 280,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 340,
+          "line": 342,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 443,
+          "line": 446,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -5994,14 +5994,14 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 700,
+          "line": 701,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 876,
+          "line": 878,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -6022,7 +6022,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1474,
+          "line": 1475,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -6085,7 +6085,7 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1786,
+          "line": 1787,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -6283,14 +6283,14 @@
       "occurrences": [
         {
           "file": "internal/handler/aggregators.go",
-          "line": 675,
+          "line": 676,
           "kind": "go-error-body",
           "raw": "failed to list holds",
           "quote": null
         },
         {
           "file": "internal/handler/aggregators.go",
-          "line": 686,
+          "line": 687,
           "kind": "go-error-body",
           "raw": "failed to list holds",
           "quote": null
@@ -6308,7 +6308,7 @@
       "occurrences": [
         {
           "file": "internal/handler/aggregators.go",
-          "line": 711,
+          "line": 712,
           "kind": "go-error-body",
           "raw": "decision must be same or different",
           "quote": null
@@ -6326,7 +6326,7 @@
       "occurrences": [
         {
           "file": "internal/handler/aggregators.go",
-          "line": 722,
+          "line": 723,
           "kind": "go-error-body",
           "raw": "hold not found",
           "quote": null
@@ -6344,7 +6344,7 @@
       "occurrences": [
         {
           "file": "internal/handler/aggregators.go",
-          "line": 735,
+          "line": 736,
           "kind": "go-error-body",
           "raw": "failed to record decision",
           "quote": null
@@ -6362,7 +6362,7 @@
       "occurrences": [
         {
           "file": "internal/handler/aggregators.go",
-          "line": 749,
+          "line": 750,
           "kind": "go-error-body",
           "raw": "this listing is no longer in the feed",
           "quote": null
@@ -6380,7 +6380,7 @@
       "occurrences": [
         {
           "file": "internal/handler/aggregators.go",
-          "line": 764,
+          "line": 765,
           "kind": "go-error-body",
           "raw": "failed to create event",
           "quote": null
@@ -6405,7 +6405,7 @@
       "occurrences": [
         {
           "file": "internal/handler/aggregators.go",
-          "line": 770,
+          "line": 771,
           "kind": "go-error-body",
           "raw": "failed to clear hold",
           "quote": null
@@ -6670,7 +6670,7 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 855,
+          "line": 857,
           "kind": "go-error-body",
           "raw": "event id required",
           "quote": null
@@ -6702,14 +6702,14 @@
         },
         {
           "file": "internal/handler/event_links.go",
-          "line": 372,
+          "line": 378,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 332,
+          "line": 334,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
@@ -6744,21 +6744,21 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 661,
+          "line": 662,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 868,
+          "line": 870,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 899,
+          "line": 901,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
@@ -6857,14 +6857,14 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1778,
+          "line": 1779,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1888,
+          "line": 1890,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
@@ -6914,49 +6914,49 @@
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 374,
+          "line": 375,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 380,
+          "line": 381,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 419,
+          "line": 420,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 577,
+          "line": 579,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 582,
+          "line": 584,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 630,
+          "line": 632,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 634,
+          "line": 636,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
@@ -8613,14 +8613,14 @@
         },
         {
           "file": "internal/handler/comments.go",
-          "line": 406,
+          "line": 413,
           "kind": "go-error-body",
           "raw": "must be member of node",
           "quote": null
         },
         {
           "file": "internal/handler/comments.go",
-          "line": 460,
+          "line": 467,
           "kind": "go-error-body",
           "raw": "must be member of node",
           "quote": null
@@ -8652,14 +8652,14 @@
         },
         {
           "file": "internal/handler/comments.go",
-          "line": 410,
+          "line": 417,
           "kind": "go-error-body",
           "raw": "this patch does not include followers in its proposals",
           "quote": null
         },
         {
           "file": "internal/handler/comments.go",
-          "line": 464,
+          "line": 471,
           "kind": "go-error-body",
           "raw": "this patch does not include followers in its proposals",
           "quote": null
@@ -8684,7 +8684,7 @@
         },
         {
           "file": "internal/handler/comments.go",
-          "line": 308,
+          "line": 314,
           "kind": "go-error-body",
           "raw": "body is required",
           "quote": null
@@ -8738,28 +8738,28 @@
       "occurrences": [
         {
           "file": "internal/handler/comments.go",
-          "line": 291,
+          "line": 297,
           "kind": "go-error-body",
           "raw": "comment not found",
           "quote": null
         },
         {
           "file": "internal/handler/comments.go",
-          "line": 346,
+          "line": 352,
           "kind": "go-error-body",
           "raw": "comment not found",
           "quote": null
         },
         {
           "file": "internal/handler/comments.go",
-          "line": 397,
+          "line": 404,
           "kind": "go-error-body",
           "raw": "comment not found",
           "quote": null
         },
         {
           "file": "internal/handler/comments.go",
-          "line": 456,
+          "line": 463,
           "kind": "go-error-body",
           "raw": "comment not found",
           "quote": null
@@ -8777,7 +8777,7 @@
       "occurrences": [
         {
           "file": "internal/handler/comments.go",
-          "line": 296,
+          "line": 302,
           "kind": "go-error-body",
           "raw": "only the author can edit this comment",
           "quote": null
@@ -8795,7 +8795,7 @@
       "occurrences": [
         {
           "file": "internal/handler/comments.go",
-          "line": 317,
+          "line": 323,
           "kind": "go-error-body",
           "raw": "failed to update comment",
           "quote": null
@@ -8813,7 +8813,7 @@
       "occurrences": [
         {
           "file": "internal/handler/comments.go",
-          "line": 364,
+          "line": 370,
           "kind": "go-error-body",
           "raw": "failed to delete comment",
           "quote": null
@@ -8831,7 +8831,7 @@
       "occurrences": [
         {
           "file": "internal/handler/comments.go",
-          "line": 422,
+          "line": 429,
           "kind": "go-error-body",
           "raw": "invalid emoji",
           "quote": null
@@ -8849,7 +8849,7 @@
       "occurrences": [
         {
           "file": "internal/handler/comments.go",
-          "line": 433,
+          "line": 440,
           "kind": "go-error-body",
           "raw": "failed to add reaction",
           "quote": null
@@ -8867,7 +8867,7 @@
       "occurrences": [
         {
           "file": "internal/handler/comments.go",
-          "line": 473,
+          "line": 480,
           "kind": "go-error-body",
           "raw": "failed to remove reaction",
           "quote": null
@@ -9089,7 +9089,7 @@
         },
         {
           "file": "internal/handler/event_links.go",
-          "line": 195,
+          "line": 196,
           "kind": "go-error-body",
           "raw": "patch not found",
           "quote": null
@@ -9505,7 +9505,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 199,
+          "line": 200,
           "kind": "go-error-body",
           "raw": "an event is already on its own patch",
           "quote": null
@@ -9523,7 +9523,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 205,
+          "line": 206,
           "kind": "go-error-body",
           "raw": "only admins of either patch can link",
           "quote": null
@@ -9541,14 +9541,14 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 224,
+          "line": 225,
           "kind": "go-error-body",
           "raw": "only the linked patch's admins choose an event to absorb",
           "quote": null
         },
         {
           "file": "internal/handler/event_links.go",
-          "line": 393,
+          "line": 399,
           "kind": "go-error-body",
           "raw": "only the linked patch's admins choose an event to absorb",
           "quote": null
@@ -9566,14 +9566,14 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 228,
+          "line": 229,
           "kind": "go-error-body",
           "raw": "absorb_event_id must be an event on the linked patch",
           "quote": null
         },
         {
           "file": "internal/handler/event_links.go",
-          "line": 397,
+          "line": 403,
           "kind": "go-error-body",
           "raw": "absorb_event_id must be an event on the linked patch",
           "quote": null
@@ -9591,7 +9591,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 250,
+          "line": 251,
           "kind": "go-error-body",
           "raw": "link already exists",
           "quote": null
@@ -9609,14 +9609,14 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 362,
+          "line": 368,
           "kind": "go-error-body",
           "raw": "link not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_links.go",
-          "line": 438,
+          "line": 445,
           "kind": "go-error-body",
           "raw": "link not found",
           "quote": null
@@ -9634,7 +9634,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 366,
+          "line": 372,
           "kind": "go-error-body",
           "raw": "link is already confirmed",
           "quote": null
@@ -9652,7 +9652,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 382,
+          "line": 388,
           "kind": "go-error-body",
           "raw": "only the other patch's admins can confirm",
           "quote": null
@@ -9670,7 +9670,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 408,
+          "line": 414,
           "kind": "go-error-body",
           "raw": "failed to confirm link",
           "quote": null
@@ -9688,7 +9688,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 443,
+          "line": 450,
           "kind": "go-error-body",
           "raw": "only admins of either patch can remove a link",
           "quote": null
@@ -9706,7 +9706,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 448,
+          "line": 455,
           "kind": "go-error-body",
           "raw": "failed to remove link",
           "quote": null
@@ -9724,7 +9724,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 473,
+          "line": 482,
           "kind": "go-error-body",
           "raw": "mention not found",
           "quote": null
@@ -9742,7 +9742,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 477,
+          "line": 486,
           "kind": "go-error-body",
           "raw": "only this patch's admins can remove a mention",
           "quote": null
@@ -9767,7 +9767,7 @@
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 214,
+          "line": 215,
           "kind": "go-error-body",
           "raw": "failed to list event sources",
           "quote": null
@@ -9821,7 +9821,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 225,
+          "line": 226,
           "kind": "go-error-body",
           "raw": "failed to create event source",
           "quote": null
@@ -9839,35 +9839,35 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 249,
+          "line": 250,
           "kind": "go-error-body",
           "raw": "event source not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 286,
+          "line": 288,
           "kind": "go-error-body",
           "raw": "event source not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 312,
+          "line": 314,
           "kind": "go-error-body",
           "raw": "event source not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 451,
+          "line": 454,
           "kind": "go-error-body",
           "raw": "event source not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 518,
+          "line": 521,
           "kind": "go-error-body",
           "raw": "event source not found",
           "quote": null
@@ -9885,7 +9885,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 257,
+          "line": 258,
           "kind": "go-error-body",
           "raw": "failed to remove event source",
           "quote": null
@@ -9903,7 +9903,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 291,
+          "line": 293,
           "kind": "go-error-body",
           "raw": "this source just synced, try again in a minute",
           "quote": null
@@ -9925,7 +9925,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 302,
+          "line": 304,
           "kind": "go-error-body",
           "raw": "failed to sync",
           "quote": null
@@ -9943,7 +9943,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 336,
+          "line": 338,
           "kind": "go-error-body",
           "raw": "this event is not attached to an event source",
           "quote": null
@@ -9961,14 +9961,14 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 349,
+          "line": 351,
           "kind": "go-error-body",
           "raw": "failed to detach event",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 357,
+          "line": 359,
           "kind": "go-error-body",
           "raw": "failed to detach event",
           "quote": null
@@ -9986,14 +9986,14 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 486,
+          "line": 489,
           "kind": "go-error-body",
           "raw": "failed to update event source",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 498,
+          "line": 501,
           "kind": "go-error-body",
           "raw": "failed to update event source",
           "quote": null
@@ -10011,7 +10011,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 508,
+          "line": 511,
           "kind": "go-error-body",
           "raw": "failed to load event sources",
           "quote": null
@@ -10090,14 +10090,14 @@
       "occurrences": [
         {
           "file": "internal/handler/event_submissions.go",
-          "line": 230,
+          "line": 231,
           "kind": "go-error-body",
           "raw": "failed to reject event",
           "quote": null
         },
         {
           "file": "internal/handler/event_submissions.go",
-          "line": 235,
+          "line": 236,
           "kind": "go-error-body",
           "raw": "failed to reject event",
           "quote": null
@@ -10283,7 +10283,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 669,
+          "line": 670,
           "kind": "go-error-body",
           "raw": "this event comes from an event source. Edit it in the source calendar, or detach it first",
           "quote": null
@@ -10305,7 +10305,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 812,
+          "line": 813,
           "kind": "go-error-body",
           "raw": "failed to update event",
           "quote": null
@@ -10323,14 +10323,14 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 887,
+          "line": 889,
           "kind": "go-error-body",
           "raw": "failed to delete event",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 894,
+          "line": 896,
           "kind": "go-error-body",
           "raw": "failed to delete event",
           "quote": null
@@ -10542,7 +10542,7 @@
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 425,
+          "line": 426,
           "kind": "go-error-body",
           "raw": "admin access required",
           "quote": null
@@ -10592,7 +10592,7 @@
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 447,
+          "line": 448,
           "kind": "go-error-body",
           "raw": "visibility must be public or members",
           "quote": null
@@ -10617,7 +10617,7 @@
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 472,
+          "line": 473,
           "kind": "go-error-body",
           "raw": "that title is reserved for the lining",
           "quote": null
@@ -10653,7 +10653,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 320,
+          "line": 321,
           "kind": "go-error-body",
           "raw": "failed to list governance docs",
           "quote": null
@@ -10671,7 +10671,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 439,
+          "line": 440,
           "kind": "go-error-body",
           "raw": "title, body, or visibility is required",
           "quote": null
@@ -10689,7 +10689,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 443,
+          "line": 444,
           "kind": "go-error-body",
           "raw": "title cannot be empty",
           "quote": null
@@ -10707,7 +10707,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 456,
+          "line": 457,
           "kind": "go-error-body",
           "raw": "the lining's title cannot be changed",
           "quote": null
@@ -10725,7 +10725,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 460,
+          "line": 461,
           "kind": "go-error-body",
           "raw": "the lining is always public",
           "quote": null
@@ -10743,7 +10743,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 464,
+          "line": 465,
           "kind": "go-error-body",
           "raw": "the lining can only be changed by amendment proposal",
           "quote": null
@@ -10761,7 +10761,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 503,
+          "line": 504,
           "kind": "go-error-body",
           "raw": "failed to update governance doc",
           "quote": null
@@ -10779,7 +10779,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 623,
+          "line": 625,
           "kind": "go-error-body",
           "raw": "from and to query params are required",
           "quote": null
@@ -10797,7 +10797,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 640,
+          "line": 642,
           "kind": "go-error-body",
           "raw": "governance repos not configured",
           "quote": null
@@ -10815,7 +10815,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 646,
+          "line": 648,
           "kind": "go-error-body",
           "raw": "version not found",
           "quote": null
@@ -13499,7 +13499,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 896,
+          "line": 900,
           "kind": "go-error-body",
           "raw": "membership not found",
           "quote": null
@@ -13524,7 +13524,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 915,
+          "line": 919,
           "kind": "go-error-body",
           "raw": "can only approve pending members",
           "quote": null
@@ -13542,7 +13542,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 920,
+          "line": 924,
           "kind": "go-error-body",
           "raw": "failed to approve member",
           "quote": null
@@ -13560,7 +13560,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 943,
+          "line": 947,
           "kind": "go-error-body",
           "raw": "can only ban active members",
           "quote": null
@@ -13578,7 +13578,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 948,
+          "line": 952,
           "kind": "go-error-body",
           "raw": "cannot ban yourself",
           "quote": null
@@ -13596,7 +13596,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 956,
+          "line": 960,
           "kind": "go-error-body",
           "raw": "cannot ban the last admin",
           "quote": null
@@ -13614,7 +13614,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 962,
+          "line": 966,
           "kind": "go-error-body",
           "raw": "failed to ban member",
           "quote": null
@@ -13632,7 +13632,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 991,
+          "line": 995,
           "kind": "go-error-body",
           "raw": "failed to reject member",
           "quote": null
@@ -13650,7 +13650,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 999,
+          "line": 1003,
           "kind": "go-error-body",
           "raw": "failed to reinstate member",
           "quote": null
@@ -13668,7 +13668,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1019,
+          "line": 1023,
           "kind": "go-error-body",
           "raw": "can only reject pending or reinstate banned members",
           "quote": null
@@ -13686,7 +13686,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1024,
+          "line": 1028,
           "kind": "go-error-body",
           "raw": "invalid status value",
           "quote": null
@@ -13704,7 +13704,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1033,
+          "line": 1037,
           "kind": "go-error-body",
           "raw": "invalid role value",
           "quote": null
@@ -13722,7 +13722,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1042,
+          "line": 1046,
           "kind": "go-error-body",
           "raw": "they have not accepted the invitation yet",
           "quote": null
@@ -13740,7 +13740,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1069,
+          "line": 1073,
           "kind": "go-error-body",
           "raw": "they follow this patch: invite them to join, or let them become a member themselves",
           "quote": null
@@ -13758,7 +13758,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1078,
+          "line": 1082,
           "kind": "go-error-body",
           "raw": "cannot demote the last admin",
           "quote": null
@@ -13776,7 +13776,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1110,
+          "line": 1114,
           "kind": "go-error-body",
           "raw": "this patch chooses its admins elsewhere: record that decision instead",
           "quote": null
@@ -13794,7 +13794,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1122,
+          "line": 1126,
           "kind": "go-error-body",
           "raw": "this patch ratifies admins by proposal: nominate them instead",
           "quote": null
@@ -13812,7 +13812,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1159,
+          "line": 1163,
           "kind": "go-error-body",
           "raw": "failed to update role",
           "quote": null
@@ -14106,7 +14106,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1482,
+          "line": 1483,
           "kind": "go-error-body",
           "raw": "failed to archive node",
           "quote": null
@@ -15767,7 +15767,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1808,
+          "line": 1809,
           "kind": "go-error-body",
           "raw": "state is not settable: proposals open for voting when they are created (docs/adr/048)",
           "quote": null
@@ -15785,7 +15785,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1821,
+          "line": 1822,
           "kind": "go-error-body",
           "raw": "invalid status transition",
           "quote": null
@@ -15803,7 +15803,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1855,
+          "line": 1856,
           "kind": "go-error-body",
           "raw": "failed to update proposal",
           "quote": null
@@ -15828,7 +15828,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1897,
+          "line": 1899,
           "kind": "go-error-body",
           "raw": "only this patch's admins can make proposals official",
           "quote": null
@@ -15846,7 +15846,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1914,
+          "line": 1916,
           "kind": "go-error-body",
           "raw": "this patch decides proposals by vote; wait for the window to close",
           "quote": null
@@ -15864,7 +15864,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1917,
+          "line": 1919,
           "kind": "go-error-body",
           "raw": "proposal cannot be applied in its current state",
           "quote": null

@@ -418,7 +418,11 @@ func UpdatePatchNotifConfig(db *database.DB) http.HandlerFunc {
 			notifications.SetCategoryEnabled(db, nodeID, notifications.Category(cat), enabled)
 		}
 
-		auth.LogAuditEvent(db, middleware.UserFromContext(r.Context()).ID, "notification_config.updated", "node", nodeID, "", "")
+		// No check of its own: RequireNodeRole let an instance admin in
+		// (docs/adr/115, issue #286), so this is where it is recorded.
+		user := middleware.UserFromContext(r.Context())
+		auth.LogAuditEventJSON(db, user.ID, "notification_config.updated", "node", nodeID,
+			reachDetail(nil, actingWithoutRole(db, user, nodeID)), clientIP(r))
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})

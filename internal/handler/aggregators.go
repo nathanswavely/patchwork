@@ -587,8 +587,8 @@ func CreateCrosswalkEntry(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"that name is already mapped"}`, http.StatusConflict)
 			return
 		}
-		auth.LogAuditEvent(db, user.ID, "crosswalk.create", "event_source", id,
-			`{"name_key":"`+req.NameKey+`"}`, clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "crosswalk.create", "event_source", id,
+			reachDetail(map[string]any{"name_key": req.NameKey}, actingWithoutRole(db, user, nodeID)), clientIP(r))
 
 		// Synchronous: the admin who just mapped a name wants to see the
 		// events arrive, and they are already in the listings cache.
@@ -640,7 +640,8 @@ func DeleteCrosswalkEntry(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"failed to unmap"}`, http.StatusInternalServerError)
 			return
 		}
-		auth.LogAuditEvent(db, user.ID, "crosswalk.delete", "event_source", entryID, "{}", clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "crosswalk.delete", "event_source", entryID,
+			reachDetail(nil, actingWithoutRole(db, user, nodeID)), clientIP(r))
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
@@ -770,8 +771,8 @@ func DecideAggregatorHold(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"failed to clear hold"}`, http.StatusInternalServerError)
 			return
 		}
-		auth.LogAuditEvent(db, user.ID, "aggregator_hold.decide", "event_source", sourceID,
-			`{"decision":"`+req.Decision+`"}`, clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "aggregator_hold.decide", "event_source", sourceID,
+			reachDetail(map[string]any{"decision": req.Decision}, actingWithoutRole(db, user, nodeID)), clientIP(r))
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
