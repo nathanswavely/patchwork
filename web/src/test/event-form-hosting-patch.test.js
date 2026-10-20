@@ -47,7 +47,11 @@ describe('choosing a patch is the picker, over the whole quilt', () => {
 
   it('does not let Enter in the picker submit the form around it', () => {
     // Without the guard, a keypress meant for the dropdown reaches the form.
-    expect(picker).toMatch(/if \(!open\) return;/);
+    // A closed picker swallows Enter too: after a pick the finder closes
+    // with focus still in it, and the next Enter used to save the event
+    // (docs/adr/2026-10-19-co-hosts-read-as-equals-and-the-owner-can-share-
+    // the-pen.md, found driving the co-host picker).
+    expect(picker).toMatch(/if \(!open\) \{\n\s*if \(isPicker\) e\.preventDefault\(\);\n\s*return;\n\s*\}/);
     expect(picker).toMatch(/if \(activeIndex < 0\) return;/);
   });
 

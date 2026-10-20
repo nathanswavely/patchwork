@@ -389,14 +389,18 @@ func Tables() []Table {
 			// data by the same argument memberships are, and both ends already
 			// travel. Only confirmed links: a pending one is invisible
 			// everywhere, and a fork cannot carry a handshake nobody finished.
+			// Edit rights travel with the row they were granted on
+			// (docs/adr/2026-10-19-co-hosts-read-as-equals-and-the-owner-can-
+			// share-the-pen.md): who may edit a shared event is part of the
+			// arrangement both patches made.
 			File: "event_links.json",
 			Name: "event_links",
 			Query: `SELECT id, event_id, node_id, status, initiated_by, requested_by,
-				absorb_event_id, created_at, confirmed_at
+				absorb_event_id, can_edit, created_at, confirmed_at
 				FROM event_links WHERE status = 'confirmed'`,
 			Columns: cols(id("id"), id("event_id"), id("node_id"), c("status"),
 				c("initiated_by"), id("requested_by"), id("absorb_event_id"),
-				c("created_at"), c("confirmed_at")),
+				c("can_edit"), c("created_at"), c("confirmed_at")),
 		},
 		{
 			// Offers a credited patch declined (docs/adr/063). After events,

@@ -127,22 +127,28 @@ detail page it reads "Tickets & details on {host}"; in outbound ICS and
 RSS it rides in the description, because `URL` there is the permalink.
 _Avoid_: external link, source URL, ticket link (it is often not tickets)
 
-**Event link**:
+**Event link**, in the UI a **co-host**:
 An explicit, mutual association between an event and a patch beyond its
 owner — admins on one side propose, admins on the other confirm, and
-either side removes it at will. The event stays the owner's to edit; the
-linked patch gains presence: the event card reads "with" the linked patch,
-and the event counts as that patch's activity. Flat — a link carries no
-role label. Not a thread (threads are inferred; a link is declared), and
+either side removes it at will. A confirmed link makes the patch a
+co-host: the event page reads "Hosted by" the owner and every co-host on
+one line, and the event counts as that patch's activity. The owner keeps
+the row (review, deletion, feed provenance) and may grant a co-host
+**edit rights** (`event_links.can_edit`), which reach everything on the
+event form except who the event is for
+(docs/adr/2026-10-19-co-hosts-read-as-equals-and-the-owner-can-share-the-pen.md).
+Flat — a link carries no role label; edit rights are a permission, not a
+billing. Not a thread (threads are inferred; a link is declared), and
 distinct from detach's territory: severing a link is "remove", never
 "unlink" (docs/adr/032).
-_Avoid_: co-host, tagged patch, on the bill, unlink (reserved against
-detach), shared event
+_Avoid_: tagged patch, on the bill, headliner/opener, unlink (reserved
+against detach), shared event, co-owner (the owner is one patch)
 
 **Cross-quilt mention**:
 A display-only doorway on an event page pointing at a patch on another
-quilt — "with Cool Band ⧉" — created when the owner pastes a remote patch
-URL. Not an event link: no handshake, no calendar placement, no counts;
+quilt, named last on the "Hosted by" line as "Cool Band ⧉ other.quilt",
+created when the owner pastes a remote patch URL on the event page (the
+event form's co-host picker sends a remote URL there). Not an event link: no handshake, no calendar placement, no counts;
 it has the standing of naming the band in the description
 (docs/adr/032).
 _Avoid_: remote link, federation link

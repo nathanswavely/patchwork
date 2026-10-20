@@ -145,6 +145,15 @@
     if (intercept?.(query)) {
       query = '';
       open = false;
+      return;
+    }
+    // Typing opens the finder even where focus never left it. A picker that
+    // takes several choices (co-hosts, trust scopes) keeps focus after each
+    // pick, and select() closed it; without this the next query typed into
+    // the same field showed nothing, and Enter fell through to the form.
+    if (!open) {
+      open = true;
+      ensureLoaded();
     }
   }
 
@@ -187,8 +196,13 @@
     } else if (e.key === 'Enter') {
       // An open finder owns Enter outright, matched row or not. A picker
       // lives inside a <form>, where letting the keypress through submits
-      // the form from a field the person was still choosing in.
-      if (!open) return;
+      // the form from a field the person was still choosing in, and that
+      // holds for a closed picker too: nothing typed into a picker is ever
+      // a request to save the form around it.
+      if (!open) {
+        if (isPicker) e.preventDefault();
+        return;
+      }
       e.preventDefault();
       if (activeIndex < 0) return;
       if (results[activeIndex]) select(results[activeIndex]);

@@ -125,7 +125,10 @@ var instanceAdminReach = map[string]struct {
 	"events.go:CreateEvent": {reachCustodyUnclaimed, 1, false,
 		"Publishing straight to a calendar. ADR 026's grant 'must not reach into active patches'."},
 
-	"events.go:UpdateEvent": {reachCustodyUnclaimed, 1, false,
+	// UpdateEvent's direct door, lifted into a function so GetEvent can ask
+	// it too (docs/adr/2026-10-19-co-hosts-read-as-equals-and-the-owner-can-
+	// share-the-pen.md). Same check, same disposition.
+	"events.go:eventDirectEditor": {reachCustodyUnclaimed, 1, false,
 		"Editing anything on a patch's calendar."},
 
 	"events.go:DeleteEvent": {reachCustodyUnclaimed, 1, false,

@@ -1,7 +1,9 @@
 <script>
-  // Event links (docs/adr/032): confirmed links render as "with X" chips
-  // for everyone; the handshake controls only appear for admins who can
-  // act. Cross-quilt mentions are doorways — plain external links.
+  // Event links (docs/adr/032), which the page calls co-hosts
+  // (docs/adr/2026-10-19-co-hosts-read-as-equals-and-the-owner-can-share-the-pen.md):
+  // the "Hosted by" line names the owning patch and every confirmed co-host
+  // as equals, for everyone; the handshake controls only appear for admins
+  // who can act. Cross-quilt mentions are doorways, plain external links.
   import { LinkSimple, ArrowSquareOut, X, Check } from 'phosphor-svelte';
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
@@ -13,12 +15,31 @@
   import { parsePatchLink } from '../lib/patchLink.js';
   import WorkspaceSearch from './WorkspaceSearch.svelte';
 
-  let { event, onChanged } = $props();
+  // `trailing` renders after the hosts on the same line: the event page's
+  // pills (community-submitted, the tier chip) belong beside who hosts it.
+  let { event, onChanged, trailing } = $props();
 
   let links = $derived(event?.links || []);
   let mentions = $derived(event?.mentions || []);
   let confirmed = $derived(links.filter((l) => l.status === 'confirmed'));
   let pending = $derived(links.filter((l) => l.status === 'pending'));
+
+  // Everyone the line names, in order: the owner, the confirmed co-hosts in
+  // the order they were linked, then cross-quilt mentions. Which one holds
+  // the row is not said here; it shows in who gets Delete.
+  let hosts = $derived([
+    ...(event?.node_name ? [{ kind: 'owner', key: 'owner', slug: event.node_slug, name: event.node_name }] : []),
+    ...confirmed.map((l) => ({ kind: 'link', key: l.id, slug: l.node_slug, name: l.node_name, link: l })),
+    ...mentions.map((m) => ({ kind: 'mention', key: m.id, slug: m.slug, name: m.name || m.slug, mention: m })),
+  ]);
+
+  // "A and B", "A, B, and C": the serial comma, because a band called
+  // "Nick Cove and The Wandering" in a list without it reads as two bands.
+  function separator(i, n) {
+    if (i === 0) return ' ';
+    if (i === n - 1) return n === 2 ? ' and ' : ', and ';
+    return ', ';
+  }
 
   // The unclaimed patches a per-patch trust grant reaches, by slug. The
   // session lists them (auth/me `trusted_patches`) because no membership
@@ -203,7 +224,7 @@
       const body = { target: staged.kind === 'mention' ? staged.target : staged.slug };
       if (absorbId) body.absorb_event_id = absorbId;
       const res = await api(`events/${event.id}/links`, { method: 'POST', body });
-      showToast(res?.host ? 'Mention added' : res?.status === 'confirmed' ? 'Linked' : 'Link requested');
+      showToast(res?.host ? 'Mention added' : res?.status === 'confirmed' ? 'Co-host added' : 'Request sent');
       resetAdd();
       onChanged?.();
     } catch (e) {
@@ -243,7 +264,7 @@
     try {
       const body = absorbId ? { absorb_event_id: absorbId } : {};
       await api(`events/${event.id}/links/${l.node_id}/confirm`, { method: 'POST', body });
-      showToast(`Linked with ${l.node_name}`);
+      showToast(`${l.node_name} is a co-host`);
       confirmingNode = '';
       duplicates = [];
       absorbId = '';
@@ -275,48 +296,49 @@
   }
 </script>
 
-{#if confirmed.length || mentions.length || canAct}
-  <div class="event-links">
-    {#if confirmed.length || mentions.length}
-      <div class="lt-chips">
-        <span class="with-label">with</span>
-        {#each confirmed as l (l.id)}
-          <span class="lt-chip">
-            <a
-              href="/patches/{l.node_slug}"
-              onclick={(e) => { e.preventDefault(); navigate(`/patches/${l.node_slug}`); }}
-            >{l.node_name}</a>
-            {#if canRemove(l)}
-              <button class="lt-chip-remove" title="Remove link" onclick={() => removeLink(l)}>
-                <X size={11} />
-              </button>
-            {/if}
-          </span>
-        {/each}
-        {#each mentions as m (m.id)}
-          <span class="lt-chip mention">
-            <a href="https://{m.host}/patches/{m.slug}" target="_blank" rel="noopener noreferrer">
-              {m.name || m.slug}
-              <ArrowSquareOut size={11} />
-            </a>
-            <span class="mention-host">{m.host}</span>
-            {#if ownerAdmin}
-              <button class="lt-chip-remove" title="Remove mention" onclick={() => removeMention(m)}>
-                <X size={11} />
-              </button>
-            {/if}
-          </span>
-        {/each}
-      </div>
-    {/if}
+<div class="event-links">
+  {#if hosts.length}
+    <div class="host-row">
+      <!-- One sentence, so it is written with no whitespace between tags:
+           the separators are expressions, and any newline inside a name's
+           span renders as a space before the comma after it. -->
+      <span class="hosts">Hosted by{#each hosts as h, i (h.key)}{separator(i, hosts.length)}<span class="host"
+          >{#if h.kind === 'mention'}<a
+              class="host-link"
+              href="https://{h.mention.host}/patches/{h.slug}"
+              target="_blank"
+              rel="noopener noreferrer"
+            >{h.name}<ArrowSquareOut size={11} /></a><span class="mention-host">{' '}{h.mention.host}</span
+            >{#if ownerAdmin}<button class="host-remove" title="Remove mention" onclick={() => removeMention(h.mention)}
+              ><X size={11} /></button
+            >{/if}{:else}<a
+              class="host-link"
+              href="/patches/{h.slug}"
+              onclick={(e) => { e.preventDefault(); navigate(`/patches/${h.slug}`); }}
+            >{h.name}</a
+            >{#if h.kind === 'link' && canRemove(h.link)}<button class="host-remove" title="Remove {h.name} as a co-host" onclick={() => removeLink(h.link)}
+              ><X size={11} /></button
+            >{/if}{/if}</span
+        >{/each}</span>
+      {@render trailing?.()}
+    </div>
+  {/if}
 
     {#each pending as l (l.id)}
       <div class="pending-row">
         <span class="lt-muted">
+          <!-- Said from where the reader stands: the side that confirms is
+               being asked, the side that asked is waiting. -->
           {#if l.initiated_by === 'owner'}
-            Waiting for <strong>{l.node_name}</strong> to confirm this link
+            {#if canConfirm(l)}
+              <strong>{event.node_name}</strong> asked <strong>{l.node_name}</strong> to co-host this event
+            {:else}
+              Waiting for <strong>{l.node_name}</strong> to confirm as a co-host
+            {/if}
+          {:else if canConfirm(l)}
+            <strong>{l.node_name}</strong> asked to co-host this event
           {:else}
-            <strong>{l.node_name}</strong> asked to link to this event
+            Waiting for <strong>{event.node_name}</strong> to confirm <strong>{l.node_name}</strong> as a co-host
           {/if}
         </span>
         {#if canConfirm(l)}
@@ -394,7 +416,7 @@
                 disabled={busy || takenSlugs.has(patch.slug)}
                 onclick={() => stagePatch(patch)}
               >
-                {patch.label}{#if takenSlugs.get(patch.slug) === 'pending'}{' — requested'}{:else if takenSlugs.get(patch.slug) === 'confirmed'}{' — linked'}{/if}
+                {patch.label}{#if takenSlugs.get(patch.slug) === 'pending'}{' (requested)'}{:else if takenSlugs.get(patch.slug) === 'confirmed'}{' (co-host)'}{/if}
               </button>
             {/each}
           {/if}
@@ -403,12 +425,11 @@
       {:else}
         <button class="link-btn" onclick={() => (adding = true)}>
           <LinkSimple size={13} weight="duotone" />
-          Link a patch
+          Add a co-host
         </button>
       {/if}
     {/if}
-  </div>
-{/if}
+</div>
 
 <style>
   .event-links {
@@ -418,27 +439,55 @@
     margin-bottom: 1.25rem;
   }
 
-  .with-label {
-    font-size: 0.85rem;
+  .host-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .hosts {
+    font-size: 0.9rem;
     color: var(--color-text-muted);
+  }
+
+  .host {
+    white-space: nowrap;
+  }
+
+  .host-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    text-decoration: none;
+    white-space: normal;
+  }
+
+  .host-link:hover {
+    text-decoration: underline;
+  }
+
+  .host-remove {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 0.15rem;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    vertical-align: middle;
+  }
+
+  .host-remove:hover {
+    color: var(--color-error);
   }
 
   .lt-chip {
     cursor: default;
     color: var(--color-text);
-  }
-
-  .lt-chip a {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.2rem;
-    color: var(--color-primary);
-    font-weight: 600;
-    text-decoration: none;
-  }
-
-  .lt-chip a:hover {
-    text-decoration: underline;
   }
 
   .mention-host {

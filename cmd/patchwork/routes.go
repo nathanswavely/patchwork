@@ -399,6 +399,7 @@ func buildRoutes(d serverDeps) (*http.ServeMux, []route) {
 	t.handleFunc("POST /api/v1/events/{id}/links", middleware.AuthRequired(d.db, handler.CreateEventLink(d.db, d.cfg)))
 	t.handleFunc("POST /api/v1/events/{id}/links/{nodeId}/confirm", middleware.AuthRequired(d.db, handler.ConfirmEventLink(d.db)))
 	t.handleFunc("DELETE /api/v1/events/{id}/links/{nodeId}", middleware.AuthRequired(d.db, handler.RemoveEventLink(d.db)))
+	t.handleFunc("PATCH /api/v1/events/{id}/links/{nodeId}", middleware.AuthRequired(d.db, handler.SetEventLinkEditRights(d.db)))
 	t.handleFunc("DELETE /api/v1/events/{id}/mentions/{mentionId}", middleware.AuthRequired(d.db, handler.RemoveEventMention(d.db)))
 	t.handleFunc("GET /api/v1/nodes/{slug}/event-submissions", middleware.AuthRequired(d.db, handler.ListNodeEventSubmissions(d.db)))
 

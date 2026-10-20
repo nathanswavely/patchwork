@@ -261,6 +261,7 @@ var bodyFields = map[string]map[string]any{
 	"POST /api/v1/comments/{id}/reactions":      {"emoji": "👍"},
 	"PATCH /api/v1/events/{id}/review":          {"action": "approve"},
 	"POST /api/v1/events/{id}/links":            {"target": "the-selvage"},
+	"PATCH /api/v1/events/{id}/links/{nodeId}":  {"can_edit": true},
 }
 
 // routeBody is a body plausible enough to get past a handler's own decoder.
@@ -482,8 +483,9 @@ func (f *routeFixture) seed(t *testing.T) {
 		mention, event)
 	f.ids["mentionId"] = mention
 
-	// A pending link between the patch's event and the other patch, so the two
-	// link routes find a row and get as far as asking who is speaking.
+	// A pending link between the patch's event and the other patch, so the
+	// link routes (confirm, remove, edit rights) find a row and get as far as
+	// asking who is speaking.
 	f.exec(t, `INSERT INTO event_links (id, event_id, node_id, status, initiated_by, requested_by) VALUES (?, ?, ?, 'pending', 'owner', ?)`,
 		auth.NewUUIDv7(), event, unclaimed, owner)
 	f.ids["/api/v1/events/{id}/links/{nodeId}/confirm {nodeId}"] = unclaimed

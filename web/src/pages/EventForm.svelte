@@ -6,8 +6,9 @@
   import VocabLabel from '../components/VocabLabel.svelte';
   import WorkspaceSearch from '../components/WorkspaceSearch.svelte';
   import TrustScopePicker from '../components/TrustScopePicker.svelte';
+  import CoHostPicker from '../components/CoHostPicker.svelte';
   import { reachablePatchPickerProvider } from '../lib/finderProviders.js';
-  import { isAdmin, isTrustedContributor } from '../stores/auth.svelte.js';
+  import { isAdmin, isTrustedContributor, getTrustedPatches } from '../stores/auth.svelte.js';
   import { getMemberships } from '../stores/memberships.svelte.js';
   import { getSubmissionsEnabled, getInstanceTimezone } from '../stores/quilt.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
@@ -38,6 +39,19 @@
   // Public unless somebody says otherwise, which is what every event
   // created in the product was before the control existed.
   let visibility = $state('public');
+
+  // Co-hosts (docs/adr/2026-10-19-co-hosts-read-as-equals-and-the-owner-can-
+  // share-the-pen.md): rows the picker edits, and on an edit the links the
+  // event already had, which is what a save diffs against. Nothing is
+  // written until the form is saved.
+  let coHosts = $state([]);
+  let initialLinks = $state([]);
+  let eventStatus = $state('');
+  // This viewer edits only as a co-host the owner granted edit rights to.
+  // Answered by the server with the check UpdateEvent runs, and it shuts
+  // the two things a co-host does not decide: who the event is for, and
+  // who else hosts it.
+  let coEditing = $state(false);
 
   // The patch this event is for: chosen in the picker, or fixed by the door
   // that was walked in through. { id, name, slug, status }.
@@ -135,6 +149,17 @@
       imageAlt = event.image_alt || '';
       eventUrl = event.event_url || '';
       visibility = event.visibility || 'public';
+      eventStatus = event.status || '';
+      coEditing = event.viewer_co_edits === true;
+      initialLinks = event.links || [];
+      coHosts = initialLinks.map((l) => ({
+        id: l.node_id,
+        slug: l.node_slug,
+        name: l.node_name || l.node_slug,
+        status: l.node_status || '',
+        can_edit: l.can_edit === true,
+        link: l,
+      }));
       // Read in the event's zone, not the editor's: an organizer editing a
       // Lancaster show sees 8:00 PM whether they are in Lancaster or on
       // tour, because 8pm is the fact they are editing.
@@ -250,6 +275,8 @@
       status: item.status,
     };
     nodeId = item.id;
+    // A patch cannot co-host its own event; the server refuses that link.
+    coHosts = coHosts.filter((r) => r.slug !== item.slug);
     // A new event follows the patch it is being posted to, so picking a
     // patch is what sets the clock this form is written in.
     await loadPatchZone(item.slug);
@@ -278,8 +305,69 @@
 
   // The tier control is for people posting to their own patch. A suggestion
   // is public whatever it asks for (docs/adr/026) and the server says so, so
-  // the form does not offer a choice it cannot keep.
-  let showTierControl = $derived(!!hostingPatch && !willReview);
+  // the form does not offer a choice it cannot keep. Nor does a co-host's:
+  // the tier is read against the owner's Follower Permissions, and the
+  // server refuses a co-host who changes it.
+  let showTierControl = $derived(!!hostingPatch && !willReview && !coEditing);
+
+  // Mirrors the server's userSpeaksForNode, the standing the link handshake
+  // asks for (docs/adr/032, docs/adr/057): instance admins, the patch's
+  // admins, and a trusted contributor whose grant reaches it while it is
+  // unclaimed. Same rule as EventLinks, which carries the reasoning.
+  let trustedSlugs = $derived(new Set(getTrustedPatches().map((p) => p.slug)));
+  function speaksFor(slug, status, viewerTrusted = false) {
+    if (isAdmin()) return true;
+    if (activeRoles.get(slug) === 'admin') return true;
+    if (status !== 'unclaimed') return false;
+    return viewerTrusted || isTrustedContributor() || trustedSlugs.has(slug);
+  }
+
+  // Co-hosts are chosen by whoever speaks for the hosting patch, on an event
+  // that publishes: a suggestion is not an active event, and only active
+  // events take links. A co-host editing someone else's event chooses
+  // nobody, because adding hosts is the owner's arrangement to make.
+  let canChooseCoHosts = $derived(
+    !!hostingPatch &&
+      !coEditing &&
+      speaksFor(hostingPatch.slug, hostingPatch.status, hostingViewerTrusted) &&
+      (isEdit ? eventStatus === 'active' : !willReview)
+  );
+
+  // Turns the picker's rows into link requests once the event is saved: a
+  // new row is a request (carrying its edit rights, which only this side may
+  // grant), a dropped row is a removal, and a changed checkbox is a PATCH.
+  // Each call is its own, so one refusal does not cost the rest; the names
+  // that failed come back for one toast.
+  async function applyCoHosts(id) {
+    const failed = [];
+    const before = new Map(initialLinks.map((l) => [l.node_slug, l]));
+    const after = new Set(coHosts.map((r) => r.slug));
+    for (const l of initialLinks) {
+      if (after.has(l.node_slug)) continue;
+      try {
+        await api(`events/${id}/links/${l.node_id}`, { method: 'DELETE' });
+      } catch (e) {
+        failed.push(`${l.node_name}: ${e.data?.error || e.message}`);
+      }
+    }
+    for (const r of coHosts) {
+      const prev = before.get(r.slug);
+      try {
+        if (!prev) {
+          await api(`events/${id}/links`, { method: 'POST', body: { target: r.slug, can_edit: r.can_edit } });
+        } else if ((prev.can_edit === true) !== r.can_edit) {
+          await api(`events/${id}/links/${prev.node_id}`, { method: 'PATCH', body: { can_edit: r.can_edit } });
+        }
+      } catch (e) {
+        failed.push(`${r.name}: ${e.data?.error || e.message}`);
+      }
+    }
+    return failed;
+  }
+
+  function reportCoHostFailures(failed) {
+    if (failed.length) showToast(`Saved, but not every co-host change went through. ${failed.join('. ')}`, 'error');
+  }
 
   // What the patch allows. Where Follower Permissions has events switched
   // off, the followers tier is not offered — it would be read down to
@@ -427,7 +515,9 @@
           pendingReviewers = reviewers;
           showToast('Submitted for review', 'success');
         } else {
+          const failed = canChooseCoHosts ? await applyCoHosts(eventId) : [];
           showToast('Event updated', 'success');
+          reportCoHostFailures(failed);
           navigate(`/events/${eventId}`);
         }
       } else {
@@ -436,7 +526,9 @@
           pendingReviewers = reviewers;
           showToast('Submitted for review', 'success');
         } else {
+          const failed = canChooseCoHosts && coHosts.length ? await applyCoHosts(result.id) : [];
           showToast('Event created', 'success');
+          reportCoHostFailures(failed);
           navigate(`/events/${result.id}`);
         }
       }
@@ -624,6 +716,18 @@
             {@render trustAsk()}
           {/if}
         </div>
+
+        {#if canChooseCoHosts}
+          <div class="field">
+            <label class="lt-label" for="co-hosts">Co-hosts</label>
+            <CoHostPicker bind:rows={coHosts} hostSlug={hostingPatch.slug} disabled={submitting} />
+            <p class="lt-hint image-hint">
+              A patch you don't run confirms before the event shows on its
+              calendar. Can edit lets that patch's admins change everything
+              here except who can see it.
+            </p>
+          </div>
+        {/if}
 
         {#if showTierControl}
           <div class="field">

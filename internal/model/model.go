@@ -420,8 +420,13 @@ type EventLink struct {
 	Status      string `json:"status"`
 	InitiatedBy string `json:"initiated_by"`
 	RequestedBy string `json:"requested_by,omitempty"`
-	CreatedAt   string `json:"created_at"`
-	// Display fields joined from nodes for rendering "with X".
+	// CanEdit: the owner granted this patch edit rights on the event
+	// (docs/adr/2026-10-19-co-hosts-read-as-equals-and-the-owner-can-share-
+	// the-pen.md). Handshake bookkeeping like RequestedBy, so it is stated
+	// only to the two sides of the link and reads false to everyone else.
+	CanEdit   bool   `json:"can_edit"`
+	CreatedAt string `json:"created_at"`
+	// Display fields joined from nodes for rendering the "Hosted by" line.
 	NodeName string `json:"node_name,omitempty"`
 	NodeSlug string `json:"node_slug,omitempty"`
 	// NodeStatus lets a client decide the linked side of the handshake

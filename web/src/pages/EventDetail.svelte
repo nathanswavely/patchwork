@@ -67,9 +67,14 @@
   let creatorRole = $derived(
     event ? getMembershipRoles().get(event.node_slug) : undefined
   );
+  // Edit also reaches a co-host the owner granted edit rights to
+  // (docs/adr/2026-10-19-co-hosts-read-as-equals-and-the-owner-can-share-the-pen.md),
+  // which the payload answers with the check UpdateEvent runs rather than
+  // this page re-deriving it from links and memberships.
   let canEdit = $derived(
     !!event && !imported && (
       canManage
+      || event.viewer_co_edits === true
       || (
         !!getUser() && event.created_by === getUser().id && (
           creatorRole === 'member'
@@ -78,6 +83,13 @@
         )
       )
     )
+  );
+
+  // Mirrors DeleteEvent: patch admins, instance admins, and the event's own
+  // creator. Not a co-host with edit rights: deleting takes the event off
+  // every co-host's calendar, and that stays with the patch that holds it.
+  let canDelete = $derived(
+    !!event && (canManage || (!!getUser() && event.created_by === getUser().id))
   );
 
   async function detachEvent() {
@@ -173,12 +185,14 @@
               onConfirm={detachEvent}
             />
           {/if}
-          <ConfirmAction
-            label={event.status === 'pending_review' ? 'Withdraw' : 'Delete'}
-            confirmLabel={event.status === 'pending_review' ? 'Withdraw' : 'Delete'}
-            variant="danger"
-            onConfirm={deleteEvent}
-          />
+          {#if canDelete}
+            <ConfirmAction
+              label={event.status === 'pending_review' ? 'Withdraw' : 'Delete'}
+              confirmLabel={event.status === 'pending_review' ? 'Withdraw' : 'Delete'}
+              variant="danger"
+              onConfirm={deleteEvent}
+            />
+          {/if}
         </div>
       {/if}
     </div>
@@ -196,21 +210,16 @@
       </p>
     {/if}
 
-    {#if event.node_name}
-      <div class="host-row">
-        <a
-          href="/patches/{event.node_slug}"
-          class="host-link"
-          onclick={(e) => { e.preventDefault(); navigate(`/patches/${event.node_slug}`); }}
-        >Hosted by {event.node_name}</a>
+    <!-- The "Hosted by" line names the owner and every confirmed co-host
+         as equals, so EventLinks draws it; the pills ride at its end. -->
+    <EventLinks {event} onChanged={() => loadEvent(event.id)}>
+      {#snippet trailing()}
         {#if event.node_status === 'unclaimed'}
           <span class="lt-pill">Community-submitted</span>
         {/if}
         <EventTierChip visibility={event.visibility} />
-      </div>
-    {/if}
-
-    <EventLinks {event} onChanged={() => loadEvent(event.id)} />
+      {/snippet}
+    </EventLinks>
 
     <div class="meta">
       <div class="meta-row">
@@ -354,26 +363,6 @@
 
   .review-banner span {
     color: var(--color-text-muted);
-  }
-
-  .host-row {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1.25rem;
-    flex-wrap: wrap;
-  }
-
-  .host-link {
-    display: inline-block;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--color-primary);
-    text-decoration: none;
-  }
-
-  .host-link:hover {
-    text-decoration: underline;
   }
 
   .meta {

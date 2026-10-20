@@ -1,7 +1,10 @@
 # Event links: one owner, two consents
 
 Status: accepted; amended by ADR 057 (standing is no longer admins-only —
-a trusted contributor speaks for a patch while it is unclaimed).
+a trusted contributor speaks for a patch while it is unclaimed) and by
+docs/adr/2026-10-19-co-hosts-read-as-equals-and-the-owner-can-share-the-pen.md
+(co-hosts are chosen in the event form, the page names every confirmed
+co-host as a host, and the owner may grant a linked patch edit rights).
 
 A band and a venue are both patches, and a gig belongs to both — but
 `events.node_id` is singular, so today the second patch either duplicates

@@ -131,10 +131,15 @@ func notifyLinkRequest(db *database.DB, confirmingNodeID, actorID, eventID, even
 
 // CreateEventLink handles POST /api/v1/events/{id}/links.
 //
-// Body: {"target": "<slug or patch URL>", "absorb_event_id": "..."}.
-// The caller's admin standing decides which side is proposing; adminning
-// both sides confirms instantly. A remote patch URL becomes a
-// cross-quilt mention instead — display-only, owner-side action.
+// Body: {"target": "<slug or patch URL>", "absorb_event_id": "...",
+// "can_edit": false}. The caller's admin standing decides which side is
+// proposing; adminning both sides confirms instantly. A remote patch URL
+// becomes a cross-quilt mention instead — display-only, owner-side action.
+//
+// can_edit asks for the co-host to be granted edit rights once the link is
+// confirmed (docs/adr/2026-10-19-co-hosts-read-as-equals-and-the-owner-can-
+// share-the-pen.md). Only the owner's side may grant them, so the event
+// form can choose a co-host and their rights in one save.
 func CreateEventLink(db *database.DB, cfg *config.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := middleware.UserFromContext(r.Context())
@@ -143,6 +148,7 @@ func CreateEventLink(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		var req struct {
 			Target        string `json:"target"`
 			AbsorbEventID string `json:"absorb_event_id"`
+			CanEdit       bool   `json:"can_edit"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || strings.TrimSpace(req.Target) == "" {
 			http.Error(w, `{"error":"target is required"}`, http.StatusBadRequest)
@@ -200,6 +206,14 @@ func CreateEventLink(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			return
 		}
 
+		// Refused rather than dropped: a request that asked for edit rights
+		// and quietly got a plain link would report success and store
+		// something else.
+		if req.CanEdit && !ownerSide {
+			http.Error(w, `{"error":"only the event's own patch can grant edit rights"}`, http.StatusForbidden)
+			return
+		}
+
 		initiatedBy := "owner"
 		if !ownerSide {
 			initiatedBy = "linked"
@@ -229,22 +243,23 @@ func CreateEventLink(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		var err error
 		if status == "confirmed" {
 			_, err = db.Exec(
-				`INSERT INTO event_links (id, event_id, node_id, status, initiated_by, requested_by, absorb_event_id, confirmed_at)
-				 VALUES (?, ?, ?, 'confirmed', ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
-				id, eventID, targetNodeID, initiatedBy, user.ID, absorb,
+				`INSERT INTO event_links (id, event_id, node_id, status, initiated_by, requested_by, absorb_event_id, can_edit, confirmed_at)
+				 VALUES (?, ?, ?, 'confirmed', ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
+				id, eventID, targetNodeID, initiatedBy, user.ID, absorb, req.CanEdit,
 			)
 		} else {
 			_, err = db.Exec(
-				`INSERT INTO event_links (id, event_id, node_id, status, initiated_by, requested_by, absorb_event_id)
-				 VALUES (?, ?, ?, 'pending', ?, ?, ?)`,
-				id, eventID, targetNodeID, initiatedBy, user.ID, absorb,
+				`INSERT INTO event_links (id, event_id, node_id, status, initiated_by, requested_by, absorb_event_id, can_edit)
+				 VALUES (?, ?, ?, 'pending', ?, ?, ?, ?)`,
+				id, eventID, targetNodeID, initiatedBy, user.ID, absorb, req.CanEdit,
 			)
 		}
 		if err != nil {
 			http.Error(w, `{"error":"link already exists"}`, http.StatusConflict)
 			return
 		}
-		auth.LogAuditEvent(db, user.ID, "event.link_request", "event", eventID, `{"node_id":"`+targetNodeID+`"}`, clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "event.link_request", "event", eventID,
+			map[string]any{"node_id": targetNodeID, "can_edit": req.CanEdit}, clientIP(r))
 
 		var ownerSlug string
 		db.QueryRow("SELECT slug FROM nodes WHERE id = ?", ownerNodeID).Scan(&ownerSlug)
@@ -449,6 +464,96 @@ func RemoveEventLink(db *database.DB) http.HandlerFunc {
 	}
 }
 
+// SetEventLinkEditRights handles PATCH /api/v1/events/{id}/links/{nodeId}.
+// Body: {"can_edit": true|false}.
+//
+// The owner's side grants a co-host edit rights and takes them back
+// (docs/adr/2026-10-19-co-hosts-read-as-equals-and-the-owner-can-share-
+// the-pen.md). Nobody else does: not the co-host, who already consented to
+// the link and is being given something rather than exposed to it, and not
+// another co-host holding the rights, because rights that pass one hop at a
+// time are rights nobody decided to give. A pending link may carry the
+// grant; it does nothing until the other side confirms.
+func SetEventLinkEditRights(db *database.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user := middleware.UserFromContext(r.Context())
+		eventID := r.PathValue("id")
+		linkedNodeID := r.PathValue("nodeId")
+
+		var req struct {
+			CanEdit *bool `json:"can_edit"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.CanEdit == nil {
+			http.Error(w, `{"error":"can_edit is required"}`, http.StatusBadRequest)
+			return
+		}
+
+		var ownerNodeID string
+		err := db.QueryRow(
+			`SELECT e.node_id FROM event_links l JOIN events e ON e.id = l.event_id
+			 WHERE l.event_id = ? AND l.node_id = ? AND e.removed_at IS NULL`,
+			eventID, linkedNodeID,
+		).Scan(&ownerNodeID)
+		if err != nil {
+			http.Error(w, `{"error":"link not found"}`, http.StatusNotFound)
+			return
+		}
+		if !userSpeaksForNode(db, user, ownerNodeID) {
+			http.Error(w, `{"error":"only the event's own patch can change edit rights"}`, http.StatusForbidden)
+			return
+		}
+
+		if _, err := db.Exec(
+			`UPDATE event_links SET can_edit = ? WHERE event_id = ? AND node_id = ?`,
+			*req.CanEdit, eventID, linkedNodeID,
+		); err != nil {
+			http.Error(w, `{"error":"failed to change edit rights"}`, http.StatusInternalServerError)
+			return
+		}
+		// Granting and revoking notify nobody (docs/adr/093): the grant
+		// shows on the event, as an Edit button the co-host's admins see.
+		auth.LogAuditEventJSON(db, user.ID, "event.link_edit_rights", "event", eventID,
+			map[string]any{"node_id": linkedNodeID, "can_edit": *req.CanEdit}, clientIP(r))
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(loadEventLink(db, eventID, linkedNodeID))
+	}
+}
+
+// userCoEditsEvent reports whether a user may edit an event as a co-host:
+// they speak for a patch whose confirmed link to the event carries edit
+// rights, and that patch is still on the quilt (docs/adr/2026-10-19-co-
+// hosts-read-as-equals-and-the-owner-can-share-the-pen.md). It answers
+// only the co-host door; UpdateEvent decides what that door may change.
+func userCoEditsEvent(db *database.DB, user *model.User, eventID string) bool {
+	if user == nil {
+		return false
+	}
+	rows, err := db.Query(
+		`SELECT l.node_id FROM event_links l JOIN nodes n ON n.id = l.node_id
+		 WHERE l.event_id = ? AND l.status = 'confirmed' AND l.can_edit = 1
+		   AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL`,
+		eventID,
+	)
+	if err != nil {
+		return false
+	}
+	var nodeIDs []string
+	for rows.Next() {
+		var id string
+		if rows.Scan(&id) == nil {
+			nodeIDs = append(nodeIDs, id)
+		}
+	}
+	rows.Close()
+	for _, id := range nodeIDs {
+		if userSpeaksForNode(db, user, id) {
+			return true
+		}
+	}
+	return false
+}
+
 // RemoveEventMention handles DELETE /api/v1/events/{id}/mentions/{mentionId}.
 // A mention is the owner's display content — owner-side admins remove it.
 func RemoveEventMention(db *database.DB) http.HandlerFunc {
@@ -484,11 +589,11 @@ func RemoveEventMention(db *database.DB) http.HandlerFunc {
 func loadEventLink(db *database.DB, eventID, nodeID string) model.EventLink {
 	var l model.EventLink
 	db.QueryRow(
-		`SELECT l.id, l.event_id, l.node_id, l.status, l.initiated_by, l.requested_by, l.created_at, n.name, n.slug
+		`SELECT l.id, l.event_id, l.node_id, l.status, l.initiated_by, l.requested_by, l.can_edit, l.created_at, n.name, n.slug, n.status
 		 FROM event_links l JOIN nodes n ON l.node_id = n.id
 		 WHERE l.event_id = ? AND l.node_id = ?`,
 		eventID, nodeID,
-	).Scan(&l.ID, &l.EventID, &l.NodeID, &l.Status, &l.InitiatedBy, &l.RequestedBy, &l.CreatedAt, &l.NodeName, &l.NodeSlug)
+	).Scan(&l.ID, &l.EventID, &l.NodeID, &l.Status, &l.InitiatedBy, &l.RequestedBy, &l.CanEdit, &l.CreatedAt, &l.NodeName, &l.NodeSlug, &l.NodeStatus)
 	return l
 }
 
@@ -497,7 +602,7 @@ func loadEventLink(db *database.DB, eventID, nodeID string) model.EventLink {
 // side). Pending links are invisible to the public (docs/adr/032).
 func eventLinksForViewer(db *database.DB, user *model.User, eventID, ownerNodeID string) []model.EventLink {
 	rows, err := db.Query(
-		`SELECT l.id, l.event_id, l.node_id, l.status, l.initiated_by, l.requested_by, l.created_at, n.name, n.slug, n.status
+		`SELECT l.id, l.event_id, l.node_id, l.status, l.initiated_by, l.requested_by, l.can_edit, l.created_at, n.name, n.slug, n.status
 		 FROM event_links l JOIN nodes n ON l.node_id = n.id
 		 WHERE l.event_id = ? AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL
 		 ORDER BY l.created_at`,
@@ -512,15 +617,21 @@ func eventLinksForViewer(db *database.DB, user *model.User, eventID, ownerNodeID
 	ownerSide := userSpeaksForNode(db, user, ownerNodeID)
 	for rows.Next() {
 		var l model.EventLink
-		if err := rows.Scan(&l.ID, &l.EventID, &l.NodeID, &l.Status, &l.InitiatedBy, &l.RequestedBy, &l.CreatedAt, &l.NodeName, &l.NodeSlug, &l.NodeStatus); err != nil {
+		if err := rows.Scan(&l.ID, &l.EventID, &l.NodeID, &l.Status, &l.InitiatedBy, &l.RequestedBy, &l.CanEdit, &l.CreatedAt, &l.NodeName, &l.NodeSlug, &l.NodeStatus); err != nil {
 			continue
 		}
-		if l.Status != "confirmed" && !ownerSide && !userSpeaksForNode(db, user, l.NodeID) {
+		linkedSide := !ownerSide && userSpeaksForNode(db, user, l.NodeID)
+		if l.Status != "confirmed" && !ownerSide && !linkedSide {
 			continue
 		}
 		if l.Status == "confirmed" {
 			// requested_by is handshake bookkeeping, not public data.
 			l.RequestedBy = ""
+		}
+		// So are edit rights: who may edit is back-office, stated to the
+		// two sides of this link and nobody else.
+		if !ownerSide && !linkedSide {
+			l.CanEdit = false
 		}
 		links = append(links, l)
 	}

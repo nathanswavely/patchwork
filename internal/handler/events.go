@@ -379,6 +379,14 @@ func GetEvent(db *database.DB) http.HandlerFunc {
 			// make to read one bit. Always stated, never absent; false on
 			// an active patch, where either scope is worth nothing.
 			ViewerTrusted bool `json:"viewer_trusted"`
+			// ViewerCoEdits: this viewer edits the event only as a co-host
+			// the owner granted edit rights to (docs/adr/2026-10-19-co-hosts-
+			// read-as-equals-and-the-owner-can-share-the-pen.md), answered by
+			// the same check UpdateEvent runs. False for anyone who edits
+			// through the direct door, so a client can tell "may edit" from
+			// "may edit everything but who it is for" without re-deriving
+			// either rule.
+			ViewerCoEdits bool `json:"viewer_co_edits"`
 		}
 		// An archived or removed patch takes its events with it — same gate
 		// as GetNode, so an event link doesn't outlive its patch page.
@@ -426,6 +434,9 @@ func GetEvent(db *database.DB) http.HandlerFunc {
 		e.Links = eventLinksForViewer(db, user, e.ID, e.NodeID)
 		e.Mentions = eventMentions(db, e.ID)
 		e.ViewerTrusted = e.NodeStatus == "unclaimed" && userTrustedOn(db, user, e.NodeID)
+		e.ViewerCoEdits = user != nil && e.Status == "active" &&
+			!eventDirectEditor(db, user, e.NodeID, e.NodeStatus, e.CreatedBy) &&
+			userCoEditsEvent(db, user, e.ID)
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(e)
@@ -654,9 +665,9 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 		eventID := r.PathValue("id")
 
 		// Get event to check permissions.
-		var nodeID, createdBy, eventStatus string
+		var nodeID, createdBy, eventStatus, storedVisibility string
 		var sourceID *string
-		err := db.QueryRow("SELECT node_id, created_by, status, source_id FROM events WHERE id = ?", eventID).Scan(&nodeID, &createdBy, &eventStatus, &sourceID)
+		err := db.QueryRow("SELECT node_id, created_by, status, source_id, visibility FROM events WHERE id = ?", eventID).Scan(&nodeID, &createdBy, &eventStatus, &sourceID, &storedVisibility)
 		if err != nil {
 			http.Error(w, `{"error":"event not found"}`, http.StatusNotFound)
 			return
@@ -672,26 +683,20 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 		var nodeStatus string
 		db.QueryRow("SELECT status FROM nodes WHERE id = ?", nodeID).Scan(&nodeStatus)
 
-		// Changes follow the same door the event came through (docs/adr/026):
-		// whoever may post directly edits directly; an ordinary submitter may
-		// edit their own event, but the edit re-enters review. On active
-		// patches an adopted suggestion belongs to the patch — the suggester
-		// keeps no residual rights once it is approved.
-		//
-		// The direct door on an active patch is the one CreateEvent opens:
-		// members and admins. Admins edit anything on their calendar; a
-		// member's reach stops at the event they created, which is the same
-		// line DeleteEvent draws. This used to say admins only, so a member
-		// could publish an event and then get a 403 editing it a minute later.
 		isCreator := user.ID == createdBy
-		direct := user.Role == "admin" ||
-			(nodeStatus == "active" && userHasNodeRole(db, user.ID, nodeID, "admin")) ||
-			(nodeStatus == "active" && isCreator && userHasNodeRole(db, user.ID, nodeID, "member")) ||
-			(nodeStatus == "unclaimed" && isCreator && userTrustedOn(db, user, nodeID))
+		direct := eventDirectEditor(db, user, nodeID, nodeStatus, createdBy)
+		// A co-host the owner granted edit rights to
+		// (docs/adr/2026-10-19-co-hosts-read-as-equals-and-the-owner-can-
+		// share-the-pen.md). Asked only when the direct door is shut, and
+		// only of a published event: links exist only on active events, and
+		// a co-host cannot read one that has gone back into review.
+		coHost := !direct && eventStatus == "active" && userCoEditsEvent(db, user, eventID)
 		reReview := false
 		switch {
 		case direct:
 			// Full edit, status untouched.
+		case coHost:
+			// Every field but visibility, status untouched (below).
 		case isCreator && eventStatus == "pending_review":
 			// Editing your own submission while it waits is free.
 		case isCreator && nodeStatus == "unclaimed":
@@ -746,7 +751,19 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 		// the CHECK constraint instead of answering with a 400. Absent
 		// means unchanged; present-but-empty is not a value this field has,
 		// so it fails like any other invalid string.
-		if raw, present := req["visibility"]; present {
+		//
+		// Who the event is for is read against the owner's own Follower
+		// Permissions, so a co-host setting it would be choosing the audience
+		// of another patch's calendar. The form spreads every field it loaded
+		// back into its submission, so the stored value sent back is no change
+		// and passes; anything else is refused.
+		if raw, present := req["visibility"]; present && coHost {
+			if v, _ := raw.(string); v != storedVisibility {
+				writeJSONError(w, http.StatusForbidden, "who can see this event is set by the patch that holds it")
+				return
+			}
+			delete(req, "visibility")
+		} else if present {
 			v, _ := raw.(string)
 			if !validEventVisibility(v) {
 				writeJSONError(w, http.StatusBadRequest, badVisibilityMessage)
@@ -844,6 +861,29 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(e)
 	}
+}
+
+// eventDirectEditor reports whether a user edits an event through the
+// direct door. Changes follow the same door the event came through
+// (docs/adr/026): whoever may post directly edits directly; an ordinary
+// submitter may edit their own event, but the edit re-enters review. On
+// active patches an adopted suggestion belongs to the patch — the
+// suggester keeps no residual rights once it is approved.
+//
+// The direct door on an active patch is the one CreateEvent opens: members
+// and admins. Admins edit anything on their calendar; a member's reach
+// stops at the event they created, which is the same line DeleteEvent
+// draws. This used to say admins only, so a member could publish an event
+// and then get a 403 editing it a minute later.
+func eventDirectEditor(db *database.DB, user *model.User, nodeID, nodeStatus, createdBy string) bool {
+	if user == nil {
+		return false
+	}
+	isCreator := user.ID == createdBy
+	return user.Role == "admin" ||
+		(nodeStatus == "active" && userHasNodeRole(db, user.ID, nodeID, "admin")) ||
+		(nodeStatus == "active" && isCreator && userHasNodeRole(db, user.ID, nodeID, "member")) ||
+		(nodeStatus == "unclaimed" && isCreator && userTrustedOn(db, user, nodeID))
 }
 
 // DeleteEvent handles DELETE /api/v1/events/{id}.
