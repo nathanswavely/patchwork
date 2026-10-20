@@ -1,6 +1,8 @@
 # An instance vouches for an app
 
-Date: 2026-09-20. Status: **accepted**. Extends docs/adr/017 (the step-up
+Date: 2026-09-20. Status: **accepted**; the deferred `applinks` block is
+decided by docs/adr/2026-10-18-a-listed-app-may-open-the-quilts-links.md
+(per app, off by default). Extends docs/adr/017 (the step-up
 gate), docs/adr/013 (usernames are chosen) and docs/adr/025 (the flagship
 gets no special powers); applies docs/adr/087's shape, that a domain proves
 a thing and a person does not.

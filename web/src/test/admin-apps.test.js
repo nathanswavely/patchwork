@@ -78,6 +78,28 @@ describe('Admin apps page', () => {
     expect(src).toContain('maxlength="64"');
   });
 
+  // docs/adr/2026-10-18-a-listed-app-may-open-the-quilts-links.md
+  it('gives an Apple row, and only an Apple row, the open-links switch', () => {
+    expect(src).toContain("import ToggleSwitch from '../components/ToggleSwitch.svelte'");
+    const row = src.slice(src.indexOf("{#if app.platform === 'apple'}"), src.indexOf('>Remove</button>'));
+    expect(row).toContain('<ToggleSwitch');
+    expect(row).toContain('checked={app.open_links}');
+    expect(row).toContain("Open this quilt's links in the app");
+  });
+
+  it('says what the switch does and that Apple is slow to notice', () => {
+    expect(src).toContain("iPhones with the app installed will open this quilt's patch, event, people and governance links in the app instead of the browser.");
+    expect(src).toContain('Apple can take up to a day to notice a change.');
+  });
+
+  it('sets the switch with a PATCH and no step-up, since it names nobody new', () => {
+    const set = src.slice(src.indexOf('async function setOpenLinks'), src.indexOf('function platformLabel'));
+    expect(set).toContain("api(`admin/native-apps/${app.id}`, { method: 'PATCH', body: { open_links: open } })");
+    expect(set).not.toContain('withStepUp');
+    // A refused change puts the switch back where the row still is.
+    expect(set).toContain('input.checked = app.open_links');
+  });
+
   it('shows the API’s own refusal inline rather than one shrug', () => {
     expect(src).toContain('e.data?.error');
     expect(src).toContain('{#if error}');

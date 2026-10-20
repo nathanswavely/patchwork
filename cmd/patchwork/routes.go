@@ -487,10 +487,13 @@ func buildRoutes(d serverDeps) (*http.ServeMux, []route) {
 	// step-up gated, because publishing an identifier lets that app ask a
 	// phone for this domain's passkeys — the same class of act as setting an
 	// account's email address (docs/adr/072). Removing one is not: taking
-	// trust back is the safe direction.
+	// trust back is the safe direction. Nor is the PATCH that lets a listed
+	// Apple app open this quilt's links: it names no new party
+	// (docs/adr/2026-10-18-a-listed-app-may-open-the-quilts-links.md).
 	t.handleFunc("GET /api/v1/admin/native-apps", middleware.AdminRequired(d.db, handler.AdminListNativeApps(d.db, d.cfg)))
 	t.handleFunc("POST /api/v1/admin/native-apps", middleware.AdminRequired(d.db, middleware.SudoRequired(d.db, handler.AdminAddNativeApp(d.db, d.wa))))
 	t.handleFunc("DELETE /api/v1/admin/native-apps/{id}", middleware.AdminRequired(d.db, handler.AdminDeleteNativeApp(d.db, d.wa)))
+	t.handleFunc("PATCH /api/v1/admin/native-apps/{id}", middleware.AdminRequired(d.db, handler.AdminSetNativeAppOpenLinks(d.db)))
 
 	// Neighbor quilts: the instance's public adjacency list (docs/adr/024).
 	t.handleFunc("GET /api/v1/admin/neighbor-quilts", middleware.AdminRequired(d.db, handler.AdminListNeighborQuilts(d.db)))

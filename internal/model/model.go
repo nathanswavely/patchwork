@@ -770,5 +770,9 @@ type NativeApp struct {
 	// from empty will get it wrong on one of them.
 	Fingerprints []string `json:"fingerprints"`
 	Label        string   `json:"label"`
-	CreatedAt    string   `json:"created_at"`
+	// OpenLinks says whether this quilt's links open in the app rather than
+	// the browser (docs/adr/2026-10-18-a-listed-app-may-open-the-quilts-links.md).
+	// Off by default, and only ever on for an Apple row for now.
+	OpenLinks bool   `json:"open_links"`
+	CreatedAt string `json:"created_at"`
 }

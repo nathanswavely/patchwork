@@ -1,0 +1,15 @@
+-- A listed app may also open this quilt's links
+-- (docs/adr/2026-10-18-a-listed-app-may-open-the-quilts-links.md).
+--
+-- Listing an app (migration 20260920T212754) lets it hold this domain's
+-- passkeys. Opening the quilt's URLs in that app instead of the browser is a
+-- second grant, and this column is where an admin makes it, one app at a
+-- time. 0 is the default, so every app already listed keeps doing exactly
+-- what it did: the Apple file carries no applinks block until an admin turns
+-- one on.
+--
+-- Apple rows only, for now. The handler refuses to set it on an Android row
+-- rather than a CHECK refusing it here, because Android's handle_all_urls is
+-- a later decision on this same column, and a constraint would turn that
+-- decision into a table rebuild.
+ALTER TABLE native_apps ADD COLUMN open_links INTEGER NOT NULL DEFAULT 0;

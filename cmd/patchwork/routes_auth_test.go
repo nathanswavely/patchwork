@@ -572,7 +572,7 @@ func (f *routeFixture) seed(t *testing.T) {
 		VALUES (?, ?, 'https://other.example', 'https://other.example/ap/nodes/1', 'their-patch', 'Their Patch')`,
 		follow, owner)
 
-	// One listed native app, so DELETE /admin/native-apps/{id} finds a row
+	// One listed native app, so DELETE and PATCH /admin/native-apps/{id} find a row
 	// and gets as far as asking who is calling
 	// (docs/adr/2026-09-20-an-instance-vouches-for-an-app.md).
 	nativeApp := id("native-apps")
