@@ -56212,7 +56212,7 @@
       "text": "The text from before this proposal is not in this patch's history, so its changes cannot be shown.",
       "words": 18,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
