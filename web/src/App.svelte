@@ -17,7 +17,7 @@
   import { loadInstance, loadTags } from './stores/quilt.svelte.js';
   import { scopeForRoute, surfaceForRoute, scopedPath } from './lib/scope.js';
   import { loadRegistry } from './lib/registry.js';
-  import { isOnboardingDismissed } from './lib/onboarding.js';
+  import { isOnboardingDismissed, welcomePath } from './lib/onboarding.js';
   import { markFamiliar } from './lib/vocab.js';
 
   // Layout shells
@@ -549,7 +549,12 @@
       // orientation from the surface orientation hands off to is a loop.
       if (!['welcome', 'discover', 'login', 'invite', 'signupComplete', 'claimPatch', 'patchSetup', 'patchNew', 'signInLink'].includes(routeName)
           && !isOnboardingDismissed(getUser()?.id)) {
-        navigate('/welcome');
+        // The address they asked for rides along (F-053): someone who
+        // followed a link to a patch is returned there, not to /discover.
+        // Replaced rather than pushed, so Back does not land on the page
+        // that redirects here again.
+        const qs = getQuery().toString();
+        replaceRoute(welcomePath(getPath() + (qs ? `?${qs}` : '')));
       }
     }
   });

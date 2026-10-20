@@ -109,7 +109,9 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 			(SELECT COUNT(*) FROM votes v JOIN memberships m ON m.user_id = v.user_id AND m.node_id = p.node_id
 				WHERE v.proposal_id = p.id AND v.value = 'reject' AND ` + countedBallot + `) as reject_count,
 			(SELECT COUNT(*) FROM votes v JOIN memberships m ON m.user_id = v.user_id AND m.node_id = p.node_id
-				WHERE v.proposal_id = p.id AND v.value = 'abstain' AND ` + countedBallot + `) as abstain_count
+				WHERE v.proposal_id = p.id AND v.value = 'abstain' AND ` + countedBallot + `) as abstain_count,
+			COALESCE(p.applied_at, p.updated_at) AS decided_at,
+			COALESCE(p.seats_contested,0), COALESCE(p.nominations_close_at,'')
 			FROM proposals p
 			LEFT JOIN users u ON u.id = p.author_id
 			WHERE p.node_id = ?`
@@ -175,6 +177,19 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 			ApproveCount int    `json:"approve_count"`
 			RejectCount  int    `json:"reject_count"`
 			AbstainCount int    `json:"abstain_count"`
+			// When a closed proposal closed, by the same expression the
+			// Record files it under (governance_record.go), so the list and
+			// the Record cannot name two different days for one decision.
+			// Empty on an open row: a decision that has not happened has no
+			// date, and updated_at on an open row is only the last edit.
+			DecidedAt string `json:"decided_at,omitempty"`
+			// An election, told apart the way the detail page tells it
+			// (election_view.go). Without it a contest that settled on no
+			// ballots read as a direct change "applied by" whoever the
+			// author column names, when the calendar opened it and nobody
+			// applied anything (F-137, docs/adr/109).
+			SeatsContested int    `json:"seats_contested"`
+			ElectionPhase  string `json:"election_phase,omitempty"`
 		}
 
 		docHidden := hiddenDocRedactor(db, r, nodeID)
@@ -182,8 +197,13 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 		var proposals []proposalItem
 		for rows.Next() {
 			var p proposalItem
-			if err := rows.Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.State, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &p.AuthorName, &p.ApproveCount, &p.RejectCount, &p.AbstainCount); err != nil {
+			var decidedAt, nominationsCloseAt string
+			if err := rows.Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.State, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &p.AuthorName, &p.ApproveCount, &p.RejectCount, &p.AbstainCount, &decidedAt, &p.SeatsContested, &nominationsCloseAt); err != nil {
 				continue
+			}
+			p.ElectionPhase = electionPhase(p.SeatsContested, nominationsCloseAt, p.Status)
+			if p.Status != "open" {
+				p.DecidedAt = decidedAt
 			}
 			if docHidden(p.TargetDoc) {
 				p.ProposedBody, p.ProposedTitle = "", ""
@@ -1015,7 +1035,9 @@ func resolveProposal(db *database.DB, proposalID string) string {
 		// co-op's first proposal, since tenure keeps most joiners out of
 		// the electorate for a month.
 		if windowClosed(votingEndsAt) {
-			lapseProposal(db, p, totalVotes)
+			if lapseProposal(db, p, totalVotes) {
+				broadcastResolution(db, p.NodeID, proposalID, "lapsed", approveCount, rejectCount, abstainCount)
+			}
 			return "lapsed"
 		}
 		return ""
@@ -1140,20 +1162,31 @@ func resolveProposal(db *database.DB, proposalID string) string {
 
 	notifyProposalResolved(db, p, newStatus)
 
-	// Broadcast resolution
+	broadcastResolution(db, p.NodeID, proposalID, newStatus, approveCount, rejectCount, abstainCount)
+
+	return newStatus
+}
+
+// broadcastResolution tells a patch's remote followers a proposal closed, and
+// how, wherever its record is public. Every way a vote closes goes through
+// here: a lapse used to return before the broadcast, so a remote follower
+// sent the Create for a proposal was never told it ended and it stayed open
+// for ever on the other quilt (F-081). A lapse goes out as "lapsed" rather
+// than "rejected", because nobody rejected it (docs/adr/097).
+func broadcastResolution(db *database.DB, nodeID, proposalID, result string, approveCount, rejectCount, abstainCount int) {
 	go func() {
-		if !governanceRecordIsPublic(db, p.NodeID) {
+		if !governanceRecordIsPublic(db, nodeID) {
 			return
 		}
 		resolveActivity := ap.ProposalResolvedActivity(
 			ap.ProposalAPID(ap.GetDomain(), proposalID),
-			ap.NodeAPID(ap.GetDomain(), p.NodeID),
-			newStatus, approveCount, rejectCount, abstainCount,
+			ap.NodeAPID(ap.GetDomain(), nodeID),
+			result, approveCount, rejectCount, abstainCount,
 		)
-		ap.BroadcastToFollowers(db, "node", p.NodeID, resolveActivity)
+		if err := ap.BroadcastToFollowers(db, "node", nodeID, resolveActivity); err != nil {
+			log.Printf("proposal %s: broadcast %s resolution: %v", proposalID, result, err)
+		}
 	}()
-
-	return newStatus
 }
 
 // notifyProposalResolved tells a patch's members what their own vote decided.
@@ -1454,6 +1487,11 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			"my_vote":              myVote,
 			"eligible_voters":      eligibleCount,
 			"can_vote":             canVote,
+			// On a closed proposal with no ballot from this viewer, whether
+			// they were somebody who could have cast one, so the page can say
+			// "You did not vote" only where that is true (F-070).
+			"could_have_voted": p.Status != "open" && myVote == "" &&
+				couldHaveVoted(db, viewerID, p.NodeID, gc, recused, voteClosedAt(p, appliedAt)),
 			// The terms this vote is judged by, so the page can say so rather
 			// than leaving a refused voter to guess (docs/adr/047). Fixed when
 			// voting opened — which is created_at, already in this payload.
@@ -1488,6 +1526,30 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			if !docTextHidden {
 				currentContent, _ := governance.GetDocument(governance.GetDataDir(), p.NodeID, p.TargetDoc)
 				result["current_doc_content"] = currentContent
+				// A settled proposal's diff is against the text it was made
+				// against, not the live one. Applied, the live text *is* the
+				// proposed body, and a diff against it said "No changes" for a
+				// change that changed something; closed unapplied, the live
+				// text may have moved since, and the diff would describe a
+				// proposal nobody made. Still pending (open, or approved and
+				// waiting on an admin), the live text is what applying would
+				// change, so it stays the comparison.
+				if p.Status == "rejected" || p.Status == "withdrawn" || p.State == "in_effect" {
+					found := false
+					if p.GitSHA != "" {
+						if prior, err := governance.GetDocumentBefore(governance.GetDataDir(), p.NodeID, p.TargetDoc, p.GitSHA); err == nil {
+							result["prior_doc_content"] = prior
+							found = true
+						}
+					}
+					if !found {
+						// No commit to read it from — a repo rebuilt from rows
+						// (docs/adr/084) holds none of the old ones. Said
+						// rather than papered over with the live text, which
+						// is the wrong answer this field exists to replace.
+						result["prior_doc_unavailable"] = true
+					}
+				}
 			}
 			// Whether this document was adopted elsewhere since the draft was
 			// written, which makes the diff below a comparison against

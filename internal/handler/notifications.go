@@ -69,6 +69,30 @@ func sortedKeys(m map[string][]string) []string {
 	return out
 }
 
+// notificationReachable is what a notification must satisfy to be shown or
+// counted: it does not point into an archived patch.
+//
+// Archiving a patch (docs/adr/034) makes every slug route under it answer
+// "not found", but the bell kept every line that linked there. A founder
+// archived a duplicate of her press and went on being told about its
+// election, each line opening onto "Patch not found" and the badge counting
+// it (F-033). Hidden rather than deleted, because archive is reversible: a
+// restore brings the patch back silently, and its notifications come back
+// with it exactly as they were, read or not. That is also why mark-all-read
+// leaves them alone.
+//
+// Matched on the link, because the link is the only thing a notification
+// row stores about its object. Every patch-scoped link starts with
+// /patches/{slug} (internal/weblink), slugs are [a-z0-9-] so LIKE needs no
+// escaping, and an archived patch holds its slug forever (docs/adr/034), so a
+// slug never comes to mean a different patch. The '/' and '?' boundaries
+// stop an archived "press" from hiding "press-two".
+const notificationReachable = `NOT EXISTS (
+	SELECT 1 FROM nodes n WHERE n.status = 'archived'
+	  AND (notifications.link = '/patches/' || n.slug
+	       OR notifications.link LIKE '/patches/' || n.slug || '/%'
+	       OR notifications.link LIKE '/patches/' || n.slug || '?%'))`
+
 // ListNotifications handles GET /api/v1/notifications.
 func ListNotifications(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -82,6 +106,7 @@ func ListNotifications(db *database.DB) http.HandlerFunc {
 
 		conditions = append(conditions, "user_id = ?")
 		args = append(args, user.ID)
+		conditions = append(conditions, notificationReachable)
 
 		if unread == "true" {
 			conditions = append(conditions, "read_at IS NULL")
@@ -150,7 +175,8 @@ func NotificationCount(db *database.DB) http.HandlerFunc {
 		user := middleware.UserFromContext(r.Context())
 
 		var count int
-		db.QueryRow("SELECT COUNT(*) FROM notifications WHERE user_id = ? AND read_at IS NULL", user.ID).Scan(&count)
+		// A badge that cannot be counted shows none, as it always has.
+		_ = db.QueryRow("SELECT COUNT(*) FROM notifications WHERE user_id = ? AND read_at IS NULL AND "+notificationReachable, user.ID).Scan(&count)
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]int{"unread": count})
@@ -192,7 +218,7 @@ func MarkAllNotificationsRead(db *database.DB) http.HandlerFunc {
 		user := middleware.UserFromContext(r.Context())
 
 		result, err := db.Exec(
-			`UPDATE notifications SET read_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE user_id = ? AND read_at IS NULL`,
+			`UPDATE notifications SET read_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE user_id = ? AND read_at IS NULL AND `+notificationReachable,
 			user.ID,
 		)
 		if err != nil {

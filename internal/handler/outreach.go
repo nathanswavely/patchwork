@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -16,6 +17,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/eventsource"
 	"github.com/patchwork-toolkit/patchwork/internal/mail"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
+	"github.com/patchwork-toolkit/patchwork/internal/model"
 	"github.com/patchwork-toolkit/patchwork/internal/settings"
 	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
@@ -48,6 +50,10 @@ type introTemplate struct {
 	Opener   string            `json:"opener"`
 	Calendar map[string]string `json:"calendar"`
 	Signoff  string            `json:"signoff"`
+	// DMOpener is the short opener for a message sent on a link rather
+	// than by email (an Instagram DM, a contact form): no subject, no
+	// sign-off, the same calendar paragraph after it.
+	DMOpener string `json:"dm_opener"`
 }
 
 func defaultIntroTemplate() introTemplate {
@@ -60,6 +66,7 @@ func defaultIntroTemplate() introTemplate {
 		Opener:   defaultIntroOpener,
 		Calendar: cal,
 		Signoff:  defaultIntroSignoff,
+		DMOpener: defaultIntroDMOpener,
 	}
 }
 
@@ -87,6 +94,9 @@ func effectiveIntroTemplate(db *database.DB) (tpl introTemplate, customized bool
 	}
 	if strings.TrimSpace(stored.Signoff) == "" {
 		stored.Signoff = def.Signoff
+	}
+	if strings.TrimSpace(stored.DMOpener) == "" {
+		stored.DMOpener = def.DMOpener
 	}
 	if stored.Calendar == nil {
 		stored.Calendar = map[string]string{}
@@ -124,21 +134,68 @@ func (f introFacts) replacer() *strings.Replacer {
 	)
 }
 
-// renderIntro fills the template for one situation. Attachable has no
-// paragraph of its own (the answer to it is to attach the source), so it
-// renders as Other.
-func renderIntro(tpl introTemplate, situation eventsource.Situation, f introFacts) (subject, body string) {
+// renderIntro fills the template for one situation and one channel.
+// Attachable has no paragraph of its own (the answer to it is to attach
+// the source), so it renders as Other. A dm has no subject and no
+// sign-off: it is a message in a thread, not a letter.
+func renderIntro(tpl introTemplate, channel string, situation eventsource.Situation, f introFacts) (subject, body string) {
 	key := string(situation)
 	if situation == eventsource.SituationAttachable || !eventsource.ValidSituation(key) {
 		key = string(eventsource.SituationOther)
 	}
 	r := f.replacer()
+	if channel == channelDM {
+		parts := []string{
+			strings.TrimSpace(r.Replace(tpl.DMOpener)),
+			strings.TrimSpace(r.Replace(tpl.Calendar[key])),
+		}
+		return "", strings.Join(parts, "\n\n")
+	}
 	parts := []string{
 		strings.TrimSpace(r.Replace(tpl.Opener)),
 		strings.TrimSpace(r.Replace(tpl.Calendar[key])),
 		strings.TrimSpace(r.Replace(tpl.Signoff)),
 	}
 	return strings.TrimSpace(r.Replace(tpl.Subject)), strings.Join(parts, "\n\n")
+}
+
+// The two ways an intro reaches someone. Email goes through the relay or
+// the admin's own mail; a dm is always copied out, since nothing here can
+// post to someone else's inbox on a social site, and nothing should.
+const (
+	channelEmail = "email"
+	channelDM    = "dm"
+)
+
+// defaultChannel is the one the preview opens on when both are on file:
+// email, because it is the channel that can carry the claim shortcut.
+func defaultChannel(n introNode) string {
+	if n.ContactEmail != "" {
+		return channelEmail
+	}
+	if n.ContactURL != "" {
+		return channelDM
+	}
+	return ""
+}
+
+// contactFor is where an intro on this channel goes.
+func contactFor(n introNode, channel string) string {
+	if channel == channelDM {
+		return n.ContactURL
+	}
+	return n.ContactEmail
+}
+
+// normalizeContactURL accepts a link to message someone on: http(s), with
+// a host. A bare handle is refused rather than guessed into a network.
+func normalizeContactURL(raw string) (string, error) {
+	raw = strings.TrimSpace(raw)
+	u, err := url.Parse(raw)
+	if err != nil || (u.Scheme != "http" && u.Scheme != "https") || u.Host == "" {
+		return "", fmt.Errorf("a link to message them on must be a full http(s) address")
+	}
+	return u.String(), nil
 }
 
 func quiltURL(cfg *config.Config) string {
@@ -159,16 +216,25 @@ type introNode struct {
 	Slug               string
 	Website            string
 	ContactEmail       string
+	ContactURL         string
 	VerificationDomain string
+	// Links are the patch's own public links, offered as places to
+	// message it: the Instagram that is often the only door there is.
+	Links []model.NodeLink
 }
 
 func loadIntroNode(db *database.DB, slug string) (introNode, bool) {
 	var n introNode
+	var links string
 	err := db.QueryRow(
-		`SELECT id, name, slug, COALESCE(website,''), contact_email, COALESCE(verification_domain,'')
+		`SELECT id, name, slug, COALESCE(website,''), contact_email, contact_url, COALESCE(verification_domain,''), COALESCE(links,'[]')
 		 FROM nodes WHERE slug = ? AND status = 'unclaimed' AND removed_at IS NULL`, slug,
-	).Scan(&n.ID, &n.Name, &n.Slug, &n.Website, &n.ContactEmail, &n.VerificationDomain)
-	return n, err == nil
+	).Scan(&n.ID, &n.Name, &n.Slug, &n.Website, &n.ContactEmail, &n.ContactURL, &n.VerificationDomain, &links)
+	if err != nil {
+		return n, false
+	}
+	_ = json.Unmarshal([]byte(links), &n.Links)
+	return n, true
 }
 
 // emailDomain is what follows the last '@' of a normalized address.
@@ -183,6 +249,7 @@ func emailDomain(email string) string {
 // introSend is one row of intro_sends as the workspace lists it.
 type introSend struct {
 	ID        string `json:"id"`
+	Channel   string `json:"channel"`
 	Email     string `json:"email"`
 	SentBy    string `json:"sent_by"`
 	Situation string `json:"situation"`
@@ -194,7 +261,7 @@ type introSend struct {
 
 func listIntroSends(db *database.DB, nodeID string) []introSend {
 	rows, err := db.Query(
-		`SELECT s.id, s.email, COALESCE(u.display_name, u.username, ''), s.situation, s.delivery, s.subject,
+		`SELECT s.id, s.channel, s.email, COALESCE(u.display_name, u.username, ''), s.situation, s.delivery, s.subject,
 		        s.claim_token IS NOT NULL, s.created_at
 		 FROM intro_sends s LEFT JOIN users u ON u.id = s.sent_by
 		 WHERE s.node_id = ? ORDER BY s.created_at DESC`, nodeID,
@@ -206,7 +273,7 @@ func listIntroSends(db *database.DB, nodeID string) []introSend {
 	out := []introSend{}
 	for rows.Next() {
 		var s introSend
-		if err := rows.Scan(&s.ID, &s.Email, &s.SentBy, &s.Situation, &s.Delivery, &s.Subject, &s.ClaimLink, &s.CreatedAt); err == nil {
+		if err := rows.Scan(&s.ID, &s.Channel, &s.Email, &s.SentBy, &s.Situation, &s.Delivery, &s.Subject, &s.ClaimLink, &s.CreatedAt); err == nil {
 			out = append(out, s)
 		}
 	}
@@ -230,24 +297,41 @@ func SetNodeContact(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"insufficient permissions"}`, http.StatusForbidden)
 			return
 		}
+		// Either field may be set, cleared, or left out. Left out keeps
+		// what is on file, so the two can be saved separately.
 		var req struct {
-			Email string `json:"email"`
+			Email *string `json:"email"`
+			URL   *string `json:"url"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
 			return
 		}
-		email := ""
-		if strings.TrimSpace(req.Email) != "" {
-			var err error
-			email, err = auth.NormalizeEmail(req.Email)
-			if err != nil {
-				http.Error(w, `{"error":"a valid email address is required"}`, http.StatusBadRequest)
-				return
+		email, contactURL := n.ContactEmail, n.ContactURL
+		if req.Email != nil {
+			email = ""
+			if strings.TrimSpace(*req.Email) != "" {
+				var err error
+				email, err = auth.NormalizeEmail(*req.Email)
+				if err != nil {
+					http.Error(w, `{"error":"a valid email address is required"}`, http.StatusBadRequest)
+					return
+				}
+			}
+		}
+		if req.URL != nil {
+			contactURL = ""
+			if strings.TrimSpace(*req.URL) != "" {
+				var err error
+				contactURL, err = normalizeContactURL(*req.URL)
+				if err != nil {
+					writeJSONError(w, http.StatusBadRequest, err.Error())
+					return
+				}
 			}
 		}
 		now := clock.Now()
-		if _, err := db.Exec(`UPDATE nodes SET contact_email = ?, updated_at = ? WHERE id = ?`, email, now, n.ID); err != nil {
+		if _, err := db.Exec(`UPDATE nodes SET contact_email = ?, contact_url = ?, updated_at = ? WHERE id = ?`, email, contactURL, now, n.ID); err != nil {
 			http.Error(w, `{"error":"failed to save contact"}`, http.StatusInternalServerError)
 			return
 		}
@@ -258,8 +342,8 @@ func SetNodeContact(db *database.DB) http.HandlerFunc {
 				return
 			}
 		}
-		auth.LogAuditEventJSON(db, user.ID, "node.contact_set", "node", n.ID, map[string]any{"set": email != ""}, clientIP(r))
-		writeJSONStatus(w, http.StatusOK, map[string]any{"contact_email": email})
+		auth.LogAuditEventJSON(db, user.ID, "node.contact_set", "node", n.ID, map[string]any{"email": email != "", "url": contactURL != ""}, clientIP(r))
+		writeJSONStatus(w, http.StatusOK, map[string]any{"contact_email": email, "contact_url": contactURL})
 	}
 }
 
@@ -275,6 +359,9 @@ func IntroState(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		}
 		writeJSONStatus(w, http.StatusOK, map[string]any{
 			"contact_email":       n.ContactEmail,
+			"contact_url":         n.ContactURL,
+			"links":               n.Links,
+			"default_channel":     defaultChannel(n),
 			"verification_domain": n.VerificationDomain,
 			"claim_shortcut":      n.ContactEmail != "" && n.VerificationDomain != "" && emailDomain(n.ContactEmail) == n.VerificationDomain,
 			"enabled":             settings.OutreachEnabled(db),
@@ -321,9 +408,11 @@ func IntroPreview(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			http.Error(w, `{"error":"node not found"}`, http.StatusNotFound)
 			return
 		}
-		// The admin may ask for a different paragraph than the probe picked.
+		// The admin may ask for a different paragraph than the probe picked,
+		// or for the other channel.
 		var req struct {
 			Situation string `json:"situation"`
+			Channel   string `json:"channel"`
 		}
 		if r.Body != nil {
 			// An empty or absent body means "the probe decides".
@@ -343,19 +432,31 @@ func IntroPreview(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			chosen = eventsource.Situation(req.Situation)
 		}
 
+		channel := req.Channel
+		if channel == "" {
+			channel = defaultChannel(n)
+		}
+		if channel != channelEmail && channel != channelDM {
+			http.Error(w, `{"error":"channel must be email or dm"}`, http.StatusBadRequest)
+			return
+		}
+
 		tpl, _, _ := effectiveIntroTemplate(db)
 		facts := introFactsFor(db, cfg, n, user.ID, class.AggregatorName)
-		subject, body := renderIntro(tpl, chosen, facts)
+		subject, body := renderIntro(tpl, channel, chosen, facts)
 
 		writeJSONStatus(w, http.StatusOK, map[string]any{
 			"classification": class,
 			"situation":      chosen,
+			"channel":        channel,
+			"destination":    contactFor(n, channel),
 			"subject":        subject,
 			"body":           body,
 			"event_count":    facts.EventCount,
 			"claim_url":      facts.ClaimURL,
-			"claim_shortcut": n.ContactEmail != "" && emailDomain(n.ContactEmail) == n.VerificationDomain && n.VerificationDomain != "",
+			"claim_shortcut": channel == channelEmail && n.ContactEmail != "" && emailDomain(n.ContactEmail) == n.VerificationDomain && n.VerificationDomain != "",
 			"contact_email":  n.ContactEmail,
+			"contact_url":    n.ContactURL,
 			"enabled":        settings.OutreachEnabled(db),
 			"smtp":           cfg.SMTP.Configured(),
 		})
@@ -377,12 +478,8 @@ func IntroSend(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			http.Error(w, `{"error":"intro emails are turned off on this quilt"}`, http.StatusForbidden)
 			return
 		}
-		if n.ContactEmail == "" {
-			http.Error(w, `{"error":"enter a contact address first"}`, http.StatusBadRequest)
-			return
-		}
-
 		var req struct {
+			Channel   string `json:"channel"`
 			Subject   string `json:"subject"`
 			Body      string `json:"body"`
 			Situation string `json:"situation"`
@@ -393,9 +490,22 @@ func IntroSend(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
 			return
 		}
+		channel := req.Channel
+		if channel == "" {
+			channel = defaultChannel(n)
+		}
+		if channel != channelEmail && channel != channelDM {
+			http.Error(w, `{"error":"channel must be email or dm"}`, http.StatusBadRequest)
+			return
+		}
+		destination := contactFor(n, channel)
+		if destination == "" {
+			http.Error(w, `{"error":"enter somewhere to reach them first"}`, http.StatusBadRequest)
+			return
+		}
 		req.Subject = strings.TrimSpace(req.Subject)
 		req.Body = strings.TrimSpace(req.Body)
-		if req.Subject == "" || req.Body == "" {
+		if req.Body == "" || (channel == channelEmail && req.Subject == "") {
 			http.Error(w, `{"error":"the message needs a subject and a body"}`, http.StatusBadRequest)
 			return
 		}
@@ -409,9 +519,16 @@ func IntroSend(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		}
 		if req.Delivery == "" {
 			req.Delivery = "smtp"
+			if channel == channelDM {
+				req.Delivery = "copied"
+			}
 		}
 		if req.Delivery != "smtp" && req.Delivery != "copied" {
 			http.Error(w, `{"error":"delivery must be smtp or copied"}`, http.StatusBadRequest)
+			return
+		}
+		if channel == channelDM && req.Delivery != "copied" {
+			http.Error(w, `{"error":"a message on a link is copied and sent by hand"}`, http.StatusBadRequest)
 			return
 		}
 		if req.Delivery == "smtp" && !cfg.SMTP.Configured() {
@@ -419,25 +536,26 @@ func IntroSend(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			return
 		}
 
-		// One send per patch per address (decision 5). A second one is an
-		// explicit resend, never a double click.
+		// One send per patch per destination (decision 5). A second one is
+		// an explicit resend, never a double click.
 		var prior int
-		if err := db.QueryRow(`SELECT COUNT(*) FROM intro_sends WHERE node_id = ? AND email = ?`, n.ID, n.ContactEmail).Scan(&prior); err != nil {
+		if err := db.QueryRow(`SELECT COUNT(*) FROM intro_sends WHERE node_id = ? AND email = ?`, n.ID, destination).Scan(&prior); err != nil {
 			http.Error(w, `{"error":"failed to check earlier sends"}`, http.StatusInternalServerError)
 			return
 		}
 		if prior > 0 && !req.Resend {
-			http.Error(w, `{"error":"an intro already went to this address; resend it on purpose"}`, http.StatusConflict)
+			http.Error(w, `{"error":"an intro already went there; resend it on purpose"}`, http.StatusConflict)
 			return
 		}
 
-		// The claim shortcut (decision 6): only to the verification domain,
-		// and only when the admin left the claim link in the message.
+		// The claim shortcut (decision 6): email only, to the verification
+		// domain, and only when the admin left the claim link in the
+		// message. A social account proves nothing about the domain.
 		facts := introFactsFor(db, cfg, n, user.ID, "")
 		body := req.Body
 		var claimToken any
 		var claimExpiry any
-		if n.VerificationDomain != "" && emailDomain(n.ContactEmail) == n.VerificationDomain && strings.Contains(body, facts.ClaimURL) {
+		if channel == channelEmail && n.VerificationDomain != "" && emailDomain(n.ContactEmail) == n.VerificationDomain && strings.Contains(body, facts.ClaimURL) {
 			b := make([]byte, 16)
 			rand.Read(b)
 			tok := hex.EncodeToString(b)
@@ -459,9 +577,9 @@ func IntroSend(db *database.DB, cfg *config.Config) http.HandlerFunc {
 
 		id := auth.NewUUIDv7()
 		if _, err := db.Exec(
-			`INSERT INTO intro_sends (id, node_id, email, sent_by, situation, delivery, subject, body, claim_token, claim_token_expires_at)
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-			id, n.ID, n.ContactEmail, user.ID, req.Situation, req.Delivery, req.Subject, body, claimToken, claimExpiry,
+			`INSERT INTO intro_sends (id, node_id, channel, email, sent_by, situation, delivery, subject, body, claim_token, claim_token_expires_at)
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			id, n.ID, channel, destination, user.ID, req.Situation, req.Delivery, req.Subject, body, claimToken, claimExpiry,
 		); err != nil {
 			http.Error(w, `{"error":"failed to record the send"}`, http.StatusInternalServerError)
 			return
@@ -471,11 +589,12 @@ func IntroSend(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			action = "outreach.resend"
 		}
 		auth.LogAuditEventJSON(db, user.ID, action, "node", n.ID, map[string]any{
-			"situation": req.Situation, "delivery": req.Delivery, "claim_link": claimToken != nil,
+			"channel": channel, "situation": req.Situation, "delivery": req.Delivery, "claim_link": claimToken != nil,
 		}, clientIP(r))
 
 		writeJSONStatus(w, http.StatusCreated, map[string]any{
 			"id":         id,
+			"channel":    channel,
 			"delivery":   req.Delivery,
 			"claim_link": claimToken != nil,
 			"sends":      listIntroSends(db, n.ID),
@@ -543,7 +662,7 @@ func consumeIntroToken(db *database.DB, nodeID, token string) (email string, ok 
 func AdminOutreach(db *database.DB, cfg *config.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rows, err := db.Query(
-			`SELECT n.id, n.name, n.slug, COALESCE(n.website,''), n.contact_email,
+			`SELECT n.id, n.name, n.slug, COALESCE(n.website,''), n.contact_email, n.contact_url,
 			        (SELECT COUNT(*) FROM intro_sends s WHERE s.node_id = n.id),
 			        COALESCE((SELECT MAX(s.created_at) FROM intro_sends s WHERE s.node_id = n.id), ''),
 			        (SELECT COUNT(*) FROM event_sources es WHERE es.node_id = n.id AND es.aggregator_id IS NULL AND es.status = 'ok') > 0,
@@ -559,15 +678,15 @@ func AdminOutreach(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		defer func() { _ = rows.Close() }()
 		patches := []map[string]any{}
 		for rows.Next() {
-			var id, name, slug, website, email, last string
+			var id, name, slug, website, email, contactURL, last string
 			var sends, claims int
 			var own, agg bool
-			if err := rows.Scan(&id, &name, &slug, &website, &email, &sends, &last, &own, &agg, &claims); err != nil {
+			if err := rows.Scan(&id, &name, &slug, &website, &email, &contactURL, &sends, &last, &own, &agg, &claims); err != nil {
 				continue
 			}
 			patches = append(patches, map[string]any{
 				"id": id, "name": name, "slug": slug, "website": website,
-				"contact_email": email, "sends": sends, "last_sent_at": last,
+				"contact_email": email, "contact_url": contactURL, "sends": sends, "last_sent_at": last,
 				"own_source": own, "aggregator_source": agg, "open_claims": claims,
 			})
 		}

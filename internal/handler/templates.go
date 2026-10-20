@@ -352,6 +352,13 @@ func GovernanceOverview(db *database.DB) http.HandlerFunc {
 			"passed_proposals":   passedProposals,
 			"rejected_proposals": rejectedProposals,
 			"needs_vote":         needsVote,
+			// Whether the inactivity sweep has asked members to step in and
+			// somebody still could (docs/adr/2026-10-19-an-interim-admin-is-asked-first.md).
+			// Without it the page told a patch with questions out that only
+			// an instance admin could put anybody back, directly under the
+			// question whose Accept does exactly that. A yes or no, never who:
+			// an offer is between the patch and the person asked.
+			"interim_offers_open": interimOffersOpen(db, nodeID),
 		}
 
 		w.Header().Set("Content-Type", "application/json")

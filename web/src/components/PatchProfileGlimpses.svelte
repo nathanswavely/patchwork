@@ -23,6 +23,7 @@
   import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
   import { eventPostingRight } from '../lib/patchWorkspace.js';
   import { handleFromDID } from '../lib/atproto.js';
+  import { isDirectRow } from '../lib/proposalRow.js';
   import { formatEventDate, formatEventTime, upcomingFrom, formatDay } from '../lib/datetime.js';
 
   // The glimpse shows three, not the five it used to fetch. A stacked row
@@ -176,6 +177,11 @@
 
   let showAbout = $derived(!!node?.website || (node?.links?.length ?? 0) > 0 || !!node?.address || !!node?.image_url || !!atprotoHandle);
 
+  // The viewer's standing and the count it moves, as one value so the effect
+  // below re-runs when either changes and not on every reload of the node
+  // that changes neither.
+  let standingKey = $derived(`${membershipRole}|${isAdmin}|${node?.member_count ?? ''}|${node?.follower_count ?? ''}`);
+
   // Keyed on the slug and on whether governance is readable, because the
   // head's payload can arrive after this mounts: a container may render the
   // glimpses the moment a reader pulls, with standing still in flight.
@@ -188,6 +194,10 @@
     // a container may mount the glimpses before the head's payload resolves,
     // and a lining filtered on a stale '' never un-filters.
     const lining = liningStatus;
+    // Read so joining, following or leaving reloads the rooms. None of the
+    // three above usually moves when standing does, so the head's count went
+    // up while the member list under it stayed as it was (F-051).
+    void standingKey;
     if (s && active) loadActivity(gov, lining);
   });
 
@@ -260,6 +270,9 @@
     // reading a founder actually took (F-107).
     if (p.state === 'lapsed') return 'not decided';
     if (p.state === 'unsettled') return 'nobody elected';
+    // A direct change was applied, not approved: nobody voted on it, and
+    // the proposals list and the Record both say so (F-021).
+    if (isDirectRow(p)) return 'applied';
     return p.status;
   }
 </script>
@@ -448,10 +461,10 @@
               <span
                 class="lt-pill proposal-status"
                 class:status-open={outcome === 'open'}
-                class:status-accepted={outcome === 'accepted'}
+                class:status-accepted={outcome === 'accepted' || outcome === 'approved' || outcome === 'applied'}
                 class:status-rejected={outcome === 'rejected'}
                 class:lt-tone-primary={outcome === 'open'}
-                class:lt-tone-success={outcome === 'accepted'}
+                class:lt-tone-success={outcome === 'accepted' || outcome === 'approved' || outcome === 'applied'}
                 class:lt-tone-error={outcome === 'rejected'}
               >{outcome}</span>
             </a>

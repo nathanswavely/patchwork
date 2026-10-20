@@ -3,6 +3,7 @@ package notifications
 import (
 	"io/fs"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -207,7 +208,11 @@ func TestSweep_NewAdminIsNotAbsent(t *testing.T) {
 // The pair. Inactivity may empty a patch — unlike every voluntary path — and
 // succession is what catches it in the same sweep. This is what makes
 // succession_policy reachable at all.
-func TestSweep_EmptiedPatchGetsLongestTenuredInterims(t *testing.T) {
+// The three longest-standing present members are asked to step in, not made
+// admins (docs/adr/2026-10-19-an-interim-admin-is-asked-first.md, F-085).
+// The patch has no admins until somebody says yes, and its members are told
+// so without being told who was asked.
+func TestSweep_EmptiedPatchAsksItsLongestTenured(t *testing.T) {
 	db := sweepDB(t)
 	n := NewNotifier(db)
 	nodeID := seedPatch(t, db, "quiet-five", "longest_tenure", 30)
@@ -234,23 +239,70 @@ func TestSweep_EmptiedPatchGetsLongestTenuredInterims(t *testing.T) {
 	if got := roleOfSeat(t, db, goneSeat); got != "member" {
 		t.Errorf("the absent sole admin's seat must go, got %q", got)
 	}
-	// The three longest-standing members become interim admins.
+	// The three longest-standing are asked, and nobody is an admin yet.
+	asked := func(userID string) bool {
+		var c int
+		if err := db.QueryRow(`SELECT COUNT(*) FROM interim_admin_offers WHERE node_id = ? AND user_id = ? AND answered_at IS NULL`, nodeID, userID).Scan(&c); err != nil {
+			t.Fatalf("read: %v", err)
+		}
+		return c == 1
+	}
 	for _, s := range []struct {
-		name, id string
-	}{{"oldest", oldestSeat}, {"middle", middleSeat}, {"newest", newestSeat}} {
-		if got := roleOfSeat(t, db, s.id); got != "admin" {
-			t.Errorf("%s should be an interim admin, got %q", s.name, got)
+		name, user, seat string
+	}{{"oldest", oldest, oldestSeat}, {"middle", middle, middleSeat}, {"newest", newest, newestSeat}} {
+		if !asked(s.user) {
+			t.Errorf("%s should have been asked to step in", s.name)
+		}
+		if got := roleOfSeat(t, db, s.seat); got != "member" {
+			t.Errorf("%s was asked, not made an admin, got %q", s.name, got)
 		}
 	}
-	if got := roleOfSeat(t, db, fourthSeat); got != "member" {
-		t.Errorf("only three are promoted, got %q for the fourth", got)
+	if asked(fourth) {
+		t.Errorf("only three are asked; the fourth should not be")
 	}
-	// The patch is not left leaderless.
 	var admins int
-	db.QueryRow(`SELECT COUNT(*) FROM memberships WHERE node_id = ? AND role = 'admin' AND status = 'active'`, nodeID).Scan(&admins)
-	if admins != 3 {
-		t.Errorf("expected three admins after succession, got %d", admins)
+	if err := db.QueryRow(`SELECT COUNT(*) FROM memberships WHERE node_id = ? AND role = 'admin' AND status = 'active'`, nodeID).Scan(&admins); err != nil {
+		t.Fatalf("read: %v", err)
 	}
+	if admins != 0 {
+		t.Errorf("nobody has said yes, so the patch has no admins, got %d", admins)
+	}
+
+	// Each person asked gets the question; the members are told the council
+	// is empty and that people have been asked, without names.
+	var questions int
+	if err := db.QueryRow(`SELECT COUNT(*) FROM notifications WHERE type = 'membership.interim_offer'`).Scan(&questions); err != nil {
+		t.Fatalf("read: %v", err)
+	}
+	if questions != 3 {
+		t.Errorf("expected the three asked to be told, got %d questions", questions)
+	}
+	var emptyBody string
+	if err := db.QueryRow(`SELECT body FROM notifications WHERE type = 'governance.council_empty' LIMIT 1`).Scan(&emptyBody); err != nil {
+		t.Fatalf("read: %v", err)
+	}
+	if !strings.Contains(emptyBody, "they have been asked") {
+		t.Errorf("the members should hear that people were asked, got %q", emptyBody)
+	}
+	for _, name := range []string{"oldestmember", "middlemember", "newestmember"} {
+		if strings.Contains(emptyBody, name) {
+			t.Errorf("the members' notice must not name who was asked, got %q", emptyBody)
+		}
+	}
+
+	// Saying yes is what makes an admin, and all three may.
+	for _, u := range []string{oldest, middle, newest} {
+		if err := AnswerInterimOffer(n, nodeID, u, true, ""); err != nil {
+			t.Fatalf("accept: %v", err)
+		}
+	}
+	if err := db.QueryRow(`SELECT COUNT(*) FROM memberships WHERE node_id = ? AND role = 'admin' AND status = 'active'`, nodeID).Scan(&admins); err != nil {
+		t.Fatalf("read: %v", err)
+	}
+	if admins != 3 {
+		t.Errorf("expected three interim admins once all three accepted, got %d", admins)
+	}
+	_ = fourthSeat
 }
 
 // A patch that chose to stop rather than be reassigned is left stopped.
@@ -270,7 +322,9 @@ func TestSweep_FreezePolicyPromotesNobody(t *testing.T) {
 		t.Errorf("freeze must promote nobody, got %q", got)
 	}
 	var admins int
-	db.QueryRow(`SELECT COUNT(*) FROM memberships WHERE node_id = ? AND role = 'admin' AND status = 'active'`, nodeID).Scan(&admins)
+	if err := db.QueryRow(`SELECT COUNT(*) FROM memberships WHERE node_id = ? AND role = 'admin' AND status = 'active'`, nodeID).Scan(&admins); err != nil {
+		t.Fatalf("read: %v", err)
+	}
 	if admins != 0 {
 		t.Errorf("expected the patch left with no admins, got %d", admins)
 	}

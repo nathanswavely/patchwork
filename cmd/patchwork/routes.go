@@ -243,6 +243,12 @@ func buildRoutes(d serverDeps) (*http.ServeMux, []route) {
 	t.handleFunc("POST /api/v1/nodes/{slug}/invitations/decline", middleware.AuthRequired(d.db, handler.DeclineInvitation(d.db)))
 	t.handleFunc("DELETE /api/v1/nodes/{slug}/invitations/{userId}", middleware.AuthRequired(d.db, handler.RescindInvitation(d.db)))
 	t.handleFunc("GET /api/v1/users/me/invitations", middleware.AuthRequired(d.db, handler.ListMyInvitations(d.db)))
+	// Interim admin offers (docs/adr/2026-10-19-an-interim-admin-is-asked-first.md):
+	// the inactivity sweep asks, the person answers. Anybody nobody asked gets
+	// the same 404 as an unknown patch.
+	t.handleFunc("POST /api/v1/nodes/{slug}/interim-offer/accept", middleware.AuthRequired(d.db, handler.AcceptInterimOffer(d.db)))
+	t.handleFunc("POST /api/v1/nodes/{slug}/interim-offer/decline", middleware.AuthRequired(d.db, handler.DeclineInterimOffer(d.db)))
+	t.handleFunc("GET /api/v1/users/me/interim-offers", middleware.AuthRequired(d.db, handler.ListMyInterimOffers(d.db)))
 	// Maintainer succession (docs/adr/051). Naming a successor decides who
 	// inherits the patch, so it is step-up gated like the other power moves.
 	t.handleFunc("PUT /api/v1/nodes/{slug}/successor", middleware.AuthRequired(d.db, middleware.SudoRequired(d.db, handler.SetSuccessor(d.db))))
