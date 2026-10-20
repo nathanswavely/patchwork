@@ -9,6 +9,7 @@
   import { addBasemap, BASEMAP_MAX_ZOOM } from '../lib/basemap.js';
   import { clusterNodes, patchActivity } from '../lib/mapClusters.js';
   import { placeLabels } from '../lib/mapLabels.js';
+  import { fitPadding, hasRoomToFit } from '../lib/mapFit.js';
   import { createMotifGroup } from '../lib/patchIcons.js';
   import { getTagVocabulary } from '../stores/quilt.svelte.js';
 
@@ -118,9 +119,13 @@
 
     // Leaflet caches the container size at init; recompute whenever it
     // changes — a viewport resize across the mobile/desktop breakpoint, or
-    // the pane being shown after starting hidden (mobile List → Map).
+    // the pane being shown after starting hidden (mobile List → Map). A map
+    // that mounted with no room to frame its markers is still waiting for its
+    // opening fit, and this is the moment it gets the room.
     const ro = new ResizeObserver(() => {
-      if (map) map.invalidateSize();
+      if (!map) return;
+      map.invalidateSize();
+      if (!hasFit) updateMarkers();
     });
     ro.observe(mapContainer);
 
@@ -248,12 +253,14 @@
   function showAll(animate = true) {
     const placed = nodes.filter((n) => n.latitude != null && n.longitude != null);
     if (!placed.length) return;
-    const padRight = Math.round((mapContainer?.clientWidth || 0) * insetRight);
     map.fitBounds(L.latLngBounds(placed.map((n) => [n.latitude, n.longitude])), {
-      paddingTopLeft: [24, 24],
-      paddingBottomRight: [24 + padRight, 24],
+      ...openingPadding(),
       animate,
     });
+  }
+
+  function openingPadding() {
+    return fitPadding(map.getSize().x, insetRight);
   }
 
   // The font the names are drawn in, read once from the rendered label so
@@ -304,7 +311,11 @@
     // Frame first, then group. Grouping is a function of zoom, so grouping at
     // the default zoom and fitting afterwards paints one 33-marker disc that
     // exists for no reason and is gone a moment later.
-    if (!hasFit && placed.length > 0) {
+    //
+    // Only once the map has room to frame them (lib/mapFit.js): a fit on a
+    // map with no width yet pins the zoom at the ceiling, and that view
+    // outlives the map being shown. The ResizeObserver comes back here.
+    if (!hasFit && placed.length > 0 && hasRoomToFit(map.getSize(), openingPadding())) {
       hasFit = true;
       showAll(false);
     }

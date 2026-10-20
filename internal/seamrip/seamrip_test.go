@@ -551,6 +551,7 @@ func TestEveryTableHasABoundaryDecision(t *testing.T) {
 		"instance_actor":              "the fork is a different actor",
 		"instance_icon":               "retired by migration 044",
 		"instance_settings":           "the fork sets its own name, policy, and icon",
+		"interim_admin_offers":        "one instance's inactivity sweep asking one person about one emptying; a fork runs its own sweep on its own clock and asks again if it needs to (docs/adr/2026-10-19-an-interim-admin-is-asked-first.md)",
 		"intro_sends":                 "one steward's correspondence with a listing's owner, carrying an address given for that one exchange and a claim token minted against this instance's verification domain (docs/adr/2026-10-16-a-page-made-for-someone-tells-them-so.md)",
 		"invite_links":                "single-use URLs pointing at the old domain",
 		"label":                       "instance-level cost transparency, not a patch's data",
@@ -728,6 +729,7 @@ func TestEveryColumnHasABoundaryDecision(t *testing.T) {
 			"suggested_feed_count": "the count one fetch found for that pending feed, for the admin reading the queue",
 			"contact_email": "an address a person gave this steward for one correspondence; a fork is a steward the giver never heard of " +
 				"(docs/adr/2026-10-16-a-page-made-for-someone-tells-them-so.md)",
+			"contact_url": "the link to message them on, given for the same one correspondence; same reason",
 		},
 		"events": {
 			"ap_id":      "names an object on the old domain",

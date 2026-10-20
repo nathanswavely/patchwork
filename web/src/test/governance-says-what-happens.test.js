@@ -69,7 +69,7 @@ describe('an approved request is not credited to its author', () => {
     // settleApplied stamps a direct change with its own created_at; an
     // approval is stamped when the maintainer decides.
     expect(detail).toMatch(
-      /isDirectChange = \$derived\(\s*effectiveState === 'in_effect' &&\s*!!proposal\?\.applied_at &&\s*proposal\.applied_at === proposal\.created_at\s*\)/
+      /isDirectChange = \$derived\(\s*effectiveState === 'in_effect' &&\s*!!proposal\?\.applied_at &&\s*proposal\.applied_at === proposal\.created_at &&\s*!proposal\?\.election_phase\s*\)/
     );
     expect(detail).not.toMatch(/isDirectChange = \$derived\([^)]*voters/);
   });

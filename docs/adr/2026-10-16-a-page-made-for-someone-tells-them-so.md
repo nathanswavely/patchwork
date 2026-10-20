@@ -119,6 +119,37 @@ one line of config.
 default on. Some quilts will prefer that nobody is written to who did not ask
 first, and that is a legitimate way to run a quilt.
 
+## Amended 2026-10-19: a contact is a place to reach someone
+
+The first cut read "contact" as "email address", and the reference
+instance's first pass at its backlog found the obvious hole: many of the
+organizations a young quilt lists have no public email at all and live on
+Instagram. So a contact is now a place to reach someone, in two shapes
+that may both be on file:
+
+- **An email address**, as before, with everything above unchanged.
+- **A link to message them on** (`nodes.contact_url`): a full `http(s)`
+  address, entered by a person, never a handle guessed into a network. The
+  patch's own public links are offered as one-click choices, since the
+  Instagram on the listing is usually the door.
+
+A message on a link is a **dm**: rendered from a short opener of its own
+(the first two lines are all a message preview shows), the same calendar
+paragraph, no subject and no sign-off. It is always copied out and sent by
+hand; nothing here posts to someone else's inbox on a social site. The
+send is recorded against the link with `intro_sends.channel = 'dm'`, under
+the same one-per-destination rule.
+
+**A dm never carries the claim shortcut.** Decision 6 rests on docs/adr/030:
+a mailbox at the verification domain is proof of the domain. A social
+account proves nothing about it, so a dm carries the ordinary claim page
+and its recipient claims the ordinary way.
+
+When both an address and a link are on file the preview opens on email,
+because it is the channel that can carry the shortcut, and the admin can
+switch. Copy-and-record is now offered for email too, for an admin who
+prefers their own mail client to the relay.
+
 ## Rejected alternatives
 
 - **Send on creation.** Fastest to build, and the one the hand process

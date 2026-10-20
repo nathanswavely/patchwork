@@ -51,13 +51,22 @@ describe('ProposalList — the row says what happened, not what the column holds
   // surface; this one printed the state name (F-107). The state is still
   // what decides the badge colour and the filter, which is why the two are
   // now two functions.
-  it('names a lapsed row "not decided" in both the meta line and the badge', () => {
+  it('names a lapsed row "not decided" in the badge', () => {
     expect(src).toMatch(/function rowStatus\(p\)/);
     expect(src).toMatch(/function rowLabel\(p\)/);
     expect(src).toMatch(/if \(p\.state === 'lapsed'\) return 'lapsed'/);
     expect(src).toMatch(/if \(st === 'lapsed'\) return 'not decided'/);
-    expect(src).toMatch(/<span class="lt-muted">\{rowLabel\(proposal\)\}<\/span>/);
     expect(src).toMatch(/<span class="lt-pill \{statusClass\(rowStatus\(proposal\)\)\} \{STATUS_TONES\[statusClass\(rowStatus\(proposal\)\)\] \|\| ''\}">\{rowLabel\(proposal\)\}<\/span>/);
+  });
+
+  // The meta line held the outcome too, so a settled row said it twice:
+  // "nobody elected [nobody elected]" (F-136). That slot answers "when" on
+  // every other row, so a closed row says when it closed, by the date the
+  // Record files it under, and the badge alone says what happened.
+  it('says when a closed row closed, and says the outcome once', () => {
+    expect(src).toMatch(/<span class="lt-muted">closed \{formatDay\(proposal\.decided_at\)\}<\/span>/);
+    expect(src).not.toMatch(/<span class="lt-muted">\{rowLabel\(proposal\)\}<\/span>/);
+    expect(src.match(/\{rowLabel\(proposal\)\}/g)).toHaveLength(1);
   });
 
   it('keeps the direct-change row green and mutes the lapsed one', () => {
