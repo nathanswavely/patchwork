@@ -172,6 +172,13 @@ func sweepNode(n *Notifier, nodeID, slug, name string, rules governanceRules) {
 	if len(admins) > 0 {
 		forgetTold(db, "node", nodeID, "council_empty")
 		forgetTold(db, "node", nodeID, "succession_needed")
+		// Answered interim offers belong to the emptying they answered.
+		// Clearing them once the council is filled again is what lets a
+		// later emptying ask the same people; the audit log keeps every
+		// answer. Open offers stay: an offer stands until it is answered.
+		if _, err := db.Exec(`DELETE FROM interim_admin_offers WHERE node_id = ? AND answered_at IS NOT NULL`, nodeID); err != nil {
+			log.Printf("inactivity: %s: clear answered interim offers: %v", slug, err)
+		}
 	}
 
 	var vacatedUsers []string
@@ -474,9 +481,14 @@ func runSuccessionPolicy(n *Notifier, nodeID, slug, name string, rules governanc
 		log.Printf("succession: %s has no admins and its policy is freeze", slug)
 	default:
 		// "longest_tenure" and anything unrecognised: the shipped succession
-		// plan's bus-factor rule — "the three longest-tenured active members
-		// become interim admins".
-		if promoteLongestTenured(n, nodeID, slug, name, 3, justVacated) > 0 {
+		// plan's bus-factor rule, "the three longest-tenured active members
+		// become interim admins", asked rather than imposed
+		// (docs/adr/2026-10-19-an-interim-admin-is-asked-first.md). Until
+		// somebody accepts, the patch has no admins and its members are told
+		// so, without being told who was asked.
+		if offerInterim(n, nodeID, slug, name, rules.InactivityDays, interimSeats, skipSet(justVacated)) > 0 {
+			announceCouncilEmpty(n, nodeID, slug, name,
+				"Its admin seat was vacated for inactivity, so this patch has no admins. Its succession policy asks its longest-standing active members to step in, and they have been asked.")
 			return
 		}
 		announceCouncilEmpty(n, nodeID, slug, name,
@@ -484,107 +496,6 @@ func runSuccessionPolicy(n *Notifier, nodeID, slug, name string, rules governanc
 		raiseSuccessionNeeded(n, nodeID, slug, name,
 			"Its last admin seat was vacated for inactivity, and nobody in the patch has taken part recently enough to be made an interim admin.")
 	}
-}
-
-// promoteLongestTenured installs interim admins and reports how many. Skips
-// anyone this sweep just vacated, and anyone who is not here either.
-//
-// The first exclusion stops the rule reinstating exactly the person it removed:
-// a vacated admin is a member again, and having been there since the beginning
-// they are the *longest-tenured* member in the patch.
-//
-// The second is what makes this sweep settle. "The three longest-tenured
-// **active** members" is the plan's own sentence, and reading "active" as
-// `status = 'active'` — a row that is not pending, banned or departed — put
-// the patch in the hands of people who had not been seen in a year. They
-// lapsed on the same clock, the next three were promoted, and the role walked
-// round the membership for as long as the simulation ran. Read as the plan
-// means it — somebody who has taken part in this patch inside the window that
-// costs an admin their seat — the rule terminates by construction: every
-// interim admin is, on the day they are appointed, a person this sweep would
-// not vacate.
-//
-// Presence here is wider than the participation an admin is measured by, and
-// the asymmetry is deliberate. A seat is lost by not governing, because a seat
-// is a governing job. A seat is offered to somebody who is *around* — who
-// posted an event, put up a notice, replied to one, or joined recently —
-// because the question is not whether they have been governing (they had no
-// seat to govern from) but whether handing them one reaches a person.
-func promoteLongestTenured(n *Notifier, nodeID, slug, name string, howMany int, justVacated []string) int {
-	db := n.DB
-	skip := make(map[string]bool, len(justVacated))
-	for _, u := range justVacated {
-		skip[u] = true
-	}
-	var rules governanceRules
-	var gcJSON string
-	db.QueryRow(`SELECT COALESCE(governance_config,'{}') FROM nodes WHERE id = ?`, nodeID).Scan(&gcJSON)
-	json.Unmarshal([]byte(gcJSON), &rules)
-	presentSince := daysAgo(rules.InactivityDays * 2)
-
-	rows, err := db.Query(`
-		SELECT m.id, m.user_id, MAX(COALESCE(act.at, m.joined_at)) AS last_at
-		FROM memberships m
-		LEFT JOIN (
-			SELECT v.user_id, p.node_id, v.created_at AS at FROM votes v
-			  JOIN proposals p ON p.id = v.proposal_id
-			UNION ALL
-			SELECT author_id, node_id, created_at FROM proposals
-			UNION ALL
-			SELECT c.author_id, p2.node_id, c.created_at
-			  FROM proposal_comments c JOIN proposals p2 ON p2.id = c.proposal_id
-			UNION ALL
-			SELECT created_by, node_id, created_at FROM events
-			UNION ALL
-			SELECT author_id, node_id, created_at FROM notices
-			UNION ALL
-			SELECT rp.author_id, nt.node_id, rp.created_at
-			  FROM notice_replies rp JOIN notices nt ON nt.id = rp.notice_id
-		) act ON act.user_id = m.user_id AND act.node_id = m.node_id
-		WHERE m.node_id = ? AND m.role = 'member' AND m.status = 'active'
-		GROUP BY m.id, m.user_id
-		HAVING MAX(COALESCE(act.at, m.joined_at)) >= ?
-		ORDER BY m.joined_at ASC`, nodeID, presentSince)
-	if err != nil {
-		return 0
-	}
-	type pick struct{ memID, userID string }
-	var picks []pick
-	for rows.Next() {
-		var p pick
-		var lastAt string
-		if rows.Scan(&p.memID, &p.userID, &lastAt) != nil || skip[p.userID] {
-			continue
-		}
-		picks = append(picks, p)
-		if len(picks) == howMany {
-			break
-		}
-	}
-	rows.Close()
-
-	if len(picks) == 0 {
-		log.Printf("succession: %s has no admins and nobody present to promote", slug)
-		return 0
-	}
-	promoted := 0
-	for _, p := range picks {
-		if !makeAdmin(db, p.memID) {
-			continue
-		}
-		promoted++
-		auth.LogAuditEvent(db, "", "membership.succession", "membership", p.memID,
-			`{"node_id":"`+nodeID+`","policy":"longest_tenure"}`, "")
-		n.Notify(Event{
-			Type: MembershipRoleChanged, NodeID: nodeID, NodeSlug: slug, NodeName: name,
-			TargetID: p.userID,
-			Title:    "You are now an interim admin of " + name,
-			Body:     "Its admin seats were vacated for inactivity, and this patch's succession policy hands them to its longest-standing active members.",
-			Link:     weblink.PatchGovernance(slug),
-		})
-	}
-	log.Printf("succession: %s promoted %d longest-tenured member(s)", slug, promoted)
-	return promoted
 }
 
 // makeAdmin promotes one membership and starts that person's own inactivity

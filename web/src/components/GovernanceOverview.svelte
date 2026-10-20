@@ -12,6 +12,7 @@
   import Skeleton from './Skeleton.svelte';
   import UnlockPanel from './UnlockPanel.svelte';
   import SetupChecklist from './SetupChecklist.svelte';
+  import InterimOffer from './InterimOffer.svelte';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -214,6 +215,12 @@
     !adminsWithheld && (overview?.admins?.length ?? 0) === 0 && !patch.value.isUnclaimed,
   );
   let noAdminsLine = $derived.by(() => {
+    // Questions out (docs/adr/2026-10-19-an-interim-admin-is-asked-first.md).
+    // The sentence below this one said only an instance admin could put
+    // anybody back, directly under a question whose Accept does it. Never
+    // says who was asked.
+    if (overview?.interim_offers_open)
+      return 'Nobody holds the admin role here. Its longest-standing active members have been asked to step in as interim admins.';
     if (leadershipElsewhere)
       return 'Nobody holds the admin role here. This patch records its leadership decisions elsewhere, so a decision made there is what puts somebody back.';
     if (isElectedModel) return 'Nobody holds the admin role here. This council is filled by election.';
@@ -442,6 +449,11 @@
   {:else if !overview}
     <p class="lt-muted">Failed to load governance overview.</p>
   {:else}
+    <!-- The interim admin question (F-085), first because it is addressed to
+         this reader and nothing else on the page is. Renders nothing for
+         anybody who was not asked. -->
+    <InterimOffer {slug} onAnswered={async () => { patch.value.reload?.(); await loadOverview(); }} />
+
     <!-- Action banner — needs your vote -->
     {#if overview.needs_vote > 0}
       <div class="lt-banner lt-tone-accent attention-banner">

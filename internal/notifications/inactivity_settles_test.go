@@ -160,15 +160,25 @@ func TestSweep_AQuietYearSettlesInsteadOfChurning(t *testing.T) {
 	successions := countRows(t, db, `SELECT COUNT(*) FROM audit_log WHERE action = 'membership.succession'`)
 	vacated := countRows(t, db, `SELECT COUNT(*) FROM audit_log WHERE action = 'membership.seat_vacated'`)
 
-	// Two people were present on day one, so the role moves exactly twice.
-	// What matters is that the number is bounded by the patch rather than by
-	// the length of the simulation: the old sweep produced hundreds.
-	if successions != 2 {
-		t.Errorf("expected the role to move twice in a year, got %d successions", successions)
+	// Nobody acting includes nobody saying yes. An interim admin is asked
+	// first (docs/adr/2026-10-19-an-interim-admin-is-asked-first.md), so a
+	// year in which nobody answers makes nobody an admin: the role never
+	// moves, and only the founder's seat is ever vacated. The path where the
+	// people who are around do say yes is TestSweep_AQuietYearWhereThePresentSayYes.
+	if successions != 0 {
+		t.Errorf("nobody accepted, so nobody should have stepped in, got %d successions", successions)
 	}
-	// The founder, then the two interims. Nobody else, ever.
-	if vacated != 3 {
-		t.Errorf("expected three seats vacated in a year, got %d", vacated)
+	if vacated != 1 {
+		t.Errorf("expected only the founder's seat vacated in a year, got %d", vacated)
+	}
+	// The two who were around were asked once each, on the day the council
+	// emptied, and the question was never put again: an offer stands until
+	// it is answered, and no pass of the sweep re-sends one.
+	if got := countRows(t, db, `SELECT COUNT(*) FROM interim_admin_offers WHERE node_id = ? AND answered_at IS NULL`, nodeID); got != 2 {
+		t.Errorf("expected the two present members still being asked, got %d open offers", got)
+	}
+	if got := countRows(t, db, `SELECT COUNT(*) FROM notifications WHERE type = 'membership.interim_offer'`); got != 2 {
+		t.Errorf("expected two questions in a year, got %d", got)
 	}
 
 	// The end state is stable and honest: nobody is left holding a seat they
@@ -213,8 +223,14 @@ func TestSweep_PromotedAdminIsNotVacatedOnSight(t *testing.T) {
 	seedProposalBy(t, db, nodeID, heir, 3)
 
 	SweepInactiveAdmins(n)
+	if got := roleOfSeat(t, db, heirSeat); got != "member" {
+		t.Fatalf("an interim admin is asked first, so nobody is promoted before answering, got %q", got)
+	}
+	if err := AnswerInterimOffer(n, nodeID, heir, true, ""); err != nil {
+		t.Fatalf("accept: %v", err)
+	}
 	if got := roleOfSeat(t, db, heirSeat); got != "admin" {
-		t.Fatalf("expected the present member promoted, got %q", got)
+		t.Fatalf("expected the present member to step in on accepting, got %q", got)
 	}
 
 	// Their last governance act is now older than the vacate threshold, and
@@ -447,8 +463,12 @@ func TestSweep_PostingAnEventCountsAsBeingHere(t *testing.T) {
 
 	SweepInactiveAdmins(n)
 
-	if got := roleOfSeat(t, db, posterSeat); got != "admin" {
-		t.Errorf("a member who posted an event last week is here, got %q", got)
+	// Here, so asked. Asked, not made: the role waits on their answer.
+	if got := countRows(t, db, `SELECT COUNT(*) FROM interim_admin_offers WHERE node_id = ? AND user_id = ? AND answered_at IS NULL`, nodeID, poster); got != 1 {
+		t.Errorf("a member who posted an event last week is here and should be asked, got %d offers", got)
+	}
+	if got := roleOfSeat(t, db, posterSeat); got != "member" {
+		t.Errorf("asking makes nobody an admin, got %q", got)
 	}
 }
 
