@@ -76,7 +76,10 @@ Violations may result in a warning, temporary suspension, or removal from the co
   }
 
   $effect(() => {
-    patch.value.setBreadcrumbExtra?.([{ label: 'New Document' }]);
+    // "Charter", matching the button that got here and the heading below.
+    // CONTEXT.md: charter is the UI word for one of these, and
+    // "governance doc" stays the backend term. One act, one name.
+    patch.value.setBreadcrumbExtra?.([{ label: 'New Charter' }]);
     return () => patch.value.setBreadcrumbExtra?.([]);
   });
 
@@ -93,10 +96,10 @@ Violations may result in a warning, temporary suspension, or removal from the co
         method: 'POST',
         body: { title: title.trim(), body: body.trim(), visibility },
       });
-      showToast('Document created', 'success');
+      showToast('Charter created', 'success');
       navigate(`/patches/${slug}/governance/docs/${result.id}`);
     } catch (e) {
-      error = e.message || 'Failed to save document';
+      error = e.message || 'Failed to save charter';
     } finally {
       submitting = false;
     }
@@ -150,7 +153,7 @@ Violations may result in a warning, temporary suspension, or removal from the co
                 <textarea
                   bind:value={body}
                   rows="20"
-                  placeholder="Write your governance document here... Use **bold**, *italic*, and - lists."
+                  placeholder="Write your charter here... Use **bold**, *italic*, and - lists."
                   disabled={submitting}
                   class="editor-textarea"
                 ></textarea>
@@ -174,8 +177,8 @@ Violations may result in a warning, temporary suspension, or removal from the co
             </select>
             <p class="lt-hint field-hint">
               {visibility === 'public'
-                ? 'Visitors, search engines, and other quilts can read this document.'
-                : 'Only this patch’s members and admins can read this document. You can publish it later.'}
+                ? 'Visitors, search engines, and other quilts can read this charter.'
+                : 'Only this patch’s members and admins can read this charter. You can publish it later.'}
             </p>
           </div>
 

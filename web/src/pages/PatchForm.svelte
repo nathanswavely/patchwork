@@ -16,6 +16,7 @@
   import { BLOCKS, getBlockIndex, getRotation } from '../lib/quiltBlocks.js';
   import { templateMembershipPolicy } from '../lib/governanceTemplates.js';
   import { ltFold } from '../lib/lt.js';
+  import { findSameNamed, worthChecking } from '../lib/sameNamedPatch.js';
 
   // Patch setup (docs/adr/039) reuses this exact form: a claim is creation
   // with prepopulated fields, not a handoff. mode='setup' prepopulates
@@ -43,6 +44,32 @@
   let description = $state(initial?.description || '');
   let address = $state(initial?.address || '');
   let website = $state(initial?.website || '');
+
+  // A patch already on the quilt under this name, said while the founder is
+  // still typing rather than after Create (F-033). It warns and never
+  // refuses: names are not unique here (sameNamedPatch.js says why). Creation
+  // only; setup is claiming a listing that is, by definition, this name.
+  let sameNamed = $state(null);
+  let sameNamedSeq = 0;
+  $effect(() => {
+    const typed = name;
+    if (mode !== 'create' || !worthChecking(typed)) {
+      sameNamed = null;
+      return;
+    }
+    const seq = ++sameNamedSeq;
+    const timer = setTimeout(async () => {
+      const q = encodeURIComponent(typed.trim());
+      const [everyone, mine] = await Promise.all([
+        api(`nodes?search=${q}&limit=20`).catch(() => null),
+        api(`nodes?scope=my&search=${q}&limit=20`).catch(() => null),
+      ]);
+      // A slower answer for an earlier spelling must not overwrite this one.
+      if (seq !== sameNamedSeq) return;
+      sameNamed = findSameNamed(typed, everyone?.items, mine?.items);
+    }, 400);
+    return () => clearTimeout(timer);
+  });
 
   // Map location, offered here rather than only in settings (docs/adr/082).
   // The address and the marker stay separate acts: leaving the address field
@@ -436,6 +463,20 @@
         <div class="field">
           <label class="lt-label" for="name"><span>Name <span class="lt-required">*</span></span></label>
           <input class="lt-field" id="name" type="text" bind:value={name} disabled={submitting} required placeholder="e.g. Gallery Row, Lancaster Beats Lab" />
+          {#if mode === 'create' && sameNamed}
+            <!-- Opens in a new tab so the half-filled form survives the look. -->
+            <!-- One sentence whether or not the match is the founder's own:
+                 scope=my includes a patch they only follow, so "you already
+                 have this" would overclaim. Theirs is still the one linked. -->
+            <p class="lt-hint field-hint same-named" role="status">
+              {#if sameNamed.status === 'unclaimed'}
+                {sameNamed.name} is already listed on this quilt and not yet claimed. If it's yours, claim it rather than adding another.
+              {:else}
+                There's already a patch called {sameNamed.name} on this quilt.
+              {/if}
+              <a href="/patches/{sameNamed.slug}" target="_blank" rel="noopener">Open it</a>
+            </p>
+          {/if}
         </div>
 
         <div class="field">

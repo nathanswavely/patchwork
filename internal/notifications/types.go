@@ -169,6 +169,11 @@ const (
 	// they accept or decline, and this is how they learn there is anything
 	// to answer.
 	MembershipInvited NotificationType = "membership.invited"
+	// MembershipInterimOffer asks one person whether they will step in as an
+	// interim admin of a patch inactivity has emptied
+	// (docs/adr/2026-10-19-an-interim-admin-is-asked-first.md). Nothing
+	// changes unless they accept, so this is a question, not a report.
+	MembershipInterimOffer NotificationType = "membership.interim_offer"
 
 	// There is deliberately no type for an event being created, updated,
 	// cancelled or about to start (docs/adr/093). An event is a fact
@@ -332,13 +337,14 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 	GovernanceCouncilEmpty:           {CategoryGovernance, "This patch has no admins", AudienceAllMembers, PriorityHigh},
 	GovernanceSuccessionNeeded:       {CategoryAdmin, "A patch has no admins left", AudienceSiteAdmins, PriorityHigh},
 
-	MembershipJoined:      {CategoryMembership, "New member joined", AudienceAdminsOnly, PriorityNormal},
-	MembershipRequest:     {CategoryMembership, "Membership request pending", AudienceAdminsOnly, PriorityHigh},
-	MembershipApproved:    {CategoryMembership, "Your membership was approved", AudienceSpecificUser, PriorityHigh},
-	MembershipRoleChanged: {CategoryMembership, "Your role was changed", AudienceSpecificUser, PriorityHigh},
-	MembershipBanned:      {CategoryMembership, "You have been removed", AudienceSpecificUser, PriorityHigh},
-	MembershipReinstated:  {CategoryMembership, "You have been reinstated", AudienceSpecificUser, PriorityHigh},
-	MembershipInvited:     {CategoryMembership, "You're invited to join a patch", AudienceSpecificUser, PriorityHigh},
+	MembershipJoined:       {CategoryMembership, "New member joined", AudienceAdminsOnly, PriorityNormal},
+	MembershipRequest:      {CategoryMembership, "Membership request pending", AudienceAdminsOnly, PriorityHigh},
+	MembershipApproved:     {CategoryMembership, "Your membership was approved", AudienceSpecificUser, PriorityHigh},
+	MembershipRoleChanged:  {CategoryMembership, "Your role was changed", AudienceSpecificUser, PriorityHigh},
+	MembershipBanned:       {CategoryMembership, "You have been removed", AudienceSpecificUser, PriorityHigh},
+	MembershipReinstated:   {CategoryMembership, "You have been reinstated", AudienceSpecificUser, PriorityHigh},
+	MembershipInvited:      {CategoryMembership, "You're invited to join a patch", AudienceSpecificUser, PriorityHigh},
+	MembershipInterimOffer: {CategoryMembership, "You're asked to step in as an interim admin", AudienceSpecificUser, PriorityHigh},
 
 	EventSuggested:          {CategoryEvents, "Event suggested to your patch", AudienceAdminsOnly, PriorityHigh},
 	EventSubmissionApproved: {CategoryEvents, "Your event was approved", AudienceSpecificUser, PriorityHigh},
@@ -452,7 +458,7 @@ func TypesForCategory(cat Category) []NotificationType {
 		GovernanceFollowerChartersClosed,
 		GovernanceInactivityWarning, GovernanceSeatUnavailable, GovernanceCouncilEmpty,
 		MembershipJoined, MembershipRequest, MembershipApproved, MembershipRoleChanged, MembershipBanned, MembershipReinstated,
-		MembershipInvited,
+		MembershipInvited, MembershipInterimOffer,
 		EventSuggested, EventSubmissionApproved, EventSubmissionRejected,
 		SubmissionApproved, SubmissionRejected,
 		EventLinkRequested, EventLinkConfirmed, ProgramOffer,

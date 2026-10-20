@@ -109,7 +109,8 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 			(SELECT COUNT(*) FROM votes v JOIN memberships m ON m.user_id = v.user_id AND m.node_id = p.node_id
 				WHERE v.proposal_id = p.id AND v.value = 'reject' AND ` + countedBallot + `) as reject_count,
 			(SELECT COUNT(*) FROM votes v JOIN memberships m ON m.user_id = v.user_id AND m.node_id = p.node_id
-				WHERE v.proposal_id = p.id AND v.value = 'abstain' AND ` + countedBallot + `) as abstain_count
+				WHERE v.proposal_id = p.id AND v.value = 'abstain' AND ` + countedBallot + `) as abstain_count,
+			COALESCE(p.applied_at, p.updated_at) AS decided_at
 			FROM proposals p
 			LEFT JOIN users u ON u.id = p.author_id
 			WHERE p.node_id = ?`
@@ -175,6 +176,12 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 			ApproveCount int    `json:"approve_count"`
 			RejectCount  int    `json:"reject_count"`
 			AbstainCount int    `json:"abstain_count"`
+			// When a closed proposal closed, by the same expression the
+			// Record files it under (governance_record.go), so the list and
+			// the Record cannot name two different days for one decision.
+			// Empty on an open row: a decision that has not happened has no
+			// date, and updated_at on an open row is only the last edit.
+			DecidedAt string `json:"decided_at,omitempty"`
 		}
 
 		docHidden := hiddenDocRedactor(db, r, nodeID)
@@ -182,8 +189,12 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 		var proposals []proposalItem
 		for rows.Next() {
 			var p proposalItem
-			if err := rows.Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.State, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &p.AuthorName, &p.ApproveCount, &p.RejectCount, &p.AbstainCount); err != nil {
+			var decidedAt string
+			if err := rows.Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.State, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &p.AuthorName, &p.ApproveCount, &p.RejectCount, &p.AbstainCount, &decidedAt); err != nil {
 				continue
+			}
+			if p.Status != "open" {
+				p.DecidedAt = decidedAt
 			}
 			if docHidden(p.TargetDoc) {
 				p.ProposedBody, p.ProposedTitle = "", ""

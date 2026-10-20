@@ -188,9 +188,12 @@ export function readableRules(rules, followerPermissions = null) {
     if (elected && rules.nomination_days > 0) {
       out.push({ label: 'How long an election takes nominations', value: days(rules.nomination_days) });
     }
-    if (rules.max_admins > 0) {
-      out.push({ label: 'How many admins at once', value: String(rules.max_admins) });
-    }
+    // No "How many admins at once" row: max_admins caps nothing. It was
+    // retired as a rule by docs/adr/051, which also retracted docs/adr/049's
+    // promotion guard, and nothing has enforced it since. A governance
+    // overview is Patchwork describing itself, so it states only what
+    // Patchwork enforces (docs/adr/049) — the count follows from how the
+    // patch governs, which the rows above already name.
     if (rules.inactivity_days > 0) {
       // One literal, not three joined. Concatenating put the fragment
       // "Warned at" into the copy ledger as if it were a reviewable line;

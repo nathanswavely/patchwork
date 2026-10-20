@@ -1,97 +1,19 @@
 <script>
+  // Every word and every comparison in here comes from the shared module,
+  // so this diff and the one-line summary the governance Record keeps
+  // cannot come to describe the same change differently (web/src/lib/rulesDiff.js).
+  import {
+    ruleLabel,
+    formatRuleValue,
+    changedRuleFields,
+    ruleKeys,
+  } from '../lib/rulesDiff.js';
+
   let { currentRules = {}, proposedRules = {} } = $props();
 
-  const LABELS = {
-    decision_method: 'Decision Method',
-    quorum_percent: 'Quorum',
-    default_vote_duration_hours: 'Default Voting Period',
-    amendment_threshold: 'Amendment Threshold',
-    amendment_auto_apply: 'Auto-Apply Amendments',
-    succession_policy: 'Succession Policy',
-    min_voting_tenure_days: 'Min Voting Tenure',
-    subject_recusal: 'Recuse a proposal’s subject',
-    leadership_venue: 'Where admins are chosen',
-    proposal_venue: 'Where proposals are decided',
-    leadership_model: 'Leadership',
-    membership_policy: 'Membership Policy',
-    follower_permissions: 'Follower Permissions',
-  };
+  let changedFields = $derived(changedRuleFields(currentRules, proposedRules));
 
-  const VALUE_LABELS = {
-    admin: 'Admin decides',
-    majority: 'Majority vote',
-    supermajority: 'Supermajority (2/3)',
-    consensus: 'Full consensus',
-    patchwork: 'In Patchwork',
-    elsewhere: 'Somewhere else, recorded here',
-    longest_tenure: 'Longest-tenured member',
-    instance_admin: 'Instance admin intervenes',
-    freeze: 'Patch freezes',
-    open: 'Open',
-    approval_required: 'Approval required',
-    invite_only: 'Invite only',
-  };
-
-  const DURATION_LABELS = {
-    24: '24 hours',
-    48: '48 hours',
-    72: '3 days',
-    168: '1 week',
-    336: '2 weeks',
-  };
-
-  function formatValue(key, val) {
-    if (val === undefined || val === null) return '\u2014';
-    if (key === 'quorum_percent') return `${val}%`;
-    if (key === 'default_vote_duration_hours') return DURATION_LABELS[val] || `${val}h`;
-    if (key === 'amendment_auto_apply') return val ? 'Yes' : 'No';
-    if (key === 'min_voting_tenure_days') {
-      if (val === 0) return 'Immediate';
-      return `${val} days`;
-    }
-    if (key === 'follower_permissions' && typeof val === 'object') {
-      const perms = [];
-      if (val.events !== false) perms.push('Events');
-      if (val.proposals !== false) perms.push('Proposals');
-      if (val.charters === true) perms.push('Charters');
-      if (val.members !== false) perms.push('Members');
-      return perms.length ? perms.join(', ') : 'None';
-    }
-    return VALUE_LABELS[val] || String(val);
-  }
-
-  function deepEqual(a, b) {
-    if (a === b) return true;
-    if (typeof a !== typeof b) return false;
-    if (typeof a === 'object' && a !== null && b !== null) {
-      const keysA = Object.keys(a);
-      const keysB = Object.keys(b);
-      if (keysA.length !== keysB.length) return false;
-      return keysA.every(k => deepEqual(a[k], b[k]));
-    }
-    return false;
-  }
-
-  // Every key either side carries, not just the ones named above. A rules
-  // file holds fields this editor does not edit, and a diff that only knows
-  // its own labels would let one of them change without saying so — which is
-  // the worse half of a governance record: silence that reads as "nothing
-  // else moved". An unlabelled key gets its own name humanized instead.
-  let allKeys = $derived([...new Set([
-    ...Object.keys(LABELS),
-    ...Object.keys(currentRules || {}),
-    ...Object.keys(proposedRules || {}),
-  ])]);
-
-  function label(key) {
-    return LABELS[key] || key.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase());
-  }
-
-  let changedFields = $derived(
-    allKeys.filter(key => !deepEqual(currentRules[key], proposedRules[key]))
-  );
-
-  let unchangedCount = $derived(allKeys.length - changedFields.length);
+  let unchangedCount = $derived(ruleKeys(currentRules, proposedRules).length - changedFields.length);
 </script>
 
 {#if changedFields.length > 0}
@@ -100,11 +22,11 @@
     <div class="diff-list">
       {#each changedFields as key}
         <div class="diff-row">
-          <span class="diff-label">{label(key)}</span>
+          <span class="diff-label">{ruleLabel(key)}</span>
           <span class="diff-values">
-            <span class="diff-old">{formatValue(key, currentRules[key])}</span>
+            <span class="diff-old">{formatRuleValue(key, currentRules[key])}</span>
             <span class="diff-arrow">&rarr;</span>
-            <span class="diff-new">{formatValue(key, proposedRules[key])}</span>
+            <span class="diff-new">{formatRuleValue(key, proposedRules[key])}</span>
           </span>
         </div>
       {/each}
