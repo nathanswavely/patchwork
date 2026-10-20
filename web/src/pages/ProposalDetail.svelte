@@ -112,6 +112,14 @@
   let hasAmendment = $derived(
     proposal?.target_doc && proposal?.current_doc_content != null && proposal?.proposed_body != null
   );
+  // A settled proposal is diffed against the text it was made against, which
+  // the server reads from the charter's history: once a change applies, the
+  // live text is the proposed body and a diff against it shows nothing. Only
+  // a pending proposal compares with the live text (what applying would
+  // change now).
+  let settledDiff = $derived(proposal?.prior_doc_content != null || proposal?.prior_doc_unavailable === true);
+  let diffBase = $derived(settledDiff ? proposal?.prior_doc_content : proposal?.current_doc_content);
+  let changeApplied = $derived(effectiveState === 'in_effect');
 
   // Tabs.
   let activeTab = $state('overview');
@@ -397,21 +405,23 @@
 
       {:else if activeTab === 'changes'}
         <section class="proposal-section changes-tab">
-          {#if isRulesChange}
+          {#if diffBase == null}
+            <p class="lt-muted">The text from before this proposal is not in this patch's history, so its changes cannot be shown.</p>
+          {:else if isRulesChange}
             <StructuredRulesDiff
-              currentRules={JSON.parse(proposal.current_doc_content)}
+              currentRules={JSON.parse(diffBase)}
               proposedRules={JSON.parse(proposal.proposed_body)}
-              directChange={isDirectChange}
+              heading={changeApplied ? 'Rule changes' : undefined}
             />
           {:else}
             <div class="doc-version-label lt-muted">
               {docLabel(proposal.target_doc)}
             </div>
             <DiffView
-              oldText={proposal.current_doc_content}
+              oldText={diffBase}
               newText={proposal.proposed_body}
-              oldLabel="Current"
-              newLabel="Proposed"
+              oldLabel={changeApplied ? 'Before' : settledDiff ? 'When proposed' : 'Current'}
+              newLabel={changeApplied ? 'After' : 'Proposed'}
             />
           {/if}
         </section>

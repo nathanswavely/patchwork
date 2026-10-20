@@ -1035,7 +1035,9 @@ func resolveProposal(db *database.DB, proposalID string) string {
 		// co-op's first proposal, since tenure keeps most joiners out of
 		// the electorate for a month.
 		if windowClosed(votingEndsAt) {
-			lapseProposal(db, p, totalVotes)
+			if lapseProposal(db, p, totalVotes) {
+				broadcastResolution(db, p.NodeID, proposalID, "lapsed", approveCount, rejectCount, abstainCount)
+			}
 			return "lapsed"
 		}
 		return ""
@@ -1160,20 +1162,31 @@ func resolveProposal(db *database.DB, proposalID string) string {
 
 	notifyProposalResolved(db, p, newStatus)
 
-	// Broadcast resolution
+	broadcastResolution(db, p.NodeID, proposalID, newStatus, approveCount, rejectCount, abstainCount)
+
+	return newStatus
+}
+
+// broadcastResolution tells a patch's remote followers a proposal closed, and
+// how, wherever its record is public. Every way a vote closes goes through
+// here: a lapse used to return before the broadcast, so a remote follower
+// sent the Create for a proposal was never told it ended and it stayed open
+// for ever on the other quilt (F-081). A lapse goes out as "lapsed" rather
+// than "rejected", because nobody rejected it (docs/adr/097).
+func broadcastResolution(db *database.DB, nodeID, proposalID, result string, approveCount, rejectCount, abstainCount int) {
 	go func() {
-		if !governanceRecordIsPublic(db, p.NodeID) {
+		if !governanceRecordIsPublic(db, nodeID) {
 			return
 		}
 		resolveActivity := ap.ProposalResolvedActivity(
 			ap.ProposalAPID(ap.GetDomain(), proposalID),
-			ap.NodeAPID(ap.GetDomain(), p.NodeID),
-			newStatus, approveCount, rejectCount, abstainCount,
+			ap.NodeAPID(ap.GetDomain(), nodeID),
+			result, approveCount, rejectCount, abstainCount,
 		)
-		ap.BroadcastToFollowers(db, "node", p.NodeID, resolveActivity)
+		if err := ap.BroadcastToFollowers(db, "node", nodeID, resolveActivity); err != nil {
+			log.Printf("proposal %s: broadcast %s resolution: %v", proposalID, result, err)
+		}
 	}()
-
-	return newStatus
 }
 
 // notifyProposalResolved tells a patch's members what their own vote decided.
@@ -1513,6 +1526,30 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			if !docTextHidden {
 				currentContent, _ := governance.GetDocument(governance.GetDataDir(), p.NodeID, p.TargetDoc)
 				result["current_doc_content"] = currentContent
+				// A settled proposal's diff is against the text it was made
+				// against, not the live one. Applied, the live text *is* the
+				// proposed body, and a diff against it said "No changes" for a
+				// change that changed something; closed unapplied, the live
+				// text may have moved since, and the diff would describe a
+				// proposal nobody made. Still pending (open, or approved and
+				// waiting on an admin), the live text is what applying would
+				// change, so it stays the comparison.
+				if p.Status == "rejected" || p.Status == "withdrawn" || p.State == "in_effect" {
+					found := false
+					if p.GitSHA != "" {
+						if prior, err := governance.GetDocumentBefore(governance.GetDataDir(), p.NodeID, p.TargetDoc, p.GitSHA); err == nil {
+							result["prior_doc_content"] = prior
+							found = true
+						}
+					}
+					if !found {
+						// No commit to read it from — a repo rebuilt from rows
+						// (docs/adr/084) holds none of the old ones. Said
+						// rather than papered over with the live text, which
+						// is the wrong answer this field exists to replace.
+						result["prior_doc_unavailable"] = true
+					}
+				}
 			}
 			// Whether this document was adopted elsewhere since the draft was
 			// written, which makes the diff below a comparison against

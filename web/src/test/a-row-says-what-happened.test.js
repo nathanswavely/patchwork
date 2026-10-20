@@ -49,16 +49,16 @@ describe('F-137: an election is never a direct change', () => {
 });
 
 describe('F-021: a direct change says what happened', () => {
-  it('the rules diff is not headed "Proposed" on a direct change', () => {
-    const src = source('components/StructuredRulesDiff.svelte');
-    expect(src).toContain("{directChange ? 'Rule changes' : 'Proposed rule changes'}");
-    expect(src).not.toContain('<h3>Proposed Rule Changes</h3>');
+  // The heading is the caller's (it arrived with the settled-diff fix). The
+  // editor's review step for a direct change is the caller this finding was
+  // about: the rules change there now, so nothing is proposed.
+  it('the rules editor heads a direct change "Rule changes", in both places it shows the diff', () => {
+    const editor = source('pages/RulesProposalEditor.svelte');
+    expect(editor.match(/<StructuredRulesDiff \{currentRules\} \{proposedRules\} heading=\{directChange \? 'Rule changes' : undefined\} \/>/g)).toHaveLength(2);
   });
 
-  it('every caller tells it which it is', () => {
-    const editor = source('pages/RulesProposalEditor.svelte');
-    expect(editor.match(/<StructuredRulesDiff \{currentRules\} \{proposedRules\} \{directChange\} \/>/g)).toHaveLength(2);
-    expect(source('pages/ProposalDetail.svelte')).toMatch(/<StructuredRulesDiff[\s\S]*?directChange=\{isDirectChange\}/);
+  it('an applied change on its own page says the same', () => {
+    expect(source('pages/ProposalDetail.svelte')).toMatch(/<StructuredRulesDiff[\s\S]*?heading=\{changeApplied \? 'Rule changes' : undefined\}/);
   });
 
   it('the profile glimpse badges an applied direct change "applied"', () => {
