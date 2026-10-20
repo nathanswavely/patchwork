@@ -17,7 +17,7 @@ func TestPaths(t *testing.T) {
 		{"patch", Patch("gallery-row"), "/patches/gallery-row"},
 		{"patch events", PatchEvents("gallery-row"), "/patches/gallery-row/events"},
 		{"patch members", PatchMembers("gallery-row"), "/patches/gallery-row/members"},
-		{"pending members", PatchMembersPending("gallery-row"), "/patches/gallery-row/members?status=pending"},
+		{"join requests", PatchJoinRequests("gallery-row"), "/patches/gallery-row/settings/members"},
 		{"patch setup", PatchSetup("gallery-row"), "/patches/gallery-row/setup"},
 		{"event", Event("ev-1"), "/events/ev-1"},
 		{"user", User("sophia-chen"), "/users/sophia-chen"},
