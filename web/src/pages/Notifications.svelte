@@ -268,12 +268,15 @@
 
   .notif-content { flex: 1; min-width: 0; }
   .notif-title { font-weight: 500; color: var(--color-text); margin-bottom: 0.1rem; }
+  /* The whole body, at every width. This page is the one place a
+     notification is read in full, and some bodies are the only explanation
+     of what happened (docs/adr/097's lapse sentence); clamped to a line they
+     died mid-word on a phone. overflow-wrap keeps a long URL or handle from
+     widening the row. */
   .notif-body {
     color: var(--color-text-muted);
     font-size: 0.8rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    overflow-wrap: anywhere;
   }
 
   .notif-time {

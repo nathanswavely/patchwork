@@ -98,6 +98,13 @@
 
   let btnSize = $derived(size === 'sm' ? 'lt-btn-sm' : '');
 
+  // Signed in, JoinSheet says "Send request". Signed out, the button goes
+  // straight to sign-in, so this is the only place that can say joining
+  // here is a request before someone makes an account for it (F-034).
+  let requestNote = $derived(
+    canBecomeMember && !isLoggedIn() && node?.membership_policy === 'approval_required'
+  );
+
   function openJoinSheet() {
     if (!isLoggedIn()) { navigate('/login'); return; }
     joinSheetOpen = true;
@@ -264,6 +271,9 @@
         disabled={joining}
       >Become a member</button>
     {/if}
+    {#if requestNote}
+      <span class="request-note">Joining is a request a patch admin answers.</span>
+    {/if}
   {/if}
 </div>
 
@@ -282,7 +292,15 @@
   .relationship-row {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 0.5rem;
+  }
+
+  /* Its own line under the buttons, in the row's muted register. */
+  .request-note {
+    flex-basis: 100%;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
   }
 
   .banned-notice {

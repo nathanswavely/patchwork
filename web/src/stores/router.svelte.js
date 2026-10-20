@@ -35,6 +35,9 @@ export function isSafeRedirectPath(path) {
     && path.startsWith('/')
     && !path.startsWith('//')
     && !path.startsWith('/\\')
+    // The URL parser strips tabs and newlines before it resolves anything,
+    // so '/\t/evil.example' arrives as '//evil.example'.
+    && !/[\u0000-\u001f\u007f]/.test(path)
   );
 }
 

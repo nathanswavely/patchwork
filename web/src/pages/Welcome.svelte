@@ -1,11 +1,15 @@
 <script>
-  import { navigate } from '../stores/router.svelte.js';
+  import { navigate, getQuery } from '../stores/router.svelte.js';
   import { getUser } from '../stores/auth.svelte.js';
   import { getInstanceName } from '../stores/quilt.svelte.js';
-  import { dismissOnboarding } from '../lib/onboarding.js';
+  import { dismissOnboarding, welcomeNext } from '../lib/onboarding.js';
   import { getLabel, loadLabel, formatMoney } from '../stores/label.svelte.js';
 
   let user = $derived(getUser());
+  // Where the person was going when the zero-membership redirect sent them
+  // here (F-053), already checked to be a same-origin path. Empty when they
+  // arrived from signup with nowhere particular in mind.
+  let next = $derived(welcomeNext(getQuery()));
   let instanceName = $derived(getInstanceName());
 
   // The Label's onboarding panel (docs/adr/023): a compact summary beside
@@ -37,6 +41,13 @@
   // in App.svelte would otherwise pull the person straight back here from
   // the very surface this screen is sending them to.
   function handleContinue() {
+    dismissOnboarding(user?.id);
+    navigate(next || '/discover');
+  }
+
+  // With somewhere to return to, building a quilt is the detour, so it
+  // becomes the second door.
+  function handleDiscover() {
     dismissOnboarding(user?.id);
     navigate('/discover');
   }
@@ -86,15 +97,24 @@
         <p class="agreement-lining-note">Every patch starts from <a href="/lining" target="_blank" rel="noopener">the lining</a>, the shared baseline behind these.</p>
       </div>
 
-      <button class="lt-btn lt-btn-primary cta-btn" onclick={handleContinue}>
-        Build your quilt &rarr;
-      </button>
-      <!-- The way out, offered at the start rather than only at the end:
-           someone who wants to look around before following anything
-           shouldn't have to walk further in to be let go. -->
-      <button class="skip-link" onclick={handleSkip}>
-        I'll explore on my own
-      </button>
+      {#if next}
+        <button class="lt-btn lt-btn-primary cta-btn" onclick={handleContinue}>
+          Continue &rarr;
+        </button>
+        <button class="skip-link" onclick={handleDiscover}>
+          Build your quilt instead
+        </button>
+      {:else}
+        <button class="lt-btn lt-btn-primary cta-btn" onclick={handleContinue}>
+          Build your quilt &rarr;
+        </button>
+        <!-- The way out, offered at the start rather than only at the end:
+             someone who wants to look around before following anything
+             shouldn't have to walk further in to be let go. -->
+        <button class="skip-link" onclick={handleSkip}>
+          I'll explore on my own
+        </button>
+      {/if}
     </div>
   </div>
 </div>
