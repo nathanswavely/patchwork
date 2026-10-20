@@ -128,7 +128,7 @@
               class="lt-btn lt-btn-primary"
               onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/docs/new`); }}
             >
-              New Document
+              New Charter
             </a>
           {:else if !isMember || membershipRole === 'follower'}
             <p class="role-prompt lt-muted">These documents define how this community makes decisions.</p>
