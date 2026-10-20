@@ -724,9 +724,10 @@ func GetNode(db *database.DB) http.HandlerFunc {
 			// Bound as `u` so the docs/adr/115 guard counts it beside the
 			// is_admin check below rather than letting it ride in unseen.
 			if u := viewer; u != nil && (u.Role == "admin" || userTrustedOn(db, u, n.ID)) {
-				var ce string
-				if err := db.QueryRow("SELECT contact_email FROM nodes WHERE id = ?", n.ID).Scan(&ce); err == nil {
+				var ce, cu string
+				if err := db.QueryRow("SELECT contact_email, contact_url FROM nodes WHERE id = ?", n.ID).Scan(&ce, &cu); err == nil {
 					resp["contact_email"] = ce
+					resp["contact_url"] = cu
 				}
 			}
 		}

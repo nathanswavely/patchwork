@@ -8,8 +8,8 @@ import {
   dismissSetupChecklist,
   isPatchLinkShared,
   markPatchLinkShared,
-  isGovernanceHubVisited,
-  markGovernanceHubVisited,
+  isGovernanceDecided,
+  markGovernanceDecided,
 } from '../lib/onboarding.js';
 
 // The dismissal flag is what lets "Skip" genuinely exit first-run onboarding.
@@ -53,7 +53,7 @@ describe('per-patch onboarding flags', () => {
     ['unlock panel', isUnlockPanelDismissed, dismissUnlockPanel],
     ['setup checklist', isSetupChecklistDismissed, dismissSetupChecklist],
     ['patch link shared', isPatchLinkShared, markPatchLinkShared],
-    ['governance hub visited', isGovernanceHubVisited, markGovernanceHubVisited],
+    ['governance decided', isGovernanceDecided, markGovernanceDecided],
   ];
 
   for (const [label, isSet, setFlag] of pairs) {

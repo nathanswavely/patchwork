@@ -10,7 +10,6 @@
 package governance
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -369,30 +368,38 @@ func GetDocumentAtVersion(dataDir, nodeID, filename, commitSHA string) (string, 
 	return content, nil
 }
 
-// GetDocumentBefore returns a file's content as it stood immediately before
-// commitSHA: at the commit's first parent, which on main is the text that
-// commit replaced (a fast-forward's parent is the branch point; a merge's
-// first parent is main as it was). A file absent there — or a root commit,
-// which has no parent — is the empty string with no error, since the commit
-// created it. An unreadable commit is an error.
+// GetDocumentBefore returns a file's content as it stood just before a
+// commit: at its first parent. For the commit a merge produced that is the
+// main branch the moment before the merge (MergeBranch puts main first, and a
+// fast-forward lands the branch commit, whose only parent is main); for an
+// amendment branch's commit it is main when the branch was cut. Either way it
+// is the text the change was made against, which the live document stops
+// being the moment the change applies.
+//
+// A file the parent does not have was created by the commit, so its prior
+// content is empty rather than an error. A commit the repo does not hold
+// (a repo rebuilt from rows, docs/adr/084) and a root commit are errors: no
+// prior text can be said.
 func GetDocumentBefore(dataDir, nodeID, filename, commitSHA string) (string, error) {
 	repo, err := openBare(NodeRepoPath(dataDir, nodeID))
 	if err != nil {
 		return "", fmt.Errorf("open repo: %w", err)
 	}
+
 	commit, err := repo.CommitObject(plumbing.NewHash(commitSHA))
 	if err != nil {
 		return "", fmt.Errorf("commit %s: %w", commitSHA, err)
 	}
 	if commit.NumParents() == 0 {
-		return "", nil
+		return "", fmt.Errorf("commit %s has no parent", commitSHA)
 	}
 	parent, err := commit.Parent(0)
 	if err != nil {
 		return "", fmt.Errorf("parent of %s: %w", commitSHA, err)
 	}
+
 	file, err := parent.File(filename)
-	if errors.Is(err, object.ErrFileNotFound) {
+	if err == object.ErrFileNotFound {
 		return "", nil
 	}
 	if err != nil {

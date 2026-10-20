@@ -77,9 +77,17 @@
       explanations.push({ label: 'Term length', value: rules.admin_term_months + ' months', explain: `Admin terms last ${rules.admin_term_months} months before re-election.` });
     }
 
-    if (rules.max_admins > 0) {
-      explanations.push({ label: 'Max admins', value: String(rules.max_admins), explain: `Up to ${rules.max_admins} people can serve as admins simultaneously.` });
-    }
+    // max_admins is deliberately absent. docs/adr/051 retired it as a rule
+    // and retracted docs/adr/049's promotion guard, so the number in the
+    // rules file caps nothing: promotion past it succeeds, and
+    // internal/handler/admin_seats_test.go holds that open. This drawer is
+    // the one place a founder reads before choosing a template, and
+    // docs/adr/049's principle is that Patchwork states as fact only what
+    // Patchwork enforces. Three simulated founders read "Up to N people can
+    // serve as admins simultaneously" as a cap; one took the Minimal
+    // template believing a second admin was impossible. How many admins a
+    // patch has follows from how it governs, which the Leadership row above
+    // already says.
 
     return explanations;
   }
