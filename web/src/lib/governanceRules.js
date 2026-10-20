@@ -231,3 +231,35 @@ export function readableRules(rules, followerPermissions = null) {
   }
   return out;
 }
+
+// The rows of readableRules that say how a vote is run, as against how the
+// patch makes admins or what a follower sees.
+const VOTE_TERM_LABELS = new Set([
+  'How a proposal carries',
+  'Quorum',
+  'How long a vote stays open',
+  'Before a new member may vote',
+  'Somebody a proposal is about',
+  'To amend a charter',
+  'An amendment that carries',
+]);
+
+/**
+ * The terms one vote runs under, in the same words as the patch's rules
+ * page: the set frozen when voting opened (docs/adr/047), which can differ
+ * from the rules the patch keeps today. A vote box said "Rules as of" a date
+ * and no surface showed the rulebook it meant (F-080).
+ *
+ * The tenure row takes the bar actually in force, never the configured
+ * number the frozen terms carry: on a patch younger than its own bar that
+ * number is not running (docs/adr/098), and reciting it is the false rule
+ * VoteSection already refuses to print.
+ */
+export function readableVoteTerms(terms, effectiveTenureDays = 0) {
+  if (!terms) return [];
+  return readableRules(terms)
+    .filter((line) => VOTE_TERM_LABELS.has(line.label))
+    .map((line) => line.label === 'Before a new member may vote'
+      ? { ...line, value: effectiveTenureDays > 0 ? days(effectiveTenureDays) : 'Straight away' }
+      : line);
+}

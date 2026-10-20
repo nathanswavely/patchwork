@@ -110,7 +110,8 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 				WHERE v.proposal_id = p.id AND v.value = 'reject' AND ` + countedBallot + `) as reject_count,
 			(SELECT COUNT(*) FROM votes v JOIN memberships m ON m.user_id = v.user_id AND m.node_id = p.node_id
 				WHERE v.proposal_id = p.id AND v.value = 'abstain' AND ` + countedBallot + `) as abstain_count,
-			COALESCE(p.applied_at, p.updated_at) AS decided_at
+			COALESCE(p.applied_at, p.updated_at) AS decided_at,
+			COALESCE(p.seats_contested,0), COALESCE(p.nominations_close_at,'')
 			FROM proposals p
 			LEFT JOIN users u ON u.id = p.author_id
 			WHERE p.node_id = ?`
@@ -182,6 +183,13 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 			// Empty on an open row: a decision that has not happened has no
 			// date, and updated_at on an open row is only the last edit.
 			DecidedAt string `json:"decided_at,omitempty"`
+			// An election, told apart the way the detail page tells it
+			// (election_view.go). Without it a contest that settled on no
+			// ballots read as a direct change "applied by" whoever the
+			// author column names, when the calendar opened it and nobody
+			// applied anything (F-137, docs/adr/109).
+			SeatsContested int    `json:"seats_contested"`
+			ElectionPhase  string `json:"election_phase,omitempty"`
 		}
 
 		docHidden := hiddenDocRedactor(db, r, nodeID)
@@ -189,10 +197,11 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 		var proposals []proposalItem
 		for rows.Next() {
 			var p proposalItem
-			var decidedAt string
-			if err := rows.Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.State, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &p.AuthorName, &p.ApproveCount, &p.RejectCount, &p.AbstainCount, &decidedAt); err != nil {
+			var decidedAt, nominationsCloseAt string
+			if err := rows.Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.State, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &p.AuthorName, &p.ApproveCount, &p.RejectCount, &p.AbstainCount, &decidedAt, &p.SeatsContested, &nominationsCloseAt); err != nil {
 				continue
 			}
+			p.ElectionPhase = electionPhase(p.SeatsContested, nominationsCloseAt, p.Status)
 			if p.Status != "open" {
 				p.DecidedAt = decidedAt
 			}
@@ -1478,6 +1487,11 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			"my_vote":              myVote,
 			"eligible_voters":      eligibleCount,
 			"can_vote":             canVote,
+			// On a closed proposal with no ballot from this viewer, whether
+			// they were somebody who could have cast one, so the page can say
+			// "You did not vote" only where that is true (F-070).
+			"could_have_voted": p.Status != "open" && myVote == "" &&
+				couldHaveVoted(db, viewerID, p.NodeID, gc, recused, voteClosedAt(p, appliedAt)),
 			// The terms this vote is judged by, so the page can say so rather
 			// than leaving a refused voter to guess (docs/adr/047). Fixed when
 			// voting opened — which is created_at, already in this payload.
