@@ -1,7 +1,7 @@
 <script>
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
-  import { timeLeft, timeLeftShort } from '../lib/datetime.js';
+  import { timeLeft, timeLeftShort, formatDay } from '../lib/datetime.js';
   import { docLabel } from '../lib/docLabel.js';
   import { navigate } from '../stores/router.svelte.js';
 
@@ -212,8 +212,13 @@
                     <span class="lt-muted">waiting on the maintainer</span>
                   {:else if proposal.status === 'open' && proposal.voting_ends_at}
                     <span class="time-remaining">{timeRemaining(proposal.voting_ends_at)}</span>
-                  {:else if proposal.status !== 'open' && !isDirectRow(proposal)}
-                    <span class="lt-muted">{rowLabel(proposal)}</span>
+                  {:else if proposal.status !== 'open' && !isDirectRow(proposal) && proposal.decided_at}
+                    <!-- When it closed, which is the question this slot
+                         answers on every other row ("6d left", "waiting on
+                         the maintainer"). It used to repeat the outcome the
+                         pill on the right already says, so a settled row
+                         read "nobody elected [nobody elected]" (F-136). -->
+                    <span class="lt-muted">closed {formatDay(proposal.decided_at)}</span>
                   {/if}
                 </div>
                 {#if (proposal.approve_count || 0) + (proposal.reject_count || 0) > 0}
