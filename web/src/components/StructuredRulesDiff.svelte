@@ -9,7 +9,10 @@
     ruleKeys,
   } from '../lib/rulesDiff.js';
 
-  let { currentRules = {}, proposedRules = {} } = $props();
+  // A direct change is not proposed (docs/adr/041): nobody votes on it, and
+  // the heading sat over "Saving changes these rules now" saying otherwise
+  // (F-021).
+  let { currentRules = {}, proposedRules = {}, directChange = false } = $props();
 
   let changedFields = $derived(changedRuleFields(currentRules, proposedRules));
 
@@ -18,7 +21,7 @@
 
 {#if changedFields.length > 0}
   <div class="rules-diff">
-    <h3>Proposed Rule Changes</h3>
+    <h3>{directChange ? 'Rule changes' : 'Proposed rule changes'}</h3>
     <div class="diff-list">
       {#each changedFields as key}
         <div class="diff-row">

@@ -280,7 +280,7 @@
       {#if hasChanges}
         <div class="changes-section">
           <h2>Changes</h2>
-          <StructuredRulesDiff {currentRules} {proposedRules} />
+          <StructuredRulesDiff {currentRules} {proposedRules} {directChange} />
         </div>
       {/if}
 
@@ -289,7 +289,7 @@
         <div class="review-card">
           <div class="review-card-header lt-muted">Your changes</div>
           <div class="review-card-body">
-            <StructuredRulesDiff {currentRules} {proposedRules} />
+            <StructuredRulesDiff {currentRules} {proposedRules} {directChange} />
           </div>
         </div>
 

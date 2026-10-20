@@ -73,8 +73,10 @@
   // tally drops ballots that no longer count, the list never does. Should the
   // list ever be filtered again, a proposal that was voted on and passed would
   // claim here that it never was.
+  // Never an election: a contest can settle on no ballots too, and the
+  // calendar opened it rather than anybody applying it (F-137).
   let isDirectChange = $derived(
-    effectiveState === 'in_effect' && (proposal?.voters || []).length === 0
+    effectiveState === 'in_effect' && (proposal?.voters || []).length === 0 && !proposal?.election_phase
   );
   // The maintainer's patch (docs/adr/092): the server says whether this
   // proposal's tally is advice, and whether this viewer is the one who
@@ -380,6 +382,7 @@
               voteEligibleAt={proposal.vote_eligible_at || ''}
               openedAt={proposal.created_at}
               userVote={proposal.my_vote}
+              couldHaveVoted={proposal.could_have_voted === true}
               votingEndsAt={proposal.voting_ends_at}
               showTimeLeft={false}
               state={effectiveState}
@@ -398,6 +401,7 @@
             <StructuredRulesDiff
               currentRules={JSON.parse(proposal.current_doc_content)}
               proposedRules={JSON.parse(proposal.proposed_body)}
+              directChange={isDirectChange}
             />
           {:else}
             <div class="doc-version-label lt-muted">
