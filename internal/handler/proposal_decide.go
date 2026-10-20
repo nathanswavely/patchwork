@@ -41,9 +41,9 @@ func maintainerDecidable(db *database.DB, w http.ResponseWriter, user *model.Use
 	err := db.QueryRow(
 		`SELECT id, node_id, author_id, status, COALESCE(state,'voting'), proposal_type,
 		 COALESCE(target_doc,''), COALESCE(proposed_branch,''), COALESCE(proposed_body,''), COALESCE(proposed_title,''),
-		 voting_ends_at, seats_contested
+		 COALESCE(target_user_id,''), voting_ends_at, seats_contested
 		 FROM proposals WHERE id = ?`, proposalID,
-	).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Status, &p.State, &p.ProposalType, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &votingEndsAt, &seatsContested)
+	).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Status, &p.State, &p.ProposalType, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.TargetUserID, &votingEndsAt, &seatsContested)
 	if err != nil {
 		http.Error(w, `{"error":"proposal not found"}`, http.StatusNotFound)
 		return p, model.GovernanceConfig{}, false
@@ -71,6 +71,19 @@ func maintainerDecidable(db *database.DB, w http.ResponseWriter, user *model.Use
 		return p, gc, false
 	}
 	return p, gc, true
+}
+
+// ratifyMaintainerApproval carries out a nomination the maintainer approved
+// (docs/adr/2026-10-18-a-nomination-takes-effect-where-the-decision-lands.md).
+// On a voting patch resolution ratifies; on an admin-decides patch nothing
+// resolves, so the maintainer's approval is where the promotion has to
+// happen. Called only after the apply has settled, so the row and the role
+// never disagree about whether the decision landed.
+func ratifyMaintainerApproval(db *database.DB, p model.Proposal, decider *model.User) {
+	if p.ProposalType != "membership" || p.TargetUserID == "" {
+		return
+	}
+	ratifyNomination(db, p.ID, p.NodeID, p.TargetUserID, decider.ID)
 }
 
 // DecideProposal handles POST /api/v1/proposals/{id}/decide — the
@@ -120,6 +133,7 @@ func DecideProposal(db *database.DB) http.HandlerFunc {
 				http.Error(w, `{"error":"`+applyFailureMessage+`"}`, http.StatusInternalServerError)
 				return
 			}
+			ratifyMaintainerApproval(db, p, user)
 			auth.LogAuditEventJSON(db, user.ID, "proposal.decided", "proposal", proposalID, detail, clientIP(r))
 			notifyProposalApplied(db, p.NodeID, proposalID, user.ID)
 			w.Header().Set("Content-Type", "application/json")

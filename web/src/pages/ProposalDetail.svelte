@@ -128,11 +128,14 @@
 
   // Tabs.
   let activeTab = $state('overview');
+  // The server's count until the thread has loaded, then the thread's own,
+  // so posting a comment moves the badge without reloading the proposal.
+  let threadCount = $state(null);
 
   let tabs = $derived.by(() => {
     const t = [{ id: 'overview', label: 'Overview' }];
     if (hasAmendment) t.push({ id: 'changes', label: 'Changes' });
-    t.push({ id: 'discussion', label: 'Discussion', count: proposal?.comment_count || 0 });
+    t.push({ id: 'discussion', label: 'Discussion', count: threadCount ?? proposal?.comment_count ?? 0 });
     t.push({ id: 'history', label: 'History' });
     return t;
   });
@@ -156,6 +159,7 @@
   async function loadProposal() {
     loading = true;
     error = '';
+    threadCount = null;
     try {
       proposal = await api(`proposals/${proposalId}`);
     } catch (e) {
@@ -171,8 +175,12 @@
     }
   }
 
-  // Paged, because the members endpoint is (docs/adr/095) and a picker that
-  // stops at twenty silently hides the twenty-first person from nomination.
+  // Every page, through allMembers, because the members endpoint is paged
+  // (docs/adr/095) and a picker that stops at twenty silently hides the
+  // twenty-first person from nomination. The page token goes back as
+  // `after`, the name parsePaginationParams reads. Sent as `cursor` it was
+  // ignored, every request returned page one, and the hundred-and-first
+  // member could not be nominated (#367).
   async function loadElectionMembers() {
     const slug = patch.value.slug;
     if (!slug) return;
@@ -422,7 +430,7 @@
 
       {:else if activeTab === 'discussion'}
         <section class="proposal-section">
-          <CommentThread proposalId={proposal.id} isMember={hasStanding} isAdmin={!!patchIsAdmin} />
+          <CommentThread proposalId={proposal.id} isMember={hasStanding} isAdmin={!!patchIsAdmin} oncount={(n) => (threadCount = n)} />
         </section>
 
       {:else if activeTab === 'history'}
