@@ -12,8 +12,11 @@
    * (clicking Copy Link is the only signal there is), and the optional
    * "Decide how you govern" item, which also derives from real state (any
    * published charter beyond the lining) but falls back to "the admin has
-   * visited the governance hub" (set from GovernanceOverview.svelte) so a
-   * patch that never amends anything doesn't nag forever.
+   * performed a governance act" (set from GovernanceOverview.svelte and
+   * RulesProposalEditor.svelte) so a patch that never writes a charter
+   * doesn't nag forever. A visit is not an act: opening the hub used to
+   * tick this item, which told a founder they had decided something they
+   * had not.
    *
    * Never blocks anything; collapses entirely once every item is done.
    */
@@ -29,7 +32,7 @@
     dismissSetupChecklist,
     isPatchLinkShared,
     markPatchLinkShared,
-    isGovernanceHubVisited,
+    isGovernanceDecided,
   } from '../lib/onboarding.js';
 
   const patch = getContext('patch');
@@ -85,14 +88,14 @@
   // rendering below; each carries its own navigation target.
   let items = $derived.by(() => {
     if (!node) return [];
-    // Re-read on every route change (getPath()) — visiting the governance
-    // hub sets a localStorage flag that isn't itself reactive, so this is
-    // what notices the admin came back from there without a full reload.
+    // Re-read on every route change (getPath()) — a governance act sets a
+    // localStorage flag that isn't itself reactive, so this is what notices
+    // the admin came back from the hub without a full reload.
     getPath();
     const hasTile = node.appearance != null;
     const hasTags = Array.isArray(node.tags) && node.tags.length > 0;
     const hasWhereabouts = !!(node.address && node.address.trim()) || hasMapLocation(node.latitude, node.longitude);
-    const governanceDecided = hasCharterBeyondLining || isGovernanceHubVisited(userId, node.id);
+    const governanceDecided = hasCharterBeyondLining || isGovernanceDecided(userId, node.id);
 
     return [
       {

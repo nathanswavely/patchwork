@@ -41,7 +41,15 @@
   }
 </script>
 
-{#if !loading && revisions.length > 1}
+<!-- A tab has to say something in every state. This rendered literally
+     nothing for a proposal nobody had edited: no heading, no sentence, an
+     empty panel a reader cannot tell from a page that failed to load.
+
+     The threshold is > 0, not > 1. A row in proposal_revisions is written
+     per edit (handler.CreateRevision snapshots the pre-edit text; nothing
+     seeds revision 1 at creation), so `> 1` hid a proposal's only edit as
+     well, and the unedited case fell through to the same nothing. -->
+{#if !loading && revisions.length > 0}
   <div class="revision-history">
     <h3>Revision History</h3>
     <div class="timeline">
@@ -58,6 +66,11 @@
         </div>
       {/each}
     </div>
+  </div>
+{:else if !loading}
+  <div class="revision-history">
+    <h3>Revision History</h3>
+    <p class="lt-muted">No edits yet. Any change to this proposal is recorded here.</p>
   </div>
 {/if}
 
