@@ -9,7 +9,9 @@
     ruleKeys,
   } from '../lib/rulesDiff.js';
 
-  let { currentRules = {}, proposedRules = {} } = $props();
+  // `heading` names what the list is: an applied change's page says what
+  // changed, the editor and a pending proposal what would.
+  let { currentRules = {}, proposedRules = {}, heading = 'Proposed Rule Changes' } = $props();
 
   let changedFields = $derived(changedRuleFields(currentRules, proposedRules));
 
@@ -18,7 +20,7 @@
 
 {#if changedFields.length > 0}
   <div class="rules-diff">
-    <h3>Proposed Rule Changes</h3>
+    <h3>{heading}</h3>
     <div class="diff-list">
       {#each changedFields as key}
         <div class="diff-row">
