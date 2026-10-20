@@ -1026,7 +1026,9 @@ func resolveProposal(db *database.DB, proposalID string) string {
 		// co-op's first proposal, since tenure keeps most joiners out of
 		// the electorate for a month.
 		if windowClosed(votingEndsAt) {
-			lapseProposal(db, p, totalVotes)
+			if lapseProposal(db, p, totalVotes) {
+				broadcastResolution(db, p.NodeID, proposalID, "lapsed", approveCount, rejectCount, abstainCount)
+			}
 			return "lapsed"
 		}
 		return ""
@@ -1151,20 +1153,31 @@ func resolveProposal(db *database.DB, proposalID string) string {
 
 	notifyProposalResolved(db, p, newStatus)
 
-	// Broadcast resolution
+	broadcastResolution(db, p.NodeID, proposalID, newStatus, approveCount, rejectCount, abstainCount)
+
+	return newStatus
+}
+
+// broadcastResolution tells a patch's remote followers a proposal closed, and
+// how, wherever its record is public. Every way a vote closes goes through
+// here: a lapse used to return before the broadcast, so a remote follower
+// sent the Create for a proposal was never told it ended and it stayed open
+// for ever on the other quilt (F-081). A lapse goes out as "lapsed" rather
+// than "rejected", because nobody rejected it (docs/adr/097).
+func broadcastResolution(db *database.DB, nodeID, proposalID, result string, approveCount, rejectCount, abstainCount int) {
 	go func() {
-		if !governanceRecordIsPublic(db, p.NodeID) {
+		if !governanceRecordIsPublic(db, nodeID) {
 			return
 		}
 		resolveActivity := ap.ProposalResolvedActivity(
 			ap.ProposalAPID(ap.GetDomain(), proposalID),
-			ap.NodeAPID(ap.GetDomain(), p.NodeID),
-			newStatus, approveCount, rejectCount, abstainCount,
+			ap.NodeAPID(ap.GetDomain(), nodeID),
+			result, approveCount, rejectCount, abstainCount,
 		)
-		ap.BroadcastToFollowers(db, "node", p.NodeID, resolveActivity)
+		if err := ap.BroadcastToFollowers(db, "node", nodeID, resolveActivity); err != nil {
+			log.Printf("proposal %s: broadcast %s resolution: %v", proposalID, result, err)
+		}
 	}()
-
-	return newStatus
 }
 
 // notifyProposalResolved tells a patch's members what their own vote decided.

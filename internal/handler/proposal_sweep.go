@@ -69,16 +69,18 @@ func windowClosed(votingEndsAt string) bool {
 // keeps the CHECK constraint as it is), the state says what actually
 // happened, and the record and the notice both say "not decided" rather
 // than "failed". Idempotent: the WHERE refuses a proposal already moved.
-func lapseProposal(db *database.DB, p model.Proposal, votes int) {
+// Reports whether this call was the one that lapsed it, so the caller tells
+// remote followers once and only for a lapse that happened.
+func lapseProposal(db *database.DB, p model.Proposal, votes int) bool {
 	now := clock.Now()
 	res, err := db.Exec(`UPDATE proposals SET status = 'rejected', state = 'lapsed', updated_at = ?
 	                     WHERE id = ? AND status = 'open'`, now, p.ID)
 	if err != nil {
 		log.Printf("proposal %s: lapse failed: %v", p.ID, err)
-		return
+		return false
 	}
 	if n, _ := res.RowsAffected(); n == 0 {
-		return
+		return false
 	}
 
 	var slug, name string
@@ -98,4 +100,5 @@ func lapseProposal(db *database.DB, p model.Proposal, votes int) {
 		Link:     weblink.Proposal(slug, p.ID),
 	})
 	log.Printf("proposal %s in %s lapsed: quorum unmet at close (%d votes)", p.ID, slug, votes)
+	return true
 }
