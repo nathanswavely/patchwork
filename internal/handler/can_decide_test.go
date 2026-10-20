@@ -41,7 +41,9 @@ func TestAdminDecidesElection_IsNotTheMaintainers(t *testing.T) {
 		t.Errorf("apply on an election: want 409, got %d: %s", code, body)
 	}
 	var status, state string
-	rig.db.QueryRow("SELECT status, state FROM proposals WHERE id = ?", electionID).Scan(&status, &state)
+	if err := rig.db.QueryRow("SELECT status, state FROM proposals WHERE id = ?", electionID).Scan(&status, &state); err != nil {
+		t.Fatal(err)
+	}
 	if status != "open" || state != "voting" {
 		t.Errorf("the election must be left running, got status=%q state=%q", status, state)
 	}
@@ -61,7 +63,9 @@ func TestAdminDecidesElection_IsNotTheMaintainers(t *testing.T) {
 func TestCanDecide_FalseOutsideTheDecidableStates(t *testing.T) {
 	rig := newAdminDecidesNominationRig(t, "candecide", "meritocratic")
 	id := rig.nominate(t, true)["id"].(string)
-	rig.db.Exec("UPDATE proposals SET state = 'elsewhere' WHERE id = ?", id)
+	if _, err := rig.db.Exec("UPDATE proposals SET state = 'elsewhere' WHERE id = ?", id); err != nil {
+		t.Fatal(err)
+	}
 	if got := getProposal(t, rig.db, id, rig.adminTok); got["can_decide"] != false {
 		t.Errorf("can_decide in state elsewhere: want false, got %v", got["can_decide"])
 	}

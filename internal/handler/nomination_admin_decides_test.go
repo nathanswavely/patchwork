@@ -43,13 +43,19 @@ func newAdminDecidesNominationRig(t *testing.T, slug, leadership string) adminDe
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	createTestMembership(t, db, nominee.ID, nodeID, "member", "active")
 	var memberID string
-	db.QueryRow("SELECT id FROM users WHERE username = ?", slug+"_member").Scan(&memberID)
+	if err := db.QueryRow("SELECT id FROM users WHERE username = ?", slug+"_member").Scan(&memberID); err != nil {
+		t.Fatal(err)
+	}
 	createTestMembership(t, db, memberID, nodeID, "member", "active")
-	db.Exec(`UPDATE memberships SET joined_at = '2020-01-01T00:00:00.000Z' WHERE node_id = ?`, nodeID)
-	db.Exec(`UPDATE nodes SET governance_config = ? WHERE id = ?`,
+	if _, err := db.Exec(`UPDATE memberships SET joined_at = '2020-01-01T00:00:00.000Z' WHERE node_id = ?`, nodeID); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.Exec(`UPDATE nodes SET governance_config = ? WHERE id = ?`,
 		`{"decision_method":"admin","quorum_percent":0,"default_vote_duration_hours":72,"min_voting_tenure_days":0,`+
 			`"leadership_model":"`+leadership+`","leadership_venue":"patchwork","admin_term_months":12}`,
-		nodeID)
+		nodeID); err != nil {
+		t.Fatal(err)
+	}
 	return adminDecidesNominationRig{
 		db: db, nodeID: nodeID, slug: slug,
 		adminID: admin.ID, adminTok: adminTok,
@@ -72,7 +78,9 @@ func (rig adminDecidesNominationRig) nominate(t *testing.T, putToVote bool) map[
 func proposalStateOf(t *testing.T, db *database.DB, id string) string {
 	t.Helper()
 	var state string
-	db.QueryRow("SELECT COALESCE(state,'') FROM proposals WHERE id = ?", id).Scan(&state)
+	if err := db.QueryRow("SELECT COALESCE(state,'') FROM proposals WHERE id = ?", id).Scan(&state); err != nil {
+		t.Fatal(err)
+	}
 	return state
 }
 
@@ -183,13 +191,17 @@ func TestAdminDecidesNomination_ApplyOpenPromotes(t *testing.T) {
 func TestAdminDecidesNomination_SkipsDepartedNominee(t *testing.T) {
 	rig := newAdminDecidesNominationRig(t, "nomleft", "meritocratic")
 	id := rig.nominate(t, true)["id"].(string)
-	rig.db.Exec("UPDATE memberships SET status = 'left' WHERE user_id = ? AND node_id = ?", rig.nomineeID, rig.nodeID)
+	if _, err := rig.db.Exec("UPDATE memberships SET status = 'left' WHERE user_id = ? AND node_id = ?", rig.nomineeID, rig.nodeID); err != nil {
+		t.Fatal(err)
+	}
 
 	if code, body := decideOn(t, rig.db, id, rig.adminTok, "approve"); code != http.StatusOK {
 		t.Fatalf("decide approve: got %d: %s", code, body)
 	}
 	var role, status string
-	rig.db.QueryRow("SELECT role, status FROM memberships WHERE user_id = ? AND node_id = ?", rig.nomineeID, rig.nodeID).Scan(&role, &status)
+	if err := rig.db.QueryRow("SELECT role, status FROM memberships WHERE user_id = ? AND node_id = ?", rig.nomineeID, rig.nodeID).Scan(&role, &status); err != nil {
+		t.Fatal(err)
+	}
 	if role == "admin" || status != "left" {
 		t.Errorf("a departed nominee must stay departed, got role=%q status=%q", role, status)
 	}
@@ -202,8 +214,10 @@ func TestAdminDecidesNomination_ElectedSeatsIntoTheVacancy(t *testing.T) {
 	for _, door := range []string{"direct", "decide", "apply"} {
 		t.Run(door, func(t *testing.T) {
 			rig := newAdminDecidesNominationRig(t, "nomseat"+door, "elected")
-			rig.db.Exec(`INSERT INTO seats (id, node_id, holder_id, term_ends_at) VALUES (?, ?, ?, ?)`,
-				auth.NewUUIDv7(), rig.nodeID, rig.adminID, time.Now().UTC().AddDate(0, 12, 0).Format("2006-01-02"))
+			if _, err := rig.db.Exec(`INSERT INTO seats (id, node_id, holder_id, term_ends_at) VALUES (?, ?, ?, ?)`,
+				auth.NewUUIDv7(), rig.nodeID, rig.adminID, time.Now().UTC().AddDate(0, 12, 0).Format("2006-01-02")); err != nil {
+				t.Fatal(err)
+			}
 			remainder := time.Now().UTC().AddDate(0, 3, 0).Format("2006-01-02")
 			seat := makeVacantSeat(t, rig.db, rig.nodeID, remainder)
 

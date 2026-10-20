@@ -142,8 +142,10 @@ func TestAppliedAmendment_CreatingADocumentHasAnEmptyBase(t *testing.T) {
 func TestAppliedAmendment_BaseTextFollowsTheCharter(t *testing.T) {
 	rig := newTemplateRig(t, "minimal", "basetexthidden")
 	openGovernanceRecord(t, rig.db, rig.nodeID)
-	rig.db.Exec(`INSERT INTO governance_docs (id, node_id, title, body, visibility, created_by) VALUES (?, ?, 'Operating Agreement', '', 'members', ?)`,
-		auth.NewUUIDv7(), rig.nodeID, rig.adminID)
+	if _, err := rig.db.Exec(`INSERT INTO governance_docs (id, node_id, title, body, visibility, created_by) VALUES (?, ?, 'Operating Agreement', '', 'members', ?)`,
+		auth.NewUUIDv7(), rig.nodeID, rig.adminID); err != nil {
+		t.Fatal(err)
+	}
 	id := amend(t, rig, rig.adminTok, "# Operating Agreement\n\nPrivate.\n", false)
 
 	r := httptest.NewRequest("GET", "/api/v1/proposals/"+id, nil)
