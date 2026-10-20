@@ -131,14 +131,26 @@ describe('StructuredRulesEditor — the second venue', () => {
 
 describe('StructuredRulesDiff — nothing changes invisibly', () => {
   const src = source('components/StructuredRulesDiff.svelte');
+  const lib = source('lib/rulesDiff.js');
 
   it('diffs every key either side carries, not only the labelled ones', () => {
     // The rules file holds fields this editor does not edit. A diff that only
     // knew its own labels would let one of them change while the page reported
     // the rest unchanged — the worse half of a governance record.
-    expect(src).toMatch(/allKeys = \$derived\(\[\.\.\.new Set\(\[/);
-    expect(src).toMatch(/\.\.\.Object\.keys\(currentRules \|\| \{\}\)/);
-    expect(src).toMatch(/LABELS\[key\] \|\| key\.replace/);
+    //
+    // The walk moved into lib/rulesDiff.js when F-038 showed the editor's
+    // prefilled summary doing the opposite beside it, off a hand-written list
+    // of five fields. The property is the same one; it is now stated once, for
+    // the diff and the record entry both.
+    expect(lib).toMatch(/\[\.\.\.new Set\(\[/);
+    expect(lib).toMatch(/\.\.\.Object\.keys\(currentRules \|\| \{\}\)/);
+    expect(lib).toMatch(/RULE_LABELS\[key\] \|\| key\.replace/);
+  });
+
+  it('renders that one answer rather than a second of its own', () => {
+    expect(src).toMatch(/from '\.\.\/lib\/rulesDiff\.js'/);
+    expect(src).toMatch(/changedRuleFields\(currentRules, proposedRules\)/);
+    expect(src).not.toMatch(/const LABELS =/);
   });
 });
 

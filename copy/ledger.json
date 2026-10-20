@@ -22639,7 +22639,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 311,
+          "line": 296,
           "kind": "markup",
           "raw": "(optional)",
           "quote": null
@@ -26972,7 +26972,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 252,
+          "line": 237,
           "kind": "markup",
           "raw": "Retry",
           "quote": null
@@ -28732,612 +28732,6 @@
       ]
     },
     {
-      "id": "3893c7375e5f",
-      "text": "Decision Method",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 5,
-          "kind": "js-string",
-          "raw": "Decision Method",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 188,
-          "kind": "markup",
-          "raw": "Decision Method",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "229c6bc90ffe",
-      "text": "Default Voting Period",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 7,
-          "kind": "js-string",
-          "raw": "Default Voting Period",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 209,
-          "kind": "markup",
-          "raw": "Default Voting Period",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "5be98d82af10",
-      "text": "Amendment Threshold",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 8,
-          "kind": "js-string",
-          "raw": "Amendment Threshold",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 218,
-          "kind": "markup",
-          "raw": "Amendment Threshold",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "d4a280c4b3c4",
-      "text": "Auto-Apply Amendments",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 9,
-          "kind": "js-string",
-          "raw": "Auto-Apply Amendments",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 229,
-          "kind": "markup",
-          "raw": "Auto-Apply Amendments",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "aed76335d831",
-      "text": "Succession Policy",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 10,
-          "kind": "js-string",
-          "raw": "Succession Policy",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 285,
-          "kind": "markup",
-          "raw": "Succession Policy",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "a5431f4aefe2",
-      "text": "Min Voting Tenure",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 11,
-          "kind": "js-string",
-          "raw": "Min Voting Tenure",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "217c86d1b4bc",
-      "text": "Recuse a proposal’s subject",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 12,
-          "kind": "js-string",
-          "raw": "Recuse a proposal’s subject",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "f3fef396353a",
-      "text": "Where admins are chosen",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 13,
-          "kind": "js-string",
-          "raw": "Where admins are chosen",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 254,
-          "kind": "markup",
-          "raw": "Where admins are chosen",
-          "quote": null
-        },
-        {
-          "file": "web/src/lib/governanceRules.js",
-          "line": 177,
-          "kind": "js-string",
-          "raw": "Where admins are chosen",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "460178bd714e",
-      "text": "Where proposals are decided",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 14,
-          "kind": "js-string",
-          "raw": "Where proposals are decided",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 269,
-          "kind": "markup",
-          "raw": "Where proposals are decided",
-          "quote": null
-        },
-        {
-          "file": "web/src/lib/governanceRules.js",
-          "line": 132,
-          "kind": "js-string",
-          "raw": "Where proposals are decided",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "e1b42ca51a5c",
-      "text": "Membership Policy",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 16,
-          "kind": "js-string",
-          "raw": "Membership Policy",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 311,
-          "kind": "markup",
-          "raw": "Membership Policy",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/PatchForm.svelte",
-          "line": 640,
-          "kind": "markup",
-          "raw": "Membership Policy",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "4aec7ac05fc7",
-      "text": "Follower Permissions",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 17,
-          "kind": "js-string",
-          "raw": "Follower Permissions",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 320,
-          "kind": "markup",
-          "raw": "Follower Permissions",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/EventForm.svelte",
-          "line": 643,
-          "kind": "markup",
-          "raw": "Follower Permissions",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "e53f9cc2d330",
-      "text": "Admin decides",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 21,
-          "kind": "js-string",
-          "raw": "Admin decides",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/lib/governanceRules.js",
-          "line": 17,
-          "kind": "js-string",
-          "raw": "Admin decides",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "ff0837dfec0c",
-      "text": "Majority vote",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 22,
-          "kind": "js-string",
-          "raw": "Majority vote",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/lib/governanceRules.js",
-          "line": 18,
-          "kind": "js-string",
-          "raw": "Majority vote",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/lib/governanceRules.js",
-          "line": 26,
-          "kind": "js-string",
-          "raw": "Majority vote",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "35d274f2046c",
-      "text": "Supermajority (2/3)",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 23,
-          "kind": "js-string",
-          "raw": "Supermajority (2/3)",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/lib/governanceRules.js",
-          "line": 19,
-          "kind": "js-string",
-          "raw": "Supermajority (2/3)",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/lib/governanceRules.js",
-          "line": 27,
-          "kind": "js-string",
-          "raw": "Supermajority (2/3)",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "12da1025783a",
-      "text": "Full consensus",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 24,
-          "kind": "js-string",
-          "raw": "Full consensus",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/lib/governanceRules.js",
-          "line": 20,
-          "kind": "js-string",
-          "raw": "Full consensus",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/lib/governanceRules.js",
-          "line": 28,
-          "kind": "js-string",
-          "raw": "Full consensus",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "f307e6862503",
-      "text": "In Patchwork",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 25,
-          "kind": "js-string",
-          "raw": "In Patchwork",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 256,
-          "kind": "markup",
-          "raw": "In Patchwork",
-          "quote": null
-        },
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 271,
-          "kind": "markup",
-          "raw": "In Patchwork",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "6a6f87f35d91",
-      "text": "Somewhere else, recorded here",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 26,
-          "kind": "js-string",
-          "raw": "Somewhere else, recorded here",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 257,
-          "kind": "markup",
-          "raw": "Somewhere else, recorded here",
-          "quote": null
-        },
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 272,
-          "kind": "markup",
-          "raw": "Somewhere else, recorded here",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "42b49c65b5c7",
-      "text": "Longest-tenured member",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 27,
-          "kind": "js-string",
-          "raw": "Longest-tenured member",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "35694277f81e",
-      "text": "Instance admin intervenes",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 28,
-          "kind": "js-string",
-          "raw": "Instance admin intervenes",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/lib/governanceRules.js",
-          "line": 62,
-          "kind": "js-string",
-          "raw": "Instance admin intervenes",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "135d275c7a6d",
-      "text": "Patch freezes",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 29,
-          "kind": "js-string",
-          "raw": "Patch freezes",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/lib/governanceRules.js",
-          "line": 64,
-          "kind": "js-string",
-          "raw": "Patch freezes",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "ef677f59f01b",
-      "text": "Approval required",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 31,
-          "kind": "js-string",
-          "raw": "Approval required",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/lib/governanceRules.js",
-          "line": 87,
-          "kind": "js-string",
-          "raw": "Approval required",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/pages/PatchForm.svelte",
-          "line": 163,
-          "kind": "js-string",
-          "raw": "Approval required",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "8e76da24ab7b",
-      "text": "Invite only",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 32,
-          "kind": "js-string",
-          "raw": "Invite only",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/lib/governanceRules.js",
-          "line": 88,
-          "kind": "js-string",
-          "raw": "Invite only",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/pages/PatchForm.svelte",
-          "line": 162,
-          "kind": "js-string",
-          "raw": "Invite only",
-          "quote": "'"
-        }
-      ]
-    },
-    {
       "id": "574aca38daf0",
       "text": "Proposed Rule Changes",
       "words": 3,
@@ -29348,7 +28742,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 99,
+          "line": 21,
           "kind": "markup",
           "raw": "Proposed Rule Changes",
           "quote": null
@@ -29366,7 +28760,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 106,
+          "line": 28,
           "kind": "markup",
           "raw": "&rarr;",
           "quote": null
@@ -29384,7 +28778,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 113,
+          "line": 35,
           "kind": "markup",
           "raw": "({unchangedCount} field{unchangedCount > 1 ? 's' : ''} unchanged)",
           "quote": null
@@ -29402,7 +28796,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesDiff.svelte",
-          "line": 118,
+          "line": 40,
           "kind": "markup",
           "raw": "No changes to governance rules.",
           "quote": null
@@ -29482,6 +28876,31 @@
       ]
     },
     {
+      "id": "3893c7375e5f",
+      "text": "Decision Method",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 188,
+          "kind": "markup",
+          "raw": "Decision Method",
+          "quote": null
+        },
+        {
+          "file": "web/src/lib/rulesDiff.js",
+          "line": 31,
+          "kind": "js-string",
+          "raw": "Decision Method",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "42907c9208ac",
       "text": "Quorum (%)",
       "words": 2,
@@ -29496,6 +28915,81 @@
           "kind": "markup",
           "raw": "Quorum (%)",
           "quote": null
+        }
+      ]
+    },
+    {
+      "id": "229c6bc90ffe",
+      "text": "Default Voting Period",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 209,
+          "kind": "markup",
+          "raw": "Default Voting Period",
+          "quote": null
+        },
+        {
+          "file": "web/src/lib/rulesDiff.js",
+          "line": 33,
+          "kind": "js-string",
+          "raw": "Default Voting Period",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "5be98d82af10",
+      "text": "Amendment Threshold",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 218,
+          "kind": "markup",
+          "raw": "Amendment Threshold",
+          "quote": null
+        },
+        {
+          "file": "web/src/lib/rulesDiff.js",
+          "line": 34,
+          "kind": "js-string",
+          "raw": "Amendment Threshold",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "d4a280c4b3c4",
+      "text": "Auto-Apply Amendments",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 229,
+          "kind": "markup",
+          "raw": "Auto-Apply Amendments",
+          "quote": null
+        },
+        {
+          "file": "web/src/lib/rulesDiff.js",
+          "line": 35,
+          "kind": "js-string",
+          "raw": "Auto-Apply Amendments",
+          "quote": "'"
         }
       ]
     },
@@ -29539,6 +29033,102 @@
       }
     },
     {
+      "id": "f3fef396353a",
+      "text": "Where admins are chosen",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 254,
+          "kind": "markup",
+          "raw": "Where admins are chosen",
+          "quote": null
+        },
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 177,
+          "kind": "js-string",
+          "raw": "Where admins are chosen",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/lib/rulesDiff.js",
+          "line": 39,
+          "kind": "js-string",
+          "raw": "Where admins are chosen",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "f307e6862503",
+      "text": "In Patchwork",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 256,
+          "kind": "markup",
+          "raw": "In Patchwork",
+          "quote": null
+        },
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 271,
+          "kind": "markup",
+          "raw": "In Patchwork",
+          "quote": null
+        },
+        {
+          "file": "web/src/lib/rulesDiff.js",
+          "line": 51,
+          "kind": "js-string",
+          "raw": "In Patchwork",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "6a6f87f35d91",
+      "text": "Somewhere else, recorded here",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 257,
+          "kind": "markup",
+          "raw": "Somewhere else, recorded here",
+          "quote": null
+        },
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 272,
+          "kind": "markup",
+          "raw": "Somewhere else, recorded here",
+          "quote": null
+        },
+        {
+          "file": "web/src/lib/rulesDiff.js",
+          "line": 52,
+          "kind": "js-string",
+          "raw": "Somewhere else, recorded here",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "738f3d17b1a9",
       "text": "Pick the second if your board is elected at a meeting, on paper, or in another tool. Patchwork will stop conducting leadership changes and let an admin record what was decided.",
       "words": 31,
@@ -29560,6 +29150,38 @@
       }
     },
     {
+      "id": "460178bd714e",
+      "text": "Where proposals are decided",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 269,
+          "kind": "markup",
+          "raw": "Where proposals are decided",
+          "quote": null
+        },
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 132,
+          "kind": "js-string",
+          "raw": "Where proposals are decided",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/lib/rulesDiff.js",
+          "line": 40,
+          "kind": "js-string",
+          "raw": "Where proposals are decided",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "f5467d2c253c",
       "text": "Pick the second if your members decide at meetings. Proposals stay open for discussion and lose the vote buttons, and an admin records the adopted text on the charter afterwards. Rules changes stay a direct change an admin applies.",
       "words": 39,
@@ -29578,6 +29200,31 @@
       ]
     },
     {
+      "id": "aed76335d831",
+      "text": "Succession Policy",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 285,
+          "kind": "markup",
+          "raw": "Succession Policy",
+          "quote": null
+        },
+        {
+          "file": "web/src/lib/rulesDiff.js",
+          "line": 36,
+          "kind": "js-string",
+          "raw": "Succession Policy",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "76af31c9df54",
       "text": "Minimum Voting Tenure",
       "words": 3,
@@ -29591,6 +29238,70 @@
           "line": 298,
           "kind": "markup",
           "raw": "Minimum Voting Tenure",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e1b42ca51a5c",
+      "text": "Membership Policy",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 311,
+          "kind": "markup",
+          "raw": "Membership Policy",
+          "quote": null
+        },
+        {
+          "file": "web/src/lib/rulesDiff.js",
+          "line": 42,
+          "kind": "js-string",
+          "raw": "Membership Policy",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/PatchForm.svelte",
+          "line": 640,
+          "kind": "markup",
+          "raw": "Membership Policy",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "4aec7ac05fc7",
+      "text": "Follower Permissions",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 320,
+          "kind": "markup",
+          "raw": "Follower Permissions",
+          "quote": null
+        },
+        {
+          "file": "web/src/lib/rulesDiff.js",
+          "line": 43,
+          "kind": "js-string",
+          "raw": "Follower Permissions",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 643,
+          "kind": "markup",
+          "raw": "Follower Permissions",
           "quote": null
         }
       ]
@@ -31263,6 +30974,127 @@
       ]
     },
     {
+      "id": "e53f9cc2d330",
+      "text": "Admin decides",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 17,
+          "kind": "js-string",
+          "raw": "Admin decides",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/lib/rulesDiff.js",
+          "line": 47,
+          "kind": "js-string",
+          "raw": "Admin decides",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "ff0837dfec0c",
+      "text": "Majority vote",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 18,
+          "kind": "js-string",
+          "raw": "Majority vote",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 26,
+          "kind": "js-string",
+          "raw": "Majority vote",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/lib/rulesDiff.js",
+          "line": 48,
+          "kind": "js-string",
+          "raw": "Majority vote",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "35d274f2046c",
+      "text": "Supermajority (2/3)",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 19,
+          "kind": "js-string",
+          "raw": "Supermajority (2/3)",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 27,
+          "kind": "js-string",
+          "raw": "Supermajority (2/3)",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/lib/rulesDiff.js",
+          "line": 49,
+          "kind": "js-string",
+          "raw": "Supermajority (2/3)",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "12da1025783a",
+      "text": "Full consensus",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 20,
+          "kind": "js-string",
+          "raw": "Full consensus",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 28,
+          "kind": "js-string",
+          "raw": "Full consensus",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/lib/rulesDiff.js",
+          "line": 50,
+          "kind": "js-string",
+          "raw": "Full consensus",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "e88ecdd60ac7",
       "text": "Longest-tenured members step in",
       "words": 4,
@@ -31335,6 +31167,31 @@
       ]
     },
     {
+      "id": "35694277f81e",
+      "text": "Instance admin intervenes",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 62,
+          "kind": "js-string",
+          "raw": "Instance admin intervenes",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/lib/rulesDiff.js",
+          "line": 54,
+          "kind": "js-string",
+          "raw": "Instance admin intervenes",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "967e43d94f6a",
       "text": "An instance admin is notified and decides who runs the patch.",
       "words": 11,
@@ -31348,6 +31205,31 @@
           "line": 63,
           "kind": "js-string",
           "raw": "An instance admin is notified and decides who runs the patch.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "135d275c7a6d",
+      "text": "Patch freezes",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 64,
+          "kind": "js-string",
+          "raw": "Patch freezes",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/lib/rulesDiff.js",
+          "line": 55,
+          "kind": "js-string",
+          "raw": "Patch freezes",
           "quote": "'"
         }
       ]
@@ -31438,6 +31320,70 @@
           "line": 82,
           "kind": "js-string",
           "raw": "One reject defeats a proposal, however many approve it.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "ef677f59f01b",
+      "text": "Approval required",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 87,
+          "kind": "js-string",
+          "raw": "Approval required",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/lib/rulesDiff.js",
+          "line": 57,
+          "kind": "js-string",
+          "raw": "Approval required",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/PatchForm.svelte",
+          "line": 163,
+          "kind": "js-string",
+          "raw": "Approval required",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "8e76da24ab7b",
+      "text": "Invite only",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 88,
+          "kind": "js-string",
+          "raw": "Invite only",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/lib/rulesDiff.js",
+          "line": 58,
+          "kind": "js-string",
+          "raw": "Invite only",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/PatchForm.svelte",
+          "line": 162,
+          "kind": "js-string",
+          "raw": "Invite only",
           "quote": "'"
         }
       ]
@@ -32592,6 +32538,78 @@
           "line": 7,
           "kind": "js-string",
           "raw": "Invalid registry format: missing quilts array",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "a5431f4aefe2",
+      "text": "Min Voting Tenure",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/rulesDiff.js",
+          "line": 37,
+          "kind": "js-string",
+          "raw": "Min Voting Tenure",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "217c86d1b4bc",
+      "text": "Recuse a proposal’s subject",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/lib/rulesDiff.js",
+          "line": 38,
+          "kind": "js-string",
+          "raw": "Recuse a proposal’s subject",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "42b49c65b5c7",
+      "text": "Longest-tenured member",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/rulesDiff.js",
+          "line": 53,
+          "kind": "js-string",
+          "raw": "Longest-tenured member",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "282da3a5f763",
+      "text": "Update governance rules",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/rulesDiff.js",
+          "line": 147,
+          "kind": "js-string",
+          "raw": "Update governance rules",
           "quote": "'"
         }
       ]
@@ -42664,7 +42682,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 209,
+          "line": 194,
           "kind": "js-string",
           "raw": "Title is required",
           "quote": "'"
@@ -42689,7 +42707,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 225,
+          "line": 210,
           "kind": "js-string",
           "raw": "Change applied",
           "quote": "'"
@@ -42714,7 +42732,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 225,
+          "line": 210,
           "kind": "js-string",
           "raw": "Proposal created",
           "quote": "'"
@@ -42746,7 +42764,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 228,
+          "line": 213,
           "kind": "js-string",
           "raw": "Failed to create proposal",
           "quote": "'"
@@ -42796,7 +42814,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 242,
+          "line": 227,
           "kind": "markup",
           "raw": "Become a member to take part in how this patch governs itself.",
           "quote": null
@@ -42893,7 +42911,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 296,
+          "line": 281,
           "kind": "markup",
           "raw": "Your changes",
           "quote": null
@@ -42918,7 +42936,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 306,
+          "line": 291,
           "kind": "markup",
           "raw": "Summary of changes",
           "quote": null
@@ -42961,7 +42979,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 312,
+          "line": 297,
           "kind": "attr:placeholder",
           "raw": "Help others understand why this change matters.",
           "quote": "\""
@@ -55837,14 +55855,14 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 220,
+          "line": 205,
           "kind": "js-string",
           "raw": "Governance Rules",
           "quote": "'"
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 258,
+          "line": 243,
           "kind": "markup",
           "raw": "Governance Rules",
           "quote": null
@@ -56978,7 +56996,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 71,
+          "line": 72,
           "kind": "js-string",
           "raw": "Saving changes these rules now. Nobody votes on it.",
           "quote": "'"
@@ -56996,7 +57014,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 95,
+          "line": 96,
           "kind": "js-string",
           "raw": "Change rules",
           "quote": "'"
@@ -57014,7 +57032,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 95,
+          "line": 96,
           "kind": "js-string",
           "raw": "Propose rules change",
           "quote": "'"
@@ -57032,34 +57050,9 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 151,
+          "line": 152,
           "kind": "js-string",
           "raw": "Failed to load rules",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "282da3a5f763",
-      "text": "Update governance rules",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 180,
-          "kind": "js-string",
-          "raw": "Update governance rules",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 198,
-          "kind": "js-string",
-          "raw": "Update governance rules",
           "quote": "'"
         }
       ]
@@ -57075,7 +57068,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 241,
+          "line": 226,
           "kind": "markup",
           "raw": "Only members can propose a change to these rules.",
           "quote": null
@@ -57093,7 +57086,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 263,
+          "line": 248,
           "kind": "markup",
           "raw": "Restored unsaved changes from {draftTimestamp ? new Date(draftTimestamp).toLocaleTimeString() : 'earlier'}",
           "quote": null
@@ -57111,7 +57104,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 264,
+          "line": 249,
           "kind": "markup",
           "raw": "Discard",
           "quote": null
@@ -57129,7 +57122,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 288,
+          "line": 273,
           "kind": "markup",
           "raw": "Changes",
           "quote": null
