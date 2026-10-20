@@ -4474,14 +4474,14 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1684,
+          "line": 1699,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1897,
+          "line": 1912,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -5506,7 +5506,7 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1937,
+          "line": 1952,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -6078,14 +6078,14 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1826,
+          "line": 1841,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1880,
+          "line": 1895,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -6843,28 +6843,28 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1611,
+          "line": 1626,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1795,
+          "line": 1810,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1872,
+          "line": 1887,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1985,
+          "line": 2000,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
@@ -15489,7 +15489,7 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 2015,
+          "line": 2030,
           "kind": "go-error-body",
           "raw": "an election is closed by the electorate, not by an admin (docs/adr/051)",
           "quote": null
@@ -15723,7 +15723,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1616,
+          "line": 1631,
           "kind": "go-error-body",
           "raw": "proposal is not open for voting",
           "quote": null
@@ -15741,7 +15741,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1627,
+          "line": 1642,
           "kind": "go-error-body",
           "raw": "this patch decides elsewhere; the decision is recorded here after it is made",
           "quote": null
@@ -15759,7 +15759,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1634,
+          "line": 1649,
           "kind": "go-error-body",
           "raw": "this proposal is waiting on the maintainer; there is no vote open on it",
           "quote": null
@@ -15777,7 +15777,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1642,
+          "line": 1657,
           "kind": "go-error-body",
           "raw": "voting period has ended",
           "quote": null
@@ -15795,7 +15795,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1688,
+          "line": 1703,
           "kind": "go-error-body",
           "raw": "value must be approve, reject, or abstain",
           "quote": null
@@ -15813,7 +15813,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1707,
+          "line": 1722,
           "kind": "go-error-body",
           "raw": "failed to cast vote",
           "quote": null
@@ -15831,7 +15831,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1800,
+          "line": 1815,
           "kind": "go-error-body",
           "raw": "can only withdraw open proposals",
           "quote": null
@@ -15849,7 +15849,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1818,
+          "line": 1833,
           "kind": "go-error-body",
           "raw": "an election cannot be withdrawn: the calendar opens it and the electorate closes it (docs/adr/051)",
           "quote": null
@@ -15867,7 +15867,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1837,
+          "line": 1852,
           "kind": "go-error-body",
           "raw": "failed to withdraw proposal",
           "quote": null
@@ -15885,7 +15885,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1902,
+          "line": 1917,
           "kind": "go-error-body",
           "raw": "state is not settable: proposals open for voting when they are created (docs/adr/048)",
           "quote": null
@@ -15903,7 +15903,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1915,
+          "line": 1930,
           "kind": "go-error-body",
           "raw": "invalid status transition",
           "quote": null
@@ -15921,7 +15921,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1949,
+          "line": 1964,
           "kind": "go-error-body",
           "raw": "failed to update proposal",
           "quote": null
@@ -15946,7 +15946,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1994,
+          "line": 2009,
           "kind": "go-error-body",
           "raw": "only this patch's admins can make proposals official",
           "quote": null
@@ -15964,7 +15964,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 2020,
+          "line": 2035,
           "kind": "go-error-body",
           "raw": "this patch decides proposals by vote; wait for the window to close",
           "quote": null
@@ -15982,7 +15982,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 2023,
+          "line": 2038,
           "kind": "go-error-body",
           "raw": "proposal cannot be applied in its current state",
           "quote": null
@@ -21928,7 +21928,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 35,
+          "line": 53,
           "kind": "js-string",
           "raw": "Failed to load comments",
           "quote": "'"
@@ -21946,7 +21946,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 52,
+          "line": 70,
           "kind": "js-string",
           "raw": "Comment posted",
           "quote": "'"
@@ -21964,7 +21964,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 54,
+          "line": 72,
           "kind": "js-string",
           "raw": "Failed to post comment",
           "quote": "'"
@@ -21982,7 +21982,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 71,
+          "line": 89,
           "kind": "js-string",
           "raw": "Reply posted",
           "quote": "'"
@@ -22000,7 +22000,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 73,
+          "line": 91,
           "kind": "js-string",
           "raw": "Failed to post reply",
           "quote": "'"
@@ -22018,7 +22018,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 90,
+          "line": 108,
           "kind": "js-string",
           "raw": "Comment updated",
           "quote": "'"
@@ -22036,7 +22036,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 92,
+          "line": 110,
           "kind": "js-string",
           "raw": "Failed to update comment",
           "quote": "'"
@@ -22054,7 +22054,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 108,
+          "line": 126,
           "kind": "js-string",
           "raw": "Comment deleted",
           "quote": "'"
@@ -22072,7 +22072,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 110,
+          "line": 128,
           "kind": "js-string",
           "raw": "Failed to delete comment",
           "quote": "'"
@@ -22090,7 +22090,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 130,
+          "line": 148,
           "kind": "js-string",
           "raw": "Failed to update reaction",
           "quote": "'"
@@ -22108,7 +22108,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 163,
+          "line": 181,
           "kind": "markup",
           "raw": "Loading comments...",
           "quote": null
@@ -22126,7 +22126,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 168,
+          "line": 186,
           "kind": "markup",
           "raw": "No comments yet.",
           "quote": null
@@ -22144,7 +22144,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 231,
+          "line": 249,
           "kind": "attr:placeholder",
           "raw": "Write a reply...",
           "quote": "\""
@@ -22162,7 +22162,7 @@
       "occurrences": [
         {
           "file": "web/src/components/CommentThread.svelte",
-          "line": 338,
+          "line": 356,
           "kind": "attr:placeholder",
           "raw": "Add a comment...",
           "quote": "\""
@@ -56230,7 +56230,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 157,
+          "line": 161,
           "kind": "js-string",
           "raw": "Failed to load proposal",
           "quote": "'"
@@ -56248,7 +56248,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 290,
+          "line": 297,
           "kind": "markup",
           "raw": "Opened by this patch&rsquo;s election calendar",
           "quote": null
@@ -56266,7 +56266,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 319,
+          "line": 326,
           "kind": "markup",
           "raw": "Why this change",
           "quote": null
@@ -56284,7 +56284,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 334,
+          "line": 341,
           "kind": "markup",
           "raw": "This document was adopted at a meeting{proposal.ground_moved_at ? ` on ${formatDay(proposal.ground_moved_at)}` : ''},\n              after this was drafted. The changes below compare against the older text.",
           "quote": null
@@ -56302,7 +56302,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 344,
+          "line": 351,
           "kind": "markup",
           "raw": "This {isDirectChange ? 'change' : 'proposal'} modifies",
           "quote": null
@@ -56320,7 +56320,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 355,
+          "line": 362,
           "kind": "markup",
           "raw": "This proposal modifies a members-only document. The text of the\n                change is visible to members.",
           "quote": null
@@ -56338,7 +56338,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 380,
+          "line": 387,
           "kind": "markup",
           "raw": "You're the only eligible voter, so your vote decides this immediately.",
           "quote": null
@@ -56360,7 +56360,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 409,
+          "line": 416,
           "kind": "markup",
           "raw": "The text from before this proposal is not in this patch's history, so its changes cannot be shown.",
           "quote": null
