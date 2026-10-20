@@ -885,6 +885,10 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"insufficient permissions"}`, http.StatusForbidden)
 			return
 		}
+		// Asked now, before anything below can make the caller an admin of
+		// this patch: restoring an empty council may seat the instance admin
+		// themselves, and the record should say who let them in.
+		without := actingWithoutRole(db, user, nodeID)
 
 		// Look up the target membership.
 		var memID, currentRole, currentStatus string
@@ -921,7 +925,7 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 					return
 				}
 				auth.LogAuditEventJSON(db, user.ID, "membership.approve", "membership", memID,
-					map[string]any{"target_user_id": targetUserID}, clientIP(r))
+					reachDetail(map[string]any{"target_user_id": targetUserID}, without), clientIP(r))
 
 				// Notify the approved user.
 				var nodeSlugN, nodeNameN string
@@ -967,7 +971,7 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 				DropContactSharesFor(db, targetUserID, nodeID)
 
 				auth.LogAuditEventJSON(db, user.ID, "membership.ban", "membership", memID,
-					map[string]any{"target_user_id": targetUserID}, clientIP(r))
+					reachDetail(map[string]any{"target_user_id": targetUserID}, without), clientIP(r))
 
 				var banSlug, banName string
 				db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", nodeID).Scan(&banSlug, &banName)
@@ -992,7 +996,7 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 						return
 					}
 					auth.LogAuditEventJSON(db, user.ID, "membership.reject", "membership", memID,
-						map[string]any{"target_user_id": targetUserID}, clientIP(r))
+						reachDetail(map[string]any{"target_user_id": targetUserID}, without), clientIP(r))
 				} else if currentStatus == "banned" {
 					_, err = db.Exec("UPDATE memberships SET status = 'left' WHERE id = ?", memID)
 					if err != nil {
@@ -1000,7 +1004,7 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 						return
 					}
 					auth.LogAuditEventJSON(db, user.ID, "membership.reinstate", "membership", memID,
-						map[string]any{"target_user_id": targetUserID}, clientIP(r))
+						reachDetail(map[string]any{"target_user_id": targetUserID}, without), clientIP(r))
 
 					var reinstateSlug, reinstateName string
 					db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", nodeID).Scan(&reinstateSlug, &reinstateName)
@@ -1168,7 +1172,7 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 				if seatID := vacantSeat(db, nodeID); seatID != "" {
 					db.Exec("UPDATE seats SET holder_id = ? WHERE id = ?", targetUserID, seatID)
 					auth.LogAuditEventJSON(db, user.ID, "seat.filled", "seat", seatID,
-						map[string]any{"node_id": nodeID, "holder_id": targetUserID, "reason": "council_empty"}, clientIP(r))
+						reachDetail(map[string]any{"node_id": nodeID, "holder_id": targetUserID, "reason": "council_empty"}, without), clientIP(r))
 				}
 			}
 
@@ -1181,7 +1185,7 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 				roleChangePayload["reason"] = "council_empty"
 			}
 			auth.LogAuditEventJSON(db, user.ID, "membership.role_change", "membership", memID,
-				roleChangePayload, clientIP(r))
+				reachDetail(roleChangePayload, without), clientIP(r))
 		}
 
 		// Return the updated membership.

@@ -308,8 +308,8 @@ func CreateProgram(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"that program is already credited to this patch"}`, http.StatusConflict)
 			return
 		}
-		auth.LogAuditEvent(db, user.ID, "program.create", "aggregator_program", id,
-			`{"title_key":`+jsonString(req.TitleKey)+`}`, clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "program.create", "aggregator_program", id,
+			reachDetail(map[string]any{"title_key": req.TitleKey}, actingWithoutRole(db, user, nodeID)), clientIP(r))
 
 		items, err := programsFor(db, nodeID)
 		if err != nil {
@@ -356,8 +356,8 @@ func DeleteProgram(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"program not found"}`, http.StatusNotFound)
 			return
 		}
-		auth.LogAuditEvent(db, user.ID, "program.delete", "aggregator_program",
-			r.PathValue("id"), "{}", clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "program.delete", "aggregator_program",
+			r.PathValue("id"), reachDetail(nil, actingWithoutRole(db, user, nodeID)), clientIP(r))
 		w.WriteHeader(http.StatusNoContent)
 	}
 }

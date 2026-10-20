@@ -203,7 +203,8 @@ func CreateEventSource(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"this feed is already attached"}`, http.StatusConflict)
 			return
 		}
-		auth.LogAuditEvent(db, user.ID, "event_source.create", "event_source", id, `{"url":"`+req.URL+`"}`, clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "event_source.create", "event_source", id,
+			reachDetail(map[string]any{"url": req.URL}, actingWithoutRole(db, user, nodeID)), clientIP(r))
 
 		// First sync in the background; the UI polls the source list.
 		// Not the request context — the sync must outlive this response.
@@ -257,7 +258,8 @@ func DeleteEventSource(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"failed to remove event source"}`, http.StatusInternalServerError)
 			return
 		}
-		auth.LogAuditEvent(db, user.ID, "event_source.delete", "event_source", sourceID, "{}", clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "event_source.delete", "event_source", sourceID,
+			reachDetail(nil, actingWithoutRole(db, user, nodeID)), clientIP(r))
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
@@ -357,7 +359,8 @@ func DetachEvent(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"failed to detach event"}`, http.StatusInternalServerError)
 			return
 		}
-		auth.LogAuditEvent(db, user.ID, "event.detach", "event", eventID, "{}", clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "event.detach", "event", eventID,
+			reachDetail(nil, actingWithoutRole(db, user, nodeID)), clientIP(r))
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
@@ -501,7 +504,7 @@ func UpdateEventSource(db *database.DB) http.HandlerFunc {
 			audit["visibility"] = *req.Visibility
 		}
 		auth.LogAuditEventJSON(db, user.ID, "event_source.update", "event_source", sourceID,
-			audit, clientIP(r))
+			reachDetail(audit, actingWithoutRole(db, user, nodeID)), clientIP(r))
 
 		sources, err := scanEventSources(db, nodeID)
 		if err != nil {

@@ -189,7 +189,8 @@ func ReviewEventSubmission(db *database.DB) http.HandlerFunc {
 				http.Error(w, `{"error":"failed to approve event"}`, http.StatusInternalServerError)
 				return
 			}
-			auth.LogAuditEvent(db, user.ID, "event.submission_approved", "event", eventID, "{}", clientIP(r))
+			auth.LogAuditEventJSON(db, user.ID, "event.submission_approved", "event", eventID,
+				reachDetail(nil, actingWithoutRole(db, user, e.NodeID)), clientIP(r))
 
 			notify(notifications.Event{
 				Type:     notifications.EventSubmissionApproved,
@@ -235,7 +236,8 @@ func ReviewEventSubmission(db *database.DB) http.HandlerFunc {
 				http.Error(w, `{"error":"failed to reject event"}`, http.StatusInternalServerError)
 				return
 			}
-			auth.LogAuditEventJSON(db, user.ID, "event.submission_rejected", "event", eventID, map[string]any{"note": req.Note}, clientIP(r))
+			auth.LogAuditEventJSON(db, user.ID, "event.submission_rejected", "event", eventID,
+				reachDetail(map[string]any{"note": req.Note}, actingWithoutRole(db, user, e.NodeID)), clientIP(r))
 
 			notify(notifications.Event{
 				Type:     notifications.EventSubmissionRejected,

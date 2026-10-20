@@ -245,7 +245,13 @@ func CreateComment(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		auth.LogAuditEvent(db, user.ID, "comment.create", "comment", id, `{"proposal_id":"`+proposalID+`"}`, clientIP(r))
+		// Speech, and kept (docs/adr/115), but still the instance role
+		// speaking where this caller's standing in the patch would not: no
+		// role at all, or a follower where followers may not join in.
+		without := actingWithoutRole(db, user, nodeID, "follower", "member", "admin") ||
+			(actingWithoutRole(db, user, nodeID, "member", "admin") && !followerMayJoinProposals(db, user.ID, nodeID))
+		auth.LogAuditEventJSON(db, user.ID, "comment.create", "comment", id,
+			reachDetail(map[string]any{"proposal_id": proposalID}, without), clientIP(r))
 
 		// Notify proposal participants about the new comment.
 		var nodeSlugN, nodeNameN, proposalTitle string
@@ -365,7 +371,8 @@ func DeleteComment(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		auth.LogAuditEvent(db, user.ID, "comment.delete", "comment", commentID, `{"proposal_id":"`+proposalID+`"}`, clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "comment.delete", "comment", commentID,
+			reachDetail(map[string]any{"proposal_id": proposalID}, !isAuthor && actingWithoutRole(db, user, nodeID)), clientIP(r))
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"status": "deleted"})
