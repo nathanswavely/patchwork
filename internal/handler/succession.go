@@ -143,15 +143,25 @@ func validateNomination(db *database.DB, nodeID, authorID, nomineeID string) str
 	return ""
 }
 
-// ratifyNomination promotes the subject of an approved nomination. Called from
-// resolution, because the community ratifying *is* the decision — leaving an
-// admin to "apply" it afterwards would hand admins a veto over the ratification
-// they asked the community for.
+// ratifyNomination promotes the subject of an approved nomination. It runs
+// wherever the decision lands, and the patch's decision method says where
+// that is (docs/adr/2026-10-18-a-nomination-takes-effect-where-the-decision-lands.md):
+//
+//   - On a voting patch, from resolution, with deciderID empty: the community
+//     ratifying *is* the decision, and leaving an admin to "apply" it
+//     afterwards would hand admins a veto over the ratification they asked
+//     the community for.
+//   - On an admin-decides patch, from the three doors the maintainer decides
+//     through (an admin's own nomination applied at creation, decide's
+//     approve, and apply on an open proposal), with deciderID naming them.
+//     That patch's rules say the maintainer decides every proposal
+//     (docs/adr/092), so the maintainer approving is the ratification.
+//     Without this the nomination settled `in_effect` and promoted nobody.
 //
 // Membership is re-checked here: a nominee who left the patch between
 // nomination and ratification is not dragged back into it, and one who was
 // promoted by some other path in the meantime is left alone.
-func ratifyNomination(db *database.DB, proposalID, nodeID, nomineeID string) {
+func ratifyNomination(db *database.DB, proposalID, nodeID, nomineeID, deciderID string) {
 	if nomineeID == "" {
 		return
 	}
@@ -210,22 +220,31 @@ func ratifyNomination(db *database.DB, proposalID, nodeID, nomineeID string) {
 		}
 	}
 
-	// No actor: ratification is the electorate and the clock, not a person, so
-	// the notice reaches everyone including whoever raised the nomination.
-	auth.LogAuditEvent(db, "", "membership.ratified", "membership", nomineeID,
+	// No actor where the electorate and the clock decided: that is not a
+	// person, so the notice reaches everyone including whoever raised the
+	// nomination. Where the maintainer decided, the record names them, the
+	// way `proposal.decided` does.
+	auth.LogAuditEvent(db, deciderID, "membership.ratified", "membership", nomineeID,
 		`{"node_id":"`+nodeID+`","proposal_id":"`+proposalID+`"}`, "")
 
 	var slug, nodeName string
 	db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", nodeID).Scan(&slug, &nodeName)
+	// Say who decided. "The community ratified" over a maintainer's approval
+	// would recite a vote that never ran, the failure docs/adr/041 names.
+	body := "The community ratified your nomination."
+	if deciderID != "" {
+		body = "Your nomination was approved."
+	}
 	notify(notifications.Event{
 		Type:     notifications.MembershipRoleChanged,
 		NodeID:   nodeID,
 		NodeSlug: slug,
 		NodeName: nodeName,
+		ActorID:  deciderID,
 		TargetID: nomineeID,
 		EntityID: proposalID,
 		Title:    "You are now an admin of " + nodeName,
-		Body:     "The community ratified your nomination.",
+		Body:     body,
 		Link:     weblink.Patch(slug),
 	})
 }
