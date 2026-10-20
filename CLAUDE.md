@@ -243,6 +243,13 @@ what is reviewed is a word and not whether one patch describes itself
 honestly. Declining spends the word, and an admin can still create it outright
 later. This amends ADR 021, which held that only instance admins change the
 list; the curation stays theirs, and a suggestion is how a word reaches them.
+An instance admin never suggests: the same field in `TagPicker` creates the
+tag outright through `POST /admin/tags`. In Patch Settings a suggestion is
+sent the moment it is made, not with Save tags. It used to wait for that
+save, so a suggestion nobody saved never reached the queue, though its chip
+looked like it had. The field appears only where the caller sends what is
+typed (`onSuggest` or `deferSuggestions`), so the listing-submission pages,
+which never suggest, do not show it.
 
 ### Inferred Threads & Placement Affinity
 

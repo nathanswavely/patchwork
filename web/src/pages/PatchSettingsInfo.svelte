@@ -3,6 +3,7 @@
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
+  import { isAdmin as isInstanceAdmin } from '../stores/auth.svelte.js';
   import InlineEdit from '../components/InlineEdit.svelte';
   import ConfirmAction from '../components/ConfirmAction.svelte';
   import TagPicker from '../components/TagPicker.svelte';
@@ -147,10 +148,8 @@
   let tags = $state([]);
   let savingTags = $state(false);
   let tagsSynced = false;
-  // Words proposed in this editing session, not yet sent. Distinct from
-  // node.pending_tags, which are the suggestions already waiting for review
-  // (docs/adr/114) — those arrive only for this patch's admins.
-  let suggestTags = $state([]);
+  // Suggestions already waiting for review (docs/adr/114), sent only to this
+  // patch's admins.
   let pendingTags = $derived(Array.isArray(node?.pending_tags) ? node.pending_tags : []);
   $effect(() => {
     if (node && !tagsSynced) {
@@ -160,21 +159,16 @@
   });
 
   let tagsDirty = $derived(
-    JSON.stringify(tags) !== JSON.stringify(Array.isArray(node?.tags) ? node.tags : []) ||
-    suggestTags.length > 0
+    JSON.stringify(tags) !== JSON.stringify(Array.isArray(node?.tags) ? node.tags : [])
   );
 
   async function saveTags() {
     savingTags = true;
     try {
-      // Sent separately: the server rejects an unknown name in `tags`, and
-      // its replace-all is scoped to approved tags so this cannot delete a
-      // suggestion already waiting.
-      const body = { tags };
-      if (suggestTags.length > 0) body.suggest_tags = suggestTags;
-      await api(`nodes/${slug}`, { method: 'PATCH', body });
-      showToast(suggestTags.length > 0 ? 'Tags saved, suggestions sent for review' : 'Tags saved', 'success');
-      suggestTags = [];
+      // The server's replace-all is scoped to approved tags, so this cannot
+      // delete a suggestion already waiting.
+      await api(`nodes/${slug}`, { method: 'PATCH', body: { tags } });
+      showToast('Tags saved', 'success');
       tagsSynced = false;
       patch.value.reload();
     } catch (e) {
@@ -186,7 +180,17 @@
 
   function resetTags() {
     tags = Array.isArray(node?.tags) ? [...node.tags] : [];
-    suggestTags = [];
+  }
+
+  // Suggesting is sent at once, like withdrawing. It used to ride on Save
+  // tags, and a suggestion made without saving never reached the queue
+  // although its chip already looked like it was waiting there. Only
+  // suggest_tags is sent, so unsaved picks stay unsaved. Errors go back to
+  // the picker, which shows them under the field.
+  async function suggestTag(name) {
+    await api(`nodes/${slug}`, { method: 'PATCH', body: { suggest_tags: [name] } });
+    showToast(`Suggested ${name}, sent for review`, 'success');
+    patch.value.reload();
   }
 
   // Taking a suggestion back is its own act, never a side effect of saving
@@ -735,12 +739,14 @@
     <p class="lt-muted tags-hint">
       Tags help people find this patch, and the quilt places patches with
       shared tags near each other. The first tag decides the default motif.
-      Missing a word? Suggest it, and an admin decides whether it joins the
-      quilt's tags.
+      {#if !isInstanceAdmin()}
+        Missing a word? Suggest it, and an admin decides whether it joins the
+        quilt's tags.
+      {/if}
     </p>
     <TagPicker
       bind:selected={tags}
-      bind:suggested={suggestTags}
+      onSuggest={suggestTag}
       pending={pendingTags}
       onWithdraw={withdrawSuggestion}
       disabled={savingTags}

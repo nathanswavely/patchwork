@@ -22251,7 +22251,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 200,
+          "line": 204,
           "kind": "js-string",
           "raw": "Failed to withdraw",
           "quote": "'"
@@ -22994,7 +22994,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 422,
+          "line": 426,
           "kind": "js-string",
           "raw": "Failed to remove link",
           "quote": "'"
@@ -23340,7 +23340,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 754,
+          "line": 760,
           "kind": "markup",
           "raw": "Cancel",
           "quote": null
@@ -24218,7 +24218,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 341,
+          "line": 345,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
@@ -29790,6 +29790,24 @@
       ]
     },
     {
+      "id": "3e1c3d3a8735",
+      "text": "Enter a tag name.",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/TagPicker.svelte",
+          "line": 98,
+          "kind": "js-string",
+          "raw": "Enter a tag name.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "f2e0aaf12286",
       "text": "Enter a word to suggest.",
       "words": 5,
@@ -29800,9 +29818,45 @@
       "occurrences": [
         {
           "file": "web/src/components/TagPicker.svelte",
-          "line": 75,
+          "line": 98,
           "kind": "js-string",
           "raw": "Enter a word to suggest.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "17a3edd6fd9c",
+      "text": "Failed to add tag",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/TagPicker.svelte",
+          "line": 120,
+          "kind": "js-string",
+          "raw": "Failed to add tag",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "00595ab0bc1f",
+      "text": "Failed to suggest tag",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/TagPicker.svelte",
+          "line": 136,
+          "kind": "js-string",
+          "raw": "Failed to suggest tag",
           "quote": "'"
         }
       ]
@@ -29818,7 +29872,7 @@
       "occurrences": [
         {
           "file": "web/src/components/TagPicker.svelte",
-          "line": 107,
+          "line": 159,
           "kind": "attr:aria-label",
           "raw": "Selected tags, in priority order",
           "quote": "\""
@@ -29836,14 +29890,14 @@
       "occurrences": [
         {
           "file": "web/src/components/TagPicker.svelte",
-          "line": 122,
+          "line": 174,
           "kind": "attr:title",
           "raw": "Remove",
           "quote": "\""
         },
         {
           "file": "web/src/components/TagPicker.svelte",
-          "line": 157,
+          "line": 209,
           "kind": "attr:title",
           "raw": "Remove",
           "quote": "\""
@@ -29882,7 +29936,7 @@
       "occurrences": [
         {
           "file": "web/src/components/TagPicker.svelte",
-          "line": 131,
+          "line": 183,
           "kind": "attr:aria-label",
           "raw": "Suggested tags awaiting review",
           "quote": "\""
@@ -29900,7 +29954,7 @@
       "occurrences": [
         {
           "file": "web/src/components/TagPicker.svelte",
-          "line": 135,
+          "line": 187,
           "kind": "markup",
           "raw": "waiting",
           "quote": null
@@ -29918,7 +29972,7 @@
       "occurrences": [
         {
           "file": "web/src/components/TagPicker.svelte",
-          "line": 142,
+          "line": 194,
           "kind": "attr:title",
           "raw": "Withdraw",
           "quote": "\""
@@ -29936,7 +29990,7 @@
       "occurrences": [
         {
           "file": "web/src/components/TagPicker.svelte",
-          "line": 151,
+          "line": 203,
           "kind": "markup",
           "raw": "to suggest",
           "quote": null
@@ -29954,7 +30008,7 @@
       "occurrences": [
         {
           "file": "web/src/components/TagPicker.svelte",
-          "line": 166,
+          "line": 218,
           "kind": "attr:aria-label",
           "raw": "Available tags",
           "quote": "\""
@@ -29972,7 +30026,7 @@
       "occurrences": [
         {
           "file": "web/src/components/TagPicker.svelte",
-          "line": 180,
+          "line": 232,
           "kind": "markup",
           "raw": "No tags yet. The instance admin curates the list.",
           "quote": null
@@ -29980,73 +30034,55 @@
       ]
     },
     {
-      "id": "e74d61c267f0",
-      "text": "Suggest a tag",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/TagPicker.svelte",
-          "line": 187,
-          "kind": "attr:placeholder",
-          "raw": "Suggest a tag",
-          "quote": "\""
-        }
-      ]
-    },
-    {
-      "id": "1b29cba9d72a",
-      "text": "Suggest a tag that is not on the list",
-      "words": 9,
+      "id": "771023561e84",
+      "text": "A tag added here joins the quilt's tags right away.",
+      "words": 10,
       "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "note": null,
       "occurrences": [
         {
           "file": "web/src/components/TagPicker.svelte",
-          "line": 191,
-          "kind": "attr:aria-label",
-          "raw": "Suggest a tag that is not on the list",
-          "quote": "\""
-        }
-      ]
-    },
-    {
-      "id": "4effad823b04",
-      "text": "Suggest",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/TagPicker.svelte",
-          "line": 199,
+          "line": 257,
           "kind": "markup",
-          "raw": "Suggest",
+          "raw": "A tag added here joins the quilt's tags right away.",
           "quote": null
         }
       ]
     },
     {
-      "id": "4a003e609a52",
-      "text": "A suggested tag stays on this patch privately until an admin adds it to the quilt's tags.",
-      "words": 17,
+      "id": "31f8ace308dd",
+      "text": "A suggestion is sent for review right away. Until an admin adds it to the quilt's tags, only this patch's admins see it.",
+      "words": 23,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Suggested tags (docs/adr/114): AI-drafted and shipped as drafted. Voice-bearing, so worth a pass in copy-review if the wording should be yours.",
+      "note": null,
       "occurrences": [
         {
           "file": "web/src/components/TagPicker.svelte",
-          "line": 205,
+          "line": 260,
           "kind": "markup",
-          "raw": "A suggested tag stays on this patch privately until an admin adds it to\n      the quilt's tags.",
+          "raw": "A suggestion is sent for review right away. Until an admin adds it to\n        the quilt's tags, only this patch's admins see it.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "40e7409ece6e",
+      "text": "Suggestions are sent for review with this form. Until an admin adds one to the quilt's tags, only this patch's admins see it.",
+      "words": 23,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/TagPicker.svelte",
+          "line": 265,
+          "kind": "markup",
+          "raw": "Suggestions are sent for review with this form. Until an admin adds\n        one to the quilt's tags, only this patch's admins see it.",
           "quote": null
         }
       ]
@@ -33750,7 +33786,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 373,
+          "line": 377,
           "kind": "js-string",
           "raw": "Could not save that link",
           "quote": "'"
@@ -34118,7 +34154,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 673,
+          "line": 677,
           "kind": "markup",
           "raw": "Links",
           "quote": null
@@ -34433,7 +34469,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 711,
+          "line": 715,
           "kind": "attr:placeholder",
           "raw": "Label (optional)",
           "quote": "\""
@@ -40835,7 +40871,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 733,
+          "line": 737,
           "kind": "markup",
           "raw": "Tags",
           "quote": null
@@ -45638,7 +45674,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 472,
+          "line": 476,
           "kind": "markup",
           "raw": "Location",
           "quote": null
@@ -45727,21 +45763,21 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 609,
+          "line": 613,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 654,
+          "line": 658,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 705,
+          "line": 709,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
@@ -45876,7 +45912,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 656,
+          "line": 660,
           "kind": "attr:placeholder",
           "raw": "Describe the image",
           "quote": "\""
@@ -50856,7 +50892,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 572,
+          "line": 576,
           "kind": "markup",
           "raw": "Looking for this address...",
           "quote": null
@@ -52208,7 +52244,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 27,
+          "line": 28,
           "kind": "js-string",
           "raw": "Open. Anyone can join without approval.",
           "quote": "'"
@@ -52226,7 +52262,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 28,
+          "line": 29,
           "kind": "js-string",
           "raw": "Approval required. Anyone can ask; an admin answers each request.",
           "quote": "'"
@@ -52244,7 +52280,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 29,
+          "line": 30,
           "kind": "js-string",
           "raw": "Invite only. Only people an admin invites can join.",
           "quote": "'"
@@ -52262,7 +52298,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 101,
+          "line": 102,
           "kind": "js-string",
           "raw": "Map location saved",
           "quote": "'"
@@ -52280,7 +52316,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 105,
+          "line": 106,
           "kind": "js-string",
           "raw": "Failed to save map location",
           "quote": "'"
@@ -52298,7 +52334,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 118,
+          "line": 119,
           "kind": "js-string",
           "raw": "Removed from map",
           "quote": "'"
@@ -52316,27 +52352,9 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 122,
+          "line": 123,
           "kind": "js-string",
           "raw": "Failed to remove from map",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "a00bf005ee2a",
-      "text": "Tags saved, suggestions sent for review",
-      "words": 6,
-      "tier": "helper",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 176,
-          "kind": "js-string",
-          "raw": "Tags saved, suggestions sent for review",
           "quote": "'"
         }
       ]
@@ -52352,7 +52370,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 176,
+          "line": 171,
           "kind": "js-string",
           "raw": "Tags saved",
           "quote": "'"
@@ -52370,7 +52388,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 181,
+          "line": 175,
           "kind": "js-string",
           "raw": "Failed to save tags",
           "quote": "'"
@@ -52388,14 +52406,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 231,
+          "line": 235,
           "kind": "js-string",
           "raw": "Failed to save the timezone",
           "quote": "'"
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 253,
+          "line": 257,
           "kind": "js-string",
           "raw": "Failed to save the timezone",
           "quote": "'"
@@ -52413,7 +52431,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 296,
+          "line": 300,
           "kind": "js-string",
           "raw": "Could not save the image",
           "quote": "'"
@@ -52431,7 +52449,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 309,
+          "line": 313,
           "kind": "js-string",
           "raw": "On the quilt. Anyone can find this patch through the quilt, search, the map, and public event feeds, and other quilts can follow it.",
           "quote": "'"
@@ -52449,7 +52467,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 315,
+          "line": 319,
           "kind": "js-string",
           "raw": "Off the quilt. Kept out of the quilt, search, the map, and public feeds, and it does not federate.",
           "quote": "'"
@@ -52467,7 +52485,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 327,
+          "line": 331,
           "kind": "js-string",
           "raw": "Failed to save visibility",
           "quote": "'"
@@ -52485,7 +52503,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 407,
+          "line": 411,
           "kind": "js-string",
           "raw": "Could not save that date",
           "quote": "'"
@@ -52503,7 +52521,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 419,
+          "line": 423,
           "kind": "js-string",
           "raw": "Link removed",
           "quote": "'"
@@ -52521,7 +52539,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 438,
+          "line": 442,
           "kind": "js-string",
           "raw": "Link added",
           "quote": "'"
@@ -52539,7 +52557,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 441,
+          "line": 445,
           "kind": "js-string",
           "raw": "Failed to add link",
           "quote": "'"
@@ -52557,7 +52575,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 454,
+          "line": 458,
           "kind": "attr:placeholder",
           "raw": "Patch name",
           "quote": "\""
@@ -52575,7 +52593,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 462,
+          "line": 466,
           "kind": "attr:placeholder",
           "raw": "Describe this patch",
           "quote": "\""
@@ -52593,7 +52611,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 479,
+          "line": 483,
           "kind": "attr:placeholder",
           "raw": "e.g. Lancaster, PA",
           "quote": "\""
@@ -52611,7 +52629,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 500,
+          "line": 504,
           "kind": "markup",
           "raw": "An IANA place name. Leave it empty to follow the quilt{instanceTimezone\n        ? `, which keeps time in ${instanceTimezone.replace(/_/g, ' ')}`\n        : ''}.",
           "quote": null
@@ -52629,7 +52647,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 514,
+          "line": 518,
           "kind": "markup",
           "raw": "{zoneChoice.events_affected} event{zoneChoice.events_affected === 1 ? '' : 's'}\n          follow{zoneChoice.events_affected === 1 ? 's' : ''} this patch's timezone.\n          Moving from {zoneChoice.from.replace(/_/g, ' ')} to {zoneChoice.to.replace(/_/g, ' ')}\n          changes what time {zoneChoice.events_affected === 1 ? 'it reads' : 'they read'} as.",
           "quote": null
@@ -52647,7 +52665,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 548,
+          "line": 552,
           "kind": "markup",
           "raw": "Keeping listed times moves each event to the new zone, so 7pm stays 7pm.\n          Leaving them where they are keeps the exact moment and changes the clock time shown.\n          Events with a timezone of their own, and events from a calendar feed, are not touched.",
           "quote": null
@@ -52665,7 +52683,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 558,
+          "line": 562,
           "kind": "markup",
           "raw": "Map location",
           "quote": null
@@ -52683,7 +52701,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 561,
+          "line": 565,
           "kind": "markup",
           "raw": "On the map at",
           "quote": null
@@ -52701,7 +52719,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 564,
+          "line": 568,
           "kind": "markup",
           "raw": "Not on the map.",
           "quote": null
@@ -52719,7 +52737,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 567,
+          "line": 571,
           "kind": "markup",
           "raw": "Placing a marker adds this patch to the map. The marker can be\n        approximate, and is separate from the address above.",
           "quote": null
@@ -52737,7 +52755,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 617,
+          "line": 621,
           "kind": "markup",
           "raw": "Founded",
           "quote": null
@@ -52755,7 +52773,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 627,
+          "line": 631,
           "kind": "markup",
           "raw": "When this group started, if it predates its patch. Voting tenure is never\n      required to be longer than the group has existed.",
           "quote": null
@@ -52773,7 +52791,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 653,
+          "line": 657,
           "kind": "markup",
           "raw": "Image",
           "quote": null
@@ -52791,7 +52809,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 659,
+          "line": 663,
           "kind": "markup",
           "raw": "Link a picture you already have online. Patchwork points at it and never\n      keeps a copy, so it stays yours.",
           "quote": null
@@ -52809,7 +52827,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 697,
+          "line": 701,
           "kind": "markup",
           "raw": "No links added.",
           "quote": null
@@ -52817,19 +52835,37 @@
       ]
     },
     {
-      "id": "1cdf91cedc2b",
-      "text": "Tags help people find this patch, and the quilt places patches with shared tags near each other. The first tag decides the default motif. Missing a word? Suggest it, and an admin decides whether it joins the quilt's tags.",
-      "words": 39,
+      "id": "39390c4e13ed",
+      "text": "Tags help people find this patch, and the quilt places patches with shared tags near each other. The first tag decides the default motif.",
+      "words": 24,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Suggested tags (docs/adr/114): AI-drafted and shipped as drafted. Voice-bearing, so worth a pass in copy-review if the wording should be yours.",
+      "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 736,
+          "line": 740,
           "kind": "markup",
-          "raw": "Tags help people find this patch, and the quilt places patches with\n      shared tags near each other. The first tag decides the default motif.\n      Missing a word? Suggest it, and an admin decides whether it joins the\n      quilt's tags.",
+          "raw": "Tags help people find this patch, and the quilt places patches with\n      shared tags near each other. The first tag decides the default motif.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e5eaccd7b083",
+      "text": "Missing a word? Suggest it, and an admin decides whether it joins the quilt's tags.",
+      "words": 15,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 743,
+          "kind": "markup",
+          "raw": "Missing a word? Suggest it, and an admin decides whether it joins the\n        quilt's tags.",
           "quote": null
         }
       ]
@@ -52845,7 +52881,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 766,
+          "line": 772,
           "kind": "markup",
           "raw": "Visibility",
           "quote": null
@@ -52863,7 +52899,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 769,
+          "line": 775,
           "kind": "markup",
           "raw": "Patch specific configuration. Events, members, and documents carry their own visibility.",
           "quote": null
@@ -52885,7 +52921,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 790,
+          "line": 796,
           "kind": "markup",
           "raw": "Either way, anyone holding a direct link can open this patch's page. Private\n      keeps it from being found, not from being visited.",
           "quote": null
@@ -52903,7 +52939,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 801,
+          "line": 807,
           "kind": "markup",
           "raw": "Membership policy",
           "quote": null
@@ -52921,7 +52957,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 813,
+          "line": 819,
           "kind": "markup",
           "raw": "This is part of the patch's rules. Changing it applies immediately or\n        goes to a vote, depending on the patch's decision method.",
           "quote": null
@@ -52939,7 +52975,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 818,
+          "line": 824,
           "kind": "markup",
           "raw": "Changed in Governance, by an admin of this patch.",
           "quote": null
@@ -52957,7 +52993,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 826,
+          "line": 832,
           "kind": "markup",
           "raw": "Event suggestions",
           "quote": null
@@ -52975,7 +53011,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 835,
+          "line": 841,
           "kind": "markup",
           "raw": "Let non-members suggest events to this patch",
           "quote": null
@@ -52993,7 +53029,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 838,
+          "line": 844,
           "kind": "markup",
           "raw": "Suggestions wait in your events queue until an admin approves them.",
           "quote": null
@@ -53011,7 +53047,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 846,
+          "line": 852,
           "kind": "markup",
           "raw": "We have moved",
           "quote": null
@@ -53029,7 +53065,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 849,
+          "line": 855,
           "kind": "markup",
           "raw": "Point this patch at its new home. The page here keeps working and stays\n      readable, with a banner saying where the patch went. New joins, new\n      follows and event suggestions from outside are turned away and sent to\n      the new address. Members and admins keep everything they had. Clear the\n      field to undo it.",
           "quote": null
@@ -53047,7 +53083,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 860,
+          "line": 866,
           "kind": "attr:placeholder",
           "raw": "https://their-quilt.example.com/patches/gallery-row",
           "quote": "\""
@@ -61881,24 +61917,6 @@
       ]
     },
     {
-      "id": "39390c4e13ed",
-      "text": "Tags help people find this patch, and the quilt places patches with shared tags near each other. The first tag decides the default motif.",
-      "words": 24,
-      "tier": "prose",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 690,
-          "kind": "markup",
-          "raw": "Tags help people find this patch, and the quilt places patches with\n      shared tags near each other. The first tag decides the default motif.",
-          "quote": null
-        }
-      ]
-    },
-    {
       "id": "66d1605446f4",
       "text": "Admin Dashboard",
       "words": 2,
@@ -64092,6 +64110,114 @@
           "line": 172,
           "kind": "markup",
           "raw": "Save a contact address first.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e74d61c267f0",
+      "text": "Suggest a tag",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/TagPicker.svelte",
+          "line": 187,
+          "kind": "attr:placeholder",
+          "raw": "Suggest a tag",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "1b29cba9d72a",
+      "text": "Suggest a tag that is not on the list",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/TagPicker.svelte",
+          "line": 191,
+          "kind": "attr:aria-label",
+          "raw": "Suggest a tag that is not on the list",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "4effad823b04",
+      "text": "Suggest",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/TagPicker.svelte",
+          "line": 199,
+          "kind": "markup",
+          "raw": "Suggest",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "4a003e609a52",
+      "text": "A suggested tag stays on this patch privately until an admin adds it to the quilt's tags.",
+      "words": 17,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): AI-drafted and shipped as drafted. Voice-bearing, so worth a pass in copy-review if the wording should be yours.",
+      "occurrences": [
+        {
+          "file": "web/src/components/TagPicker.svelte",
+          "line": 205,
+          "kind": "markup",
+          "raw": "A suggested tag stays on this patch privately until an admin adds it to\n      the quilt's tags.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a00bf005ee2a",
+      "text": "Tags saved, suggestions sent for review",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 176,
+          "kind": "js-string",
+          "raw": "Tags saved, suggestions sent for review",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "1cdf91cedc2b",
+      "text": "Tags help people find this patch, and the quilt places patches with shared tags near each other. The first tag decides the default motif. Missing a word? Suggest it, and an admin decides whether it joins the quilt's tags.",
+      "words": 39,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): AI-drafted and shipped as drafted. Voice-bearing, so worth a pass in copy-review if the wording should be yours.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 736,
+          "kind": "markup",
+          "raw": "Tags help people find this patch, and the quilt places patches with\n      shared tags near each other. The first tag decides the default motif.\n      Missing a word? Suggest it, and an admin decides whether it joins the\n      quilt's tags.",
           "quote": null
         }
       ]
