@@ -544,8 +544,9 @@
           <div class="field">
             <label class="lt-label">Tile</label>
             <p class="lt-hint field-hint">
-              How this patch looks on the quilt. You can change it anytime
-              in Patch Settings → Appearance, and draft your own block there too.
+              How this patch looks on the quilt. The one shown is a random
+              starting point. You can change it anytime in Patch Settings →
+              Appearance, and draft your own block there too.
             </p>
             <div class="tile-picker">
               <div class="tile-preview-col">

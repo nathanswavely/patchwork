@@ -261,8 +261,13 @@
 
     {#if step === 'editing'}
       <div class="editor-card">
+        <!-- Both halves of the change: the stored rules it is measured
+             against, and the change in progress the form opens on. This step
+             is unmounted while the review step is up, so the pending change
+             has to come back in through a prop. -->
         <StructuredRulesEditor
           currentRules={currentRules}
+          proposedRules={proposedRules}
           electorate={electorate}
           onSave={handleRulesChange}
         />
@@ -280,7 +285,7 @@
       {#if hasChanges}
         <div class="changes-section">
           <h2>Changes</h2>
-          <StructuredRulesDiff {currentRules} {proposedRules} />
+          <StructuredRulesDiff {currentRules} {proposedRules} heading={directChange ? 'Rule changes' : undefined} />
         </div>
       {/if}
 
@@ -289,7 +294,7 @@
         <div class="review-card">
           <div class="review-card-header lt-muted">Your changes</div>
           <div class="review-card-body">
-            <StructuredRulesDiff {currentRules} {proposedRules} />
+            <StructuredRulesDiff {currentRules} {proposedRules} heading={directChange ? 'Rule changes' : undefined} />
           </div>
         </div>
 

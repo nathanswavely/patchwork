@@ -119,7 +119,9 @@ describe('StructuredRulesEditor — the second venue', () => {
   const src = source('components/StructuredRulesEditor.svelte');
 
   it('offers where proposals are decided, alongside where admins are chosen', () => {
-    expect(src).toMatch(/proposalVenue = currentRules\.proposal_venue === 'elsewhere' \? 'elsewhere' : 'patchwork'/);
+    // `incoming` is the rules the form seeds from: the change in progress
+    // when there is one, else the stored rules.
+    expect(src).toMatch(/proposalVenue = incoming\.proposal_venue === 'elsewhere' \? 'elsewhere' : 'patchwork'/);
     expect(src).toMatch(/proposal_venue: proposalVenue/);
     expect(src).toMatch(/Where proposals are decided/);
   });

@@ -2,6 +2,7 @@
   import { api } from '../lib/api.js';
   import { timeLeft as timeLeftFor, timeLeftPhrase } from '../lib/datetime.js';
   import { showToast } from '../stores/toast.svelte.js';
+  import { readableVoteTerms } from '../lib/governanceRules.js';
 
   let {
     proposalId = '',
@@ -39,6 +40,9 @@
     // it, so the page was reciting a rule while the button took the vote.
     tenureDays = 0,
     voteEligibleAt = '',
+    // On a closed proposal this viewer cast no ballot on: whether they were
+    // somebody who could have (the server's answer, F-070).
+    couldHaveVoted = false,
     onVote = () => {},
   } = $props();
 
@@ -126,7 +130,10 @@
     const when = openedAt
       ? new Date(openedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
       : '';
-    const head = when ? `Rules as of ${when}` : 'Rules fixed when voting opened';
+    // Named as this vote's terms, not "Rules": they are the set frozen when
+    // voting opened (docs/adr/047), and the patch's current rules, a link
+    // away on the Governance page, may already say something else (F-080).
+    const head = when ? `This vote's terms, fixed ${when}` : 'This vote\'s terms, fixed when voting opened';
     // Only the tenure in force, and only when it is holding somebody back.
     // A member who may already vote does not need the rule recited at them,
     // and a patch too young to run the rule must not print it at all.
@@ -138,6 +145,12 @@
     }
     return head;
   });
+
+  // The frozen terms as readable rows, in the rules page's own words.
+  let termRows = $derived(readableVoteTerms(terms, tenureDays));
+
+  const MY_VOTE_WORDS = { approve: 'You approved.', reject: 'You rejected.', abstain: 'You abstained.' };
+  let myVoteWord = $derived(MY_VOTE_WORDS[userVote] || '');
 
   async function castVote(value) {
     voting = true;
@@ -172,6 +185,15 @@
     <span class="sep">&middot;</span>
     <span class="abstain-count">{abstainCount} abstain</span>
   </div>
+
+
+  <!-- How this viewer voted, once the vote has closed (F-070). The buttons
+       say it while voting is open; after that the box was three counts and
+       a person's own ballot was only in the voter list. "You did not vote"
+       is said only where the server says this person could have. -->
+  {#if windowClosed && (myVoteWord || couldHaveVoted)}
+    <p class="my-vote">{myVoteWord || 'You did not vote.'}</p>
+  {/if}
 
   <!-- Quorum status -->
   <div class="quorum-status">
@@ -231,7 +253,22 @@
        and it is the only place a tenure requirement appears, so it is also the
        answer for someone who can see the vote and has no buttons. -->
   {#if termsLine}
-    <div class="terms-info lt-muted">{termsLine}</div>
+    {#if termRows.length > 0}
+      <details class="terms-info lt-muted">
+        <summary>{termsLine}</summary>
+        <dl class="terms-list">
+          {#each termRows as row}
+            <div class="terms-row">
+              <dt>{row.label}</dt>
+              <dd>{row.value}</dd>
+            </div>
+          {/each}
+        </dl>
+        <p class="terms-note">These were fixed when voting opened. The patch's current rules may differ.</p>
+      </details>
+    {:else}
+      <div class="terms-info lt-muted">{termsLine}</div>
+    {/if}
   {/if}
 
   <!-- Voter list -->
@@ -372,6 +409,42 @@
   .terms-info {
     margin-top: 0.25rem;
     font-size: var(--lt-text-sm);
+  }
+
+  .terms-info summary {
+    cursor: pointer;
+  }
+
+  .terms-list {
+    margin: 0.5rem 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .terms-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+  }
+
+  .terms-row dt {
+    color: var(--color-text);
+  }
+
+  .terms-row dd {
+    margin: 0;
+  }
+
+  .terms-note {
+    margin: 0.5rem 0 0;
+  }
+
+  .my-vote {
+    margin: 0.5rem 0 0;
+    font-size: var(--lt-text-sm);
+    font-weight: 500;
   }
 
   .threshold-info {

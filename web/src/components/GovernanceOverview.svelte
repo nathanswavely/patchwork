@@ -738,8 +738,9 @@
            page of their own. -->
       {#if leadershipElsewhere}
         <p class="venue-line lt-muted">
-          Admins are chosen outside Patchwork. What the community decided is
-          recorded below.
+          Admins are chosen outside Patchwork. Who the community put in place
+          is recorded below. Minutes and other decisions go in
+          <a href="/patches/{slug}/governance/docs" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/docs`); }}>Documents</a>.
         </p>
         <AttestationRecords {slug} isAdmin={isAdmin} hasTerms={overview?.rules?.leadership_model === 'elected'} />
       {/if}

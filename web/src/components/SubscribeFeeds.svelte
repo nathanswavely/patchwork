@@ -15,6 +15,7 @@
    * resolve to nothing.
    */
   import { showToast } from '../stores/toast.svelte.js';
+  import { selectWhen } from '../lib/selectText.js';
   import {
     getInstanceDomain,
     getInstanceFederation,
@@ -29,30 +30,38 @@
   let handleAvailable = $derived(getInstanceFederation() && !!getInstanceDomain());
   let handle = $derived(`@${slug}@${getInstanceDomain()}`);
 
+  // The value the clipboard last refused. Its row then shows the whole
+  // address, unclipped and selected, to copy by hand (F-031). A fresh
+  // object per failure so a second refusal selects it again.
+  let copyFailed = $state(null);
+  let failedFor = (value) => (copyFailed?.value === value ? copyFailed : null);
+
   async function copyValue(value) {
     try {
       await navigator.clipboard.writeText(value);
+      copyFailed = null;
       showToast('Copied');
     } catch {
-      showToast('Copy failed. Select the address instead.', 'error');
+      copyFailed = { value };
+      showToast('Copy failed. The address is selected for you to copy.', 'error');
     }
   }
 </script>
 
 <div class="feed-row">
   <span class="feed-label">Calendar (ICS)</span>
-  <code class="feed-url">{icsUrl}</code>
+  <code class="feed-url" class:whole={failedFor(icsUrl)} use:selectWhen={failedFor(icsUrl)}>{icsUrl}</code>
   <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => copyValue(icsUrl)}>Copy</button>
 </div>
 <div class="feed-row">
   <span class="feed-label">RSS</span>
-  <code class="feed-url">{rssUrl}</code>
+  <code class="feed-url" class:whole={failedFor(rssUrl)} use:selectWhen={failedFor(rssUrl)}>{rssUrl}</code>
   <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => copyValue(rssUrl)}>Copy</button>
 </div>
 {#if handleAvailable}
   <div class="feed-row">
     <span class="feed-label">Mastodon</span>
-    <code class="feed-url">{handle}</code>
+    <code class="feed-url" class:whole={failedFor(handle)} use:selectWhen={failedFor(handle)}>{handle}</code>
     <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={() => copyValue(handle)}>Copy</button>
   </div>
 {/if}
@@ -94,6 +103,14 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     color: var(--color-text-muted);
+  }
+
+  /* After a refused copy: the whole value, wrapped, for selecting by hand. */
+  .feed-url.whole {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    user-select: all;
+    color: var(--color-text);
   }
 
   .feed-hint {

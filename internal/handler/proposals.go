@@ -110,7 +110,8 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 				WHERE v.proposal_id = p.id AND v.value = 'reject' AND ` + countedBallot + `) as reject_count,
 			(SELECT COUNT(*) FROM votes v JOIN memberships m ON m.user_id = v.user_id AND m.node_id = p.node_id
 				WHERE v.proposal_id = p.id AND v.value = 'abstain' AND ` + countedBallot + `) as abstain_count,
-			COALESCE(p.applied_at, p.updated_at) AS decided_at
+			COALESCE(p.applied_at, p.updated_at) AS decided_at,
+			COALESCE(p.seats_contested,0), COALESCE(p.nominations_close_at,'')
 			FROM proposals p
 			LEFT JOIN users u ON u.id = p.author_id
 			WHERE p.node_id = ?`
@@ -182,6 +183,13 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 			// Empty on an open row: a decision that has not happened has no
 			// date, and updated_at on an open row is only the last edit.
 			DecidedAt string `json:"decided_at,omitempty"`
+			// An election, told apart the way the detail page tells it
+			// (election_view.go). Without it a contest that settled on no
+			// ballots read as a direct change "applied by" whoever the
+			// author column names, when the calendar opened it and nobody
+			// applied anything (F-137, docs/adr/109).
+			SeatsContested int    `json:"seats_contested"`
+			ElectionPhase  string `json:"election_phase,omitempty"`
 		}
 
 		docHidden := hiddenDocRedactor(db, r, nodeID)
@@ -189,10 +197,11 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 		var proposals []proposalItem
 		for rows.Next() {
 			var p proposalItem
-			var decidedAt string
-			if err := rows.Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.State, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &p.AuthorName, &p.ApproveCount, &p.RejectCount, &p.AbstainCount, &decidedAt); err != nil {
+			var decidedAt, nominationsCloseAt string
+			if err := rows.Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.State, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &p.AuthorName, &p.ApproveCount, &p.RejectCount, &p.AbstainCount, &decidedAt, &p.SeatsContested, &nominationsCloseAt); err != nil {
 				continue
 			}
+			p.ElectionPhase = electionPhase(p.SeatsContested, nominationsCloseAt, p.Status)
 			if p.Status != "open" {
 				p.DecidedAt = decidedAt
 			}
@@ -505,6 +514,11 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 				// The sha travels with it: settleApplied writes both together.
 				if err := settleApplied(db, id, mergedSHA, user.ID, createdAt); err != nil {
 					applyIncomplete(db, id, mergedSHA, "settle", err)
+				} else if req.ProposalType == "membership" && req.TargetUserID != "" {
+					// An admin's own nomination on an admin-decides patch
+					// is their decision, made at creation, so it promotes
+					// here and not on a vote that will never run.
+					ratifyNomination(db, id, nodeID, req.TargetUserID, user.ID)
 				}
 			} else {
 				// The INSERT above stamped state 'in_effect'; roll it back so
@@ -1026,7 +1040,9 @@ func resolveProposal(db *database.DB, proposalID string) string {
 		// co-op's first proposal, since tenure keeps most joiners out of
 		// the electorate for a month.
 		if windowClosed(votingEndsAt) {
-			lapseProposal(db, p, totalVotes)
+			if lapseProposal(db, p, totalVotes) {
+				broadcastResolution(db, p.NodeID, proposalID, "lapsed", approveCount, rejectCount, abstainCount)
+			}
 			return "lapsed"
 		}
 		return ""
@@ -1078,7 +1094,7 @@ func resolveProposal(db *database.DB, proposalID string) string {
 	// and leaving it to an admin afterwards would be a veto over the
 	// ratification the admins themselves asked for.
 	if newStatus == "approved" && p.ProposalType == "membership" && p.TargetUserID != "" {
-		ratifyNomination(db, proposalID, p.NodeID, p.TargetUserID)
+		ratifyNomination(db, proposalID, p.NodeID, p.TargetUserID, "")
 		now := clock.Now()
 		// The promotion has already happened by here, so a failure to record
 		// it leaves a new admin whose proposal still reads as merely
@@ -1151,20 +1167,31 @@ func resolveProposal(db *database.DB, proposalID string) string {
 
 	notifyProposalResolved(db, p, newStatus)
 
-	// Broadcast resolution
+	broadcastResolution(db, p.NodeID, proposalID, newStatus, approveCount, rejectCount, abstainCount)
+
+	return newStatus
+}
+
+// broadcastResolution tells a patch's remote followers a proposal closed, and
+// how, wherever its record is public. Every way a vote closes goes through
+// here: a lapse used to return before the broadcast, so a remote follower
+// sent the Create for a proposal was never told it ended and it stayed open
+// for ever on the other quilt (F-081). A lapse goes out as "lapsed" rather
+// than "rejected", because nobody rejected it (docs/adr/097).
+func broadcastResolution(db *database.DB, nodeID, proposalID, result string, approveCount, rejectCount, abstainCount int) {
 	go func() {
-		if !governanceRecordIsPublic(db, p.NodeID) {
+		if !governanceRecordIsPublic(db, nodeID) {
 			return
 		}
 		resolveActivity := ap.ProposalResolvedActivity(
 			ap.ProposalAPID(ap.GetDomain(), proposalID),
-			ap.NodeAPID(ap.GetDomain(), p.NodeID),
-			newStatus, approveCount, rejectCount, abstainCount,
+			ap.NodeAPID(ap.GetDomain(), nodeID),
+			result, approveCount, rejectCount, abstainCount,
 		)
-		ap.BroadcastToFollowers(db, "node", p.NodeID, resolveActivity)
+		if err := ap.BroadcastToFollowers(db, "node", nodeID, resolveActivity); err != nil {
+			log.Printf("proposal %s: broadcast %s resolution: %v", proposalID, result, err)
+		}
 	}()
-
-	return newStatus
 }
 
 // notifyProposalResolved tells a patch's members what their own vote decided.
@@ -1416,8 +1443,16 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 		// proposal whose frozen terms are admin-decides, while it is open.
 		// Both from the terms rather than the patch's live rules, like
 		// everything else that decides a proposal (docs/adr/047).
-		advisory := gc.DecisionMethod == "admin"
-		canDecide := advisory && p.Status == "open" && viewerID != "" &&
+		//
+		// Neither is true of an election. The electorate closes a contest on
+		// every patch, admin-decides included (docs/adr/051), so its ballot is
+		// binding and decide refuses it; a payload offering Approve and
+		// Decline on one is the contradiction docs/adr/044 was written to end.
+		// The state test is decide's too: an `elsewhere` proposal is open and
+		// no admin decides it here.
+		advisory := gc.DecisionMethod == "admin" && seatsContested == 0
+		canDecide := advisory && p.Status == "open" &&
+			(p.State == "voting" || p.State == "awaiting_admin") && viewerID != "" &&
 			userHasNodeRole(db, viewerID, p.NodeID, "admin")
 		var declinedBy string
 		db.QueryRow(`SELECT COALESCE(`+displayNameExpr("u")+`,'') FROM proposals p
@@ -1465,6 +1500,11 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			"my_vote":              myVote,
 			"eligible_voters":      eligibleCount,
 			"can_vote":             canVote,
+			// On a closed proposal with no ballot from this viewer, whether
+			// they were somebody who could have cast one, so the page can say
+			// "You did not vote" only where that is true (F-070).
+			"could_have_voted": p.Status != "open" && myVote == "" &&
+				couldHaveVoted(db, viewerID, p.NodeID, gc, recused, voteClosedAt(p, appliedAt)),
 			// The terms this vote is judged by, so the page can say so rather
 			// than leaving a refused voter to guess (docs/adr/047). Fixed when
 			// voting opened — which is created_at, already in this payload.
@@ -1485,6 +1525,21 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			"declined_by":      declinedBy,
 		}
 
+		// The Discussion tab's badge (#368). The page read `comment_count`
+		// from this payload for as long as the tab has had a badge, and
+		// nothing ever sent it, so the badge was always 0 and never drawn.
+		// Every comment, replies included: deletion is a hard delete that
+		// cascades to replies, so the rows are exactly the thread. The
+		// thread itself is behind the same canReadGovernanceRecord gate this
+		// handler has already passed, so the number tells nobody anything
+		// the comments endpoint would not. A failed count is left out of
+		// the payload rather than sent as 0, which would state "nobody has
+		// said anything" about a thread nobody counted.
+		var commentCount int
+		if err := db.QueryRow(`SELECT COUNT(*) FROM proposal_comments WHERE proposal_id = ?`, proposalID).Scan(&commentCount); err == nil {
+			result["comment_count"] = commentCount
+		}
+
 		// Include amendment-specific fields if this is a governance amendment.
 		// The two text fields — the proposed body and the current text it would
 		// replace — are the charter itself, so they carry its visibility; the
@@ -1499,6 +1554,49 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			if !docTextHidden {
 				currentContent, _ := governance.GetDocument(governance.GetDataDir(), p.NodeID, p.TargetDoc)
 				result["current_doc_content"] = currentContent
+				// A settled proposal's diff is against the text it was made
+				// against, not the live one. Applied, the live text *is* the
+				// proposed body, and a diff against it said "No changes" for a
+				// change that changed something; closed unapplied, the live
+				// text may have moved since, and the diff would describe a
+				// proposal nobody made. Still pending (open, or approved and
+				// waiting on an admin), the live text is what applying would
+				// change, so it stays the comparison.
+				if p.Status == "rejected" || p.Status == "withdrawn" || p.State == "in_effect" {
+					found := false
+					if p.GitSHA != "" {
+						if prior, err := governance.GetDocumentBefore(governance.GetDataDir(), p.NodeID, p.TargetDoc, p.GitSHA); err == nil {
+							result["prior_doc_content"] = prior
+							found = true
+							// Once the amendment is in effect the current text
+							// *is* the proposed text, so a diff against it shows
+							// nothing changed on the page of the change itself.
+							// `base_doc_content` is the text the amendment
+							// replaced: the document at the first parent of the
+							// commit applying it put on main, which is the text
+							// it was written against when nothing moved in
+							// between and the text it actually displaced when
+							// something did. Revisions rebuild the branch, so
+							// `base_sha` would be stale for those; the applied
+							// commit never is. An empty string means the
+							// amendment created the document. Omitted where the
+							// commit cannot be read — a repo rebuilt from the
+							// database (docs/adr/084) carries synthetic history
+							// — so a client falls back to the current text
+							// rather than a false "everything was added".
+							if p.State == "in_effect" {
+								result["base_doc_content"] = prior
+							}
+						}
+					}
+					if !found {
+						// No commit to read it from — a repo rebuilt from rows
+						// (docs/adr/084) holds none of the old ones. Said
+						// rather than papered over with the live text, which
+						// is the wrong answer this field exists to replace.
+						result["prior_doc_unavailable"] = true
+					}
+				}
 			}
 			// Whether this document was adopted elsewhere since the draft was
 			// written, which makes the diff below a comparison against
@@ -1890,11 +1988,14 @@ func ApplyProposal(db *database.DB) http.HandlerFunc {
 		// COALESCE like every other proposal query here: the amendment
 		// columns are NULL on non-amendment proposals, and a bare Scan into
 		// string fields turns that NULL into a bogus "proposal not found".
+		var seatsContested int
 		err := db.QueryRow(
 			`SELECT id, node_id, author_id, status, COALESCE(state,'voting'), proposal_type,
-			 COALESCE(target_doc,''), COALESCE(proposed_branch,''), COALESCE(proposed_body,''), COALESCE(proposed_title,'')
+			 COALESCE(target_doc,''), COALESCE(proposed_branch,''), COALESCE(proposed_body,''), COALESCE(proposed_title,''),
+			 COALESCE(target_user_id,''), COALESCE(seats_contested,0)
 			 FROM proposals WHERE id = ?`, proposalID,
-		).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Status, &p.State, &p.ProposalType, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle)
+		).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Status, &p.State, &p.ProposalType, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle,
+			&p.TargetUserID, &seatsContested)
 		if err != nil {
 			http.Error(w, `{"error":"proposal not found"}`, http.StatusNotFound)
 			return
@@ -1916,10 +2017,19 @@ func ApplyProposal(db *database.DB) http.HandlerFunc {
 		// from any admin, which on a majority patch was an apply-before-the-
 		// vote-ends bypass the rules never granted; docs/adr/041 says every
 		// voting method votes, admins included, and the endpoint now agrees.
+		//
+		// An election is never the maintainer's, here any more than at decide
+		// (docs/adr/051): the electorate closes it. Without this, apply was
+		// the door around decide's refusal, settling a contest `in_effect`
+		// with nobody seated.
 		terms := votingTerms(db, proposalID, p.NodeID)
 		electorateApproved := p.State == "approved" || p.Status == "approved"
 		maintainersToDecide := terms.DecisionMethod == "admin" && p.Status == "open" &&
-			(p.State == "voting" || p.State == "awaiting_admin")
+			(p.State == "voting" || p.State == "awaiting_admin") && seatsContested == 0
+		if seatsContested > 0 && p.Status == "open" {
+			http.Error(w, `{"error":"an election is closed by the electorate, not by an admin (docs/adr/051)"}`, http.StatusConflict)
+			return
+		}
 		if !electorateApproved && !maintainersToDecide {
 			if p.Status == "open" {
 				http.Error(w, `{"error":"this patch decides proposals by vote; wait for the window to close"}`, http.StatusConflict)
@@ -1933,6 +2043,14 @@ func ApplyProposal(db *database.DB) http.HandlerFunc {
 			log.Printf("proposal %s: apply failed: %v", proposalID, err)
 			http.Error(w, `{"error":"`+applyFailureMessage+`"}`, http.StatusInternalServerError)
 			return
+		}
+		// Applying an open proposal on an admin-decides patch is the
+		// maintainer deciding it, so a nomination promotes here. The
+		// approved → in_effect step does not: resolution already ratified
+		// that one, and running it again is how a vote that found no seat
+		// would be quietly carried out later.
+		if maintainersToDecide {
+			ratifyMaintainerApproval(db, p, user)
 		}
 
 		auth.LogAuditEvent(db, user.ID, "proposal.applied", "proposal", proposalID, "{}", clientIP(r))

@@ -36,9 +36,15 @@ func PatchMembers(slug string) string {
 	return Patch(slug) + "/members"
 }
 
-// PatchMembersPending is the members tab filtered to pending join requests.
-func PatchMembersPending(slug string) string {
-	return PatchMembers(slug) + "?status=pending"
+// PatchJoinRequests is where a patch's pending join requests are answered:
+// Settings → Members, /patches/:slug/settings/members.
+//
+// It used to be the members tab with ?status=pending, which that page never
+// read, so the bell's "Membership request" line opened the ordinary roster
+// and an admin sent to answer two requests found a page with only their own
+// name on it (F-043). The Dashboard already linked here.
+func PatchJoinRequests(slug string) string {
+	return Patch(slug) + "/settings/members"
 }
 
 // PatchSetup is the post-claim setup flow — /patches/:slug/setup.

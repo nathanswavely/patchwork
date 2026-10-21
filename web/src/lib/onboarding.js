@@ -8,7 +8,33 @@
  * Stored in localStorage keyed by user id: per-browser, and scoped so a
  * different account on a shared machine still gets its own first run.
  */
+import { isSafeRedirectPath } from '../stores/router.svelte.js';
+
 const PREFIX = 'patchwork_onboarding_dismissed:';
+
+/**
+ * The welcome screen's address, carrying where the person was going.
+ *
+ * Following a link to a patch is the arrival this platform is built around
+ * (an invite, a flyer), and the zero-membership redirect used to drop the
+ * address on the way to /welcome. `next` is the requested path; anything
+ * that is not a same-origin path is dropped rather than carried, so the
+ * parameter cannot become an open redirect. Home and /welcome itself are
+ * not destinations worth carrying.
+ */
+export function welcomePath(next) {
+  return carriesNext(next) ? `/welcome?next=${encodeURIComponent(next)}` : '/welcome';
+}
+
+/** The `next` a welcome URL carries, or '' when it carries nothing usable. */
+export function welcomeNext(query) {
+  const next = query?.get?.('next') || '';
+  return carriesNext(next) ? next : '';
+}
+
+function carriesNext(next) {
+  return isSafeRedirectPath(next) && next !== '/' && !next.startsWith('/welcome');
+}
 
 export function isOnboardingDismissed(userId) {
   if (!userId) return false;

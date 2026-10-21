@@ -218,7 +218,15 @@ func CreateGovernanceDoc(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		// Require admin role on the node or global admin.
+		// A patch admin, or an instance admin holding no role here. The
+		// second is the instance-admin reach docs/adr/115 decides should end
+		// (custody, not rank) and deliberately leaves in place until issue
+		// #286, as the operator's recovery hatch. It matches
+		// UpdateGovernanceDoc and canReadPatchDocs on purpose: closing one
+		// door of a shelf whose others stay open protects nothing, so this
+		// changes with them, in #286, and not on its own. Distinct from the
+		// proposal verbs (apply, decide), whose bypass docs/adr/092 removed
+		// because a patch's *decision* was never the steward's to make.
 		if user.Role != "admin" && !userHasNodeRole(db, user.ID, nodeID, "admin") {
 			http.Error(w, `{"error":"admin access required"}`, http.StatusForbidden)
 			return
@@ -420,7 +428,8 @@ func UpdateGovernanceDoc(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		// Require admin role on the node or global admin.
+		// The same reach as CreateGovernanceDoc, for the same deferred
+		// reason (docs/adr/115, issue #286).
 		if user.Role != "admin" && !userHasNodeRole(db, user.ID, nodeID, "admin") {
 			http.Error(w, `{"error":"admin access required"}`, http.StatusForbidden)
 			return

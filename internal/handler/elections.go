@@ -160,7 +160,7 @@ func StartElectionOnAdoption(db *database.DB, nodeID string) {
 		return
 	}
 
-	openElectionFor(db, nodeID, gc, chairs)
+	openElectionFor(db, nodeID, gc, chairs, "adoption")
 }
 
 // seatIDs lists a council's chairs in the order they were made, which is the
@@ -239,7 +239,13 @@ func electionLeadHours(gc model.GovernanceConfig) int {
 // for is frozen here, the way docs/adr/047 freezes a proposal's terms: a
 // council can stagger, so "how many" does not say which, and a resolution that
 // has to guess guesses at the whole council.
-func openElectionFor(db *database.DB, nodeID string, gc model.GovernanceConfig, chairs []string) string {
+//
+// `trigger` says what opened it, "adoption" or "calendar", and goes on the
+// audit row with the seats (F-015). Opening a contest is the one governance
+// act the calendar takes on its own, and it was the one the audit log could
+// not show: resolution, nominations and ballots were all recorded, and the
+// question of why a contest exists at all was not.
+func openElectionFor(db *database.DB, nodeID string, gc model.GovernanceConfig, chairs []string, trigger string) string {
 	seats := len(chairs)
 	if seats == 0 {
 		return ""
@@ -301,6 +307,13 @@ func openElectionFor(db *database.DB, nodeID string, gc model.GovernanceConfig, 
 		Body:     "This patch elects its admins. Stand, or put someone forward.",
 		Link:     weblink.Proposal(slug, id),
 	})
+	auth.LogAuditEventJSON(db, "", "election.opened", "proposal", id, map[string]any{
+		"node_id":              nodeID,
+		"seats":                seats,
+		"seat_ids":             chairs,
+		"nominations_close_at": nominationsClose,
+		"trigger":              trigger,
+	}, "")
 	log.Printf("election: opened for %s, %d seat(s), nominations close %s", slug, seats, nominationsClose)
 	return id
 }
