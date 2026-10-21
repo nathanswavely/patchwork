@@ -5,6 +5,7 @@ import {
   toLocalInputValue,
   fromLocalInputValue,
   eventDateRange,
+  dateInputBounds,
 } from '../lib/datetime.js';
 
 // The event edit form prefills a datetime-local input from a stored UTC
@@ -309,5 +310,28 @@ describe('EventsPage filters through eventDateRange', () => {
   it('keeps no local date arithmetic of its own', () => {
     expect(src).not.toContain('function getDateRange');
     expect(src).not.toMatch(/toISOString\(\)\.slice\(0,\s*10\)/);
+  });
+});
+
+// The audit log's date filter had the events list's old bug: it sent the bare
+// input values, so a `to` date sorted before every entry on its own day.
+describe('AdminAuditLog filters through dateInputBounds', () => {
+  const src = readFileSync(
+    resolve(process.cwd(), 'src/pages/AdminAuditLog.svelte'),
+    'utf8',
+  );
+
+  it('sends instants rather than the raw input values', () => {
+    expect(src).toContain('dateInputBounds(dateFrom, dateTo)');
+    expect(src).not.toContain("params.set('to', dateTo)");
+    expect(src).not.toContain("params.set('from', dateFrom)");
+  });
+
+  it('bounds whole local days and leaves an empty side open', () => {
+    const { from, to } = dateInputBounds('2026-10-19', '2026-10-19');
+    expect(from).toBe(new Date(2026, 9, 19, 0, 0, 0, 0).toISOString());
+    expect(new Date(2026, 9, 19, 23, 59, 59, 999).toISOString() <= to).toBe(true);
+    expect(dateInputBounds('', '2026-10-19').from).toBe('');
+    expect(dateInputBounds('2026-10-19', '').to).toBe('');
   });
 });

@@ -5542,7 +5542,7 @@
       "occurrences": [
         {
           "file": "internal/handler/admin.go",
-          "line": 275,
+          "line": 280,
           "kind": "go-error-body",
           "raw": "failed to list audit log",
           "quote": null
@@ -28152,7 +28152,7 @@
         },
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 169,
+          "line": 173,
           "kind": "markup",
           "raw": "Details",
           "quote": null
@@ -31084,7 +31084,7 @@
         },
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 110,
+          "line": 114,
           "kind": "markup",
           "raw": "Audit log",
           "quote": null
@@ -36970,7 +36970,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 17,
+          "line": 18,
           "kind": "js-string",
           "raw": "The \"From\" date must be before the \"To\" date.",
           "quote": "'"
@@ -36988,14 +36988,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 116,
+          "line": 120,
           "kind": "markup",
           "raw": "Action",
           "quote": null
         },
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 167,
+          "line": 171,
           "kind": "markup",
           "raw": "Action",
           "quote": null
@@ -37027,7 +37027,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 118,
+          "line": 122,
           "kind": "markup",
           "raw": "All",
           "quote": null
@@ -37045,7 +37045,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 119,
+          "line": 123,
           "kind": "markup",
           "raw": "node.create",
           "quote": null
@@ -37063,7 +37063,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 120,
+          "line": 124,
           "kind": "markup",
           "raw": "node.update",
           "quote": null
@@ -37081,7 +37081,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 121,
+          "line": 125,
           "kind": "markup",
           "raw": "node.delete",
           "quote": null
@@ -37099,7 +37099,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 122,
+          "line": 126,
           "kind": "markup",
           "raw": "event.create",
           "quote": null
@@ -37117,7 +37117,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 123,
+          "line": 127,
           "kind": "markup",
           "raw": "event.update",
           "quote": null
@@ -37135,7 +37135,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 124,
+          "line": 128,
           "kind": "markup",
           "raw": "event.delete",
           "quote": null
@@ -37153,7 +37153,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 125,
+          "line": 129,
           "kind": "markup",
           "raw": "report.create",
           "quote": null
@@ -37171,7 +37171,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 126,
+          "line": 130,
           "kind": "markup",
           "raw": "report.resolve",
           "quote": null
@@ -37189,7 +37189,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 127,
+          "line": 131,
           "kind": "markup",
           "raw": "admin.user_update",
           "quote": null
@@ -37207,7 +37207,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 128,
+          "line": 132,
           "kind": "markup",
           "raw": "admin.user_email_set",
           "quote": null
@@ -37225,7 +37225,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 129,
+          "line": 133,
           "kind": "markup",
           "raw": "membership.join",
           "quote": null
@@ -37243,7 +37243,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 130,
+          "line": 134,
           "kind": "markup",
           "raw": "auth.login",
           "quote": null
@@ -37261,14 +37261,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 134,
+          "line": 138,
           "kind": "markup",
           "raw": "User",
           "quote": null
         },
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 166,
+          "line": 170,
           "kind": "markup",
           "raw": "User",
           "quote": null
@@ -37286,7 +37286,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 135,
+          "line": 139,
           "kind": "attr:placeholder",
           "raw": "Search by user ID...",
           "quote": "\""
@@ -37304,7 +37304,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 138,
+          "line": 142,
           "kind": "markup",
           "raw": "From",
           "quote": null
@@ -37329,7 +37329,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 156,
+          "line": 160,
           "kind": "markup",
           "raw": "No audit entries found.",
           "quote": null
@@ -37347,7 +37347,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 165,
+          "line": 169,
           "kind": "markup",
           "raw": "Time",
           "quote": null
@@ -37365,7 +37365,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 168,
+          "line": 172,
           "kind": "markup",
           "raw": "Target",
           "quote": null
