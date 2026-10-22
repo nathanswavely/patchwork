@@ -15,9 +15,25 @@
    * shown so an admin can see what they asked for, and withdrawn through
    * `onWithdraw` rather than by editing the array, because taking a
    * suggestion back is an explicit act.
+   *
+   * The new-word field appears only where a word will actually go somewhere,
+   * and the caller says where:
+   *
+   *   onSuggest         sends it now (Patch Settings). Suggesting there used
+   *                     to wait for Save tags, so a word suggested and then
+   *                     left behind never reached the queue, while its chip
+   *                     already read as waiting on an admin.
+   *   deferSuggestions  collects it in `suggested` for a form that sends it
+   *                     on submit (patch creation).
+   *
+   * An instance admin curates the vocabulary, so for them the field creates
+   * the tag outright and picks it, rather than asking themselves and then
+   * approving their own request.
    */
   import { onMount } from 'svelte';
   import { getTagVocabulary, loadTags } from '../stores/quilt.svelte.js';
+  import { isAdmin } from '../stores/auth.svelte.js';
+  import { api } from '../lib/api.js';
   import { colorForTag, textOnColor } from '../lib/quiltTheme.js';
   import { MOTIFS } from '../lib/patchIcons.js';
   import { X, Plus } from 'phosphor-svelte';
@@ -27,8 +43,14 @@
     suggested = $bindable([]),
     pending = [],
     onWithdraw = null,
+    onSuggest = null,
+    deferSuggestions = false,
     disabled = false,
   } = $props();
+
+  // An instance admin adds to the vocabulary; anyone else asks for a word.
+  let creates = $derived(isAdmin());
+  let showNewWord = $derived(creates || !!onSuggest || deferSuggestions);
 
   onMount(() => {
     if (getTagVocabulary().length === 0) loadTags();
@@ -39,6 +61,7 @@
 
   let draft = $state('');
   let draftError = $state('');
+  let sending = $state(false);
 
   /**
    * Mirrors normalizeTagName in internal/handler/tags.go. The server
@@ -67,12 +90,12 @@
     selected = selected.filter(t => t !== name);
   }
 
-  function addSuggestion() {
-    if (disabled) return;
+  async function addNewWord() {
+    if (disabled || sending) return;
     const name = normalize(draft);
     draftError = '';
     if (!name) {
-      draftError = 'Enter a word to suggest.';
+      draftError = creates ? 'Enter a tag name.' : 'Enter a word to suggest.';
       return;
     }
     const known = vocabulary.find(t => t.name === name);
@@ -83,8 +106,37 @@
       draft = '';
       return;
     }
+    if (creates) {
+      sending = true;
+      try {
+        // CreateTag approves a pending or declined row of the same name
+        // rather than colliding, so this also settles anyone else's
+        // suggestion of the word.
+        const tag = await api('admin/tags', { method: 'POST', body: { name } });
+        await loadTags();
+        add(tag?.name || name);
+        draft = '';
+      } catch (e) {
+        draftError = e.message || 'Failed to add tag';
+      } finally {
+        sending = false;
+      }
+      return;
+    }
     if (pending.includes(name) || suggested.includes(name)) {
       draftError = `${name} is already waiting for review.`;
+      return;
+    }
+    if (onSuggest) {
+      sending = true;
+      try {
+        await onSuggest(name);
+        draft = '';
+      } catch (e) {
+        draftError = e.message || 'Failed to suggest tag';
+      } finally {
+        sending = false;
+      }
       return;
     }
     suggested = [...suggested, name];
@@ -180,31 +232,40 @@
     <p class="lt-muted empty-hint">No tags yet. The instance admin curates the list.</p>
   {/if}
 
-  <div class="suggest-row">
-    <input
-      class="lt-field"
-      type="text"
-      placeholder="Suggest a tag"
-      bind:value={draft}
-      {disabled}
-      maxlength="32"
-      aria-label="Suggest a tag that is not on the list"
-      onkeydown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addSuggestion(); } }}
-    />
-    <button
-      type="button"
-      class="lt-btn lt-btn-secondary lt-btn-sm"
-      onclick={addSuggestion}
-      disabled={disabled || !draft.trim()}
-    ><Plus size={12} weight="bold" /> Suggest</button>
-  </div>
-  {#if draftError}
-    <p class="lt-muted suggest-hint error-hint">{draftError}</p>
-  {:else}
-    <p class="lt-muted suggest-hint">
-      A suggested tag stays on this patch privately until an admin adds it to
-      the quilt's tags.
-    </p>
+  {#if showNewWord}
+    <div class="suggest-row">
+      <input
+        class="lt-field"
+        type="text"
+        placeholder={creates ? 'New tag' : 'Suggest a tag'}
+        bind:value={draft}
+        disabled={disabled || sending}
+        maxlength="32"
+        aria-label={creates ? 'Add a new tag to the quilt' : 'Suggest a tag that is not on the list'}
+        onkeydown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addNewWord(); } }}
+      />
+      <button
+        type="button"
+        class="lt-btn lt-btn-secondary lt-btn-sm"
+        onclick={addNewWord}
+        disabled={disabled || sending || !draft.trim()}
+      ><Plus size={12} weight="bold" /> {creates ? 'Add tag' : 'Suggest'}</button>
+    </div>
+    {#if draftError}
+      <p class="lt-muted suggest-hint error-hint">{draftError}</p>
+    {:else if creates}
+      <p class="lt-muted suggest-hint">A tag added here joins the quilt's tags right away.</p>
+    {:else if onSuggest}
+      <p class="lt-muted suggest-hint">
+        A suggestion is sent for review right away. Until an admin adds it to
+        the quilt's tags, only this patch's admins see it.
+      </p>
+    {:else}
+      <p class="lt-muted suggest-hint">
+        Suggestions are sent for review with this form. Until an admin adds
+        one to the quilt's tags, only this patch's admins see it.
+      </p>
+    {/if}
   {/if}
 </div>
 

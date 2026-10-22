@@ -532,7 +532,7 @@
             The first tag decides your default motif. Missing a word? Suggest
             it, and an admin decides whether it joins the quilt's tags.
           </p>
-          <TagPicker bind:selected={tags} bind:suggested={suggestTags} disabled={submitting} />
+          <TagPicker bind:selected={tags} bind:suggested={suggestTags} deferSuggestions disabled={submitting} />
         </div>
 
         <!-- The tile and its motif are optional here and editable later in
