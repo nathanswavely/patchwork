@@ -2,8 +2,11 @@
   import { api } from '../lib/api.js';
   import MarkdownRenderer from './MarkdownRenderer.svelte';
   import { showToast } from '../stores/toast.svelte.js';
+  import { getUser } from '../stores/auth.svelte.js';
 
-  let { proposalId = '', isMember = false, isAdmin = false } = $props();
+  // `oncount` hears how many comments the thread holds each time it loads,
+  // so a badge counting them moves when somebody posts or deletes (#368).
+  let { proposalId = '', isMember = false, isAdmin = false, oncount = undefined } = $props();
 
   let comments = $state([]);
   let loading = $state(true);
@@ -16,6 +19,20 @@
   let editText = $state('');
   // Two-step delete: first click arms the confirm, second click deletes.
   let deletingId = $state(null);
+
+  // Ownership is read off `author_id`, which every comment carries. The
+  // thread used to gate Edit and Delete on an `is_mine` the server never
+  // sends, so an author could neither edit nor delete their own comment
+  // (#366). The server decides either way: PATCH is author-only, DELETE is
+  // the author, a patch admin or an instance admin.
+  let viewer = $derived(getUser());
+  function isMine(c) {
+    return !!viewer?.id && !!c?.author_id && c.author_id === viewer.id;
+  }
+
+  function countComments(list) {
+    return (list || []).reduce((n, c) => n + 1 + countComments(c.replies), 0);
+  }
 
   const REACTION_EMOJIS = ['\u{1F44D}', '\u{1F44E}', '\u{2764}\u{FE0F}', '\u{1F914}', '\u{1F389}', '\u{1F440}'];
 
@@ -31,6 +48,7 @@
     try {
       const res = await api(`proposals/${proposalId}/comments`);
       comments = res.items || [];
+      oncount?.(countComments(comments));
     } catch (e) {
       error = e.message || 'Failed to load comments';
       comments = [];
@@ -211,10 +229,10 @@
             {#if isMember}
               <button class="action-link" onclick={() => startReply(comment.id)}>Reply</button>
             {/if}
-            {#if comment.author_id && comment.is_mine}
+            {#if isMine(comment)}
               <button class="action-link" onclick={() => startEdit(comment)}>Edit</button>
             {/if}
-            {#if comment.is_mine || isAdmin}
+            {#if isMine(comment) || isAdmin}
               <button class="action-link danger" onclick={() => deleteComment(comment.id)} disabled={submitting}>
                 {deletingId === comment.id ? 'Confirm delete?' : 'Delete'}
               </button>
@@ -280,12 +298,12 @@
                   {/each}
                 </div>
                 <div class="comment-actions">
-                  {#if reply.is_mine || isAdmin}
+                  {#if isMine(reply) || isAdmin}
                     <button class="action-link danger" onclick={() => deleteComment(reply.id)} disabled={submitting}>
                       {deletingId === reply.id ? 'Confirm delete?' : 'Delete'}
                     </button>
                   {/if}
-                  {#if reply.is_mine}
+                  {#if isMine(reply)}
                     <button class="action-link" onclick={() => startEdit(reply)}>Edit</button>
                   {/if}
                 </div>
