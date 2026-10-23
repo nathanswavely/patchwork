@@ -165,6 +165,8 @@ range, a date for everything after it.
 | [058](058-atproto-is-a-source-not-a-second-federation.md) | atproto is a source and an identity, not a second federation — no relay, no AppView, public slice only *(amended: A and B built as 064 and 062, D retired, C optional)* |
 | [059](059-the-handle-is-a-subscribe-option.md) | The handle is a subscribe option — the patch actor exists and no surface says so |
 | [060](060-a-fork-keeps-its-threads-and-loses-its-audience.md) | A fork keeps its threads and loses its audience — the reach gap in the seamrip boundary |
+| [2026-10-20](2026-10-20-the-site-says-where-ai-is.md) | The site says where AI is: a public `/ai` page answering whether AI touches what people post (no), whether AI crawlers can take it (refused by name, with the limits stated), and whether the software was built with AI (yes, with the copy ledger reported as interface text and writing, and a per-page table of the pages a visitor reads); a project part shipped in the binary and not editable, every claim rendered from or tested against the code, and a stewards' part for the instance's own policy *(applies 028, 037)* |
+| [2026-10-20](2026-10-20-a-post-says-whether-ai-made-it.md) | A post says whether AI made it: an instance switch (`off`, `optional`, `required`); a three-answer question with nothing preselected on events, patches, proposals, charter edits and notices, with images asked separately; only `generated` is shown; imported content carries provenance instead; a patch may declare that its work relies on AI, with a badge and a per-person discovery filter; an `unlabelled_ai` report whose first remedy is applying the label *(applies 082, 037, 007, 039)* |
 
 ## Rejected after evaluation
 
