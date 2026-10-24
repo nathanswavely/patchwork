@@ -56,3 +56,25 @@ func governanceRecordIsPublic(db *database.DB, nodeID string) bool {
 	}
 	return setting == "everyone"
 }
+
+// governanceRecordReadableSQL is canReadGovernanceRecord as a boolean
+// expression, for a listing that spans many patches and joins the viewer's
+// own active membership row (aliased memberAlias) to each one (nodeAlias).
+// The activity feed is that listing: it cannot call the per-node Go helper
+// row by row, and a copy of the rule written inline is how the feed came to
+// hand a closed record's proposal titles to anybody who clicked Follow
+// (issue #398).
+//
+// Same answer as the Go helper for everyone holding a role on the patch: an
+// open record, or the room. A follower is an outsider. The caller's join must
+// already require `status = 'active'`, because this reads only the role.
+//
+// There is no instance-admin branch, and that is a narrowing rather than an
+// oversight: a listing scoped to the viewer's own relationships has no reason
+// to reach further for an instance admin than for anyone else
+// (docs/adr/115), and the record itself is still a click away at its own
+// page.
+func governanceRecordReadableSQL(memberAlias, nodeAlias string) string {
+	return `(` + nodeAlias + `.public_governance_record = 'everyone'
+		OR ` + memberAlias + `.role IN ('member','admin'))`
+}
