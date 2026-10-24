@@ -5980,14 +5980,14 @@
         },
         {
           "file": "internal/handler/event_submissions.go",
-          "line": 169,
+          "line": 172,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/event_submissions.go",
-          "line": 174,
+          "line": 177,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -6695,14 +6695,14 @@
         },
         {
           "file": "internal/handler/event_links.go",
-          "line": 154,
+          "line": 160,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_links.go",
-          "line": 366,
+          "line": 372,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
@@ -9089,7 +9089,7 @@
         },
         {
           "file": "internal/handler/event_links.go",
-          "line": 189,
+          "line": 195,
           "kind": "go-error-body",
           "raw": "patch not found",
           "quote": null
@@ -9433,7 +9433,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 148,
+          "line": 154,
           "kind": "go-error-body",
           "raw": "target is required",
           "quote": null
@@ -9451,7 +9451,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 158,
+          "line": 164,
           "kind": "go-error-body",
           "raw": "only active events can be linked",
           "quote": null
@@ -9469,7 +9469,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 170,
+          "line": 176,
           "kind": "go-error-body",
           "raw": "only this patch's admins can add a mention",
           "quote": null
@@ -9487,7 +9487,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 178,
+          "line": 184,
           "kind": "go-error-body",
           "raw": "already mentioned",
           "quote": null
@@ -9505,7 +9505,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 193,
+          "line": 199,
           "kind": "go-error-body",
           "raw": "an event is already on its own patch",
           "quote": null
@@ -9523,7 +9523,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 199,
+          "line": 205,
           "kind": "go-error-body",
           "raw": "only admins of either patch can link",
           "quote": null
@@ -9541,14 +9541,14 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 218,
+          "line": 224,
           "kind": "go-error-body",
           "raw": "only the linked patch's admins choose an event to absorb",
           "quote": null
         },
         {
           "file": "internal/handler/event_links.go",
-          "line": 387,
+          "line": 393,
           "kind": "go-error-body",
           "raw": "only the linked patch's admins choose an event to absorb",
           "quote": null
@@ -9566,14 +9566,14 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 222,
+          "line": 228,
           "kind": "go-error-body",
           "raw": "absorb_event_id must be an event on the linked patch",
           "quote": null
         },
         {
           "file": "internal/handler/event_links.go",
-          "line": 391,
+          "line": 397,
           "kind": "go-error-body",
           "raw": "absorb_event_id must be an event on the linked patch",
           "quote": null
@@ -9591,7 +9591,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 244,
+          "line": 250,
           "kind": "go-error-body",
           "raw": "link already exists",
           "quote": null
@@ -9609,14 +9609,14 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 356,
+          "line": 362,
           "kind": "go-error-body",
           "raw": "link not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_links.go",
-          "line": 432,
+          "line": 438,
           "kind": "go-error-body",
           "raw": "link not found",
           "quote": null
@@ -9634,7 +9634,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 360,
+          "line": 366,
           "kind": "go-error-body",
           "raw": "link is already confirmed",
           "quote": null
@@ -9652,7 +9652,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 376,
+          "line": 382,
           "kind": "go-error-body",
           "raw": "only the other patch's admins can confirm",
           "quote": null
@@ -9670,7 +9670,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 402,
+          "line": 408,
           "kind": "go-error-body",
           "raw": "failed to confirm link",
           "quote": null
@@ -9688,7 +9688,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 437,
+          "line": 443,
           "kind": "go-error-body",
           "raw": "only admins of either patch can remove a link",
           "quote": null
@@ -9706,7 +9706,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 442,
+          "line": 448,
           "kind": "go-error-body",
           "raw": "failed to remove link",
           "quote": null
@@ -9724,7 +9724,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 467,
+          "line": 473,
           "kind": "go-error-body",
           "raw": "mention not found",
           "quote": null
@@ -9742,7 +9742,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 471,
+          "line": 477,
           "kind": "go-error-body",
           "raw": "only this patch's admins can remove a mention",
           "quote": null
@@ -10072,7 +10072,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_submissions.go",
-          "line": 186,
+          "line": 189,
           "kind": "go-error-body",
           "raw": "failed to approve event",
           "quote": null
@@ -10090,14 +10090,14 @@
       "occurrences": [
         {
           "file": "internal/handler/event_submissions.go",
-          "line": 227,
+          "line": 230,
           "kind": "go-error-body",
           "raw": "failed to reject event",
           "quote": null
         },
         {
           "file": "internal/handler/event_submissions.go",
-          "line": 232,
+          "line": 235,
           "kind": "go-error-body",
           "raw": "failed to reject event",
           "quote": null
