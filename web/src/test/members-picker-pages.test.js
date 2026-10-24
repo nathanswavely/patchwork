@@ -24,6 +24,7 @@ function walk(dir, out = []) {
 
 const src = resolve(__dirname, '..');
 const proposalDetail = shipped(resolve(src, 'pages/ProposalDetail.svelte'));
+const patchMembers = shipped(resolve(src, 'lib/patchMembers.js'));
 const nodesGo = readFileSync(resolve(__dirname, '../../../internal/handler/nodes.go'), 'utf8');
 
 // #367: the election nominee picker sent its page token as `cursor`, the
@@ -34,8 +35,11 @@ describe('the nominee picker reaches the hundred-and-first member (#367)', () =>
   });
 
   it('sends the page token back as `after`', () => {
-    expect(proposalDetail).toContain('`?limit=100&after=${encodeURIComponent(after)}`');
-    expect(proposalDetail).toContain("after = data.next_cursor || '';");
+    // The picker pages through the shared helper, which owns the token.
+    expect(proposalDetail).toContain("import { allMembers } from '../lib/patchMembers.js'");
+    expect(proposalDetail).toContain('await allMembers(slug)');
+    expect(patchMembers).toContain("params.set('after', after)");
+    expect(patchMembers).toContain("data?.next_cursor || ''");
   });
 
   // The server has one name for the page token. A client that spells it
