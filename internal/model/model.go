@@ -339,6 +339,12 @@ type Node struct {
 	// keeps its full bar and one made this morning asks for none. Set on the
 	// detail response and by the patch's admins at Settings -> Info.
 	FoundedAt *string `json:"founded_at"`
+	// Nonprofit is whether the organisation behind this patch says it is
+	// one (#448). Self-declared, by the patch's admins or by whoever
+	// suggested the listing; nothing verifies it. Deliberately not a tag:
+	// tags place patches and draw motifs (docs/adr/021), and a legal
+	// structure says nothing about who a patch is like.
+	Nonprofit bool `json:"nonprofit"`
 	// MovedTo is where this patch says it has gone (docs/adr/090). Set by
 	// the patch's own admins, rendered as a banner on its page and a line
 	// on its card, and carried on the AP actor as `movedTo`. The patch

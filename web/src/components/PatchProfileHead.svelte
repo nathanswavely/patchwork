@@ -213,6 +213,20 @@
       <p class="profile-desc">{node.description}</p>
     {/if}
 
+    <!-- Nonprofit (#448): self-declared, so the title says who declared it.
+         Seeded from the tree, which carries the flag, so it is right on the
+         first frame. -->
+    {#if node.nonprofit}
+      <p class="nonprofit-row">
+        <span
+          class="lt-pill"
+          title={isUnclaimed
+            ? 'Whoever added this listing says it is a nonprofit organisation.'
+            : "This patch's admins say it is a nonprofit organisation."}
+        >Nonprofit</span>
+      </p>
+    {/if}
+
     <!-- State is worn in the header, never disguised as an action. The
          unclaimed fact used to be visible only as a blue button, so the
          act shouted while the fact stayed silent (docs/adr/042).
@@ -429,7 +443,8 @@
     color: var(--color-text);
   }
 
-  .amended-lining-row {
+  .amended-lining-row,
+  .nonprofit-row {
     text-align: center;
     margin-top: 0.5rem;
   }
