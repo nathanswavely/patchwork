@@ -53238,11 +53238,11 @@
       ]
     },
     {
-      "id": "e89aff8acff9",
-      "text": "Shown as a badge on this patch's page. Patchwork takes your word for it.",
-      "words": 14,
+      "id": "32ca129f6832",
+      "text": "Shown as a badge on this patch's page.",
+      "words": 8,
       "tier": "helper",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -53250,7 +53250,7 @@
           "file": "web/src/pages/PatchSettingsInfo.svelte",
           "line": 678,
           "kind": "markup",
-          "raw": "Shown as a badge on this patch's page. Patchwork takes your word for it.",
+          "raw": "Shown as a badge on this patch's page.",
           "quote": null
         }
       ]
@@ -64880,6 +64880,24 @@
           "line": 741,
           "kind": "markup",
           "raw": "Admins are chosen outside Patchwork. What the community decided is\n          recorded below.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e89aff8acff9",
+      "text": "Shown as a badge on this patch's page. Patchwork takes your word for it.",
+      "words": 14,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 678,
+          "kind": "markup",
+          "raw": "Shown as a badge on this patch's page. Patchwork takes your word for it.",
           "quote": null
         }
       ]

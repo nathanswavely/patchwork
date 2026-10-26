@@ -675,7 +675,7 @@
       <span>This is a nonprofit organisation</span>
     </label>
     <p class="lt-muted tags-hint" style="margin-top: 0.35rem;">
-      Shown as a badge on this patch's page. Patchwork takes your word for it.
+      Shown as a badge on this patch's page.
     </p>
   </div>
 
