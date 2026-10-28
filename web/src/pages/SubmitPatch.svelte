@@ -20,6 +20,9 @@
   // Tags are optional on a community suggestion — an admin can add them at
   // review time if the submitter skips this (docs/adr/021).
   let tags = $state([]);
+  // Whether the place is a nonprofit, as far as the suggester knows (#448).
+  // The reviewer sees it and can correct it; the owner can change it later.
+  let nonprofit = $state(false);
   let submitting = $state(false);
   let error = $state('');
 
@@ -53,6 +56,7 @@
         address: address.trim() || undefined,
         feed_url: feedUrl.trim() || undefined,
         tags: tags.length > 0 ? tags : undefined,
+        nonprofit: nonprofit || undefined,
       };
       const result = await api('submissions', { method: 'POST', body });
       if (result.node) {
@@ -123,6 +127,11 @@
       <label class="lt-label"><span>Tags <span class="lt-optional">(optional)</span></span></label>
       <TagPicker bind:selected={tags} disabled={submitting} />
     </div>
+
+    <label class="lt-check">
+      <input type="checkbox" bind:checked={nonprofit} disabled={submitting} />
+      <span>This is a nonprofit organisation</span>
+    </label>
 
     {#if error}
       <p class="lt-error-text">{error}</p>

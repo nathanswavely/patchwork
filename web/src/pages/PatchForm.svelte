@@ -213,6 +213,9 @@
   // Words that are not in the vocabulary yet (docs/adr/114). They travel in
   // their own field so an unknown name in `tags` stays an error.
   let suggestTags = $state([]);
+  // Whether the organisation is a nonprofit (#448). In setup it starts from
+  // what the listing's suggester said, and the claimant confirms or corrects.
+  let nonprofit = $state(initial?.nonprofit === true);
 
   // Tile appearance. At creation the form always shows a concrete pick —
   // seeded randomly so every new patch starts somewhere real — and
@@ -370,6 +373,7 @@
             appearance,
             tags: tags.length > 0 ? tags : undefined,
             suggest_tags: suggestTags.length > 0 ? suggestTags : undefined,
+            nonprofit,
           },
         });
         showToast('This patch is yours', 'success');
@@ -399,6 +403,7 @@
         appearance,
         tags: tags.length > 0 ? tags : undefined,
         suggest_tags: suggestTags.length > 0 ? suggestTags : undefined,
+        nonprofit: nonprofit || undefined,
       };
       const result = await api('nodes', { method: 'POST', body });
       // A word an admin already declined does not fail the creation; the
@@ -534,6 +539,11 @@
           </p>
           <TagPicker bind:selected={tags} bind:suggested={suggestTags} disabled={submitting} />
         </div>
+
+        <label class="lt-check">
+          <input type="checkbox" bind:checked={nonprofit} disabled={submitting} />
+          <span>This is a nonprofit organisation</span>
+        </label>
 
         <!-- The tile and its motif are optional here and editable later in
              Patch Settings; on a phone, with the fabric wall and blocks, they

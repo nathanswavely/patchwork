@@ -344,6 +344,21 @@
     }
   }
 
+  // Whether the organisation says it is a nonprofit (#448). A field and not
+  // a tag: tags place patches and draw motifs (docs/adr/021), and a legal
+  // structure says nothing about who a patch is like.
+  let savingNonprofit = $state(false);
+  async function saveNonprofit(value) {
+    savingNonprofit = true;
+    try {
+      await saveField('nonprofit', value);
+    } catch (e) {
+      showToast(e.message || 'Failed to save', 'error');
+    } finally {
+      savingNonprofit = false;
+    }
+  }
+
   // The moved-to pointer (docs/adr/090). Its own block rather than an
   // InlineEdit, because it needs a sentence saying what setting it does to
   // the patch, and because clearing it is a real act somebody will want.
@@ -642,6 +657,26 @@
         >Cancel</button>
       </div>
     {/if}
+  </div>
+
+  <!-- Nonprofit (#448): a fact about how the organisation is set up, said by
+       its admins and shown as a badge on the patch's page. -->
+  <div class="links-section">
+    <div class="links-header">
+      <span class="links-label">Nonprofit</span>
+    </div>
+    <label class="lt-check toggle-row">
+      <input
+        type="checkbox"
+        checked={node?.nonprofit === true}
+        disabled={savingNonprofit}
+        onchange={(e) => saveNonprofit(e.target.checked)}
+      />
+      <span>This is a nonprofit organisation</span>
+    </label>
+    <p class="lt-muted tags-hint" style="margin-top: 0.35rem;">
+      Shown as a badge on this patch's page.
+    </p>
   </div>
 
   <!-- The image and its description save together, unlike every other field

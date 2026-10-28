@@ -122,7 +122,7 @@ func Tables() []Table {
 				follower_permissions, governance_config, governance_setup_complete,
 				designated_successor_id, accept_event_suggestions,
 				submitted_by, submission_source, did, activated_at,
-				notice_posting, notice_replies_default, public_member_list, public_governance_record, moved_to, founded_at, created_at, updated_at
+				notice_posting, notice_replies_default, public_member_list, public_governance_record, moved_to, founded_at, nonprofit, created_at, updated_at
 				FROM nodes WHERE removed_at IS NULL`,
 			Columns: cols(id("id"), id("owner_id"), c("name"), c("slug"),
 				c("description"), c("latitude"), c("longitude"),
@@ -201,6 +201,11 @@ func Tables() []Table {
 				// had deliberately kept. def() so archives written before the
 				// column import as NULL - "started with its row".
 				def("founded_at", nil),
+				// Whether the organisation says it is a nonprofit (#448). A
+				// fact about the community, so it travels; def() so archives
+				// written before the column import as 0, which is what every
+				// patch in them said.
+				def("nonprofit", 0),
 				c("created_at"), c("updated_at")),
 		},
 		{
