@@ -1473,9 +1473,9 @@ func (s *seeder) seedNotifications() {
 			readAt = &r
 		}
 
-		_, err := s.db.Exec(`INSERT INTO notifications (id, user_id, type, title, body, link, read_at, created_at)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-			id, userID, n.nType, n.title, n.body, n.link, readAt, createdAt)
+		_, err := s.db.Exec(`INSERT INTO notifications (id, user_id, type, title, body, link, read_at, created_at, node_id)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULLIF(?, ''))`,
+			id, userID, n.nType, n.title, n.body, n.link, readAt, createdAt, notifications.NodeIDFromLink(s.db, n.link))
 		if err != nil {
 			log.Fatalf("seed notification: %v", err)
 		}
@@ -1490,6 +1490,8 @@ func (s *seeder) seedNotifications() {
 	adminNotifs := []struct {
 		nType, title, body, link string
 		read                     bool
+		// The patch's slug, for a row whose link does not lead into it.
+		patch string
 	}{
 		// Linked at the global events list rather than at its patch's own
 		// events page, which is where a real event.suggested points. The
@@ -1497,9 +1499,9 @@ func (s *seeder) seedNotifications() {
 		// shell: a workspace route remounts the bell, and the remount's
 		// refresh would supply the right count whether or not reading
 		// updated it.
-		{string(notifications.EventSuggested), "Event suggested: First Friday Gallery Walk", "Someone suggested an event for the First Friday Collective.", "/events", false},
-		{string(notifications.ProposalNew), "New proposal: Anti-harassment policy", "A new proposal has been created for the Lancaster Arts District.", "/patches/lancaster-arts-district/governance/proposals", false},
-		{string(notifications.MembershipJoined), "New member joined First Friday", "David Park has joined the First Friday Collective.", "/patches/first-friday-collective/members", true},
+		{string(notifications.EventSuggested), "Event suggested: First Friday Gallery Walk", "Someone suggested an event for the First Friday Collective.", "/events", false, "first-friday-collective"},
+		{string(notifications.ProposalNew), "New proposal: Anti-harassment policy", "A new proposal has been created for the Lancaster Arts District.", "/patches/lancaster-arts-district/governance/proposals", false, ""},
+		{string(notifications.MembershipJoined), "New member joined First Friday", "David Park has joined the First Friday Collective.", "/patches/first-friday-collective/members", true, ""},
 	}
 	// Two deep links to single entities, the shapes issue #56 got wrong: an
 	// event (addressed globally) and a charter (needs its 'docs/' segment).
@@ -1510,24 +1512,33 @@ func (s *seeder) seedNotifications() {
 		adminNotifs = append(adminNotifs, struct {
 			nType, title, body, link string
 			read                     bool
-		}{string(notifications.EventSubmissionApproved), "Your event was approved: " + eventTitle, "It is on the calendar now.", weblink.Event(eventID), false})
+			patch                    string
+		}{string(notifications.EventSubmissionApproved), "Your event was approved: " + eventTitle, "It is on the calendar now.", weblink.Event(eventID), false, ""})
 	}
 	if slug, docID, docTitle, ok := s.firstGovernanceDoc(); ok {
 		adminNotifs = append(adminNotifs, struct {
 			nType, title, body, link string
 			read                     bool
-		}{string(notifications.GovernanceDocUpdated), "Charter updated: " + docTitle, "The charter was amended.", weblink.GovernanceDoc(slug, docID), false})
+			patch                    string
+		}{string(notifications.GovernanceDocUpdated), "Charter updated: " + docTitle, "The charter was amended.", weblink.GovernanceDoc(slug, docID), false, ""})
 	}
-	for i, n := range adminNotifs {
+	// Inserted oldest first, so the id order the list sorts by agrees with
+	// the timestamps: the first entry is the newest.
+	for i := len(adminNotifs) - 1; i >= 0; i-- {
+		n := adminNotifs[i]
 		createdAt := clock.Format(s.now.AddDate(0, 0, -(i + 1)))
 		var readAt *string
 		if n.read {
 			r := clock.Format(s.now)
 			readAt = &r
 		}
-		_, err := s.db.Exec(`INSERT INTO notifications (id, user_id, type, title, body, link, read_at, created_at)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-			auth.NewUUIDv7(), s.userIDs[0], n.nType, n.title, n.body, n.link, readAt, createdAt)
+		nodeID := notifications.NodeIDFromLink(s.db, n.link)
+		if n.patch != "" {
+			nodeID = notifications.NodeIDFromLink(s.db, "/patches/"+n.patch)
+		}
+		_, err := s.db.Exec(`INSERT INTO notifications (id, user_id, type, title, body, link, read_at, created_at, node_id)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULLIF(?, ''))`,
+			auth.NewUUIDv7(), s.userIDs[0], n.nType, n.title, n.body, n.link, readAt, createdAt, nodeID)
 		if err != nil {
 			log.Fatalf("seed admin notification: %v", err)
 		}

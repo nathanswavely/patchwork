@@ -564,11 +564,15 @@ func DeleteReply(db *database.DB) http.HandlerFunc {
 	}
 }
 
-// excerpt trims a body for a notification line.
+// excerpt trims a body for a notification line. Notices, proposals and
+// comments all send one: a notification carrying a whole proposal is the
+// proposal, read in the wrong place. n counts characters, not bytes, so a
+// cut never lands inside a multi-byte one and leaves invalid UTF-8.
 func excerpt(s string, n int) string {
 	s = strings.TrimSpace(s)
-	if len(s) <= n {
+	r := []rune(s)
+	if len(r) <= n {
 		return s
 	}
-	return s[:n] + "…"
+	return strings.TrimSpace(string(r[:n])) + "…"
 }

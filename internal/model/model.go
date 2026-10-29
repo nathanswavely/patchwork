@@ -72,6 +72,10 @@ type Notification struct {
 	Link      string  `json:"link"`
 	ReadAt    *string `json:"read_at,omitempty"`
 	CreatedAt string  `json:"created_at"`
+	// The patch the notification is about, when it is about one
+	// (migration notification_patch). Empty for moderation, account,
+	// bulletin and remote rows.
+	NodeName string `json:"node_name,omitempty"`
 }
 
 // RemoteFollow is a person's follow of a patch on another quilt

@@ -592,7 +592,7 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			ActorID:  user.ID,
 			EntityID: id,
 			Title:    "New proposal: " + req.Title,
-			Body:     req.Body,
+			Body:     excerpt(req.Body, 200),
 			Link:     weblink.Proposal(slug, id),
 		})
 

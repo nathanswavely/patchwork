@@ -7,6 +7,7 @@ import (
 
 	"github.com/patchwork-toolkit/patchwork/internal/handler"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
+	"github.com/patchwork-toolkit/patchwork/internal/notifications"
 )
 
 func TestCreateNotification(t *testing.T) {
@@ -268,5 +269,54 @@ func TestNotificationCount(t *testing.T) {
 	result := decodeJSON(t, w)
 	if result["unread"].(float64) != 2 {
 		t.Fatalf("expected 2 unread, got %v", result["unread"])
+	}
+}
+
+// A notification names the patch it is about (migration notification_patch).
+// The in-app channel keeps the patch the event carries, falls back to the
+// link when the event names none, and leaves a row with no patch empty
+// rather than guessing, because a moderation outcome or a remote patch's
+// news is not from any patch here.
+func TestListNotificationsNamesThePatch(t *testing.T) {
+	db := setupTestDB(t)
+	owner, _ := createTestUser(t, db, "notif-patch-owner", "member")
+	user, userToken := createTestUser(t, db, "notif-patch-user", "member")
+	press := createTestNode(t, db, owner.ID, "Brayer Press", "press", "open")
+	createTestNode(t, db, owner.ID, "Brayer Press Two", "press-two", "open")
+	eventID := createTestEvent(t, db, press, owner.ID, "Open studio")
+
+	ch := &notifications.InAppChannel{}
+	ch.Send(db, user.ID, notifications.Event{Type: notifications.ProposalNew, NodeID: press, Title: "named", Link: "/elsewhere"})
+	ch.Send(db, user.ID, notifications.Event{Type: notifications.ProposalNew, Title: "from patch link", Link: "/patches/press/governance/proposals"})
+	ch.Send(db, user.ID, notifications.Event{Type: notifications.ProposalNew, Title: "from event link", Link: "/events/" + eventID})
+	ch.Send(db, user.ID, notifications.Event{Type: notifications.ProposalNew, Title: "prefix only", Link: "/patches/press-three"})
+	handler.CreateNotification(db, user.ID, "account.warned", "no patch", "", "/settings")
+
+	r := authedRequest("GET", "/api/v1/notifications", nil, userToken)
+	mux := http.NewServeMux()
+	mux.HandleFunc("GET /api/v1/notifications", middleware.AuthRequired(db, handler.ListNotifications(db)))
+	w := httptest.NewRecorder()
+	mux.ServeHTTP(w, r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+
+	want := map[string]string{
+		"named":           "Brayer Press",
+		"from patch link": "Brayer Press",
+		"from event link": "Brayer Press",
+		"prefix only":     "",
+		"no patch":        "",
+	}
+	items := decodeJSON(t, w)["items"].([]interface{})
+	if len(items) != len(want) {
+		t.Fatalf("expected %d notifications, got %d", len(want), len(items))
+	}
+	for _, it := range items {
+		n := it.(map[string]interface{})
+		got, _ := n["node_name"].(string)
+		if got != want[n["title"].(string)] {
+			t.Errorf("%q: node_name = %q, want %q", n["title"], got, want[n["title"].(string)])
+		}
 	}
 }
