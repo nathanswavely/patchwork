@@ -126,7 +126,7 @@ func TestNoAIServiceDependency(t *testing.T) {
 // amended 2026-10-28). This fails on a string nobody has looked at, or a
 // rewrite saved but never applied, so the page cannot ship unread. It
 // accepts a person's words and AI wording a person chose to keep alike,
-// because the page itself says which parts are which.
+// because the copy ledger records which parts are which.
 //
 // Only strings found in nothing but the page's two source files are held
 // here. A string the page shares with other screens ("Failed to load", "The

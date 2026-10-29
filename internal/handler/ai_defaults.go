@@ -21,16 +21,14 @@ package handler
 // And nobody ships the page unread: TestAIPageWordsAreDecided reads the copy
 // ledger and fails on any string in this file or in
 // web/src/pages/AiPage.svelte that a person has not decided. Parts of the
-// page are AI wording a person kept, and the page says so.
+// page are AI wording a person kept; the copy ledger records which.
 //
 // {quilt_name} is substituted at serve time, as in legal_defaults.go.
 //
 // Formatting: one line per paragraph and per list item. The frontend renders
 // markdown with breaks:true, so a wrapped paragraph would render ragged.
 
-const aiPageProject = `*Parts of this page were drafted with AI and reviewed by a person before it shipped.*
-
-## Does AI touch what you post here?
+const aiPageProject = `## Does AI touch what you post here?
 
 No. Nothing on {quilt_name} sends what you write, or anything about you, to an AI model. No model summarizes, ranks, rewrites, moderates or generates anything here. Accounts are for people, and nothing on this site posts by itself. We can't stop other users from taking public content from the site and giving it to AI, but the site itself will not do so.
 
@@ -52,7 +50,7 @@ That has limits. A scraper that lies about its name looks like any other browser
 
 Yes. Patchwork's codebase was developed with significant help from AI coding tools. People design it, make every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.
 
-The core of what visitors and newcomers read is human written: the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, parts of this page, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please contribute to the project.
+The core of what visitors and newcomers read is human written: the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please contribute to the project.
 
 The project's repository keeps [a public record of who wrote each string](https://github.com/nathanswavely/patchwork/blob/main/copy/REPORT.md) a visitor can read.`
 

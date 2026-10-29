@@ -185,9 +185,10 @@ person's words, or AI wording a person read and chose to keep
 (`TestAIPageWordsAreDecided` fails only on a string nobody has looked at,
 or a rewrite saved and never applied). The site's policy is transparency,
 not abstinence, and a disclosure page that is partly drafted is consistent
-with it as long as it says so. So it does: its first line says parts of it
-were drafted with AI, and its account of the site's writing names "parts of
-this page" among the drafted copy. What the page must never do is ship
-unread, or claim a person wrote what they did not.
+with it. The page carries no notice about itself: its account of the
+site's writing already says much of the copy was drafted with AI and
+reviewed, and the copy ledger records which strings, this page's included.
+What the page must never do is ship unread, or claim a person wrote what
+they did not.
 
 Decisions 1 to 4 stand.
