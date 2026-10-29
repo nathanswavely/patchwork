@@ -23,13 +23,20 @@ function fn(name) {
 }
 
 describe('a corner mark', () => {
-  it('is a glyph with no disc under it', () => {
+  it('is a glyph on a soft shadow, with no disc and no outline', () => {
     const draw = fn('drawCornerMark');
-    expect(draw).not.toMatch(/append\('circle'\)/);
-    expect(draw).toMatch(/paint-order', 'stroke'/);
-    // Phosphor's unfilled 256-unit box would take the halo stroke and draw
-    // a frame around every glyph.
-    expect(draw).toMatch(/rect\[fill="none"\]/);
+    // One circle, and it is the shadow: filled with the fading gradient,
+    // never a solid fill, a ring, or an offset copy.
+    expect(draw.match(/append\('circle'\)/g)).toHaveLength(1);
+    expect(draw).toMatch(/\.attr\('fill', `url\(#\$\{MARK_SHADOW_ID\}\)`\)/);
+    expect(draw).not.toMatch(/'stroke'/);
+    // A dark edge traced around each glyph was tried and read as busy.
+    expect(draw).not.toMatch(/paint-order/);
+  });
+
+  it('fades the shadow to nothing at its edge', () => {
+    expect(quilt).toMatch(/const MARK_SHADOW_STOPS = \[\[0, [\d.]+\], \[[\d.]+, [\d.]+\], \[1, 0\]\]/);
+    expect(quilt).toMatch(/append\('radialGradient'\)\.attr\('id', MARK_SHADOW_ID\)/);
   });
 
   it('draws the motif in one color, not the patch identity color', () => {

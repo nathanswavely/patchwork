@@ -216,15 +216,19 @@
   // whole job is to show fabric. The glyph is larger than it was inside a
   // disc, since it no longer has one to read against.
   const MARK_GLYPH_PX = MARK_PX * 0.72;
-  // What lets a bare glyph read on any fabric: a dark edge stroked under the
-  // fill (paint-order), so a white glyph holds on pale cloth and a pale
-  // glyph on white. Hardcoded black in both themes, for the reason the
+  // What lets a bare glyph read on any fabric: a soft dark spot behind it
+  // that fades to nothing, so a white glyph holds on pale cloth without the
+  // mark drawing a shape of its own. A dark edge stroked around the glyph
+  // was tried first and made every tile look busy: it traced each glyph's
+  // outline in black. Hardcoded black in both themes, for the reason the
   // tile's own pillow shadow is: --lt-shadow-color inverts with the theme
   // because it is built for chrome on the page canvas, and on arbitrary
-  // fabric a pale halo either disappears or reads as a glow. In screen
-  // pixels at full mark size.
-  const MARK_HALO = 'rgba(0,0,0,0.55)';
-  const MARK_HALO_PX = 1.6;
+  // fabric a pale halo either disappears or reads as a glow. One gradient,
+  // shared by every mark (buildLayout defines it); the radius is a little
+  // past the glyph's corners so the fade finishes on bare fabric.
+  const MARK_SHADOW_ID = 'pw-mark-shadow';
+  const MARK_SHADOW_R = MARK_PX * 0.6;
+  const MARK_SHADOW_STOPS = [[0, 0.42], [0.55, 0.28], [1, 0]];
   // The motif is white whatever the patch's colors: it says what a patch is,
   // and the fabric already says how it looks. Status glyphs keep their own
   // colors (gold star, red heart), which is how they stay distinct from it.
@@ -1064,6 +1068,18 @@
 
     const tileGroups = []; // For staggered animation.
     cornerMarks = new Map(); // Re-collected below; the old svg is already gone.
+    // The soft shadow every corner mark sits on (drawCornerMark). In
+    // objectBoundingBox units, so one definition fits every circle.
+    if (interactive) {
+      const shadow = contentG.append('defs').attr('class', 'mark-defs')
+        .append('radialGradient').attr('id', MARK_SHADOW_ID);
+      for (const [offset, alpha] of MARK_SHADOW_STOPS) {
+        shadow.append('stop')
+          .attr('offset', offset)
+          .attr('stop-color', '#000')
+          .attr('stop-opacity', alpha);
+      }
+    }
 
     // Cloth geometry, collected across tiles and emitted once per paint.
     // Grouped into spatial chunks because a path is only skipped when its
@@ -2241,18 +2257,14 @@
     const cx = sx * (MARK_INSET + MARK_PX / 2);
     const cy = sy * (MARK_INSET + MARK_PX / 2);
 
-    // The halo is a stroke on the glyph itself rather than a CSS filter or a
-    // second copy of the paths: these transforms are rewritten on every zoom
-    // tick, up to three per tile across the whole quilt, and a stroke painted
-    // under the fill costs nothing a filter would. The glyph is drawn in
-    // Phosphor's 256-unit box, so the width is stated in those units. Every
-    // Phosphor icon also carries an unfilled rect the size of that box, which
-    // the inherited stroke would draw as a frame around the glyph.
-    for (const box of glyph.querySelectorAll('rect[fill="none"]')) box.remove();
-    glyph.setAttribute('stroke', MARK_HALO);
-    glyph.setAttribute('stroke-width', (MARK_HALO_PX * 2 * 256 / MARK_GLYPH_PX).toFixed(1));
-    glyph.setAttribute('stroke-linejoin', 'round');
-    glyph.setAttribute('paint-order', 'stroke');
+    // The shadow is a gradient-filled circle rather than a CSS or SVG blur
+    // filter: these transforms are rewritten on every zoom tick, up to three
+    // per tile across the whole quilt, and a gradient fill is a plain paint
+    // where a filter would be an offscreen pass per mark.
+    g.append('circle')
+      .attr('cx', cx).attr('cy', cy).attr('r', MARK_SHADOW_R)
+      .attr('fill', `url(#${MARK_SHADOW_ID})`);
+
     glyph.setAttribute('transform',
       `translate(${cx - MARK_GLYPH_PX / 2},${cy - MARK_GLYPH_PX / 2}) ` +
       glyph.getAttribute('transform'));
