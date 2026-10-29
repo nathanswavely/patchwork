@@ -6221,11 +6221,11 @@
       ]
     },
     {
-      "id": "a9e5c9e03c0e",
-      "text": "*Draft. A model wrote this text from the design record. A person rewrites it before this page ships, and a test holds the release until they have.*",
-      "words": 27,
+      "id": "a5cc27e3c517",
+      "text": "*Parts of this page were drafted with AI and reviewed by a person before it shipped.*",
+      "words": 16,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6233,7 +6233,7 @@
           "file": "internal/handler/ai_defaults.go",
           "line": 31,
           "kind": "go-doc-block",
-          "raw": "*Draft. A model wrote this text from the design record. A person rewrites it before this page ships, and a test holds the release until they have.*",
+          "raw": "*Parts of this page were drafted with AI and reviewed by a person before it shipped.*",
           "quote": null
         }
       ]
@@ -6243,7 +6243,7 @@
       "text": "## Does AI touch what you post here?",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6257,11 +6257,11 @@
       ]
     },
     {
-      "id": "4784898aafe6",
-      "text": "No. Nothing on {quilt_name} sends what you write, or anything about you, to an AI model. No model summarizes, ranks, rewrites, moderates or generates anything here. Accounts are for people, and nothing on this site posts by itself.",
-      "words": 38,
+      "id": "8378765ce6af",
+      "text": "No. Nothing on {quilt_name} sends what you write, or anything about you, to an AI model. No model summarizes, ranks, rewrites, moderates or generates anything here. Accounts are for people, and nothing on this site posts by itself. We can't stop other users from taking public content from the site and giving it to AI, but the site itself will not do so.",
+      "words": 63,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6269,17 +6269,21 @@
           "file": "internal/handler/ai_defaults.go",
           "line": 35,
           "kind": "go-doc-block",
-          "raw": "No. Nothing on {quilt_name} sends what you write, or anything about you, to an AI model. No model summarizes, ranks, rewrites, moderates or generates anything here. Accounts are for people, and nothing on this site posts by itself.",
+          "raw": "No. Nothing on {quilt_name} sends what you write, or anything about you, to an AI model. No model summarizes, ranks, rewrites, moderates or generates anything here. Accounts are for people, and nothing on this site posts by itself. We can't stop other users from taking public content from the site and giving it to AI, but the site itself will not do so.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "No. Nothing on {quilt_name} sends what you write, or anything about you, to an AI model. No model summarizes, ranks, rewrites, moderates or generates anything here. Accounts are for people, and nothing on this site posts by itself.",
+      "authorship": {
+        "kind": "edited"
+      }
     },
     {
       "id": "bba105368d68",
       "text": "The server opens connections to other machines for these reasons and no others:",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6315,7 +6319,7 @@
       "text": "## Can AI companies take what is here?",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6329,11 +6333,11 @@
       ]
     },
     {
-      "id": "6a41208d679f",
-      "text": "Not with permission. The site's robots.txt asks these crawlers to stay away, and the server refuses the ones that arrive under their own name anyway:",
-      "words": 25,
+      "id": "3208cd4b2724",
+      "text": "Not with permission. The site's robots.txt asks these crawlers to stay away, and the server refuses the ones that arrive under names that we know are AI including, but not limited to:",
+      "words": 32,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6341,10 +6345,14 @@
           "file": "internal/handler/ai_defaults.go",
           "line": 45,
           "kind": "go-doc-block",
-          "raw": "Not with permission. The site's robots.txt asks these crawlers to stay away, and the server refuses the ones that arrive under their own name anyway:",
+          "raw": "Not with permission. The site's robots.txt asks these crawlers to stay away, and the server refuses the ones that arrive under names that we know are AI including, but not limited to:",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Not with permission. The site's robots.txt asks these crawlers to stay away, and the server refuses the ones that arrive under their own name anyway:",
+      "authorship": {
+        "kind": "edited"
+      }
     },
     {
       "id": "f26633d5872d",
@@ -6369,7 +6377,7 @@
       "text": "## Was this software built with AI?",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6383,11 +6391,11 @@
       ]
     },
     {
-      "id": "139d5e823c79",
-      "text": "Yes. Patchwork's codebase was developed with significant help from AI coding tools. People design it, makes every decision about how its governance works, and reviews the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
+      "id": "997a93384fe4",
+      "text": "Yes. Patchwork's codebase was developed with significant help from AI coding tools. People design it, make every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
       "words": 44,
       "tier": "prose",
-      "status": "human",
+      "status": "unreviewed",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6395,19 +6403,15 @@
           "file": "internal/handler/ai_defaults.go",
           "line": 53,
           "kind": "go-doc-block",
-          "raw": "Yes. Patchwork's codebase was developed with significant help from AI coding tools. People design it, makes every decision about how its governance works, and reviews the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
+          "raw": "Yes. Patchwork's codebase was developed with significant help from AI coding tools. People design it, make every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
           "quote": null
         }
-      ],
-      "previous_ai_text": "Yes. Patchwork is written with a great deal of help from AI coding tools. One person designs it, makes every decision about how its governance works, and reviews what ships. The decision records in its repository were drafted with AI help and left that way.",
-      "authorship": {
-        "kind": "edited"
-      }
+      ]
     },
     {
-      "id": "ff3531767d6b",
-      "text": "The writing a visitor meets first is a person's: the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. Much of the rest, including the charter templates, the guides to how governance works, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped.",
-      "words": 62,
+      "id": "22d9522d98bb",
+      "text": "The core of what visitors and newcomers read is human written: the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, parts of this page, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please contribute to the project.",
+      "words": 104,
       "tier": "prose",
       "status": "unreviewed",
       "replacement": null,
@@ -6417,7 +6421,7 @@
           "file": "internal/handler/ai_defaults.go",
           "line": 55,
           "kind": "go-doc-block",
-          "raw": "The writing a visitor meets first is a person's: the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. Much of the rest, including the charter templates, the guides to how governance works, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped.",
+          "raw": "The core of what visitors and newcomers read is human written: the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, parts of this page, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please contribute to the project.",
           "quote": null
         }
       ]
@@ -6427,7 +6431,7 @@
       "text": "The project's repository keeps [a public record of who wrote each string](https://github.com/nathanswavely/patchwork/blob/main/copy/REPORT.md) a visitor can read.",
       "words": 16,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6445,7 +6449,7 @@
       "text": "Other servers in the fediverse, when the stewards have turned federation on, to deliver public posts to their followers and to read their public keys.",
       "words": 25,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6463,7 +6467,7 @@
       "text": "Calendars a patch has connected, to copy in their events.",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6481,7 +6485,7 @@
       "text": "A patch's own website and domain records, when someone claims the patch and the site checks that they run it.",
       "words": 20,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6499,7 +6503,7 @@
       "text": "The mail server the stewards set up, to send sign-in links and the notifications you turn on.",
       "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -73947,6 +73951,68 @@
           "quote": null
         }
       ]
+    },
+    {
+      "id": "a9e5c9e03c0e",
+      "text": "*Draft. A model wrote this text from the design record. A person rewrites it before this page ships, and a test holds the release until they have.*",
+      "words": 27,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 31,
+          "kind": "go-doc-block",
+          "raw": "*Draft. A model wrote this text from the design record. A person rewrites it before this page ships, and a test holds the release until they have.*",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "58dcd22fa676",
+      "text": "Yes. Patchwork's codebase was developed with significant help from AI coding tools. People design it, makes every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
+      "words": 44,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 53,
+          "kind": "go-doc-block",
+          "raw": "Yes. Patchwork's codebase was developed with significant help from AI coding tools. People design it, makes every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
+          "quote": null
+        }
+      ],
+      "previous_ai_text": "Yes. Patchwork is written with a great deal of help from AI coding tools. One person designs it, makes every decision about how its governance works, and reviews what ships. The decision records in its repository were drafted with AI help and left that way.",
+      "authorship": {
+        "kind": "written"
+      }
+    },
+    {
+      "id": "ad09c25c93fe",
+      "text": "The copy that visitors and newcomers touch is human written, including the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please contribute to the project.",
+      "words": 97,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 55,
+          "kind": "go-doc-block",
+          "raw": "The copy that visitors and newcomers touch is human written, including the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please contribute to the project.",
+          "quote": null
+        }
+      ],
+      "authorship": {
+        "kind": "written"
+      },
+      "previous_ai_text": "The writing a visitor meets first is a person's: the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. Much of the rest, including the charter templates, the guides to how governance works, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped."
     }
   ],
   "baseline": [

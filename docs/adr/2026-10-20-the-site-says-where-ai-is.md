@@ -1,7 +1,7 @@
 # The site says where AI is
 
 Date: 2026-10-20. Status: **accepted**; partly implemented; **amended
-2026-10-28** (decision 5, see the end). Built: the page at `/ai`, both
+2026-10-28** (decisions 5 and 6, see the end). Built: the page at `/ai`, both
 parts, and the tests behind decisions 3 and 6. Not yet: the links from
 About and the Label, and the disclosure paragraph, which waits on the paired
 ADR. Builds on docs/adr/028 (shipped
@@ -179,4 +179,15 @@ What this changes:
 - The two-class reporting of decision 5 survives where it belongs, in
   SlopChop's report, which anyone can regenerate from the repository.
 
-Decisions 1 to 4 and 6 stand.
+Decision 6 is amended the same day. It required every string unique to the
+page to be a person's. It now requires every one to be *decided*: a
+person's words, or AI wording a person read and chose to keep
+(`TestAIPageWordsAreDecided` fails only on a string nobody has looked at,
+or a rewrite saved and never applied). The site's policy is transparency,
+not abstinence, and a disclosure page that is partly drafted is consistent
+with it as long as it says so. So it does: its first line says parts of it
+were drafted with AI, and its account of the site's writing names "parts of
+this page" among the drafted copy. What the page must never do is ship
+unread, or claim a person wrote what they did not.
+
+Decisions 1 to 4 stand.

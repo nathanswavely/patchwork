@@ -122,15 +122,17 @@ func TestNoAIServiceDependency(t *testing.T) {
 	}
 }
 
-// The page's own words must be a person's (decision 6). This fails until
-// every string the copy ledger finds only in the page's two source files is
-// recorded as human, which is the point: the page cannot ship as drafted.
+// Every string on the page has been decided by a person (decision 6, as
+// amended 2026-10-28). This fails on a string nobody has looked at, or a
+// rewrite saved but never applied, so the page cannot ship unread. It
+// accepts a person's words and AI wording a person chose to keep alike,
+// because the page itself says which parts are which.
 //
-// A string the page shares with other screens ("Failed to load", "The
-// Label") was decided where it first appeared. Demanding it become human
-// here would ask somebody to claim words they did not write, which is the
-// one thing the ledger exists to prevent.
-func TestAIPageWordsAreAPersons(t *testing.T) {
+// Only strings found in nothing but the page's two source files are held
+// here. A string the page shares with other screens ("Failed to load", "The
+// Label") was decided where it first appeared.
+func TestAIPageWordsAreDecided(t *testing.T) {
+	decided := map[string]bool{"human": true, "ai-fine": true, "ai-revised": true, "not-copy": true}
 	pageFiles := map[string]bool{
 		"internal/handler/ai_defaults.go": true,
 		"web/src/pages/AiPage.svelte":     true,
@@ -165,12 +167,12 @@ func TestAIPageWordsAreAPersons(t *testing.T) {
 			continue
 		}
 		seen++
-		if e.Status != "human" {
+		if !decided[e.Status] {
 			text := e.Text
 			if len(text) > 60 {
 				text = text[:60] + "…"
 			}
-			t.Errorf("%s:%s is %s, not a person's: %q", e.Occurrences[0].File, e.ID, e.Status, text)
+			t.Errorf("%s:%s is %s: nobody has decided it yet: %q", e.Occurrences[0].File, e.ID, e.Status, text)
 		}
 	}
 	if seen == 0 {

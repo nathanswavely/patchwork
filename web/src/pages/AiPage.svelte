@@ -9,8 +9,8 @@
    * it. The stewards' part is what this quilt's stewards wrote, and may be
    * empty.
    *
-   * Every string in this file must be recorded as a person's in the copy
-   * ledger before the page ships (TestAIPageWordsAreAPersons).
+   * Every string in this file must be decided by a person in the copy
+   * ledger before the page ships (TestAIPageWordsAreDecided).
    */
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';

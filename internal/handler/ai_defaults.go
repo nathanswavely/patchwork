@@ -18,21 +18,21 @@ package handler
 //   - TestNoAIServiceDependency fails when go.mod or web/package.json gains
 //     a model provider's SDK.
 //
-// And the page's own words are a person's: TestAIPageWordsAreAPersons reads
-// the copy ledger and fails until every string in this file and in
-// web/src/pages/AiPage.svelte is recorded as human. A disclosure page left as
-// a model drafted it would break the policy it states.
+// And nobody ships the page unread: TestAIPageWordsAreDecided reads the copy
+// ledger and fails on any string in this file or in
+// web/src/pages/AiPage.svelte that a person has not decided. Parts of the
+// page are AI wording a person kept, and the page says so.
 //
 // {quilt_name} is substituted at serve time, as in legal_defaults.go.
 //
 // Formatting: one line per paragraph and per list item. The frontend renders
 // markdown with breaks:true, so a wrapped paragraph would render ragged.
 
-const aiPageProject = `*Draft. A model wrote this text from the design record. A person rewrites it before this page ships, and a test holds the release until they have.*
+const aiPageProject = `*Parts of this page were drafted with AI and reviewed by a person before it shipped.*
 
 ## Does AI touch what you post here?
 
-No. Nothing on {quilt_name} sends what you write, or anything about you, to an AI model. No model summarizes, ranks, rewrites, moderates or generates anything here. Accounts are for people, and nothing on this site posts by itself.
+No. Nothing on {quilt_name} sends what you write, or anything about you, to an AI model. No model summarizes, ranks, rewrites, moderates or generates anything here. Accounts are for people, and nothing on this site posts by itself. We can't stop other users from taking public content from the site and giving it to AI, but the site itself will not do so.
 
 The server opens connections to other machines for these reasons and no others:
 
@@ -42,7 +42,7 @@ That list is checked against the code. A change that lets the server reach anyth
 
 ## Can AI companies take what is here?
 
-Not with permission. The site's robots.txt asks these crawlers to stay away, and the server refuses the ones that arrive under their own name anyway:
+Not with permission. The site's robots.txt asks these crawlers to stay away, and the server refuses the ones that arrive under names that we know are AI including, but not limited to:
 
 {ai_crawlers}
 
@@ -50,9 +50,9 @@ That has limits. A scraper that lies about its name looks like any other browser
 
 ## Was this software built with AI?
 
-Yes. Patchwork's codebase was developed with significant help from AI coding tools. People design it, makes every decision about how its governance works, and reviews the features that ship. All code (human or AI) is available in the open source repository for public evaluation.
+Yes. Patchwork's codebase was developed with significant help from AI coding tools. People design it, make every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.
 
-The writing a visitor meets first is a person's: the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. Much of the rest, including the charter templates, the guides to how governance works, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped.
+The core of what visitors and newcomers read is human written: the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, parts of this page, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please contribute to the project.
 
 The project's repository keeps [a public record of who wrote each string](https://github.com/nathanswavely/patchwork/blob/main/copy/REPORT.md) a visitor can read.`
 
