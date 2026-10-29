@@ -191,7 +191,7 @@
   <section class="ai-stewards">
     <h2>The AI page: your part</h2>
     <p class="lt-muted">
-      /ai says where AI is in the Patchwork software. That part ships with the software and cannot be edited here. Below it, this quilt can say what its stewards do and what they ask of members. Leave it empty and the page says you have not added anything.
+      /ai explains the AI policy for the Patchwork deployment. Below it, this quilt can say what its stewards do and what they ask of members. Leave it empty and the page says you have not added anything.
     </p>
     <textarea
       class="doc-editor"

@@ -6377,7 +6377,7 @@
       "text": "Yes. Patchwork's codebase was developed with significant help from AI coding tools. People design it, make every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
       "words": 44,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6388,14 +6388,17 @@
           "raw": "Yes. Patchwork's codebase was developed with significant help from AI coding tools. People design it, make every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "42d7c0bcd5bc",
       "text": "The core of what visitors and newcomers read is human written: the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please contribute to the project.",
       "words": 100,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6406,7 +6409,10 @@
           "raw": "The core of what visitors and newcomers read is human written: the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please contribute to the project.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "d359b9fa6256",
@@ -6503,7 +6509,7 @@
       "text": "text cannot be empty, use remove to clear it",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6521,7 +6527,7 @@
       "text": "text is too large",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6571,7 +6577,7 @@
       "text": "failed to remove",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23622,7 +23628,7 @@
       "text": "DELETE",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "not-copy",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24724,7 +24730,7 @@
       "text": "PUT",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "not-copy",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -46444,7 +46450,7 @@
       "text": "Saved, now live at /ai",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -46462,7 +46468,7 @@
       "text": "Removed from /ai",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -46627,7 +46633,7 @@
       "text": "The AI page: your part",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -46641,11 +46647,11 @@
       ]
     },
     {
-      "id": "178573b1ff37",
-      "text": "/ai says where AI is in the Patchwork software. That part ships with the software and cannot be edited here. Below it, this quilt can say what its stewards do and what they ask of members. Leave it empty and the page says you have not added anything.",
-      "words": 48,
+      "id": "6c998b7b5989",
+      "text": "/ai explains the AI policy for the Patchwork deployment. Below it, this quilt can say what its stewards do and what they ask of members. Leave it empty and the page says you have not added anything.",
+      "words": 37,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -46653,17 +46659,21 @@
           "file": "web/src/pages/AdminLegal.svelte",
           "line": 194,
           "kind": "markup",
-          "raw": "/ai says where AI is in the Patchwork software. That part ships with the software and cannot be edited here. Below it, this quilt can say what its stewards do and what they ask of members. Leave it empty and the page says you have not added anything.",
+          "raw": "/ai explains the AI policy for the Patchwork deployment. Below it, this quilt can say what its stewards do and what they ask of members. Leave it empty and the page says you have not added anything.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "/ai says where AI is in the Patchwork software. That part ships with the software and cannot be edited here. Below it, this quilt can say what its stewards do and what they ask of members. Leave it empty and the page says you have not added anything.",
+      "authorship": {
+        "kind": "edited"
+      }
     },
     {
       "id": "c26396fb0227",
       "text": "Your part of the AI page, in markdown",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -50685,11 +50695,11 @@
       ]
     },
     {
-      "id": "3aa2708957e2",
-      "text": "Where AI is — {instanceName}",
+      "id": "6388661d5144",
+      "text": "Where AI is | {instanceName}",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -50697,10 +50707,14 @@
           "file": "web/src/pages/AiPage.svelte",
           "line": 40,
           "kind": "markup",
-          "raw": "Where AI is &mdash; {instanceName}",
+          "raw": "Where AI is | {instanceName}",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Where AI is — {instanceName}",
+      "authorship": {
+        "kind": "written"
+      }
     },
     {
       "id": "dd07d4bd15b4",
@@ -50732,7 +50746,7 @@
       "text": "Where AI is",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -50750,7 +50764,7 @@
       "text": "From the stewards of {instanceName}",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -50768,7 +50782,7 @@
       "text": "The stewards of {instanceName} have not added anything here yet.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -50811,7 +50825,7 @@
       "text": "says who runs {instanceName}.",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [

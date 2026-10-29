@@ -37,7 +37,7 @@
 </script>
 
 <svelte:head>
-  <title>Where AI is &mdash; {instanceName}</title>
+  <title>Where AI is | {instanceName}</title>
 </svelte:head>
 
 <div class="ai-page lt-fade-in">
