@@ -1840,8 +1840,11 @@ stands. The motif is white on every tile, never the patch's identity color:
 the fabric already shows how a patch looks, and a colored disc in three
 corners of every tile was the loudest thing on the quilt. The role mark
 keeps its gold star and red heart, which is how it stays distinct from the
-motif beside it. Every glyph sits on a soft dark shadow that fades to nothing
-at its edge, so it reads on pale fabric without drawing a shape of its own.
+motif beside it. Where the fabric a glyph can land on is too light for it to
+read alone (under 3:1 against the glyph's own color), the glyph sits on a
+soft dark shadow that fades to nothing at its edge; everywhere else it is
+bare. The shadow is decided from the block's own fabrics when the tile is
+built, never from what is on screen, so it does not come and go with zoom.
 Status, not fabric: like a name badge a corner mark holds a fixed on-screen
 size whatever the zoom, and it is never clipped by the tile's seam. One
 size is computed per tile and shared by all of its marks, so a tile's marks

@@ -3,7 +3,9 @@
   import * as d3 from 'd3';
   import { api } from '../lib/api.js';
   import { canHover } from '../stores/viewport.svelte.js';
-  import { paletteForPatch, ghostPalette, darken, textOnColor } from '../lib/quiltTheme.js';
+  import {
+    paletteForPatch, ghostPalette, darken, textOnColor, luminance, contrastRatio,
+  } from '../lib/quiltTheme.js';
   import { renderBlock, blockPieces, getRotation, blockKeyAt } from '../lib/quiltBlocks.js';
   import {
     CLOTH, createLattice, warpPolygon, fabricGrain, bakeWrinkles, bakeWeave,
@@ -229,6 +231,21 @@
   const MARK_SHADOW_ID = 'pw-mark-shadow';
   const MARK_SHADOW_R = MARK_PX * 0.6;
   const MARK_SHADOW_STOPS = [[0, 0.42], [0.55, 0.28], [1, 0]];
+  // ...and only where the glyph needs it (markNeedsShadow). A glyph that
+  // already clears WCAG's 3:1 floor for graphics against every fabric it
+  // can land on goes bare, which on a quilt of saturated and dark fabric is
+  // most of them. MARK_SHADOW_UNDER is the wash the glyph's own edge gets:
+  // the glyph reaches about 60% of the way out, where the fade has come
+  // down to its middle stop, so that stop is the honest one to judge by.
+  const MARK_MIN_CONTRAST = 3;
+  const MARK_SHADOW_UNDER = MARK_SHADOW_STOPS[1][1];
+  // How far into the tile, from its corner and as a share of its side, a
+  // glyph can ever reach: at the largest a mark is drawn relative to its
+  // tile (MARK_TILE_SHARE), the far edge of the glyph. Closer in the mark
+  // holds its screen size while the tile grows, so it covers less of the
+  // tile, always inside this square. Sampled MARK_SAMPLES to a side.
+  const MARK_REACH = (MARK_INSET + (MARK_PX + MARK_GLYPH_PX) / 2) / MARK_PX * MARK_TILE_SHARE;
+  const MARK_SAMPLES = 5;
   // The motif is white whatever the patch's colors: it says what a patch is,
   // and the fabric already says how it looks. Status glyphs keep their own
   // colors (gold star, red heart), which is how they stay distinct from it.
@@ -2261,9 +2278,11 @@
     // filter: these transforms are rewritten on every zoom tick, up to three
     // per tile across the whole quilt, and a gradient fill is a plain paint
     // where a filter would be an offscreen pass per mark.
-    g.append('circle')
-      .attr('cx', cx).attr('cy', cy).attr('r', MARK_SHADOW_R)
-      .attr('fill', `url(#${MARK_SHADOW_ID})`);
+    if (markNeedsShadow(glyph.getAttribute('fill'), fabricsUnderCorner(entry, corner))) {
+      g.append('circle')
+        .attr('cx', cx).attr('cy', cy).attr('r', MARK_SHADOW_R)
+        .attr('fill', `url(#${MARK_SHADOW_ID})`);
+    }
 
     glyph.setAttribute('transform',
       `translate(${cx - MARK_GLYPH_PX / 2},${cy - MARK_GLYPH_PX / 2}) ` +
@@ -2271,6 +2290,76 @@
     g.node().appendChild(glyph);
 
     entry.slots.set(slot, { g, corner });
+  }
+
+  /**
+   * The fabrics a glyph in this corner can land on, at any zoom: the block's
+   * pieces sampled across the corner's MARK_REACH square, topmost piece
+   * first since later pieces paint over earlier ones. Read from the block's
+   * own geometry rather than the screen, so it costs one pass per tile at
+   * build and nothing while the quilt moves.
+   *
+   * The lattice's wobble is ignored: it moves a seam by a few percent of the
+   * tile, and the sample square is already the widest the glyph can reach.
+   * Rotation is not, since it decides which corner of the block is here.
+   */
+  function fabricsUnderCorner(entry, corner) {
+    entry.fabrics ??= {};
+    if (entry.fabrics[corner]) return entry.fabrics[corner];
+    const { data } = entry.tile;
+    entry.pieces ??= blockPieces(data.id, paletteForPatch(data.id, data.appearance), data.appearance);
+    // The warp turns block space into the tile about its center; undo it.
+    const rad = (-getRotation(data.id, data.appearance) * Math.PI) / 180;
+    const cos = Math.cos(rad), sin = Math.sin(rad);
+    const { ax, ay, sx, sy } = MARK_CORNERS[corner];
+    const fills = new Set();
+    for (let i = 0; i < MARK_SAMPLES; i++) {
+      for (let j = 0; j < MARK_SAMPLES; j++) {
+        const dx = ax + sx * MARK_REACH * (i + 0.5) / MARK_SAMPLES - 0.5;
+        const dy = ay + sy * MARK_REACH * (j + 0.5) / MARK_SAMPLES - 0.5;
+        const u = dx * cos - dy * sin + 0.5;
+        const v = dx * sin + dy * cos + 0.5;
+        for (let p = entry.pieces.length - 1; p >= 0; p--) {
+          if (insidePolygon(u, v, entry.pieces[p].pts)) {
+            fills.add(entry.pieces[p].fill);
+            break;
+          }
+        }
+      }
+    }
+    return (entry.fabrics[corner] = [...fills]);
+  }
+
+  /** Even-odd point-in-polygon, for a block piece in unit block space. */
+  function insidePolygon(x, y, pts) {
+    let inside = false;
+    for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+      const [xi, yi] = pts[i], [xj, yj] = pts[j];
+      if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside;
+    }
+    return inside;
+  }
+
+  /**
+   * Whether a glyph of this color needs the shadow to read on these
+   * fabrics. Only if some fabric falls under the contrast floor, and only if
+   * the shadow actually helps: a dark wash raises contrast for a pale glyph
+   * and lowers it for a dark one, so the red heart on white fabric is
+   * already at its best bare. Judged against the worst fabric, since the
+   * glyph may land on any of them. A color that cannot be read gets the
+   * shadow, which is the state every mark was in before this check.
+   */
+  function markNeedsShadow(glyphFill, fabrics) {
+    const glyphL = luminance(glyphFill);
+    if (glyphL === null || fabrics.length === 0) return true;
+    let bare = Infinity, shaded = Infinity;
+    for (const fill of fabrics) {
+      const plain = luminance(fill);
+      if (plain === null) return true;
+      bare = Math.min(bare, contrastRatio(glyphL, plain));
+      shaded = Math.min(shaded, contrastRatio(glyphL, luminance(fill, MARK_SHADOW_UNDER)));
+    }
+    return bare < MARK_MIN_CONTRAST && shaded > bare;
   }
 
   /**

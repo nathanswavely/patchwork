@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { luminance, contrastRatio, textOnColor } from '../lib/quiltTheme.js';
 
 // How the quilt says what a patch is (CONTEXT.md "Corner mark", "Name
 // badge"). The motif used to be a disc in the patch's identity color, with a
@@ -32,6 +33,27 @@ describe('a corner mark', () => {
     expect(draw).not.toMatch(/'stroke'/);
     // A dark edge traced around each glyph was tried and read as busy.
     expect(draw).not.toMatch(/paint-order/);
+  });
+
+  it('wears the shadow only where the fabric under it needs one', () => {
+    const draw = fn('drawCornerMark');
+    expect(draw).toMatch(/if \(markNeedsShadow\(glyph\.getAttribute\('fill'\), fabricsUnderCorner\(entry, corner\)\)\) \{\s*g\.append\('circle'\)/);
+    const decide = fn('markNeedsShadow');
+    // Below the floor against the worst fabric, and only if a dark wash
+    // helps: it never does for a glyph darker than the fabric.
+    expect(decide).toMatch(/return bare < MARK_MIN_CONTRAST && shaded > bare;/);
+    expect(quilt).toMatch(/const MARK_MIN_CONTRAST = 3;/);
+  });
+
+  it('samples the block under the corner, not the screen', () => {
+    const sample = fn('fabricsUnderCorner');
+    expect(sample).toMatch(/blockPieces\(data\.id, paletteForPatch\(data\.id, data\.appearance\), data\.appearance\)/);
+    // The block is rotated into the tile, so the rotation is undone first.
+    expect(sample).toMatch(/-getRotation\(data\.id, data\.appearance\)/);
+    // Topmost piece wins: later pieces paint over earlier ones.
+    expect(sample).toMatch(/for \(let p = entry\.pieces\.length - 1; p >= 0; p--\)/);
+    // Cached per tile, so the role mark redrawn on a follow costs nothing.
+    expect(sample).toMatch(/if \(entry\.fabrics\[corner\]\) return entry\.fabrics\[corner\];/);
   });
 
   it('fades the shadow to nothing at its edge', () => {
@@ -88,5 +110,32 @@ describe('a motif that resolves after the quilt is built', () => {
 
   it('rebuilds a badge whose motif changed under the same data', () => {
     expect(quilt).toMatch(/label\.__motif !== motif/);
+  });
+});
+
+describe('the contrast arithmetic', () => {
+  it('reads WCAG luminance from every hex form a bundle allows', () => {
+    expect(luminance('#ffffff')).toBeCloseTo(1, 5);
+    expect(luminance('#fff')).toBeCloseTo(1, 5);
+    expect(luminance('#000000')).toBe(0);
+    expect(luminance('#ffffff80')).toBeCloseTo(1, 5);
+    expect(luminance('var(--x)')).toBeNull();
+    expect(luminance('rgb(0,0,0)')).toBeNull();
+  });
+
+  it('darkens under a black wash the way a browser composites one', () => {
+    // 50% black over white is #808080 in sRGB, luminance ~0.216.
+    expect(luminance('#ffffff', 0.5)).toBeCloseTo(luminance('#808080'), 2);
+  });
+
+  it('gives white on black the full 21:1', () => {
+    expect(contrastRatio(1, 0)).toBeCloseTo(21, 5);
+    expect(contrastRatio(0, 1)).toBeCloseTo(21, 5);
+  });
+
+  it('leaves textOnColor answering as it did', () => {
+    expect(textOnColor('#ffffff')).toBe('#151820');
+    expect(textOnColor('#0a0a0a')).toBe('#ffffff');
+    expect(textOnColor('#fff')).toBe('#ffffff');
   });
 });
