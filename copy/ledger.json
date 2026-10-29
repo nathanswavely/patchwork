@@ -26785,14 +26785,14 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 406,
+          "line": 429,
           "kind": "attr:title",
           "raw": "Notifications",
           "quote": "\""
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 414,
+          "line": 437,
           "kind": "markup",
           "raw": "Notifications",
           "quote": null
@@ -28511,14 +28511,14 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 378,
+          "line": 401,
           "kind": "attr:title",
           "raw": "What is Patchwork?",
           "quote": "\""
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 381,
+          "line": 404,
           "kind": "markup",
           "raw": "What is Patchwork?",
           "quote": null
@@ -28787,7 +28787,7 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 430,
+          "line": 453,
           "kind": "attr:title",
           "raw": "The Label",
           "quote": "\""
@@ -28880,7 +28880,7 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 476,
+          "line": 499,
           "kind": "markup",
           "raw": "About {formatMoney(label.total_monthly_minor, label.currency)}/month to keep running",
           "quote": null
@@ -29074,7 +29074,7 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 469,
+          "line": 492,
           "kind": "attr:aria-label",
           "raw": "Close",
           "quote": "\""
@@ -29419,7 +29419,7 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 164,
+          "line": 182,
           "kind": "js-string",
           "raw": "Events",
           "quote": "'",
@@ -32235,7 +32235,7 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 264,
+          "line": 287,
           "kind": "markup",
           "raw": "My Quilt",
           "quote": null
@@ -32253,7 +32253,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 162,
+          "line": 180,
           "kind": "js-string",
           "raw": "patches",
           "quote": "'",
@@ -32272,7 +32272,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 162,
+          "line": 180,
           "kind": "js-string",
           "raw": "Patches",
           "quote": "'",
@@ -32320,7 +32320,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 164,
+          "line": 182,
           "kind": "js-string",
           "raw": "events",
           "quote": "'",
@@ -32363,7 +32363,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 168,
+          "line": 186,
           "kind": "js-string",
           "raw": "discover",
           "quote": "'",
@@ -32382,7 +32382,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 168,
+          "line": 186,
           "kind": "js-string",
           "raw": "Discover",
           "quote": "'",
@@ -32401,7 +32401,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 170,
+          "line": 188,
           "kind": "js-string",
           "raw": "dashboard",
           "quote": "'",
@@ -32420,7 +32420,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 170,
+          "line": 188,
           "kind": "js-string",
           "raw": "Dashboard",
           "quote": "'",
@@ -32446,7 +32446,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 268,
+          "line": 291,
           "kind": "markup",
           "raw": "Connected quilts",
           "quote": null
@@ -32464,14 +32464,14 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 290,
+          "line": 313,
           "kind": "attr:placeholder",
           "raw": "Search patches and events…",
           "quote": "\""
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 314,
+          "line": 337,
           "kind": "attr:placeholder",
           "raw": "Search patches and events…",
           "quote": "\""
@@ -32489,7 +32489,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 337,
+          "line": 360,
           "kind": "attr:aria-label",
           "raw": "Canvas view",
           "quote": "\""
@@ -32507,14 +32507,14 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 391,
+          "line": 414,
           "kind": "attr:title",
           "raw": "Search",
           "quote": "\""
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 396,
+          "line": 419,
           "kind": "markup",
           "raw": "Search",
           "quote": null
@@ -32532,7 +32532,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 431,
+          "line": 454,
           "kind": "attr:aria-label",
           "raw": "About this quilt",
           "quote": "\""
@@ -32550,7 +32550,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 445,
+          "line": 468,
           "kind": "attr:title",
           "raw": "Filter",
           "quote": "\""
@@ -32568,7 +32568,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 472,
+          "line": 495,
           "kind": "markup",
           "raw": "Stewarded by {(label.stewards || []).map((s) => `@${s.username}`).join(', ')}",
           "quote": null
@@ -32586,7 +32586,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 479,
+          "line": 502,
           "kind": "markup",
           "raw": "Run by real people and open source. Feel free to build your own if you don't like this one.",
           "quote": null

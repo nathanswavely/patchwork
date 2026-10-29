@@ -66,6 +66,24 @@
 
   let activeScopeLabel = $derived(quiltScope === 'my' ? 'My Quilt' : getInstanceName());
 
+  // On a narrow bar the name shrinks to the room it has. The fade at its
+  // right edge goes on only when the name is actually cut off, so a short
+  // name keeps its last letters, and the title carries the whole name then.
+  let logoLabelEl = $state(null);
+  let logoLabelClipped = $state(false);
+  $effect(() => {
+    activeScopeLabel;
+    const el = logoLabelEl;
+    if (!el) return;
+    const measure = () => { logoLabelClipped = el.scrollWidth - el.clientWidth > 1; };
+    measure();
+    document.fonts?.ready.then(measure);
+    if (typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  });
+
   // The quilt switcher's other-quilt entries: neighbors (instance-curated,
   // visible to everyone) + personal connected quilts + registry overlay.
   // Every one is a doorway — objects blend, places don't (docs/adr/024):
@@ -239,7 +257,12 @@
               <rect x="13" y="13" width="9" height="9" rx="1" stroke="currentColor" stroke-width="2"/>
             </svg>
           {/if}
-          <span class="lt-type-name logo-label">{activeScopeLabel}</span>
+          <span
+            class="lt-type-name logo-label"
+            class:clipped={logoLabelClipped}
+            title={logoLabelClipped ? activeScopeLabel : undefined}
+            bind:this={logoLabelEl}
+          >{activeScopeLabel}</span>
           <span class="logo-chevron">
             <CaretDown size={12} weight="bold" />
           </span>
@@ -591,13 +614,39 @@
     line-height: 1;
   }
 
-  /* Narrow bars drop the quilt's name from the switcher trigger — the
-     mark and chevron carry it (the mark is the identity, and My Quilt
-     scope still reads from the house icon). The dropdown keeps full
-     names. */
+  /* Narrow bars keep the quilt's name but let it give way: the switcher
+     shrinks in the row instead of pushing the right cluster, and a name
+     longer than its room fades out at the right edge. The fade is a mask,
+     not a wash of the bar's colour, so it holds in both themes and over
+     the quilt, and it replaces .lt-type-name's ellipsis rather than fading
+     one. The line height leaves room for descenders the clip would
+     otherwise cut. */
   @media (max-width: 900px) {
+    .scope-switcher,
+    .scope-btn {
+      flex-shrink: 1;
+      min-width: 0;
+    }
+
     .logo-label {
-      display: none;
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: clip;
+      line-height: 1.3;
+    }
+
+    .logo-label.clipped {
+      -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 2rem), transparent);
+      mask-image: linear-gradient(to right, #000 calc(100% - 2rem), transparent);
+    }
+  }
+
+  /* Beside the search pill the name gets a share of the row, not all of
+     it, so a long one cannot squeeze the search out. */
+  @media (min-width: 769px) and (max-width: 900px) {
+    .logo-label {
+      max-width: 11rem;
     }
   }
 
