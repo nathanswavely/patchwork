@@ -1280,9 +1280,9 @@
       "text": "- Anyone can join. This patch is open.\n- Members can vote on proposals and participate fully.\n- Followers can see what we're up to without participating in governance.\n- Admins manage the patch, approve changes, and keep things running.",
       "words": 40,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -1291,10 +1291,7 @@
           "raw": "- Anyone can join. This patch is open.\n- Members can vote on proposals and participate fully.\n- Followers can see what we're up to without participating in governance.\n- Admins manage the patch, approve changes, and keep things running.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "0fa87b6bef35",
@@ -1359,9 +1356,9 @@
       "text": "- Any member can propose changes to this document through a proposal.\n- Changes pass by majority vote.",
       "words": 18,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -1370,10 +1367,7 @@
           "raw": "- Any member can propose changes to this document through a proposal.\n- Changes pass by majority vote.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "065d9adbffad",
@@ -1405,9 +1399,9 @@
       "text": "This patch exists to serve our community through shared space, resources, and collective decision-making. We believe that the people who do the work should have a voice in how things run.",
       "words": 31,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -1416,10 +1410,7 @@
           "raw": "This patch exists to serve our community through shared space, resources, and collective decision-making. We believe that the people who do the work should have a voice in how things run.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "f525e5844acf",
@@ -1444,9 +1435,9 @@
       "text": "We follow a meritocratic model inspired by open source communities. Authority is earned through sustained contribution, not elected or inherited.",
       "words": 20,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -1455,19 +1446,16 @@
           "raw": "We follow a meritocratic model inspired by open source communities. Authority is earned through sustained contribution, not elected or inherited.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "a405c6fecf67",
       "text": "- **Followers** are community members who stay informed. They can attend events and observe governance.\n- **Members** have demonstrated commitment to the patch. They can vote on proposals and participate in governance.\n- **Admins** are experienced members who have been nominated by existing admins and ratified by the community. They manage day-to-day operations.",
       "words": 53,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -1476,10 +1464,7 @@
           "raw": "- **Followers** are community members who stay informed. They can attend events and observe governance.\n- **Members** have demonstrated commitment to the patch. They can vote on proposals and participate in governance.\n- **Admins** are experienced members who have been nominated by existing admins and ratified by the community. They manage day-to-day operations.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "c935fffaa605",
@@ -1504,9 +1489,9 @@
       "text": "Existing admins may nominate any active member for an admin role. The nomination is posted as a proposal. The community has 7 days to discuss and vote. A majority of active members must approve.",
       "words": 34,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -1515,10 +1500,7 @@
           "raw": "Existing admins may nominate any active member for an admin role. The nomination is posted as a proposal. The community has 7 days to discuss and vote. A majority of active members must approve.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "08dc131b873c",
@@ -1543,9 +1525,9 @@
       "text": "Admins can step down at any time. When an admin steps down, remaining admins nominate a successor from active members.",
       "words": 20,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -1554,10 +1536,7 @@
           "raw": "Admins can step down at any time. When an admin steps down, remaining admins nominate a successor from active members.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "27d129fbede3",
@@ -1582,9 +1561,9 @@
       "text": "- **Day-to-day decisions**: Admins handle routine operations.\n- **Proposals**: Any member can submit a proposal for community decisions.\n- **Voting period**: 7 days for most proposals.\n- **Quorum**: 25% of active members must participate for a vote to be valid.\n- **Passing threshold**: Simple majority for most decisions. Supermajority (2/3) for amendments to governance documents.",
       "words": 55,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -1593,19 +1572,16 @@
           "raw": "- **Day-to-day decisions**: Admins handle routine operations.\n- **Proposals**: Any member can submit a proposal for community decisions.\n- **Voting period**: 7 days for most proposals.\n- **Quorum**: 25% of active members must participate for a vote to be valid.\n- **Passing threshold**: Simple majority for most decisions. Supermajority (2/3) for amendments to governance documents.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "0f70468538b4",
       "text": "- Membership requires approval. Apply and an admin will review your request.\n- Members who haven't participated in 60 days may be contacted about their status.\n- Admins inactive for 60 days will be asked to step down or re-engage.",
       "words": 40,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -1614,10 +1590,7 @@
           "raw": "- Membership requires approval. Apply and an admin will review your request.\n- Members who haven't participated in 60 days may be contacted about their status.\n- Admins inactive for 60 days will be asked to step down or re-engage.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "399c4bd71f25",
@@ -1663,9 +1636,9 @@
       "text": "Any member can propose changes to this operating agreement. Amendments require a supermajority (2/3) vote with 25% quorum.",
       "words": 18,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -1674,10 +1647,7 @@
           "raw": "Any member can propose changes to this operating agreement. Amendments require a supermajority (2/3) vote with 25% quorum.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "1d0a3a467b88",
@@ -1748,9 +1718,9 @@
       "text": "Money is where trust dies in community. Every dollar in and every dollar out should be visible to every member, in real records anyone can open at any time. Nobody should have to wait for a treasurer's report at a meeting.",
       "words": 41,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -1759,10 +1729,7 @@
           "raw": "Money is where trust dies in community. Every dollar in and every dollar out should be visible to every member, in real records anyone can open at any time. Nobody should have to wait for a treasurer's report at a meeting.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "d8c149179dbb",
@@ -1794,9 +1761,9 @@
       "text": "All income (dues, grants, donations, event revenue, sales) is recorded with:\n- Amount\n- Source\n- Date\n- Purpose or restriction (if any)",
       "words": 23,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -1805,10 +1772,7 @@
           "raw": "All income (dues, grants, donations, event revenue, sales) is recorded with:\n- Amount\n- Source\n- Date\n- Purpose or restriction (if any)",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "ce585ad8a171",
@@ -1840,9 +1804,9 @@
       "text": "All spending is recorded with:\n- Amount\n- Recipient\n- Date\n- What it was for\n- Who approved it",
       "words": 20,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -1851,10 +1815,7 @@
           "raw": "All spending is recorded with:\n- Amount\n- Recipient\n- Date\n- What it was for\n- Who approved it",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "45e8d3c82b2d",
@@ -1879,9 +1840,9 @@
       "text": "- **Under $50**: Any admin can approve.\n- **$50–$500**: Requires two admin approvals.\n- **Over $500**: Requires a proposal and community vote.",
       "words": 22,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -1890,10 +1851,7 @@
           "raw": "- **Under $50**: Any admin can approve.\n- **$50–$500**: Requires two admin approvals.\n- **Over $500**: Requires a proposal and community vote.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "4d61fcff9295",
@@ -1943,9 +1901,9 @@
       "text": "A financial summary is posted monthly and is always accessible to members. Anyone can ask questions about any transaction at any time.",
       "words": 22,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -1954,10 +1912,7 @@
           "raw": "A financial summary is posted monthly and is always accessible to members. Anyone can ask questions about any transaction at any time.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "477eee04eff0",
@@ -2047,9 +2002,9 @@
       "text": "If you have an issue with someone, talk to them directly first. Most conflicts come from misunderstanding, not malice. Be specific about what happened and what you need.",
       "words": 28,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2058,10 +2013,7 @@
           "raw": "If you have an issue with someone, talk to them directly first. Most conflicts come from misunderstanding, not malice. Be specific about what happened and what you need.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "851cbc372f3c",
@@ -2093,9 +2045,9 @@
       "text": "If direct conversation doesn't resolve it, ask a neutral member or admin to mediate. The mediator's job is to listen to both sides and help find common ground, not to judge.",
       "words": 31,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2104,10 +2056,7 @@
           "raw": "If direct conversation doesn't resolve it, ask a neutral member or admin to mediate. The mediator's job is to listen to both sides and help find common ground, not to judge.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "38a3a1e93c1f",
@@ -2132,9 +2081,9 @@
       "text": "If mediation doesn't work, submit a formal complaint to the admins. Include:\n- What happened (specific actions, not character judgments)\n- When it happened\n- What resolution you're seeking",
       "words": 29,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2143,10 +2092,7 @@
           "raw": "If mediation doesn't work, submit a formal complaint to the admins. Include:\n- What happened (specific actions, not character judgments)\n- When it happened\n- What resolution you're seeking",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "641e1bfc6f93",
@@ -2189,9 +2135,9 @@
       "text": "If you disagree with the admin's resolution, you can escalate to a community review. The situation is presented (with identities protected where possible) as a proposal. The community votes on the resolution.",
       "words": 32,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2200,10 +2146,7 @@
           "raw": "If you disagree with the admin's resolution, you can escalate to a community review. The situation is presented (with identities protected where possible) as a proposal. The community votes on the resolution.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "89452c3c3f04",
@@ -2235,9 +2178,9 @@
       "text": "Depending on severity: warning, temporary suspension, permanent removal. Violations of the community standards (the lining) may result in immediate action.",
       "words": 20,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2246,10 +2189,7 @@
           "raw": "Depending on severity: warning, temporary suspension, permanent removal. Violations of the community standards (the lining) may result in immediate action.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "ceebb8820133",
@@ -2339,9 +2279,9 @@
       "text": "This charter establishes the governance framework for this patch. It is the foundational document that defines our mission, structure, and principles. All other governance documents build on this charter.",
       "words": 29,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2350,19 +2290,16 @@
           "raw": "This charter establishes the governance framework for this patch. It is the foundational document that defines our mission, structure, and principles. All other governance documents build on this charter.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "c92e161dd013",
       "text": "We exist to serve our community through collective organizing, shared resources, and transparent self-governance. We believe that the people who build the culture should govern the culture.",
       "words": 27,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2371,10 +2308,7 @@
           "raw": "We exist to serve our community through collective organizing, shared resources, and transparent self-governance. We believe that the people who build the culture should govern the culture.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "f09aca17c00c",
@@ -2399,9 +2333,9 @@
       "text": "- **Transparency**: All decisions, finances, and governance are public to members.\n- **Accountability**: Power rotates. No one stays in charge indefinitely.\n- **Inclusion**: We actively work to include voices that are typically excluded.\n- **Self-determination**: We govern ourselves. We don't answer to external authorities that don't share our values.\n- **Right to seamrip**: Any group can take our patterns and build their own quilt.",
       "words": 64,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2410,10 +2344,7 @@
           "raw": "- **Transparency**: All decisions, finances, and governance are public to members.\n- **Accountability**: Power rotates. No one stays in charge indefinitely.\n- **Inclusion**: We actively work to include voices that are typically excluded.\n- **Self-determination**: We govern ourselves. We don't answer to external authorities that don't share our values.\n- **Right to seamrip**: Any group can take our patterns and build their own quilt.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "5bbbcc7bc0f0",
@@ -2456,9 +2387,9 @@
       "text": "This patch is governed by an elected council of up to 7 admins. The council handles day-to-day decisions, facilitates community governance, and is accountable to the membership.",
       "words": 27,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2467,10 +2398,7 @@
           "raw": "This patch is governed by an elected council of up to 7 admins. The council handles day-to-day decisions, facilitates community governance, and is accountable to the membership.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "7deba1832681",
@@ -2495,9 +2423,9 @@
       "text": "Members are the foundation. They vote on proposals, elect the council, and can propose amendments to any governance document. Membership requires approval and a 30-day tenure before voting rights activate.",
       "words": 30,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2506,10 +2434,7 @@
           "raw": "Members are the foundation. They vote on proposals, elect the council, and can propose amendments to any governance document. Membership requires approval and a 30-day tenure before voting rights activate.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "dcc7658cfccc",
@@ -2570,9 +2495,9 @@
       "text": "This patch is part of a larger patchwork. We agree to uphold the community standards (the lining) and to participate in good faith with other patches on the quilt.",
       "words": 29,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2581,10 +2506,7 @@
           "raw": "This patch is part of a larger patchwork. We agree to uphold the community standards (the lining) and to participate in good faith with other patches on the quilt.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "73fd8b8deec7",
@@ -2627,9 +2549,9 @@
       "text": "### 1.1 Council Elections\nElections are held annually. All members who have been active for at least 30 days are eligible to vote.",
       "words": 23,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2638,19 +2560,16 @@
           "raw": "### 1.1 Council Elections\nElections are held annually. All members who have been active for at least 30 days are eligible to vote.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "09630d9d6198",
       "text": "### 1.2 Nominations\nAny member may nominate themselves or another member for a council seat. Nominations open 14 days before the election and close 7 days before.",
       "words": 27,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2659,19 +2578,16 @@
           "raw": "### 1.2 Nominations\nAny member may nominate themselves or another member for a council seat. Nominations open 14 days before the election and close 7 days before.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "b1838fa8e8c9",
       "text": "### 1.3 Voting\nElections use ranked-choice voting. Each member ranks candidates in order of preference. Voting is open for 14 days.",
       "words": 21,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2680,19 +2596,16 @@
           "raw": "### 1.3 Voting\nElections use ranked-choice voting. Each member ranks candidates in order of preference. Voting is open for 14 days.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "e443e222af46",
       "text": "### 1.4 Term Limits\nCouncil members serve 12-month terms. There is no limit on the number of terms, but consecutive terms require re-election.",
       "words": 23,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2701,10 +2614,7 @@
           "raw": "### 1.4 Term Limits\nCouncil members serve 12-month terms. There is no limit on the number of terms, but consecutive terms require re-election.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "e03fbc73007f",
@@ -2729,9 +2639,9 @@
       "text": "### 2.1 Quorum\nA majority of council members must be present (or voting) for council decisions.",
       "words": 16,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2740,19 +2650,16 @@
           "raw": "### 2.1 Quorum\nA majority of council members must be present (or voting) for council decisions.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "d176fbf77c31",
       "text": "### 2.2 Decision Making\nThe council operates by consensus when possible. If consensus cannot be reached within a reasonable timeframe, decisions fall back to a supermajority (2/3) vote of council members.",
       "words": 31,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2761,19 +2668,16 @@
           "raw": "### 2.2 Decision Making\nThe council operates by consensus when possible. If consensus cannot be reached within a reasonable timeframe, decisions fall back to a supermajority (2/3) vote of council members.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "8bf7f508b0ae",
       "text": "### 2.3 Removal\nA council member can be removed by a supermajority vote of the full membership. A removal proposal requires signatures from at least 10% of active members to be considered.",
       "words": 32,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2782,10 +2686,7 @@
           "raw": "### 2.3 Removal\nA council member can be removed by a supermajority vote of the full membership. A removal proposal requires signatures from at least 10% of active members to be considered.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "9bae9d8a426f",
@@ -2810,9 +2711,9 @@
       "text": "### 3.1 Joining\nNew members must be approved by a council member. Approval should be granted to anyone who commits to the community standards and participates in good faith.",
       "words": 29,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2821,19 +2722,16 @@
           "raw": "### 3.1 Joining\nNew members must be approved by a council member. Approval should be granted to anyone who commits to the community standards and participates in good faith.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "e4034401a496",
       "text": "### 3.2 Voting Rights\nVoting rights activate after 30 days of active membership. This ensures voters have context for the decisions they're making.",
       "words": 23,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2842,19 +2740,16 @@
           "raw": "### 3.2 Voting Rights\nVoting rights activate after 30 days of active membership. This ensures voters have context for the decisions they're making.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "80526fa5d297",
       "text": "### 3.3 Leaving\nMembers may leave at any time. Membership data is retained for 30 days in case of return.",
       "words": 20,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2863,10 +2758,7 @@
           "raw": "### 3.3 Leaving\nMembers may leave at any time. Membership data is retained for 30 days in case of return.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "dbc2901c4ab2",
@@ -2891,9 +2783,9 @@
       "text": "### 4.1 Proposing Amendments\nAny member can propose an amendment to these bylaws or any governance document by submitting a proposal.",
       "words": 21,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2902,19 +2794,16 @@
           "raw": "### 4.1 Proposing Amendments\nAny member can propose an amendment to these bylaws or any governance document by submitting a proposal.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "a0cd8f7fc385",
       "text": "### 4.2 Review Period\nAmendment proposals are open for 14 days. Discussion and voting run over\nthat same window: comment on the proposal, and change your vote, at any\npoint before it closes.",
       "words": 33,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2923,19 +2812,16 @@
           "raw": "### 4.2 Review Period\nAmendment proposals are open for 14 days. Discussion and voting run over\nthat same window: comment on the proposal, and change your vote, at any\npoint before it closes.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "23c1e1ae2851",
       "text": "### 4.3 Approval\nAmendments to the bylaws require consensus. If consensus cannot be reached, a supermajority (2/3) with 50% quorum is required.",
       "words": 22,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2944,19 +2830,16 @@
           "raw": "### 4.3 Approval\nAmendments to the bylaws require consensus. If consensus cannot be reached, a supermajority (2/3) with 50% quorum is required.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "13f6470dd037",
       "text": "### 4.4 Implementation\nApproved amendments are not auto-applied. A council member must review and merge the change to ensure consistency with other governance documents.",
       "words": 24,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -2965,10 +2848,7 @@
           "raw": "### 4.4 Implementation\nApproved amendments are not auto-applied. A council member must review and merge the change to ensure consistency with other governance documents.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "2109b2744da2",
@@ -2993,9 +2873,9 @@
       "text": "### 5.1 Dissolution\nThis patch may be dissolved by a consensus vote of the membership with at least 50% quorum.",
       "words": 20,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3004,19 +2884,16 @@
           "raw": "### 5.1 Dissolution\nThis patch may be dissolved by a consensus vote of the membership with at least 50% quorum.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "45eeae50cbac",
       "text": "### 5.2 Seamrip\nAny group of members may seamrip (take the governance documents, tools, and their data) and start a new patch. This is a right the parent patch must facilitate in good faith.",
       "words": 34,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3025,19 +2902,16 @@
           "raw": "### 5.2 Seamrip\nAny group of members may seamrip (take the governance documents, tools, and their data) and start a new patch. This is a right the parent patch must facilitate in good faith.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "a6fe3b622524",
       "text": "### 5.3 Assets\nUpon dissolution, remaining assets are distributed as determined by the final membership vote. If no consensus is reached, assets are donated to a community organization chosen by the council.",
       "words": 32,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3046,19 +2920,16 @@
           "raw": "### 5.3 Assets\nUpon dissolution, remaining assets are distributed as determined by the final membership vote. If no consensus is reached, assets are donated to a community organization chosen by the council.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "908559a3994d",
       "text": "Every dollar in and every dollar out is recorded and visible to every member. Transparency here is structural, written into the rules rather than left to whoever happens to hold the books. This document establishes the rules for how money moves through this patch.",
       "words": 44,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3067,19 +2938,16 @@
           "raw": "Every dollar in and every dollar out is recorded and visible to every member. Transparency here is structural, written into the rules rather than left to whoever happens to hold the books. This document establishes the rules for how money moves through this patch.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "5868fcccad7e",
       "text": "All income (dues, grants, donations, event revenue, sponsorships, sales) is recorded with:\n- Amount\n- Source\n- Date received\n- Purpose or restriction (if any)\n- Council member who acknowledged receipt",
       "words": 31,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3088,19 +2956,16 @@
           "raw": "All income (dues, grants, donations, event revenue, sponsorships, sales) is recorded with:\n- Amount\n- Source\n- Date received\n- Purpose or restriction (if any)\n- Council member who acknowledged receipt",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "a98392793be8",
       "text": "All spending is recorded with:\n- Amount\n- Recipient\n- Date\n- Description of what it was for\n- Which council member approved it\n- Budget line item it falls under",
       "words": 31,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3109,10 +2974,7 @@
           "raw": "All spending is recorded with:\n- Amount\n- Recipient\n- Date\n- Description of what it was for\n- Which council member approved it\n- Budget line item it falls under",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "b131015c3985",
@@ -3137,9 +2999,9 @@
       "text": "| Amount | Required Approval |\n|--------|------------------|\n| Under $100 | Any council member |\n| $100–$1,000 | Two council members |\n| $1,000–$5,000 | Council vote (majority) |\n| Over $5,000 | Community vote (proposal) |",
       "words": 37,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3148,10 +3010,7 @@
           "raw": "| Amount | Required Approval |\n|--------|------------------|\n| Under $100 | Any council member |\n| $100–$1,000 | Two council members |\n| $1,000–$5,000 | Council vote (majority) |\n| Over $5,000 | Community vote (proposal) |",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "679ef65e91d9",
@@ -3176,9 +3035,9 @@
       "text": "The council proposes an annual budget as a proposal. The budget must be approved by a majority vote with 50% quorum. Mid-year budget amendments follow the same process.",
       "words": 28,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3187,10 +3046,7 @@
           "raw": "The council proposes an annual budget as a proposal. The budget must be approved by a majority vote with 50% quorum. Mid-year budget amendments follow the same process.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "68d3ae4095ab",
@@ -3215,9 +3071,9 @@
       "text": "An annual financial review is conducted by a member who is not on the council. The review is published to all members.",
       "words": 22,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3226,19 +3082,16 @@
           "raw": "An annual financial review is conducted by a member who is not on the council. The review is published to all members.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "927f08a6dd67",
       "text": "- Monthly financial summaries posted to governance docs\n- Annual comprehensive report with review\n- Any member can request details on any transaction at any time",
       "words": 26,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3247,10 +3100,7 @@
           "raw": "- Monthly financial summaries posted to governance docs\n- Annual comprehensive report with review\n- Any member can request details on any transaction at any time",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "e12d78a9a3bd",
@@ -3275,9 +3125,9 @@
       "text": "This patch is committed to resolving conflicts fairly, transparently, and with respect for all involved. This process exists to protect people, not to punish them.",
       "words": 25,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3286,10 +3136,7 @@
           "raw": "This patch is committed to resolving conflicts fairly, transparently, and with respect for all involved. This process exists to protect people, not to punish them.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "06f13eceae24",
@@ -3314,9 +3161,9 @@
       "text": "This process applies to conflicts between members, between members and admins, and between patches. It does not replace legal processes where applicable.",
       "words": 22,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3325,10 +3172,7 @@
           "raw": "This process applies to conflicts between members, between members and admins, and between patches. It does not replace legal processes where applicable.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "858566e7bef6",
@@ -3353,9 +3197,9 @@
       "text": "Parties are encouraged to resolve conflicts directly. Be specific about actions and impacts, not character judgments.",
       "words": 16,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3364,19 +3208,16 @@
           "raw": "Parties are encouraged to resolve conflicts directly. Be specific about actions and impacts, not character judgments.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "2b01ccee58a2",
       "text": "If direct resolution fails, either party may request mediation. A neutral mediator is selected from a pool of trained members or, if none are available, an admin not involved in the conflict.",
       "words": 32,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3385,19 +3226,16 @@
           "raw": "If direct resolution fails, either party may request mediation. A neutral mediator is selected from a pool of trained members or, if none are available, an admin not involved in the conflict.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "90a71fd7a4d7",
       "text": "The mediator:\n- Meets separately with each party\n- Facilitates a joint conversation\n- Helps identify common ground and next steps\n- Documents the agreement (shared only with involved parties)",
       "words": 30,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3406,10 +3244,7 @@
           "raw": "The mediator:\n- Meets separately with each party\n- Facilitates a joint conversation\n- Helps identify common ground and next steps\n- Documents the agreement (shared only with involved parties)",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "2df936537414",
@@ -3434,9 +3269,9 @@
       "text": "If mediation does not resolve the conflict, a formal grievance may be filed with the council. The grievance must include:\n- Specific actions that caused harm\n- Dates and context\n- Steps already taken to resolve\n- Requested resolution",
       "words": 39,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3445,10 +3280,7 @@
           "raw": "If mediation does not resolve the conflict, a formal grievance may be filed with the council. The grievance must include:\n- Specific actions that caused harm\n- Dates and context\n- Steps already taken to resolve\n- Requested resolution",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "894181035fe6",
@@ -3491,9 +3323,9 @@
       "text": "If either party disagrees with the council's resolution, they may appeal to the full membership. The appeal is presented as a proposal with identities protected where possible. The community votes on the resolution.",
       "words": 33,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3502,10 +3334,7 @@
           "raw": "If either party disagrees with the council's resolution, they may appeal to the full membership. The appeal is presented as a proposal with identities protected where possible. The community votes on the resolution.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "42bc68838a09",
@@ -3530,9 +3359,9 @@
       "text": "In cases of immediate safety concern, any admin may take emergency action (temporary suspension) without waiting for the full process. Emergency actions must be reviewed by the council within 48 hours.",
       "words": 31,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3541,19 +3370,16 @@
           "raw": "In cases of immediate safety concern, any admin may take emergency action (temporary suspension) without waiting for the full process. Emergency actions must be reviewed by the council within 48 hours.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "2c1d5fe3d9e8",
       "text": "- Verbal or written warning\n- Required mediation or training\n- Temporary suspension (with defined end date)\n- Permanent removal (requires council vote, appealable to membership)",
       "words": 26,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3562,19 +3388,16 @@
           "raw": "- Verbal or written warning\n- Required mediation or training\n- Temporary suspension (with defined end date)\n- Permanent removal (requires council vote, appealable to membership)",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "ec2fc37d641f",
       "text": "All conflict resolution proceedings are confidential. Public communications use anonymized descriptions. Participants may share their own experience but should not share others' private information.",
       "words": 24,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3583,10 +3406,7 @@
           "raw": "All conflict resolution proceedings are confidential. Public communications use anonymized descriptions. Participants may share their own experience but should not share others' private information.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "0fb63dd64e7f",
@@ -3611,9 +3431,9 @@
       "text": "Records of formal grievances are maintained by the council for 2 years. They are accessible only to current council members and the involved parties.",
       "words": 24,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3622,10 +3442,7 @@
           "raw": "Records of formal grievances are maintained by the council for 2 years. They are accessible only to current council members and the involved parties.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "0377f9e77545",
@@ -3668,9 +3485,9 @@
       "text": "Power must rotate. This document ensures that leadership transitions are planned, transparent, and don't depend on any single person.",
       "words": 19,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3679,10 +3496,7 @@
           "raw": "Power must rotate. This document ensures that leadership transitions are planned, transparent, and don't depend on any single person.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "bb97f6aeceec",
@@ -3707,9 +3521,9 @@
       "text": "### Schedule\nCouncil elections are held annually. The election timeline:\n- **Day 1–14**: Nomination period. Any member can nominate themselves or another member.\n- **Day 15–28**: Campaign/discussion period. Candidates share their vision.\n- **Day 29–42**: Voting period (14 days). Ranked-choice voting.\n- **Day 43**: Results announced. New council seated.",
       "words": 49,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3718,19 +3532,16 @@
           "raw": "### Schedule\nCouncil elections are held annually. The election timeline:\n- **Day 1–14**: Nomination period. Any member can nominate themselves or another member.\n- **Day 15–28**: Campaign/discussion period. Candidates share their vision.\n- **Day 29–42**: Voting period (14 days). Ranked-choice voting.\n- **Day 43**: Results announced. New council seated.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "a07fa212228e",
       "text": "### Transition\nOutgoing council members have 7 days to transfer responsibilities, access, and context to incoming members. A transition document is published to governance docs.",
       "words": 25,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3739,10 +3550,7 @@
           "raw": "### Transition\nOutgoing council members have 7 days to transfer responsibilities, access, and context to incoming members. A transition document is published to governance docs.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "d0c7008da6dd",
@@ -3767,9 +3575,9 @@
       "text": "### Single Vacancy\nIf one council seat becomes vacant mid-term, the council may appoint a replacement from active members. The appointment must be ratified by the community within 14 days.",
       "words": 30,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3778,19 +3586,16 @@
           "raw": "### Single Vacancy\nIf one council seat becomes vacant mid-term, the council may appoint a replacement from active members. The appointment must be ratified by the community within 14 days.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "e7a59983041e",
       "text": "### Multiple Vacancies\nIf more than half the council seats are vacant, an emergency election is triggered immediately using the regular election process with compressed timelines (7 days each phase instead of 14).",
       "words": 33,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3799,19 +3604,16 @@
           "raw": "### Multiple Vacancies\nIf more than half the council seats are vacant, an emergency election is triggered immediately using the regular election process with compressed timelines (7 days each phase instead of 14).",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "abaf019727a5",
       "text": "### Total Vacancy\nIf all council seats are vacant (the \"bus factor\" scenario), the three longest-tenured active members become interim admins. They must initiate an emergency election within 7 days.",
       "words": 30,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3820,10 +3622,7 @@
           "raw": "### Total Vacancy\nIf all council seats are vacant (the \"bus factor\" scenario), the three longest-tenured active members become interim admins. They must initiate an emergency election within 7 days.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "35d5d78d25a1",
@@ -3848,9 +3647,9 @@
       "text": "### Detection\nCouncil members who have not participated in governance (votes, proposals, discussions) for 30 consecutive days are contacted.",
       "words": 19,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3859,19 +3658,16 @@
           "raw": "### Detection\nCouncil members who have not participated in governance (votes, proposals, discussions) for 30 consecutive days are contacted.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "bd770537db58",
       "text": "### Process\n- Day 30: Notification sent to inactive council member.\n- Day 45: If no response, the council discusses the situation.\n- Day 60: If still inactive, the seat is declared vacant and succession procedures begin.",
       "words": 37,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3880,10 +3676,7 @@
           "raw": "### Process\n- Day 30: Notification sent to inactive council member.\n- Day 45: If no response, the council discusses the situation.\n- Day 60: If still inactive, the seat is declared vacant and succession procedures begin.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "95dd5e82c640",
@@ -3908,9 +3701,9 @@
       "text": "If a group of members seamrips to create a new patch, they carry their governance documents with them. The original patch's succession plan continues to operate independently.",
       "words": 27,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3919,19 +3712,16 @@
           "raw": "If a group of members seamrips to create a new patch, they carry their governance documents with them. The original patch's succession plan continues to operate independently.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "39d7d33e96b0",
       "text": "Changes to the succession plan require consensus. If consensus cannot be reached, a supermajority (2/3) with 50% quorum is required.",
       "words": 20,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
@@ -3940,10 +3730,7 @@
           "raw": "Changes to the succession plan require consensus. If consensus cannot be reached, a supermajority (2/3) with 50% quorum is required.",
           "quote": null
         }
-      ],
-      "authorship": {
-        "kind": "claimed"
-      }
+      ]
     },
     {
       "id": "1ad63ade5201",
@@ -41002,9 +40789,9 @@
       "text": "About — {instanceName}",
       "words": 2,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41013,16 +40800,19 @@
           "raw": "About &mdash; {instanceName}",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "3349fbb70b2c",
       "text": "What is {instanceName}?",
       "words": 2,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41031,16 +40821,19 @@
           "raw": "What is {instanceName}?",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "0b12ba39ab4d",
       "text": "What is this?",
       "words": 3,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41049,16 +40842,19 @@
           "raw": "What is this?",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "97c57152cb4c",
       "text": "A Patchwork is a hyper-local-by-design platform built to enable discovery, connection, and community building without relying on billionaire owned, algorithm powered, attention-economy-buttressed apps and social media sites. Patchwork is an open source codebase that can be hosted by anyone. No ads and no monetization strategy.",
       "words": 45,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41067,16 +40863,19 @@
           "raw": "A Patchwork is a hyper-local-by-design platform built to enable\n      discovery, connection, and community building without relying on\n      billionaire owned, algorithm powered, attention-economy-buttressed\n      apps and social media sites. Patchwork is an open source codebase\n      that can be hosted by anyone. No ads and no monetization strategy.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "03666fe9461c",
       "text": "This instance describes itself as:",
       "words": 5,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41085,16 +40884,19 @@
           "raw": "This instance describes itself as:",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "c3f15799af50",
       "text": "How does it work?",
       "words": 4,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41103,16 +40905,19 @@
           "raw": "How does it work?",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "db1dcf21d386",
       "text": "Every community, group, or entity on the \"quilt\" is a patch. It could be a music venue, a food bank, a local union chapter, an artist, a coalition, a band... you get the picture. Every patch is equal in ability to use the features of the platform and its discoverability, though some patches may grow or move depending on their activity or relationships to other patches.",
       "words": 66,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41121,16 +40926,19 @@
           "raw": "Every community, group, or entity on the \"quilt\" is a patch. It\n      could be a music venue, a food bank, a local union chapter, an\n      artist, a coalition, a band... you get the picture. Every patch is\n      equal in ability to use the features of the platform and its\n      discoverability, though some patches may grow or move depending on\n      their activity or relationships to other patches.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "77f3cc5d896a",
       "text": "You can interact with patches in a few ways:",
       "words": 9,
       "tier": "helper",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41139,16 +40947,19 @@
           "raw": "You can interact with patches in a few ways:",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "1dab73ed08a4",
       "text": "Follow a patch to see events and public notifications from it in your own personal quilt.",
       "words": 16,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41157,16 +40968,19 @@
           "raw": "Follow a patch to see events and public notifications from it in your own personal quilt.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "4f07676df7e3",
       "text": "Join a patch as a member to be involved in non-public activities.",
       "words": 12,
       "tier": "helper",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41175,16 +40989,19 @@
           "raw": "Join a patch as a member to be involved in non-public activities.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "ca655bc26db0",
       "text": "Create or manage a patch to update members, document policies, and even run internal elections and governance.",
       "words": 17,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41193,16 +41010,19 @@
           "raw": "Create or manage a patch to update members, document policies, and even run internal elections and governance.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "28307c13ef1f",
       "text": "Patches are arranged on the quilt near other patches that share members, followers, and events. Patchwork also has a robust governance system that allows patches to elect leaders, vote on policies, and attest to shared values. If you're interested in transparent, open-source governance through Patchwork,",
       "words": 45,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41211,16 +41031,19 @@
           "raw": "Patches are arranged on the quilt near other patches that share\n      members, followers, and events. Patchwork also has a robust\n      governance system that allows patches to elect leaders, vote on\n      policies, and attest to shared values. If you're interested in\n      transparent, open-source governance through Patchwork,",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "4bf92bcdd888",
       "text": "read more here",
       "words": 3,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41229,16 +41052,19 @@
           "raw": "read more here",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "3955115f8a44",
       "text": "Where do patches come from?",
       "words": 5,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41247,16 +41073,19 @@
           "raw": "Where do patches come from?",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "ccb53f8a6df5",
       "text": "Patches are created either by their owner or as \"unclaimed\" by an admin or a community suggestion. Unclaimed patches can be acquired and verified by their owners. However, any claimed patch must make a choice: adopt",
       "words": 36,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41265,7 +41094,10 @@
           "raw": "Patches are created either by their owner or as \"unclaimed\" by an\n      admin or a community suggestion. Unclaimed patches can be acquired\n      and verified by their owners. However, any claimed patch must make a\n      choice: adopt",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "ac6e78cb1e73",
@@ -41311,9 +41143,9 @@
       "text": ", or adopt and then publicly dissent. The lining is the \"baseline\" commitment that Patchwork expects, and any dissent or modifications thereof will not result in a ban, but instead a brand. Patchwork was designed to be a community building tool, and therefore has intentional biases towards fostering community according to values held by the contributors. Neighbors with differing values are welcome to use the tools, as they are welcome to participate in society and use shared public infrastructure, but the admin(s) will take steps to enforce rules or remove individuals and entities if significant breach occurs.",
       "words": 97,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41322,16 +41154,19 @@
           "raw": ",\n      or adopt and then publicly dissent. The lining is the \"baseline\"\n      commitment that Patchwork expects, and any dissent or modifications\n      thereof will not result in a ban, but instead a brand. Patchwork was\n      designed to be a community building tool, and therefore has\n      intentional biases towards fostering community according to values\n      held by the contributors. Neighbors with differing values are\n      welcome to use the tools, as they are welcome to participate in\n      society and use shared public infrastructure, but the admin(s) will\n      take steps to enforce rules or remove individuals and entities if\n      significant breach occurs.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "2653d09843e1",
       "text": "Patch presence on this quilt does not indicate an endorsement by this Patchwork or the people who run it. It only means the person, place, or group exists and that somebody recorded it, like a modern phone book. Nothing reaches your personal quilt except the patches you choose to follow, and anything that has no business being here at all can be reported to the admins.",
       "words": 66,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41340,16 +41175,19 @@
           "raw": "Patch presence on this quilt does not indicate an endorsement by this\n      Patchwork or the people who run it. It only means the person, place,\n      or group exists and that somebody recorded it, like a modern phone\n      book. Nothing reaches your personal quilt except the patches you\n      choose to follow, and anything that has no business being here at all\n      can be reported to the admins.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "b90045cdb266",
       "text": "What makes Patchwork different",
       "words": 4,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41358,16 +41196,19 @@
           "raw": "What makes Patchwork different",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "613fd94b8ee2",
       "text": "No ads, and no data collection beyond what the platform needs to function.",
       "words": 13,
       "tier": "helper",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41376,16 +41217,19 @@
           "raw": "No ads, and no data collection beyond what the platform needs to function.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "bddeb9b02d9c",
       "text": "No algorithm that decides what you should see.",
       "words": 8,
       "tier": "helper",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41394,16 +41238,19 @@
           "raw": "No algorithm that decides what you should see.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "97ce0ce3bd79",
       "text": "Run by community members.",
       "words": 4,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41412,16 +41259,19 @@
           "raw": "Run by community members.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "c03e8fb8991e",
       "text": "Creating a patch requires adopting",
       "words": 5,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41430,16 +41280,19 @@
           "raw": "Creating a patch requires adopting",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "3b3e906a92f0",
       "text": ", and amendments to it for your community are public.",
       "words": 10,
       "tier": "helper",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41448,16 +41301,19 @@
           "raw": ", and\n        amendments to it for your community are public.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "993fbef7431a",
       "text": "Leaving is made intentionally easy. If this place is not for you, but you like some of it, take it with you and start another quilt. It's open source, and this quilt's data can be exported whole and stood up somewhere else.",
       "words": 42,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41466,7 +41322,10 @@
           "raw": "Leaving is made intentionally easy. If this place is not for you,\n        but you like some of it, take it with you and start another quilt.\n        It's open source, and this quilt's data can be exported whole and\n        stood up somewhere else.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "f74ac3de659b",
@@ -41498,9 +41357,9 @@
       "text": "Patchwork is open source. Start your own quilt →",
       "words": 9,
       "tier": "helper",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": null,
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
@@ -41509,7 +41368,10 @@
           "raw": "Patchwork is open source. Start your own quilt &rarr;",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "eb0bd4914961",
