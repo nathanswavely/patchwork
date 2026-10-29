@@ -9,6 +9,9 @@
   import StructuredRulesDiff from '../components/StructuredRulesDiff.svelte';
   import { summarizeRuleChanges } from '../lib/rulesDiff.js';
   import Skeleton from '../components/Skeleton.svelte';
+  import AIUseQuestion from '../components/AIUseQuestion.svelte';
+  import { aiField, aiAnswerMissing } from '../lib/aiUse.js';
+  import { getAiDisclosure } from '../stores/quilt.svelte.js';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -79,6 +82,10 @@
   let step = $state('editing');
   let title = $state('');
   let description = $state('');
+  // Whether AI wrote the proposal
+  // (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md). Null until
+  // somebody answers.
+  let aiUse = $state(null);
   let submitting = $state(false);
 
   let currentRulesJSON = $derived(currentRules ? JSON.stringify(currentRules) : '');
@@ -196,6 +203,11 @@
       showToast('Title is required', 'error');
       return;
     }
+    const aiMissing = aiAnswerMissing(getAiDisclosure(), aiUse);
+    if (aiMissing) {
+      showToast(aiMissing, 'error');
+      return;
+    }
     submitting = true;
     try {
       const payload = {
@@ -206,6 +218,7 @@
         proposed_body: JSON.stringify(proposedRules, null, 2),
         proposed_title: 'Governance Rules',
         change_summary: title.trim(),
+        ai_use: aiField(getAiDisclosure(), aiUse),
       };
       const result = await api(`nodes/${slug}/proposals`, { method: 'POST', body: payload });
       // Changing the rules is the plainest answer to "decide how you
@@ -310,6 +323,12 @@
               <label class="lt-label" for="rules-desc"><span>{directChange ? 'Why this change?' : 'Why are you proposing this?'} <span class="lt-optional">(optional)</span></span></label>
               <textarea class="lt-field" id="rules-desc" bind:value={description} rows="4" disabled={submitting} placeholder="Help others understand why this change matters."></textarea>
             </div>
+
+            {#if getAiDisclosure() !== 'off'}
+              <div class="field">
+                <AIUseQuestion bind:value={aiUse} disabled={submitting} />
+              </div>
+            {/if}
 
             <p class="submit-consequence lt-muted">{submitConsequence}</p>
 

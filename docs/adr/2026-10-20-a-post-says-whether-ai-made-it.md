@@ -1,6 +1,9 @@
 # A post says whether AI made it
 
-Date: 2026-10-20. Status: **proposed**. Paired with
+Date: 2026-10-20. Status: **accepted**; implemented 2026-10-29 (migration
+`20261029T133533_ai_disclosure.sql`, `internal/handler/ai_disclosure.go`). The
+visible copy waits on the maintainer's review, as "Not decided here" says.
+Paired with
 docs/adr/2026-10-20-the-site-says-where-ai-is.md. Applies docs/adr/082's
 confirm step (nothing is accepted by silence), docs/adr/037's badge and
 per-user discovery filter, docs/adr/007 (an image is a reference), and

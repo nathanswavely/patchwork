@@ -55,6 +55,10 @@
     e.preventDefault();
     navigate('/governance');
   }
+  function goAi(e) {
+    e.preventDefault();
+    navigate('/ai');
+  }
 </script>
 
 <svelte:head>
@@ -179,6 +183,9 @@
         but you like some of it, take it with you and start another quilt.
         It's open source, and this quilt's data can be exported whole and
         stood up somewhere else.
+      </li>
+      <li>
+        <a href="/ai" onclick={goAi}>Where AI is used here</a>, and how posts made with it are labelled.
       </li>
     </ul>
   </section>

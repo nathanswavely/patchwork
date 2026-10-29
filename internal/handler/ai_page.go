@@ -27,11 +27,22 @@ func renderAIProject(db *database.DB, cfg *config.Config) string {
 	}
 	crawlers := strings.Join(middleware.AICrawlerNames(), ", ")
 
+	disclosure := aiDisclosureOptionalText
+	switch settings.AIDisclosure(db) {
+	case settings.AIDisclosureOff:
+		disclosure = aiDisclosureOffText
+	case settings.AIDisclosureRequired:
+		disclosure = aiDisclosureRequiredText
+	}
+
+	// {ai_disclosure} goes in first, because its text names the quilt and a
+	// Replacer makes one pass.
+	page := strings.Replace(aiPageProject, "{ai_disclosure}", disclosure, 1)
 	return strings.NewReplacer(
 		"{quilt_name}", settings.EffectiveName(db, cfg),
 		"{outbound}", strings.TrimRight(outbound.String(), "\n"),
 		"{ai_crawlers}", crawlers+".",
-	).Replace(aiPageProject)
+	).Replace(page)
 }
 
 // AIPage handles GET /api/v1/ai: public, no auth.

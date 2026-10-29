@@ -8,6 +8,8 @@
   import ConfirmAction from '../components/ConfirmAction.svelte';
   import EventLinks from '../components/EventLinks.svelte';
   import EventTierChip from '../components/EventTierChip.svelte';
+  import MadeWithAI from '../components/MadeWithAI.svelte';
+  import ReportButton from '../components/ReportButton.svelte';
   import { formatEventDateLong as formatDate, formatEventTime as formatTime } from '../lib/datetime.js';
 
   let { eventId = '' } = $props();
@@ -248,9 +250,15 @@
          host stops serving the file. -->
     {#if event.image_url}
       <img class="event-image" src={event.image_url} alt={event.image_alt} loading="lazy" />
+      {#if event.image_ai === 'generated'}
+        <p class="ai-row"><MadeWithAI value={event.image_ai} image /></p>
+      {/if}
     {/if}
 
     {#if event.description}
+      {#if event.ai_use === 'generated'}
+        <p class="ai-row"><MadeWithAI value={event.ai_use} /></p>
+      {/if}
       <p class="description">{event.description}</p>
     {/if}
 
@@ -268,6 +276,10 @@
         </a>
       </div>
     {/if}
+
+    <div class="report-row">
+      <ReportButton entityType="event" entityId={event.id} entityName={event.title} />
+    </div>
   {/if}
 </div>
 
@@ -332,6 +344,16 @@
 
   .edit-btn {
     flex-shrink: 0;
+  }
+
+  .ai-row {
+    margin: 0.5rem 0 0;
+  }
+
+  .report-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
   }
 
   .imported-note {

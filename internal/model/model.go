@@ -39,6 +39,10 @@ type User struct {
 	// hide amended-lining patches from this user's quilt, search, map, and
 	// public feeds. Populated by the Me handler, not by session validation.
 	HideAmendedLinings bool `json:"hide_amended_linings"`
+	// HideAIWork hides patches that declare their work relies on AI from
+	// this user's discovery (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md).
+	// There is no instance-wide twin. Populated by the Me handler.
+	HideAIWork bool `json:"hide_ai_work"`
 	// ContactCard is the phone, email and note a person shares patch by
 	// patch (docs/adr/080). Populated by the Me handlers only — it never
 	// rides along on a login response, a public profile, or an AP actor.
@@ -274,8 +278,16 @@ type Node struct {
 	// ImageURL is a reference, never bytes (docs/adr/007): the browser fetches
 	// it from wherever the patch keeps it. ImageAlt is required alongside, and
 	// is what remains when the bytes go.
-	ImageURL         string      `json:"image_url"`
-	ImageAlt         string      `json:"image_alt"`
+	ImageURL string `json:"image_url"`
+	ImageAlt string `json:"image_alt"`
+	// AIUse and ImageAI say whether AI made the description and the image
+	// (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md): "none",
+	// "assisted" or "generated", nil when nobody said. AIWork is the
+	// patch-level declaration that its work relies heavily on AI, nil when
+	// not stated, which an unclaimed patch always is.
+	AIUse            *string     `json:"ai_use"`
+	ImageAI          *string     `json:"image_ai"`
+	AIWork           *bool       `json:"ai_work"`
 	Links            []NodeLink  `json:"links"`
 	Visibility       string      `json:"visibility"`
 	MembershipPolicy string      `json:"membership_policy"`
@@ -395,6 +407,12 @@ type Event struct {
 	// A flyer or a show photo, held wherever the patch keeps it (docs/adr/007).
 	ImageURL string `json:"image_url"`
 	ImageAlt string `json:"image_alt"`
+	// AIUse and ImageAI say whether AI made the description and the flyer
+	// (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md). nil when
+	// nobody said, which is always the case for an imported event: it
+	// carries its provenance instead.
+	AIUse   *string `json:"ai_use"`
+	ImageAI *string `json:"image_ai"`
 	// EventURL is the event's own page out on the web — the venue's
 	// listing, the ticket page, the Facebook event (docs/adr/079). Every
 	// feed carries one and Patchwork used to drop it; an imported show
@@ -664,9 +682,13 @@ type Notice struct {
 	RepliesOpen bool `json:"replies_open"`
 	// MembersTold records that the author checked "Tell members" — the one
 	// way a notice reaches the bell. Shown on the notice afterwards.
-	MembersTold bool   `json:"members_told"`
-	CreatedAt   string `json:"created_at"`
-	UpdatedAt   string `json:"updated_at"`
+	MembersTold bool `json:"members_told"`
+	// AIUse says whether AI made the notice
+	// (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md); nil when the
+	// author did not say. Its image is not asked about.
+	AIUse     *string `json:"ai_use"`
+	CreatedAt string  `json:"created_at"`
+	UpdatedAt string  `json:"updated_at"`
 }
 
 // NoticeReply is a flat response under a notice: no parent, no reactions.
@@ -705,6 +727,10 @@ type Proposal struct {
 	BaseSHA        string  `json:"base_sha,omitempty"`
 	AppliedAt      *string `json:"applied_at,omitempty"`
 	AppliedBy      *string `json:"applied_by,omitempty"`
+	// AIUse says whether AI made the proposed text
+	// (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md); nil when the
+	// author did not say.
+	AIUse *string `json:"ai_use"`
 }
 
 type GovernanceDoc struct {
