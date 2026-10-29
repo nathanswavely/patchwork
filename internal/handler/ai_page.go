@@ -40,7 +40,7 @@ func AIPage(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		stewards, updatedAt, _ := settings.GetDetailed(db, settings.KeyAIPageStewards)
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]interface{}{
+		_ = json.NewEncoder(w).Encode(map[string]interface{}{
 			"project_markdown":    renderAIProject(db, cfg),
 			"stewards_markdown":   strings.TrimSpace(stewards),
 			"stewards_updated_at": updatedAt,
@@ -79,7 +79,7 @@ func AdminUpdateAIStewards(db *database.DB) http.HandlerFunc {
 		auth.LogAuditEvent(db, adminUser.ID, "admin.ai_page_update", "instance", "ai", "{}", clientIP(r))
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+		_ = json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 	}
 }
 
@@ -97,6 +97,6 @@ func AdminResetAIStewards(db *database.DB) http.HandlerFunc {
 		auth.LogAuditEvent(db, adminUser.ID, "admin.ai_page_reset", "instance", "ai", "{}", clientIP(r))
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+		_ = json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 	}
 }
