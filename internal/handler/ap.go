@@ -202,11 +202,11 @@ func APEvent(db *database.DB) http.HandlerFunc {
 		// applies the same visibility rule on the way out.
 		var e model.Event
 		err := db.QueryRow(
-			`SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location, e.latitude, e.longitude, e.starts_at, e.ends_at, e.recurrence, e.visibility, e.created_at, e.updated_at
+			`SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location, e.latitude, e.longitude, e.starts_at, e.ends_at, e.recurrence, e.visibility, e.ai_use, e.image_ai, e.created_at, e.updated_at
 			 FROM events e JOIN nodes n ON n.id = e.node_id
 			 WHERE e.id = ? AND e.removed_at IS NULL AND e.status = 'active' AND e.visibility = 'public'
 			   AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL AND n.visibility = 'public'`, eventID,
-		).Scan(&e.ID, &e.NodeID, &e.CreatedBy, &e.Title, &e.Description, &e.Location, &e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Recurrence, &e.Visibility, &e.CreatedAt, &e.UpdatedAt)
+		).Scan(&e.ID, &e.NodeID, &e.CreatedBy, &e.Title, &e.Description, &e.Location, &e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Recurrence, &e.Visibility, &e.AIUse, &e.ImageAI, &e.CreatedAt, &e.UpdatedAt)
 		if err != nil {
 			http.Error(w, `{"error":"event not found"}`, http.StatusNotFound)
 			return
@@ -238,9 +238,9 @@ func APProposal(db *database.DB) http.HandlerFunc {
 		var p model.Proposal
 		var apID sql.NullString
 		err := db.QueryRow(
-			`SELECT id, node_id, author_id, title, body, status, proposal_type, duration_hours, voting_ends_at, created_at, updated_at, ap_id
+			`SELECT id, node_id, author_id, title, body, status, proposal_type, duration_hours, voting_ends_at, created_at, updated_at, ap_id, ai_use
 			 FROM proposals WHERE id = ?`, proposalID,
-		).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &apID)
+		).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &apID, &p.AIUse)
 		if err != nil {
 			http.Error(w, `{"error":"proposal not found"}`, http.StatusNotFound)
 			return
@@ -319,14 +319,14 @@ func APGovernanceDoc(db *database.DB) http.HandlerFunc {
 				"https://www.w3.org/ns/activitystreams",
 				map[string]string{"gv": "https://" + domain + "/ns/governance#"},
 			},
-			"type":         "gv:GovernanceDocument",
-			"id":           fmt.Sprintf("https://%s/ap/governance/%s", domain, doc.ID),
-			"name":         doc.Title,
-			"content":      doc.Body,
-			"version":      doc.Version,
-			"context":      ap.NodeAPID(domain, doc.NodeID),
-			"published":    doc.CreatedAt,
-			"updated":      doc.UpdatedAt,
+			"type":      "gv:GovernanceDocument",
+			"id":        fmt.Sprintf("https://%s/ap/governance/%s", domain, doc.ID),
+			"name":      doc.Title,
+			"content":   doc.Body,
+			"version":   doc.Version,
+			"context":   ap.NodeAPID(domain, doc.NodeID),
+			"published": doc.CreatedAt,
+			"updated":   doc.UpdatedAt,
 		}
 		// As above: editing a charter takes a membership, so the editor is
 		// named only where that membership is not hidden (docs/adr/006).
@@ -363,7 +363,7 @@ func APNodeOutbox(db *database.DB) http.HandlerFunc {
 		// Collect recent public events as Create activities — non-public
 		// events never federate (broadcastEventCreate applies the same rule).
 		rows, err := db.Query(
-			`SELECT id, title, description, location, latitude, longitude, starts_at, ends_at, recurrence, visibility, created_at, updated_at
+			`SELECT id, title, description, location, latitude, longitude, starts_at, ends_at, recurrence, visibility, ai_use, image_ai, created_at, updated_at
 			 FROM events WHERE node_id = ? AND removed_at IS NULL AND status = 'active' AND visibility = 'public' ORDER BY created_at DESC LIMIT 50`, nodeID,
 		)
 		if err != nil {
@@ -375,7 +375,7 @@ func APNodeOutbox(db *database.DB) http.HandlerFunc {
 		var items []interface{}
 		for rows.Next() {
 			var e model.Event
-			if err := rows.Scan(&e.ID, &e.Title, &e.Description, &e.Location, &e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Recurrence, &e.Visibility, &e.CreatedAt, &e.UpdatedAt); err != nil {
+			if err := rows.Scan(&e.ID, &e.Title, &e.Description, &e.Location, &e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Recurrence, &e.Visibility, &e.AIUse, &e.ImageAI, &e.CreatedAt, &e.UpdatedAt); err != nil {
 				continue
 			}
 			e.NodeID = nodeID

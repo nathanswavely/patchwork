@@ -23,6 +23,10 @@ package handler
 // person's and which are AI wording a person kept.
 //
 // {quilt_name} is substituted at serve time, as in legal_defaults.go.
+// {ai_disclosure} is whichever of the three paragraphs below matches the
+// quilt's disclosure switch (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md),
+// the way {usage_stats} is rendered into the privacy policy: the switch
+// decides what the forms ask, so the page has to say which way it is set.
 //
 // Formatting: one line per paragraph and per list item. The frontend renders
 // markdown with breaks:true, so a wrapped paragraph would render ragged.
@@ -36,6 +40,8 @@ The server opens connections to other machines for these reasons and no others:
 {outbound}
 
 That list is checked against the code. A change that lets the server reach anything else fails the build until this page says what it is.
+
+{ai_disclosure}
 
 ## Can AI companies take what is here?
 
@@ -79,3 +85,11 @@ var aiPageOutbound = []struct {
 		"The mail server the stewards set up, to send sign-in links and the notifications you turn on.",
 	},
 }
+
+// The three states of the disclosure paragraph. Each one describes what the
+// forms do under that setting; change the forms and change these.
+const (
+	aiDisclosureOffText      = `**Labels.** {quilt_name} does not ask people whether AI made what they post. The stewards have turned that question off.`
+	aiDisclosureOptionalText = `**Labels.** When someone posts an event, a proposal, a notice, a charter change or a patch description here, the form asks whether AI made it, and, where there is an image, whether AI made the image. Answering is optional. Anything its author says AI made carries a "Made with AI" tag. A patch can also say that its work relies on AI, and you can hide those patches from your own browsing in your account settings.`
+	aiDisclosureRequiredText = `**Labels.** When someone posts an event, a proposal, a notice, a charter change or a patch description here, the form asks whether AI made it, and, where there is an image, whether AI made the image. It needs an answer. Anything its author says AI made carries a "Made with AI" tag. A patch can also say that its work relies on AI, and you can hide those patches from your own browsing in your account settings.`
+)

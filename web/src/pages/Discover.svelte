@@ -392,6 +392,9 @@
                 {#if patch.moved_to}
                   <span class="moved-chip">Moved</span>
                 {/if}
+                {#if patch.ai_work === true}
+                  <span class="moved-chip" title="This patch's admins say its work relies heavily on AI.">AI work</span>
+                {/if}
                 {#if patch.description}
                   <span class="patch-desc">
                     {patch.description.length > 90 ? patch.description.slice(0, 90) + '…' : patch.description}
@@ -437,6 +440,9 @@
                     >{patch.name}</a>
                     {#if patch.moved_to}
                       <span class="moved-chip">Moved</span>
+                    {/if}
+                    {#if patch.ai_work === true}
+                      <span class="moved-chip" title="This patch's admins say its work relies heavily on AI.">AI work</span>
                     {/if}
                     <span class="patch-meta">
                       {#each (patch.tags || []).slice(0, 3) as tag}

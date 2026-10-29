@@ -7,6 +7,7 @@
   import ConfirmAction from '../components/ConfirmAction.svelte';
   import { formatDay as formatDate } from '../lib/datetime.js';
   import { navigate } from '../stores/router.svelte.js';
+  import { reportReasonLabel } from '../lib/aiUse.js';
 
   let reports = $state([]);
   let loading = $state(true);
@@ -18,7 +19,13 @@
   let selectedAction = $state('dismiss');
 
   // What a report is about, in the UI's words rather than the table's.
-  const ENTITY_LABELS = { node: 'patch', event: 'event', user: 'person' };
+  const ENTITY_LABELS = { node: 'patch', event: 'event', proposal: 'proposal', user: 'person' };
+
+  // Where the AI label can be applied
+  // (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md, decision 7):
+  // the text of a patch, event or proposal, and the image of a patch or event.
+  const LABELLABLE = new Set(['node', 'event', 'proposal']);
+  const IMAGE_LABELLABLE = new Set(['node', 'event']);
 
   const tabs = [
     { key: 'pending', label: 'Pending' },
@@ -93,6 +100,8 @@
         remove_content: 'resolved',
         suspend_user: 'resolved',
         reset_appearance: 'resolved',
+        label: 'resolved',
+        label_image: 'resolved',
       };
       await api(`admin/reports/${resolvingId}`, {
         method: 'PATCH',
@@ -155,7 +164,7 @@
                   ><strong>{report.target_name}</strong></a>{:else}<strong>{report.target_name}</strong>{/if}</span>
               {/if}
             </div>
-            <p class="report-reason">{report.reason}</p>
+            <p class="report-reason">{reportReasonLabel(report.reason)}</p>
             {#if report.details}
               <p class="report-details lt-muted">{report.details}</p>
             {/if}
@@ -173,6 +182,12 @@
                     {#if report.entity_type === 'node'}
                       <option value="reset_appearance">Reset appearance</option>
                     {/if}
+                    {#if LABELLABLE.has(report.entity_type)}
+                      <option value="label">Apply the Made with AI label</option>
+                    {/if}
+                    {#if IMAGE_LABELLABLE.has(report.entity_type)}
+                      <option value="label_image">Label the image as made with AI</option>
+                    {/if}
                     <option value="suspend_user">Suspend user</option>
                   </select>
                 </label>
@@ -187,6 +202,10 @@
                     This clears the patch's chosen tile, so the quilt decides its look again.
                     The patch itself is untouched.
                   </p>
+                {:else if selectedAction === 'label'}
+                  <p class="warning-text">This marks the text as made with AI and records that you did it.</p>
+                {:else if selectedAction === 'label_image'}
+                  <p class="warning-text">This marks the image as made with AI and records that you did it.</p>
                 {/if}
                 <div class="resolve-actions">
                   {#if selectedAction === 'suspend_user'}

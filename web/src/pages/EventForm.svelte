@@ -6,10 +6,12 @@
   import VocabLabel from '../components/VocabLabel.svelte';
   import WorkspaceSearch from '../components/WorkspaceSearch.svelte';
   import TrustScopePicker from '../components/TrustScopePicker.svelte';
+  import AIUseQuestion from '../components/AIUseQuestion.svelte';
+  import { aiField, aiAnswerMissing } from '../lib/aiUse.js';
   import { reachablePatchPickerProvider } from '../lib/finderProviders.js';
   import { isAdmin, isTrustedContributor } from '../stores/auth.svelte.js';
   import { getMemberships } from '../stores/memberships.svelte.js';
-  import { getSubmissionsEnabled, getInstanceTimezone } from '../stores/quilt.svelte.js';
+  import { getSubmissionsEnabled, getInstanceTimezone, getAiDisclosure } from '../stores/quilt.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
 
   let { eventId = '', nodeSlug = '' } = $props();
@@ -33,6 +35,16 @@
   let imageUrl = $state('');
   let imageAlt = $state('');
   let eventUrl = $state('');
+  // Whether AI made the description and the image, asked separately because
+  // a flyer and its words are often made by different hands
+  // (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md). Null until
+  // somebody answers; nothing is preselected.
+  let aiUse = $state(null);
+  let imageAi = $state(null);
+  // An imported event was written elsewhere and carries provenance instead
+  // of an answer (decision 5), so the form does not ask.
+  let imported = $state(false);
+  let askAi = $derived(!imported && getAiDisclosure() !== 'off');
   // Who this event is for
   // (docs/adr/2026-09-19-an-event-says-who-it-is-for-within-what-the-patch-allows.md).
   // Public unless somebody says otherwise, which is what every event
@@ -134,6 +146,9 @@
       imageUrl = event.image_url || '';
       imageAlt = event.image_alt || '';
       eventUrl = event.event_url || '';
+      aiUse = event.ai_use ?? null;
+      imageAi = event.image_ai ?? null;
+      imported = !!event.source_id;
       visibility = event.visibility || 'public';
       // Read in the event's zone, not the editor's: an organizer editing a
       // Lancaster show sees 8:00 PM whether they are in Lancaster or on
@@ -391,6 +406,10 @@
     if (!startsAt) return 'Start date/time is required';
     if (timezone && !isValidZone(timezone))
       return 'Timezone must name a place, like America/New_York. A fixed-offset name like EST is an hour wrong for half the year.';
+    if (!imported) {
+      const missing = aiAnswerMissing(getAiDisclosure(), aiUse, ...(imageUrl.trim() ? [imageAi] : []));
+      if (missing) return missing;
+    }
     return '';
   }
 
@@ -418,6 +437,9 @@
         image_alt: imageAlt.trim(),
         event_url: eventUrl.trim(),
         visibility,
+        ai_use: imported ? undefined : aiField(getAiDisclosure(), aiUse),
+        // No image, no answer about one: a removed image takes its answer with it.
+        image_ai: imported ? undefined : aiField(getAiDisclosure(), imageUrl.trim() ? imageAi : null),
       };
       if (isEdit) {
         const result = await api(`events/${eventId}`, { method: 'PATCH', body });
@@ -577,6 +599,12 @@
           <textarea class="lt-field" id="description" bind:value={description} rows="4" disabled={submitting}></textarea>
         </div>
 
+        {#if askAi}
+          <div class="field">
+            <AIUseQuestion bind:value={aiUse} disabled={submitting} />
+          </div>
+        {/if}
+
         <div class="field">
           <label class="lt-label" for="node"><span>Hosting Patch <span class="lt-required">*</span></span></label>
           {#if fixed}
@@ -684,6 +712,11 @@
               loading.
             </p>
           </div>
+          {#if askAi}
+            <div class="field">
+              <AIUseQuestion bind:value={imageAi} legend="Was AI used to make this image?" disabled={submitting} />
+            </div>
+          {/if}
         {/if}
 
         <div class="lt-field-row">

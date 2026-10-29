@@ -10,6 +10,10 @@
   import { hasMapLocation, formatCoord } from '../lib/mapLocation.js';
   import { isPlaceZone } from '../lib/datetime.js';
   import { suggestPlace, worthLookingUp } from '../lib/placeSuggestion.js';
+  import AIUseQuestion from '../components/AIUseQuestion.svelte';
+  import AIWorkQuestion from '../components/AIWorkQuestion.svelte';
+  import { aiField, aiAnswerMissing } from '../lib/aiUse.js';
+  import { getAiDisclosure } from '../stores/quilt.svelte.js';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -262,10 +266,52 @@
     patch.value.reload();
   }
 
+  // Whether AI wrote the description
+  // (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md). Saved on pick,
+  // and sent again with every description edit so the two stay together; on
+  // a quilt that requires an answer, the description will not save without
+  // one.
+  let descAiUse = $state(null);
+  async function saveDescription(value) {
+    const aiMissing = aiAnswerMissing(getAiDisclosure(), descAiUse);
+    if (aiMissing) throw new Error(aiMissing);
+    await api(`nodes/${slug}`, {
+      method: 'PATCH',
+      body: { description: value, ai_use: aiField(getAiDisclosure(), descAiUse) },
+    });
+    showToast('Saved', 'success');
+    patch.value.reload();
+  }
+  async function saveDescAiUse(value) {
+    try {
+      await saveField('ai_use', value);
+    } catch (e) {
+      showToast(e.message || 'Failed to save', 'error');
+    }
+  }
+
+  // The patch-level declaration (decision 6). Saved on pick, and changing
+  // it is audited, so a patch cannot quietly drop the badge.
+  let savingAiWork = $state(false);
+  async function saveAiWork(value) {
+    savingAiWork = true;
+    try {
+      await saveField('ai_work', value);
+    } catch (e) {
+      showToast(e.message || 'Failed to save', 'error');
+    } finally {
+      savingAiWork = false;
+    }
+  }
+
   // The image pair (docs/adr/007). Seeded from the node and sent in one PATCH,
   // because neither half is valid without the other.
   let imageUrl = $state('');
   let imageAlt = $state('');
+  // Whether AI made the image, asked beside its description
+  // (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md, decision 3) and
+  // saved with the pair.
+  let imageAi = $state(null);
   let imageSeeded = $state('');
   let savingImage = $state(false);
   let imageError = $state('');
@@ -274,21 +320,35 @@
     if (node?.id && imageSeeded !== node.id) {
       imageUrl = node.image_url || '';
       imageAlt = node.image_alt || '';
+      imageAi = node.image_ai ?? null;
+      descAiUse = node.ai_use ?? null;
       imageSeeded = node.id;
     }
   });
 
   let imageDirty = $derived(
-    imageUrl.trim() !== (node?.image_url || '') || imageAlt.trim() !== (node?.image_alt || '')
+    imageUrl.trim() !== (node?.image_url || '') ||
+      imageAlt.trim() !== (node?.image_alt || '') ||
+      (imageUrl.trim() !== '' && (imageAi ?? null) !== (node?.image_ai ?? null))
   );
 
   async function saveImage() {
+    const aiMissing = imageUrl.trim() ? aiAnswerMissing(getAiDisclosure(), imageAi) : '';
+    if (aiMissing) {
+      imageError = aiMissing;
+      return;
+    }
     savingImage = true;
     imageError = '';
     try {
       await api(`nodes/${slug}`, {
         method: 'PATCH',
-        body: { image_url: imageUrl.trim(), image_alt: imageAlt.trim() },
+        body: {
+          image_url: imageUrl.trim(),
+          image_alt: imageAlt.trim(),
+          // A removed image takes its answer with it.
+          image_ai: aiField(getAiDisclosure(), imageUrl.trim() ? imageAi : null),
+        },
       });
       showToast('Saved', 'success');
       patch.value.reload();
@@ -473,9 +533,14 @@
     label="Description"
     value={node?.description || ''}
     type="textarea"
-    onSave={(v) => saveField('description', v)}
+    onSave={saveDescription}
     placeholder="Describe this patch"
   />
+  {#if getAiDisclosure() !== 'off'}
+    <div class="ai-section">
+      <AIUseQuestion bind:value={descAiUse} onchange={saveDescAiUse} legend="Did you use AI to write the description?" />
+    </div>
+  {/if}
 
   <!-- Location: the address, the clock it keeps, and the marker on the map,
        together because they all say where this patch is — in three different
@@ -679,6 +744,16 @@
     </p>
   </div>
 
+  <!-- AI work (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md,
+       decision 6): said by this patch's admins and shown as a badge on its
+       page and cards. An unclaimed patch carries no declaration; whoever
+       claims it answers. -->
+  {#if node?.status !== 'unclaimed'}
+    <div class="links-section">
+      <AIWorkQuestion value={node?.ai_work ?? null} disabled={savingAiWork} onchange={saveAiWork} />
+    </div>
+  {/if}
+
   <!-- The image and its description save together, unlike every other field
        here. They are only valid as a pair (docs/adr/007), so two separate
        inline edits would force you to write the description first and refuse
@@ -689,6 +764,7 @@
     <input class="lt-field" type="url" bind:value={imageUrl} disabled={savingImage} placeholder="https://..." />
     {#if imageUrl.trim()}
       <input class="lt-field" type="text" bind:value={imageAlt} disabled={savingImage} placeholder="Describe the image" />
+      <AIUseQuestion bind:value={imageAi} legend="Was AI used to make this image?" disabled={savingImage} />
     {/if}
     <p class="image-hint lt-muted">
       Link a picture you already have online. Patchwork points at it and never
@@ -974,6 +1050,10 @@
 
   .moved-input {
     width: 100%;
+  }
+
+  .ai-section {
+    padding: 0 0 0.6rem;
   }
 
   .links-section {

@@ -102,6 +102,11 @@ func SubmitPatch(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			// reviewer sees it in the queue, and the owner who claims the
 			// patch can change it at Settings -> Info.
 			Nonprofit bool `json:"nonprofit"`
+			// Whether AI wrote the description the suggester typed
+			// (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md). They
+			// answer for what they wrote and nothing else: a listing carries
+			// no AI work declaration, which waits for whoever claims it.
+			AIUse *string `json:"ai_use"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -109,6 +114,10 @@ func SubmitPatch(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		}
 		if req.Name == "" {
 			http.Error(w, `{"error":"name is required"}`, http.StatusBadRequest)
+			return
+		}
+		if msg := checkAIAnswer(db, "ai_use", req.AIUse); msg != "" {
+			writeJSONError(w, http.StatusBadRequest, msg)
 			return
 		}
 
@@ -214,9 +223,9 @@ func SubmitPatch(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		// patch went live admitting anyone, chosen by nobody. Same at the
 		// two admin-side listing inserts below.
 		_, err := db.Exec(
-			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, visibility, membership_policy, status, submitted_by, submission_source, verification_domain, ap_id, created_at, updated_at, follower_permissions, suggested_feed_url, suggested_feed_count, nonprofit)
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'public', 'invite_only', ?, ?, 'community', ?, ?, ?, ?, '{}', ?, ?, ?)`,
-			id, model.SystemUserID, req.Name, slug, req.Description, req.Latitude, req.Longitude, req.Address, req.Website, linksStr, status, user.ID, verificationDomain, apID, now, now, storedFeedURL, storedFeedCount, req.Nonprofit,
+			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, visibility, membership_policy, status, submitted_by, submission_source, verification_domain, ap_id, created_at, updated_at, follower_permissions, suggested_feed_url, suggested_feed_count, nonprofit, ai_use)
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'public', 'invite_only', ?, ?, 'community', ?, ?, ?, ?, '{}', ?, ?, ?, ?)`,
+			id, model.SystemUserID, req.Name, slug, req.Description, req.Latitude, req.Longitude, req.Address, req.Website, linksStr, status, user.ID, verificationDomain, apID, now, now, storedFeedURL, storedFeedCount, req.Nonprofit, aiAnswerValue(req.AIUse),
 		)
 		if err != nil {
 			http.Error(w, `{"error":"failed to create submission"}`, http.StatusInternalServerError)
@@ -498,20 +507,20 @@ func ListSubmissions(db *database.DB) http.HandlerFunc {
 		defer rows.Close()
 
 		type submission struct {
-			ID              string `json:"id"`
-			Name            string `json:"name"`
-			Slug            string `json:"slug"`
+			ID   string `json:"id"`
+			Name string `json:"name"`
+			Slug string `json:"slug"`
 			// What the website would derive as a trust anchor — shown to the
 			// reviewing admin as a suggestion, never applied automatically.
-			SuggestedVerificationDomain string `json:"suggested_verification_domain"`
-			Description     string `json:"description"`
-			Website         string `json:"website"`
-			Links           json.RawMessage `json:"links"`
-			Address         string `json:"address"`
-			SubmittedBy     string `json:"submitted_by"`
-			CreatedAt       string `json:"created_at"`
-			SubmitterName   string `json:"submitter_username"`
-			SubmitterDisplay string `json:"submitter_display_name"`
+			SuggestedVerificationDomain string          `json:"suggested_verification_domain"`
+			Description                 string          `json:"description"`
+			Website                     string          `json:"website"`
+			Links                       json.RawMessage `json:"links"`
+			Address                     string          `json:"address"`
+			SubmittedBy                 string          `json:"submitted_by"`
+			CreatedAt                   string          `json:"created_at"`
+			SubmitterName               string          `json:"submitter_username"`
+			SubmitterDisplay            string          `json:"submitter_display_name"`
 			// Tags the submitter picked, in priority order — shown so the
 			// reviewer can see what the community suggested before approving
 			// (docs/adr/021). Corrections happen after approval, once the
