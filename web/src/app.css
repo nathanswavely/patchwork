@@ -243,6 +243,14 @@
      a phone and cost the forms 32px of width. */
 }
 
+/* The height of every control floating on the quilt or map: the filter
+   chips and the buttons in their row, the Quilt/Map switch and the zoom.
+   One number, so a row of them reads as one line rather than five sizes
+   that nearly agree. A coarse pointer still gets LT's larger target. */
+:root {
+  --pw-canvas-control-h: 32px;
+}
+
 /* A card that floats on the quilt or map: the patch list's panel and the
    filter chips' open card. Frosted rather than opaque so the canvas reads
    through it, and one recipe so cards hanging side by side cannot drift

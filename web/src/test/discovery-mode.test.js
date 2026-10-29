@@ -235,7 +235,20 @@ describe('filter chips', () => {
     expect(chips()).toMatch(/class="chips-toggle on"[\s\S]*?aria-label="Hide filters"[\s\S]*?<EyeSlash /);
     expect(chips()).not.toContain('chips-collapse');
     // One size in both states, or showing the chips would move it.
-    expect(chips()).toMatch(/\.chips-toggle \{[^}]*width: 29px;[^}]*height: 29px;/);
+    expect(chips()).toMatch(/\.chips-toggle \{[^}]*width: var\(--pw-canvas-control-h\);[^}]*height: var\(--pw-canvas-control-h\);/);
+  });
+
+  it('stand as tall as every other control on the canvas', () => {
+    // One height for the row and the Quilt/Map switch and zoom at the
+    // canvas's foot, rather than five sizes that nearly agree.
+    const shell = readFileSync(resolve(process.cwd(), 'src', 'components/SocialShell.svelte'), 'utf8');
+    const app = readFileSync(resolve(process.cwd(), 'src', 'app.css'), 'utf8');
+    expect(app).toMatch(/--pw-canvas-control-h: 32px;/);
+    expect(chips()).toMatch(/\.lt-chip \{\s*height: var\(--pw-canvas-control-h\);/);
+    expect(chips()).toMatch(/\.chips-find input \{[^}]*height: var\(--pw-canvas-control-h\);/);
+    expect(chips()).toMatch(/\.chips-more \{[^}]*height: var\(--pw-canvas-control-h\);/);
+    expect(chips()).toMatch(/\.chips-round \{[^}]*height: var\(--pw-canvas-control-h\);/);
+    expect(shell).toMatch(/\.canvas-zoom \{[^}]*height: var\(--pw-canvas-control-h\);/);
   });
 
   it('slide the row home past the funnel when the card closes', () => {

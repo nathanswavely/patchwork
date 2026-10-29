@@ -527,10 +527,10 @@
      row stood on. */
   .chips-find input {
     width: 100%;
-    height: 29px;
+    height: var(--pw-canvas-control-h);
     min-height: 0;
-    padding-top: 4px;
-    padding-bottom: 4px;
+    padding-top: 0;
+    padding-bottom: 0;
     padding-left: 30px;
     padding-right: 28px;
   }
@@ -604,9 +604,10 @@
     align-items: center;
     justify-content: center;
     gap: 4px;
+    height: var(--pw-canvas-control-h);
     border: none;
     background: none;
-    padding: 2px 6px;
+    padding: 0 6px;
     font-family: inherit;
     font-size: 0.78rem;
     font-weight: 600;
@@ -620,7 +621,8 @@
   }
 
   .lt-chip {
-    padding: 5px 12px;
+    height: var(--pw-canvas-control-h);
+    padding: 0 12px;
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--color-text);
@@ -645,9 +647,10 @@
   }
 
   .chips-clear {
+    height: var(--pw-canvas-control-h);
     border: none;
     background: none;
-    padding: 2px 6px;
+    padding: 0 6px;
     font-family: inherit;
     font-size: 0.78rem;
     font-weight: 600;
@@ -664,8 +667,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 26px;
-    height: 26px;
+    width: var(--pw-canvas-control-h);
+    height: var(--pw-canvas-control-h);
     padding: 0;
     border: none;
     background: none;
@@ -681,16 +684,16 @@
 
   /* The show/hide button: one size whether it stands alone or leads the
      row, so showing and hiding the chips never moves it. On desktop that
-     size is a chip's height, so the row keeps its line; a phone keeps the
-     larger target. */
+     size is the canvas controls' height, so the row keeps its line; a phone
+     keeps the larger target. */
   .chips-toggle {
     position: relative;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 29px;
-    height: 29px;
+    width: var(--pw-canvas-control-h);
+    height: var(--pw-canvas-control-h);
     padding: 0;
     /* Matches the mobile filter FAB: text-muted-derived border so the
        circle keeps a visible edge in the dark theme too. */
@@ -757,7 +760,7 @@
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-radius: 999px;
-    padding: 4px 10px;
+    padding: 0 10px;
   }
 
   /* Flow: the page's own component — plain, wraps with the content. */

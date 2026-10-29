@@ -701,10 +701,12 @@
     gap: 8px;
   }
 
-  /* The switch and the zoom wear one glass pill each. */
+  /* The switch and the zoom wear one glass pill each, as tall as the
+     filter chips at the canvas's top edge (app.css). */
   .canvas-view,
   .canvas-zoom {
     display: flex;
+    height: var(--pw-canvas-control-h);
     gap: 3px;
     padding: 3px;
     border-radius: 999px;
@@ -715,7 +717,9 @@
   }
 
   .canvas-view a {
-    padding: 4px 12px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
     border-radius: 999px;
     font-size: 0.78rem;
     font-weight: 600;
@@ -739,8 +743,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 26px;
-    height: 26px;
+    aspect-ratio: 1;
     padding: 0;
     border: none;
     border-radius: 999px;
