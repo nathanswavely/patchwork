@@ -38,18 +38,26 @@ func (c *InAppChannel) Send(db *database.DB, recipientID string, event Event) {
 // event that did not name one. It is the match the notification_patch
 // migration backfilled with: a /patches/{slug} link, bounded by '/' or '?' so
 // "press" never matches "press-two", or an event's own patch for the
-// canonical /events/{id} shape. Empty when the link is neither.
+// canonical /events/{id} shape. Empty when the link is neither, and empty
+// when the lookup fails: a notification with no patch named is what every
+// row was before, so a miss is never worth refusing the notification over.
 func NodeIDFromLink(db *database.DB, link string) string {
-	var id string
+	var row interface{ Scan(...any) error }
 	switch {
 	case strings.HasPrefix(link, "/patches/"):
-		db.QueryRow(`SELECT id FROM nodes
+		row = db.QueryRow(`SELECT id FROM nodes
 			WHERE ? = '/patches/' || slug OR ? LIKE '/patches/' || slug || '/%' OR ? LIKE '/patches/' || slug || '?%'
-			LIMIT 1`, link, link, link).Scan(&id)
+			LIMIT 1`, link, link, link)
 	case strings.HasPrefix(link, "/events/"):
-		db.QueryRow(`SELECT node_id FROM events
+		row = db.QueryRow(`SELECT node_id FROM events
 			WHERE ? = '/events/' || id OR ? LIKE '/events/' || id || '?%'
-			LIMIT 1`, link, link).Scan(&id)
+			LIMIT 1`, link, link)
+	default:
+		return ""
+	}
+	var id string
+	if err := row.Scan(&id); err != nil {
+		return ""
 	}
 	return id
 }

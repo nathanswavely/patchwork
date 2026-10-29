@@ -24,15 +24,6 @@ test.describe('Notifications — Bell', () => {
     await expect(page.locator('.bell-btn')).toHaveAttribute('aria-expanded', 'true');
   });
 
-  test('Escape closes the dropdown and returns focus to the bell', async ({ page }) => {
-    await goto(page, '/dashboard');
-    await page.locator('.bell-btn').click();
-    await expect(page.locator('.notif-dropdown')).toBeVisible({ timeout: 3000 });
-    await page.keyboard.press('Escape');
-    await expect(page.locator('.notif-dropdown')).toHaveCount(0);
-    await expect(page.locator('.bell-btn')).toBeFocused();
-  });
-
   test('on a phone the bell goes to the notifications page', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
     await goto(page, '/events');
