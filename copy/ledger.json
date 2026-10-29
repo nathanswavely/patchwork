@@ -25970,7 +25970,7 @@
         },
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2505,
+          "line": 2697,
           "kind": "markup",
           "raw": "Try Again",
           "quote": null
@@ -26931,14 +26931,14 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 429,
+          "line": 452,
           "kind": "attr:title",
           "raw": "Notifications",
           "quote": "\""
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 437,
+          "line": 460,
           "kind": "markup",
           "raw": "Notifications",
           "quote": null
@@ -28657,14 +28657,14 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 401,
+          "line": 424,
           "kind": "attr:title",
           "raw": "What is Patchwork?",
           "quote": "\""
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 404,
+          "line": 427,
           "kind": "markup",
           "raw": "What is Patchwork?",
           "quote": null
@@ -28933,7 +28933,7 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 453,
+          "line": 476,
           "kind": "attr:title",
           "raw": "The Label",
           "quote": "\""
@@ -29026,7 +29026,7 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 499,
+          "line": 522,
           "kind": "markup",
           "raw": "About {formatMoney(label.total_monthly_minor, label.currency)}/month to keep running",
           "quote": null
@@ -29220,7 +29220,7 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 492,
+          "line": 515,
           "kind": "attr:aria-label",
           "raw": "Close",
           "quote": "\""
@@ -29565,7 +29565,7 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 165,
+          "line": 183,
           "kind": "js-string",
           "raw": "Events",
           "quote": "'",
@@ -31528,7 +31528,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 665,
+          "line": 724,
           "kind": "js-string",
           "raw": "This quilt",
           "quote": "'"
@@ -31546,7 +31546,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 1032,
+          "line": 1091,
           "kind": "js-string",
           "raw": "'Space Grotesk Variable', system-ui, sans-serif",
           "quote": "\""
@@ -31564,7 +31564,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2500,
+          "line": 2692,
           "kind": "markup",
           "raw": "Loading quilt...",
           "quote": null
@@ -31582,14 +31582,14 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2511,
+          "line": 2703,
           "kind": "markup",
           "raw": "No patches match your\n        {filterTags.length > 0 && searchQuery.trim() ? 'search and filter'\n          : filterTags.length > 0 ? 'filter' : 'search'}{quiltScope === 'my' ? ' in My Quilt' : ''}.",
           "quote": null
         },
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2538,
+          "line": 2730,
           "kind": "markup",
           "raw": "No patches match your\n        {filterTags.length > 0 && searchQuery.trim() ? 'search and filter'\n          : filterTags.length > 0 ? 'filter' : 'search'}{quiltScope === 'my' ? ' in My Quilt' : ''}.",
           "quote": null
@@ -31610,14 +31610,14 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2518,
+          "line": 2710,
           "kind": "markup",
           "raw": "Clear filter",
           "quote": null
         },
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2545,
+          "line": 2737,
           "kind": "markup",
           "raw": "Clear filter",
           "quote": null
@@ -31649,14 +31649,14 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2521,
+          "line": 2713,
           "kind": "markup",
           "raw": "Suggest a patch",
           "quote": null
         },
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2548,
+          "line": 2740,
           "kind": "markup",
           "raw": "Suggest a patch",
           "quote": null
@@ -31681,7 +31681,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2526,
+          "line": 2718,
           "kind": "markup",
           "raw": "This quilt is empty.",
           "quote": null
@@ -31699,7 +31699,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2527,
+          "line": 2719,
           "kind": "markup",
           "raw": "Create the first patch to get started.",
           "quote": null
@@ -32381,7 +32381,7 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 265,
+          "line": 288,
           "kind": "markup",
           "raw": "My Quilt",
           "quote": null
@@ -32399,7 +32399,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 163,
+          "line": 181,
           "kind": "js-string",
           "raw": "patches",
           "quote": "'",
@@ -32418,7 +32418,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 163,
+          "line": 181,
           "kind": "js-string",
           "raw": "Patches",
           "quote": "'",
@@ -32466,7 +32466,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 165,
+          "line": 183,
           "kind": "js-string",
           "raw": "events",
           "quote": "'",
@@ -32509,7 +32509,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 169,
+          "line": 187,
           "kind": "js-string",
           "raw": "discover",
           "quote": "'",
@@ -32528,7 +32528,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 169,
+          "line": 187,
           "kind": "js-string",
           "raw": "Discover",
           "quote": "'",
@@ -32547,7 +32547,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 171,
+          "line": 189,
           "kind": "js-string",
           "raw": "dashboard",
           "quote": "'",
@@ -32566,7 +32566,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 171,
+          "line": 189,
           "kind": "js-string",
           "raw": "Dashboard",
           "quote": "'",
@@ -32592,7 +32592,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 269,
+          "line": 292,
           "kind": "markup",
           "raw": "Connected quilts",
           "quote": null
@@ -32610,14 +32610,14 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 291,
+          "line": 314,
           "kind": "attr:placeholder",
           "raw": "Search patches and events…",
           "quote": "\""
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 315,
+          "line": 338,
           "kind": "attr:placeholder",
           "raw": "Search patches and events…",
           "quote": "\""
@@ -32635,7 +32635,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 342,
+          "line": 365,
           "kind": "attr:aria-label",
           "raw": "Canvas view",
           "quote": "\""
@@ -32653,7 +32653,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 358,
+          "line": 381,
           "kind": "attr:aria-label",
           "raw": "Zoom",
           "quote": "\""
@@ -32671,14 +32671,14 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 362,
+          "line": 385,
           "kind": "attr:title",
           "raw": "Zoom out",
           "quote": "\""
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 363,
+          "line": 386,
           "kind": "attr:aria-label",
           "raw": "Zoom out",
           "quote": "\""
@@ -32696,14 +32696,14 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 368,
+          "line": 391,
           "kind": "attr:title",
           "raw": "Zoom in",
           "quote": "\""
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 369,
+          "line": 392,
           "kind": "attr:aria-label",
           "raw": "Zoom in",
           "quote": "\""
@@ -32721,14 +32721,14 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 414,
+          "line": 437,
           "kind": "attr:title",
           "raw": "Search",
           "quote": "\""
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 419,
+          "line": 442,
           "kind": "markup",
           "raw": "Search",
           "quote": null
@@ -32746,7 +32746,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 454,
+          "line": 477,
           "kind": "attr:aria-label",
           "raw": "About this quilt",
           "quote": "\""
@@ -32764,7 +32764,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 468,
+          "line": 491,
           "kind": "attr:title",
           "raw": "Filter",
           "quote": "\""
@@ -32782,7 +32782,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 495,
+          "line": 518,
           "kind": "markup",
           "raw": "Stewarded by {(label.stewards || []).map((s) => `@${s.username}`).join(', ')}",
           "quote": null
@@ -32800,7 +32800,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 502,
+          "line": 525,
           "kind": "markup",
           "raw": "Run by real people and open source. Feel free to build your own if you don't like this one.",
           "quote": null
@@ -37720,7 +37720,7 @@
         },
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 84,
+          "line": 85,
           "kind": "js-string",
           "raw": "People",
           "quote": "'",
@@ -39508,7 +39508,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 63,
+          "line": 64,
           "kind": "js-string",
           "raw": "Quilt mark",
           "quote": "'"
@@ -39526,7 +39526,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 64,
+          "line": 65,
           "kind": "js-string",
           "raw": "Palette",
           "quote": "'",
@@ -39559,7 +39559,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 65,
+          "line": 66,
           "kind": "js-string",
           "raw": "Paint brush",
           "quote": "'"
@@ -39577,7 +39577,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 66,
+          "line": 67,
           "kind": "js-string",
           "raw": "Gallery",
           "quote": "'",
@@ -39596,7 +39596,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 67,
+          "line": 68,
           "kind": "js-string",
           "raw": "Camera",
           "quote": "'",
@@ -39615,7 +39615,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 68,
+          "line": 69,
           "kind": "js-string",
           "raw": "Film slate",
           "quote": "'"
@@ -39633,7 +39633,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 69,
+          "line": 70,
           "kind": "js-string",
           "raw": "Music notes",
           "quote": "'"
@@ -39651,7 +39651,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 70,
+          "line": 71,
           "kind": "js-string",
           "raw": "Guitar",
           "quote": "'",
@@ -39670,7 +39670,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 71,
+          "line": 72,
           "kind": "js-string",
           "raw": "Microphone",
           "quote": "'",
@@ -39689,7 +39689,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 72,
+          "line": 73,
           "kind": "js-string",
           "raw": "Vinyl",
           "quote": "'",
@@ -39708,7 +39708,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 73,
+          "line": 74,
           "kind": "js-string",
           "raw": "Radio",
           "quote": "'",
@@ -39727,7 +39727,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 74,
+          "line": 75,
           "kind": "js-string",
           "raw": "Theater mask",
           "quote": "'"
@@ -39745,7 +39745,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 75,
+          "line": 76,
           "kind": "js-string",
           "raw": "Dance",
           "quote": "'",
@@ -39764,7 +39764,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 76,
+          "line": 77,
           "kind": "js-string",
           "raw": "Open book",
           "quote": "'"
@@ -39782,7 +39782,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 77,
+          "line": 78,
           "kind": "js-string",
           "raw": "Stamp",
           "quote": "'",
@@ -39801,7 +39801,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 78,
+          "line": 79,
           "kind": "js-string",
           "raw": "Scissors",
           "quote": "'",
@@ -39820,7 +39820,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 79,
+          "line": 80,
           "kind": "js-string",
           "raw": "Hammer",
           "quote": "'",
@@ -39839,7 +39839,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 80,
+          "line": 81,
           "kind": "js-string",
           "raw": "Venue",
           "quote": "'",
@@ -39858,7 +39858,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 81,
+          "line": 82,
           "kind": "js-string",
           "raw": "Storefront",
           "quote": "'",
@@ -39877,7 +39877,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 82,
+          "line": 83,
           "kind": "js-string",
           "raw": "Fork & knife",
           "quote": "'"
@@ -39895,7 +39895,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 83,
+          "line": 84,
           "kind": "js-string",
           "raw": "Coffee",
           "quote": "'",
@@ -39914,7 +39914,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 85,
+          "line": 86,
           "kind": "js-string",
           "raw": "Megaphone",
           "quote": "'",
@@ -39933,7 +39933,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 86,
+          "line": 87,
           "kind": "js-string",
           "raw": "Grad cap",
           "quote": "'"
@@ -39951,7 +39951,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 87,
+          "line": 88,
           "kind": "js-string",
           "raw": "Code",
           "quote": "'",
@@ -39970,7 +39970,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 88,
+          "line": 89,
           "kind": "js-string",
           "raw": "Ball",
           "quote": "'",
@@ -39989,7 +39989,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 89,
+          "line": 90,
           "kind": "js-string",
           "raw": "Bicycle",
           "quote": "'",
@@ -40008,7 +40008,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 90,
+          "line": 91,
           "kind": "js-string",
           "raw": "Heartbeat",
           "quote": "'",
@@ -40027,7 +40027,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 91,
+          "line": 92,
           "kind": "js-string",
           "raw": "Flower",
           "quote": "'",
@@ -40046,7 +40046,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 92,
+          "line": 93,
           "kind": "js-string",
           "raw": "Butterfly",
           "quote": "'",
@@ -40065,7 +40065,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 93,
+          "line": 94,
           "kind": "js-string",
           "raw": "Globe",
           "quote": "'",
@@ -40084,7 +40084,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 94,
+          "line": 95,
           "kind": "js-string",
           "raw": "Star",
           "quote": "'",
@@ -40103,7 +40103,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 95,
+          "line": 96,
           "kind": "js-string",
           "raw": "Skull",
           "quote": "'",
@@ -40122,7 +40122,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchIcons.js",
-          "line": 96,
+          "line": 97,
           "kind": "js-string",
           "raw": "Lightning",
           "quote": "'",
