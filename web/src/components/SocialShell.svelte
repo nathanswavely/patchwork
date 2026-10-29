@@ -25,7 +25,8 @@
   import FilterChips from './FilterChips.svelte';
   import { discoveryFinderProvider } from '../lib/finderProviders.js';
   import { getUnread } from '../stores/notifications.svelte.js';
-  import { ArrowSquareOut, Bell, CaretDown, Compass, FunnelSimple, Info, MagnifyingGlass, SquaresFour, CalendarBlank, Gauge, SidebarSimple, House } from 'phosphor-svelte';
+  import { ArrowSquareOut, Bell, CaretDown, Compass, FunnelSimple, Info, MagnifyingGlass, Minus, Plus, SquaresFour, CalendarBlank, Gauge, SidebarSimple, House } from 'phosphor-svelte';
+  import { hasCanvasZoom, canZoomIn, canZoomOut, zoomCanvas } from '../stores/canvasZoom.svelte.js';
   import LabelFooter from './LabelFooter.svelte';
   import IntroCard from './IntroCard.svelte';
   import { getLabel, loadLabel, formatMoney } from '../stores/label.svelte.js';
@@ -331,22 +332,44 @@
     </div>
   {/if}
 
-  <!-- Canvas view switcher (docs/adr/074): desktop only. On mobile the same
-       choice already rides the floating pill, which is canvas chrome too. -->
-  {#if isQuiltRoute && mapEnabled}
-    <div class="canvas-view" role="group" aria-label="Canvas view">
-      <a
-        href={scopedPath('quilt', quiltScope)}
-        class:active={!onMapSurface}
-        aria-current={!onMapSurface ? 'page' : undefined}
-        onclick={(e) => handleNav(e, scopedPath('quilt', quiltScope))}
-      >Quilt</a>
-      <a
-        href={scopedPath('map', quiltScope)}
-        class:active={onMapSurface}
-        aria-current={onMapSurface ? 'page' : undefined}
-        onclick={(e) => handleNav(e, scopedPath('map', quiltScope))}
-      >Map</a>
+  <!-- Canvas view switcher (docs/adr/074) and the canvas's zoom, together
+       at its bottom-right corner: desktop only. On mobile the view choice
+       already rides the floating pill, and both canvases pinch. The zoom
+       holds the corner, since it is there with or without a map. -->
+  {#if isQuiltRoute}
+    <div class="canvas-controls">
+      {#if mapEnabled}
+        <div class="canvas-view" role="group" aria-label="Canvas view">
+          <a
+            href={scopedPath('quilt', quiltScope)}
+            class:active={!onMapSurface}
+            aria-current={!onMapSurface ? 'page' : undefined}
+            onclick={(e) => handleNav(e, scopedPath('quilt', quiltScope))}
+          >Quilt</a>
+          <a
+            href={scopedPath('map', quiltScope)}
+            class:active={onMapSurface}
+            aria-current={onMapSurface ? 'page' : undefined}
+            onclick={(e) => handleNav(e, scopedPath('map', quiltScope))}
+          >Map</a>
+        </div>
+      {/if}
+      {#if hasCanvasZoom()}
+        <div class="canvas-zoom" role="group" aria-label="Zoom">
+          <button
+            onclick={() => zoomCanvas(-1)}
+            disabled={!canZoomOut()}
+            title="Zoom out"
+            aria-label="Zoom out"
+          ><Minus size={14} weight="bold" /></button>
+          <button
+            onclick={() => zoomCanvas(1)}
+            disabled={!canZoomIn()}
+            title="Zoom in"
+            aria-label="Zoom in"
+          ><Plus size={14} weight="bold" /></button>
+        </div>
+      {/if}
     </div>
   {/if}
 
@@ -668,13 +691,19 @@
      strip's line (24px tall at the window's foot) at every width, not only
      when the pane is put away: the strip is a run of text and outgrows the
      pane on a narrow window, and a switch that hopped when the pane moved
-     would be one more thing to find again. The map's zoom control keeps
-     the bottom-left. */
-  .canvas-view {
+     would be one more thing to find again. */
+  .canvas-controls {
     position: fixed;
     right: calc(var(--pw-cards-pane-w, 45%) + 16px);
     bottom: 36px;
     z-index: 20;
+    display: flex;
+    gap: 8px;
+  }
+
+  /* The switch and the zoom wear one glass pill each. */
+  .canvas-view,
+  .canvas-zoom {
     display: flex;
     gap: 3px;
     padding: 3px;
@@ -703,6 +732,32 @@
     background: var(--color-surface);
     color: var(--color-text);
     box-shadow: 0 1px 3px var(--color-shadow);
+  }
+
+  /* Round, as tall as a switch option, so the two pills share a line. */
+  .canvas-zoom button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: background 150ms ease, color 150ms ease;
+  }
+
+  .canvas-zoom button:hover:not(:disabled) {
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+
+  .canvas-zoom button:disabled {
+    opacity: 0.4;
+    cursor: default;
   }
 
   .quilt-chips.rail-collapsed {
@@ -990,7 +1045,7 @@
       display: none;
     }
 
-    .canvas-view {
+    .canvas-controls {
       display: none;
     }
 

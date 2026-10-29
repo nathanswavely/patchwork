@@ -416,14 +416,11 @@
   // move to.
   let listDimmed = $derived(previewing !== null && hoveredCardId === null);
 
-  function preview(patch, fromMap = false) {
+  // A preview never scrolls the list. Bringing the card to the reader moved
+  // the list on every tile the pointer crossed on its way somewhere else;
+  // the lit card among dimmed ones answers the hover without the motion.
+  function preview(patch) {
     previewing = patch?.id ?? null;
-    // A preview that comes from the map brings its card to the reader; one
-    // that comes from the card must not move the list under their pointer.
-    if (!fromMap || !patch) return;
-    document
-      .querySelector(`[data-patch-id="${CSS.escape(patch.id)}"]`)
-      ?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
 
   // Opening a patch from this surface pushes its address; choosing another
@@ -629,7 +626,7 @@
         onMarkerClick={(node) => openPatch(node.slug, node._source || null)}
         onBackgroundClick={backgroundClick}
         announceOffscreen={!inViewActive}
-        onPatchHover={(node) => hasPointer && preview(node, true)}
+        onPatchHover={(node) => hasPointer && preview(node)}
         hoveredId={previewing}
         onInViewChange={reportInView}
       />
@@ -644,7 +641,7 @@
         insetRight={quiltInset}
         insetTop={quiltInsetTop}
         onClearFilter={resetFilters}
-        onPatchHover={(patch) => hasPointer && preview(patch, true)}
+        onPatchHover={(patch) => hasPointer && preview(patch)}
         onBackgroundClick={backgroundClick}
         onInViewChange={reportInView}
         focusPatchId={hoveredCardId}

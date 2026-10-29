@@ -50,6 +50,10 @@ typing.**
 - **The canvas chips return to the top edge**, as 033 first placed them,
   and the Quilt/Map switch moves to the canvas's bottom-right. The quilt's
   fit leaves room for the row.
+- **One zoom for both canvases stands beside the switch.** The map wore
+  Leaflet's control in the bottom-left and the quilt had none; now a pair of
+  buttons drives whichever canvas is showing, about the middle the reader
+  can see. Phones pinch, as they already did on the quilt.
 
 ## Consequences
 

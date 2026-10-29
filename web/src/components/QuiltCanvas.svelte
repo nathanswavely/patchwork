@@ -19,6 +19,7 @@
   } from '../stores/multiQuilt.svelte.js';
   import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
   import { getColorMode } from '../stores/colors.svelte.js';
+  import { attachCanvasZoom, reportCanvasZoom } from '../stores/canvasZoom.svelte.js';
   import { navigate } from '../stores/router.svelte.js';
 
   // A search that named a group the quilt doesn't have. The filter-miss case
@@ -383,6 +384,11 @@
     return Math.max(30, Math.min(80, Math.floor(contentSize / gridSide)));
   }
 
+  // The zoom extent, which the fit is clamped to as well.
+  const ZOOM_MIN = 0.3;
+  const ZOOM_MAX = 6;
+  const ZOOM_STEP = 1.5; // one press of the zoom buttons
+
   /** Fit padding — a phone can't spare the desktop gutters. */
   function fitInsets(vw) {
     const narrow = vw <= NARROW_VW;
@@ -397,7 +403,7 @@
    * person pan.
    */
   function clampFitScale(targetK, narrow) {
-    const k = Math.max(0.3, Math.min(6, targetK));
+    const k = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, targetK));
     if (!narrow) return k;
     return Math.max(k, Math.min(2.4, (LABEL_MIN_PX + 8) / baseUnit));
   }
@@ -1207,7 +1213,7 @@
 
     // --- ZOOM ---
     zoomBehavior = d3.zoom()
-      .scaleExtent([0.3, 6])
+      .scaleExtent([ZOOM_MIN, ZOOM_MAX])
       .filter(event => event.type !== 'dblclick')
       .on('start', () => { quiltGestureMoved = false; })
       .on('zoom', (event) => {
@@ -1221,6 +1227,9 @@
         updateSeamRidge();
         applyClothTiers();
         parkWeaveDuringZoom();
+        if (interactive) {
+          reportCanvasZoom(event.transform.k < ZOOM_MAX - 1e-6, event.transform.k > ZOOM_MIN + 1e-6);
+        }
       });
 
     svgSelection = svg;
@@ -1448,6 +1457,27 @@
     svgSelection.interrupt('zoomFit');
     zoomBehavior.translateBy(svgSelection, dxScreen / k, dyScreen / k);
   }
+
+  // The canvas chrome's zoom buttons (stores/canvasZoom), the same pair the
+  // map answers to. A step zooms about the middle of the quilt the reader
+  // can see, the point the fit centres on: right of the rail, left of the
+  // cards pane, below the chips row.
+  function stepZoom(direction) {
+    if (!svgSelection || !zoomBehavior) return;
+    const { vw, vh } = getContainerSize();
+    const { fitPadLeft } = fitInsets(vw);
+    const fitPadRight = Math.round(vw * insetRight);
+    const middle = [(vw + fitPadLeft - fitPadRight) / 2, (vh + insetTop) / 2];
+    const dur = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 200;
+    svgSelection.interrupt('zoomFit');
+    svgSelection.transition('zoomStep').duration(dur).ease(d3.easeCubicOut)
+      .call(zoomBehavior.scaleBy, direction > 0 ? ZOOM_STEP : 1 / ZOOM_STEP, middle);
+  }
+
+  $effect(() => {
+    if (!interactive) return;
+    return attachCanvasZoom(stepZoom);
+  });
 
   function zoomQuiltBy(ratio, clientX, clientY) {
     if (!svgSelection || !zoomBehavior) return;
