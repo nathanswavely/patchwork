@@ -72,6 +72,42 @@
     resetting = false;
   }
 
+  // The stewards' part of the AI page
+  // (docs/adr/2026-10-20-the-site-says-where-ai-is.md). It replaces nothing:
+  // the project part above it ships with the software and is not editable.
+  let stewards = $state('');
+  let stewardsSaved = $state('');
+  let stewardsBusy = $state(false);
+
+  $effect(() => { loadStewards(); });
+
+  async function loadStewards() {
+    try {
+      const data = await api('ai');
+      stewards = data.stewards_markdown || '';
+      stewardsSaved = stewards;
+    } catch {
+      // The legal editor above still works; this block just stays empty.
+    }
+  }
+
+  async function saveStewards() {
+    stewardsBusy = true;
+    try {
+      if (stewards.trim()) {
+        await api('admin/ai-page', { method: 'PUT', body: { markdown: stewards } });
+        showToast('Saved, now live at /ai', 'success');
+      } else {
+        await api('admin/ai-page', { method: 'DELETE' });
+        showToast('Removed from /ai', 'success');
+      }
+      await loadStewards();
+    } catch (e) {
+      showToast(e.message || 'Save failed', 'error');
+    }
+    stewardsBusy = false;
+  }
+
   function viewPublic(e) {
     e.preventDefault();
     navigate(`/${active}`);
@@ -151,11 +187,48 @@
       </div>
     {/if}
   {/if}
+
+  <section class="ai-stewards">
+    <h2>The AI page: your part</h2>
+    <p class="lt-muted">
+      /ai says where AI is in the Patchwork software. That part ships with the software and cannot be edited here. Below it, this quilt can say what its stewards do and what they ask of members. Leave it empty and the page says you have not added anything.
+    </p>
+    <textarea
+      class="doc-editor"
+      bind:value={stewards}
+      rows="10"
+      spellcheck="true"
+      aria-label="Your part of the AI page, in markdown"
+    ></textarea>
+    <div class="doc-actions">
+      <button class="lt-btn lt-btn-primary" onclick={saveStewards} disabled={stewardsBusy || stewards === stewardsSaved}>
+        {stewardsBusy ? 'Saving…' : 'Save'}
+      </button>
+      <a href="/ai" onclick={(e) => { e.preventDefault(); navigate('/ai'); }} class="view-link">
+        <ArrowSquareOut size={14} weight="bold" /> View public page
+      </a>
+    </div>
+  </section>
 </div>
 
 <style>
   .admin-legal {
     max-width: var(--pw-measure);
+  }
+
+  .ai-stewards {
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px solid var(--color-border);
+  }
+  .ai-stewards h2 {
+    margin: 0 0 6px;
+    font-size: 1.15rem;
+  }
+  .ai-stewards p {
+    margin: 0 0 12px;
+    font-size: 0.9rem;
+    max-width: 60ch;
   }
 
   .page-head {

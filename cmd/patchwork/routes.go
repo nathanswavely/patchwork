@@ -116,6 +116,10 @@ func buildRoutes(d serverDeps) (*http.ServeMux, []route) {
 	// Legal documents (docs/adr/028) — public read, defaults ship in the
 	// binary so this never 404s on a fresh deployment.
 	t.handleFunc("GET /api/v1/legal/{doc}", handler.LegalDoc(d.db, d.cfg))
+
+	// The AI page (docs/adr/2026-10-20-the-site-says-where-ai-is.md) — public
+	// read. The project part ships in the binary; the stewards' part is theirs.
+	t.handleFunc("GET /api/v1/ai", handler.AIPage(d.db, d.cfg))
 	t.handleFunc("GET /api/v1/users/me/steward", middleware.AuthRequired(d.db, handler.GetMyStewardListing(d.db)))
 	t.handleFunc("PATCH /api/v1/users/me/steward", middleware.AuthRequired(d.db, handler.UpdateMyStewardListing(d.db)))
 	t.handleFunc("DELETE /api/v1/users/me/steward", middleware.AuthRequired(d.db, handler.DeleteMyStewardListing(d.db)))
@@ -516,6 +520,8 @@ func buildRoutes(d serverDeps) (*http.ServeMux, []route) {
 	t.handleFunc("GET /api/v1/admin/legal", middleware.AdminRequired(d.db, handler.AdminGetLegal(d.db, d.cfg)))
 	t.handleFunc("PUT /api/v1/admin/legal/{doc}", middleware.AdminRequired(d.db, handler.AdminUpdateLegal(d.db)))
 	t.handleFunc("DELETE /api/v1/admin/legal/{doc}", middleware.AdminRequired(d.db, handler.AdminResetLegal(d.db)))
+	t.handleFunc("PUT /api/v1/admin/ai-page", middleware.AdminRequired(d.db, handler.AdminUpdateAIStewards(d.db)))
+	t.handleFunc("DELETE /api/v1/admin/ai-page", middleware.AdminRequired(d.db, handler.AdminResetAIStewards(d.db)))
 	t.handleFunc("GET /api/v1/admin/label", middleware.AdminRequired(d.db, handler.AdminGetLabel(d.db)))
 	t.handleFunc("PATCH /api/v1/admin/label", middleware.AdminRequired(d.db, handler.AdminUpdateLabel(d.db)))
 	t.handleFunc("PUT /api/v1/admin/label/costs", middleware.AdminRequired(d.db, handler.AdminPutLabelCosts(d.db)))

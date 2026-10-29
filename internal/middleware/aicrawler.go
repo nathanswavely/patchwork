@@ -92,6 +92,21 @@ User-agent: *
 Allow: /
 `
 
+// AICrawlerNames lists, in robots.txt order, the crawlers this file opts out
+// of by name. The AI page renders its list from here
+// (docs/adr/2026-10-20-the-site-says-where-ai-is.md), so it cannot name a
+// crawler the site does not refuse, or leave out one it does.
+func AICrawlerNames() []string {
+	var names []string
+	for _, line := range strings.Split(robotsTxt, "\n") {
+		name, ok := strings.CutPrefix(line, "User-agent: ")
+		if ok && name != "*" {
+			names = append(names, strings.TrimSpace(name))
+		}
+	}
+	return names
+}
+
 // RobotsTxt serves the static robots.txt opt-out. Mount at GET /robots.txt.
 func RobotsTxt() http.HandlerFunc {
 	body := []byte(robotsTxt)

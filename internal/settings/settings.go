@@ -34,6 +34,13 @@ const (
 	KeyLegalPrivacy = "legal_privacy"
 	KeyLegalTerms   = "legal_terms"
 
+	// The stewards' part of the AI page
+	// (docs/adr/2026-10-20-the-site-says-where-ai-is.md): what the people
+	// running this quilt do and ask of members. Unlike the legal documents
+	// it replaces nothing; no key means the stewards have written nothing,
+	// and the project part above it is never editable.
+	KeyAIPageStewards = "ai_page_stewards"
+
 	// Quilt policy (docs/adr/037): "true" hides amended-lining patches from
 	// discovery for everyone. The per-user twin is users.hide_amended_linings;
 	// strictest wins — the user switch can hide more, never reveal more.
