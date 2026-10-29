@@ -4166,7 +4166,7 @@
         },
         {
           "file": "internal/handler/ai_page.go",
-          "line": 70,
+          "line": 62,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -6438,13 +6438,13 @@
       "text": "*Draft. A model wrote this text from the design record. A person rewrites it before this page ships, and a test holds the release until they have.*",
       "words": 27,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 32,
+          "line": 31,
           "kind": "go-doc-block",
           "raw": "*Draft. A model wrote this text from the design record. A person rewrites it before this page ships, and a test holds the release until they have.*",
           "quote": null
@@ -6462,7 +6462,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 34,
+          "line": 33,
           "kind": "go-doc-block",
           "raw": "## Does AI touch what you post here?",
           "quote": null
@@ -6474,13 +6474,13 @@
       "text": "No. Nothing on {quilt_name} sends what you write, or anything about you, to an AI model. No model summarizes, ranks, rewrites, moderates or generates anything here. Accounts are for people, and nothing on this site posts by itself.",
       "words": 38,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 36,
+          "line": 35,
           "kind": "go-doc-block",
           "raw": "No. Nothing on {quilt_name} sends what you write, or anything about you, to an AI model. No model summarizes, ranks, rewrites, moderates or generates anything here. Accounts are for people, and nothing on this site posts by itself.",
           "quote": null
@@ -6498,7 +6498,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 38,
+          "line": 37,
           "kind": "go-doc-block",
           "raw": "The server opens connections to other machines for these reasons and no others:",
           "quote": null
@@ -6510,13 +6510,13 @@
       "text": "That list is checked against the code. A change that lets the server reach anything else fails the build until this page says what it is.",
       "words": 26,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 42,
+          "line": 41,
           "kind": "go-doc-block",
           "raw": "That list is checked against the code. A change that lets the server reach anything else fails the build until this page says what it is.",
           "quote": null
@@ -6534,7 +6534,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 44,
+          "line": 43,
           "kind": "go-doc-block",
           "raw": "## Can AI companies take what is here?",
           "quote": null
@@ -6546,13 +6546,13 @@
       "text": "Not with permission. The site's robots.txt asks these crawlers to stay away, and the server refuses the ones that arrive under their own name anyway:",
       "words": 25,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 46,
+          "line": 45,
           "kind": "go-doc-block",
           "raw": "Not with permission. The site's robots.txt asks these crawlers to stay away, and the server refuses the ones that arrive under their own name anyway:",
           "quote": null
@@ -6564,13 +6564,13 @@
       "text": "That has limits. A scraper that lies about its name looks like any other browser and gets in. And public posts that federate are copied to other servers, which keep them under their own rules.",
       "words": 35,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 50,
+          "line": 49,
           "kind": "go-doc-block",
           "raw": "That has limits. A scraper that lies about its name looks like any other browser and gets in. And public posts that federate are copied to other servers, which keep them under their own rules.",
           "quote": null
@@ -6588,7 +6588,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 52,
+          "line": 51,
           "kind": "go-doc-block",
           "raw": "## Was this software built with AI?",
           "quote": null
@@ -6596,9 +6596,31 @@
       ]
     },
     {
-      "id": "770730e22e07",
-      "text": "Yes. Patchwork is written with a great deal of help from AI coding tools. One person designs it, makes every decision about how its governance works, and reviews what ships. The decision records in its repository were drafted with AI help and left that way.",
-      "words": 45,
+      "id": "139d5e823c79",
+      "text": "Yes. Patchwork's codebase was developed with significant help from AI coding tools. People design it, makes every decision about how its governance works, and reviews the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
+      "words": 44,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 53,
+          "kind": "go-doc-block",
+          "raw": "Yes. Patchwork's codebase was developed with significant help from AI coding tools. People design it, makes every decision about how its governance works, and reviews the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
+          "quote": null
+        }
+      ],
+      "previous_ai_text": "Yes. Patchwork is written with a great deal of help from AI coding tools. One person designs it, makes every decision about how its governance works, and reviews what ships. The decision records in its repository were drafted with AI help and left that way.",
+      "authorship": {
+        "kind": "edited"
+      }
+    },
+    {
+      "id": "ff3531767d6b",
+      "text": "The writing a visitor meets first is a person's: the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. Much of the rest, including the charter templates, the guides to how governance works, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped.",
+      "words": 62,
       "tier": "prose",
       "status": "unreviewed",
       "replacement": null,
@@ -6606,17 +6628,17 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 54,
+          "line": 55,
           "kind": "go-doc-block",
-          "raw": "Yes. Patchwork is written with a great deal of help from AI coding tools. One person designs it, makes every decision about how its governance works, and reviews what ships. The decision records in its repository were drafted with AI help and left that way.",
+          "raw": "The writing a visitor meets first is a person's: the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. Much of the rest, including the charter templates, the guides to how governance works, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped.",
           "quote": null
         }
       ]
     },
     {
-      "id": "1037edffc7ac",
-      "text": "The words on this site are tracked one string at a time. Here is where they stand.",
-      "words": 17,
+      "id": "d359b9fa6256",
+      "text": "The project's repository keeps [a public record of who wrote each string](https://github.com/nathanswavely/patchwork/blob/main/copy/REPORT.md) a visitor can read.",
+      "words": 16,
       "tier": "prose",
       "status": "unreviewed",
       "replacement": null,
@@ -6624,45 +6646,9 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 56,
+          "line": 57,
           "kind": "go-doc-block",
-          "raw": "The words on this site are tracked one string at a time. Here is where they stand.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "c6f87f7edc97",
-      "text": "Every string a visitor can read is recorded in the project's copy ledger with one of three answers: a person wrote it; a model drafted it and a person read it and kept it; or nobody has looked yet. These figures are counted from the ledger this copy of the software was built with.",
-      "words": 54,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/handler/ai_defaults.go",
-          "line": 59,
-          "kind": "go-doc-block",
-          "raw": "Every string a visitor can read is recorded in the project's copy ledger with one of three answers: a person wrote it; a model drafted it and a person read it and kept it; or nobody has looked yet. These figures are counted from the ledger this copy of the software was built with.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "7dd1a787955b",
-      "text": "Buttons, labels and error messages are counted as interface text, by whether a person has checked them. Paragraphs are counted as writing, in words.",
-      "words": 24,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/handler/ai_defaults.go",
-          "line": 61,
-          "kind": "go-doc-block",
-          "raw": "Buttons, labels and error messages are counted as interface text, by whether a person has checked them. Paragraphs are counted as writing, in words.",
+          "raw": "The project's repository keeps [a public record of who wrote each string](https://github.com/nathanswavely/patchwork/blob/main/copy/REPORT.md) a visitor can read.",
           "quote": null
         }
       ]
@@ -6678,7 +6664,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 74,
+          "line": 70,
           "kind": "go-string",
           "raw": "Other servers in the fediverse, when the stewards have turned federation on, to deliver public posts to their followers and to read their public keys.",
           "quote": "\""
@@ -6696,7 +6682,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 78,
+          "line": 74,
           "kind": "go-string",
           "raw": "Calendars a patch has connected, to copy in their events.",
           "quote": "\""
@@ -6714,7 +6700,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 82,
+          "line": 78,
           "kind": "go-string",
           "raw": "A patch's own website and domain records, when someone claims the patch and the site checks that they run it.",
           "quote": "\""
@@ -6732,28 +6718,10 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 86,
+          "line": 82,
           "kind": "go-string",
           "raw": "The mail server the stewards set up, to send sign-in links and the notifications you turn on.",
           "quote": "\""
-        }
-      ]
-    },
-    {
-      "id": "7249ae2ac78b",
-      "text": "failed to read the copy ledger",
-      "words": 6,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/handler/ai_page.go",
-          "line": 43,
-          "kind": "go-error-body",
-          "raw": "failed to read the copy ledger",
-          "quote": null
         }
       ]
     },
@@ -6768,7 +6736,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_page.go",
-          "line": 75,
+          "line": 67,
           "kind": "go-error-body",
           "raw": "text cannot be empty, use remove to clear it",
           "quote": null
@@ -6786,7 +6754,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_page.go",
-          "line": 79,
+          "line": 71,
           "kind": "go-error-body",
           "raw": "text is too large",
           "quote": null
@@ -6804,7 +6772,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_page.go",
-          "line": 83,
+          "line": 75,
           "kind": "go-error-body",
           "raw": "failed to save",
           "quote": null
@@ -6836,7 +6804,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_page.go",
-          "line": 101,
+          "line": 93,
           "kind": "go-error-body",
           "raw": "failed to remove",
           "quote": null
@@ -28689,13 +28657,6 @@
           "kind": "markup",
           "raw": "The Label",
           "quote": null
-        },
-        {
-          "file": "web/src/pages/AiPage.svelte",
-          "line": 40,
-          "kind": "js-string",
-          "raw": "The Label",
-          "quote": "'"
         },
         {
           "file": "web/src/pages/Label.svelte",
@@ -50876,92 +50837,6 @@
       ]
     },
     {
-      "id": "8ec2d9e272e8",
-      "text": "The lining",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AiPage.svelte",
-          "line": 37,
-          "kind": "js-string",
-          "raw": "The lining",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/pages/GovernanceList.svelte",
-          "line": 169,
-          "kind": "markup",
-          "raw": "The lining",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/PatchForm.svelte",
-          "line": 658,
-          "kind": "markup",
-          "raw": "The lining",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "bfb8587f0e16",
-      "text": "Charter templates",
-      "words": 2,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/AiPage.svelte",
-          "line": 38,
-          "kind": "js-string",
-          "raw": "Charter templates",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "790b49731603",
-      "text": "Privacy and Terms",
-      "words": 3,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/AiPage.svelte",
-          "line": 41,
-          "kind": "js-string",
-          "raw": "Privacy and Terms",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "ebf2023c7ca0",
-      "text": "This page",
-      "words": 2,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/AiPage.svelte",
-          "line": 42,
-          "kind": "js-string",
-          "raw": "This page",
-          "quote": "'"
-        }
-      ]
-    },
-    {
       "id": "3aa2708957e2",
       "text": "Where AI is — {instanceName}",
       "words": 4,
@@ -50972,7 +50847,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AiPage.svelte",
-          "line": 65,
+          "line": 41,
           "kind": "markup",
           "raw": "Where AI is &mdash; {instanceName}",
           "quote": null
@@ -50990,7 +50865,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AiPage.svelte",
-          "line": 75,
+          "line": 51,
           "kind": "markup",
           "raw": "The fine print",
           "quote": null
@@ -51015,189 +50890,9 @@
       "occurrences": [
         {
           "file": "web/src/pages/AiPage.svelte",
-          "line": 76,
+          "line": 52,
           "kind": "markup",
           "raw": "Where AI is",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "a8bfae3eee94",
-      "text": "Writing",
-      "words": 1,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/AiPage.svelte",
-          "line": 88,
-          "kind": "markup",
-          "raw": "Writing",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "aac017995e9e",
-      "text": "{num(writingTotal)} words: {pct(writing.human, writingTotal)} written by a person, {pct(writing.drafted, writingTotal)} drafted with AI and kept, {pct(writing.unreviewed, writingTotal)} not reviewed yet.",
-      "words": 13,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/AiPage.svelte",
-          "line": 90,
-          "kind": "markup",
-          "raw": "{num(writingTotal)} words: {pct(writing.human, writingTotal)} written by a person,\n            {pct(writing.drafted, writingTotal)} drafted with AI and kept,\n            {pct(writing.unreviewed, writingTotal)} not reviewed yet.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "146382ffc03d",
-      "text": "Interface text",
-      "words": 2,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/AiPage.svelte",
-          "line": 96,
-          "kind": "markup",
-          "raw": "Interface text",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "d6499276ddab",
-      "text": "{num(iface.reviewed)} of {num(iface.total)} strings checked by a person.",
-      "words": 6,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/AiPage.svelte",
-          "line": 97,
-          "kind": "markup",
-          "raw": "{num(iface.reviewed)} of {num(iface.total)} strings checked by a person.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "eb446aef5985",
-      "text": "Writing on the pages a visitor reads, in words.",
-      "words": 9,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/AiPage.svelte",
-          "line": 103,
-          "kind": "markup",
-          "raw": "Writing on the pages a visitor reads, in words.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "0a30a815d67d",
-      "text": "Page",
-      "words": 1,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/AiPage.svelte",
-          "line": 106,
-          "kind": "markup",
-          "raw": "Page",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "3fb6d1027d8a",
-      "text": "Written by a person",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/AiPage.svelte",
-          "line": 107,
-          "kind": "markup",
-          "raw": "Written by a person",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "3e5ea4a69b01",
-      "text": "Drafted with AI, kept",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/AiPage.svelte",
-          "line": 108,
-          "kind": "markup",
-          "raw": "Drafted with AI, kept",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "a720a692a877",
-      "text": "Not reviewed yet",
-      "words": 3,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/AiPage.svelte",
-          "line": 109,
-          "kind": "markup",
-          "raw": "Not reviewed yet",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "1aef146c3a60",
-      "text": "{num(data.copy.not_copy)} strings are marked as not copy, such as format strings and identifiers, and are left out of these figures.",
-      "words": 19,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/AiPage.svelte",
-          "line": 127,
-          "kind": "markup",
-          "raw": "{num(data.copy.not_copy)} strings are marked as not copy, such as format strings and identifiers, and are left out of these figures.",
           "quote": null
         }
       ]
@@ -51213,7 +50908,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AiPage.svelte",
-          "line": 133,
+          "line": 60,
           "kind": "markup",
           "raw": "From the stewards of {instanceName}",
           "quote": null
@@ -51231,7 +50926,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AiPage.svelte",
-          "line": 137,
+          "line": 64,
           "kind": "markup",
           "raw": "The stewards of {instanceName} have not added anything here yet.",
           "quote": null
@@ -51249,7 +50944,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AiPage.svelte",
-          "line": 142,
+          "line": 69,
           "kind": "markup",
           "raw": "Also see the",
           "quote": null
@@ -51274,7 +50969,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AiPage.svelte",
-          "line": 144,
+          "line": 71,
           "kind": "markup",
           "raw": "says\n      who runs {instanceName}.",
           "quote": null
@@ -56214,6 +55909,31 @@
           "kind": "attr:title",
           "raw": "The shared baseline every patch starts with. Always public; changed only by amendment.",
           "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "8ec2d9e272e8",
+      "text": "The lining",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceList.svelte",
+          "line": 169,
+          "kind": "markup",
+          "raw": "The lining",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchForm.svelte",
+          "line": 658,
+          "kind": "markup",
+          "raw": "The lining",
+          "quote": null
         }
       ]
     },

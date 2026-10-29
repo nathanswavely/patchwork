@@ -8,8 +8,6 @@ import (
 	"regexp"
 	"strings"
 	"testing"
-
-	copyledger "github.com/patchwork-toolkit/patchwork/copy"
 )
 
 // These tests hold the AI page's claims true
@@ -147,7 +145,11 @@ func TestAIPageWordsAreAPersons(t *testing.T) {
 			} `json:"occurrences"`
 		} `json:"entries"`
 	}
-	if err := json.Unmarshal(copyledger.JSON, &l); err != nil {
+	raw, err := os.ReadFile(filepath.Join(repoRoot, "copy", "ledger.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := json.Unmarshal(raw, &l); err != nil {
 		t.Fatal(err)
 	}
 

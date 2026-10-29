@@ -16,8 +16,7 @@ package handler
 //     TestEveryOutboundCallerIsOnTheAIPage fails the build when the server
 //     gains a way to reach another machine that this list does not name;
 //   - TestNoAIServiceDependency fails when go.mod or web/package.json gains
-//     a model provider's SDK;
-//   - the copy figures come from the embedded ledger (internal/copystats).
+//     a model provider's SDK.
 //
 // And the page's own words are a person's: TestAIPageWordsAreAPersons reads
 // the copy ledger and fails until every string in this file and in
@@ -51,14 +50,11 @@ That has limits. A scraper that lies about its name looks like any other browser
 
 ## Was this software built with AI?
 
-Yes. Patchwork is written with a great deal of help from AI coding tools. One person designs it, makes every decision about how its governance works, and reviews what ships. The decision records in its repository were drafted with AI help and left that way.
+Yes. Patchwork's codebase was developed with significant help from AI coding tools. People design it, makes every decision about how its governance works, and reviews the features that ship. All code (human or AI) is available in the open source repository for public evaluation.
 
-The words on this site are tracked one string at a time. Here is where they stand.`
+The writing a visitor meets first is a person's: the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. Much of the rest, including the charter templates, the guides to how governance works, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped.
 
-// aiPageCopyNote explains the figures the page renders beneath it.
-const aiPageCopyNote = `Every string a visitor can read is recorded in the project's copy ledger with one of three answers: a person wrote it; a model drafted it and a person read it and kept it; or nobody has looked yet. These figures are counted from the ledger this copy of the software was built with.
-
-Buttons, labels and error messages are counted as interface text, by whether a person has checked them. Paragraphs are counted as writing, in words.`
+The project's repository keeps [a public record of who wrote each string](https://github.com/nathanswavely/patchwork/blob/main/copy/REPORT.md) a visitor can read.`
 
 // aiPageOutbound is every way the running server reaches another machine,
 // and what the page says about each. Files are repository paths; the test

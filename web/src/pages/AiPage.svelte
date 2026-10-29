@@ -6,8 +6,8 @@
    *
    * Two parts, owned by two parties. The project part is shipped text the
    * server fills in from the code it describes; nobody on an instance edits
-   * it. The copy figures come from the ledger embedded in the binary. The
-   * stewards' part is what this quilt's stewards wrote, and may be empty.
+   * it. The stewards' part is what this quilt's stewards wrote, and may be
+   * empty.
    *
    * Every string in this file must be recorded as a person's in the copy
    * ledger before the page ships (TestAIPageWordsAreAPersons).
@@ -30,30 +30,6 @@
       .catch((e) => { error = e.message || 'Failed to load'; })
       .finally(() => { loading = false; });
   });
-
-  // Display names for internal/copystats VisitorPages, kept here so the
-  // copy ledger sees them.
-  const pageNames = {
-    lining: 'The lining',
-    charters: 'Charter templates',
-    about: 'About',
-    label: 'The Label',
-    legal: 'Privacy and Terms',
-    ai: 'This page',
-  };
-
-  let writing = $derived(data?.copy?.writing);
-  let writingTotal = $derived(writing ? writing.human + writing.drafted + writing.unreviewed : 0);
-  let iface = $derived(data?.copy?.interface);
-
-  function pct(n, total) {
-    if (!total) return '0%';
-    return `${Math.round((n / total) * 100)}%`;
-  }
-
-  function num(n) {
-    return (n || 0).toLocaleString();
-  }
 
   function go(e, href) {
     e.preventDefault();
@@ -78,55 +54,6 @@
 
     <section class="ai-prose">
       <MarkdownRenderer content={data.project_markdown} />
-    </section>
-
-    <section class="ai-copy">
-      <MarkdownRenderer content={data.copy_markdown} />
-
-      <dl class="ai-figures">
-        <div class="figure">
-          <dt>Writing</dt>
-          <dd>
-            {num(writingTotal)} words: {pct(writing.human, writingTotal)} written by a person,
-            {pct(writing.drafted, writingTotal)} drafted with AI and kept,
-            {pct(writing.unreviewed, writingTotal)} not reviewed yet.
-          </dd>
-        </div>
-        <div class="figure">
-          <dt>Interface text</dt>
-          <dd>{num(iface.reviewed)} of {num(iface.total)} strings checked by a person.</dd>
-        </div>
-      </dl>
-
-      <div class="lt-table-wrap">
-        <table class="lt-table">
-          <caption class="lt-muted">Writing on the pages a visitor reads, in words.</caption>
-          <thead>
-            <tr>
-              <th scope="col">Page</th>
-              <th scope="col" class="n">Written by a person</th>
-              <th scope="col" class="n">Drafted with AI, kept</th>
-              <th scope="col" class="n">Not reviewed yet</th>
-            </tr>
-          </thead>
-          <tbody>
-            {#each data.copy.pages as p (p.id)}
-              <tr>
-                <th scope="row">{pageNames[p.id] || p.id}</th>
-                <td class="n">{num(p.human)}</td>
-                <td class="n">{num(p.drafted)}</td>
-                <td class="n">{num(p.unreviewed)}</td>
-              </tr>
-            {/each}
-          </tbody>
-        </table>
-      </div>
-
-      {#if data.copy.not_copy > 0}
-        <p class="lt-muted not-copy">
-          {num(data.copy.not_copy)} strings are marked as not copy, such as format strings and identifiers, and are left out of these figures.
-        </p>
-      {/if}
     </section>
 
     <section class="ai-stewards">
@@ -172,36 +99,8 @@
   }
 
   .ai-prose,
-  .ai-copy,
   .ai-stewards {
     margin-bottom: 28px;
-  }
-
-  .ai-figures {
-    display: grid;
-    gap: 10px;
-    margin: 16px 0;
-  }
-  .figure dt {
-    font-weight: 700;
-  }
-  .figure dd {
-    margin: 2px 0 0;
-  }
-
-  .lt-table caption {
-    caption-side: top;
-    text-align: left;
-    font-size: 0.85rem;
-    padding-bottom: 6px;
-  }
-  .n {
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .not-copy {
-    font-size: 0.85rem;
   }
 
   .ai-stewards h2 {

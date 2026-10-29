@@ -49,15 +49,6 @@ func TestAIPageRendersFromTheCode(t *testing.T) {
 		}
 	}
 
-	copyFigures, ok := resp["copy"].(map[string]interface{})
-	if !ok {
-		t.Fatalf("copy figures missing: %v", resp["copy"])
-	}
-	for _, k := range []string{"interface", "writing", "not_copy", "pages"} {
-		if _, ok := copyFigures[k]; !ok {
-			t.Errorf("copy figures missing %q", k)
-		}
-	}
 	if resp["stewards_markdown"] != "" {
 		t.Errorf("a fresh quilt's stewards have written nothing, got %q", resp["stewards_markdown"])
 	}

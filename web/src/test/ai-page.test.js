@@ -34,14 +34,10 @@ describe('the AI page', () => {
     expect(page).toContain('data.stewards_markdown');
   });
 
-  it('names a row for every visitor page the server reports', () => {
-    for (const id of ['lining', 'charters', 'about', 'label', 'legal', 'ai']) {
-      expect(page).toMatch(new RegExp(`\\b${id}: '`));
-    }
-  });
-
-  it('states the not-copy count rather than hiding it', () => {
-    expect(page).toContain('data.copy.not_copy');
+  // The page says AI helped and points to the repository for the record of
+  // who wrote what; it does not publish the copy ledger's counts.
+  it('publishes no copy figures', () => {
+    expect(page).not.toContain('data.copy');
   });
 
   it('says so when the stewards have written nothing', () => {

@@ -7,7 +7,6 @@ import (
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/config"
-	"github.com/patchwork-toolkit/patchwork/internal/copystats"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/settings"
@@ -38,18 +37,11 @@ func renderAIProject(db *database.DB, cfg *config.Config) string {
 // AIPage handles GET /api/v1/ai: public, no auth.
 func AIPage(db *database.DB, cfg *config.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		figures, err := copystats.Current()
-		if err != nil {
-			http.Error(w, `{"error":"failed to read the copy ledger"}`, http.StatusInternalServerError)
-			return
-		}
 		stewards, updatedAt, _ := settings.GetDetailed(db, settings.KeyAIPageStewards)
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"project_markdown":    renderAIProject(db, cfg),
-			"copy_markdown":       aiPageCopyNote,
-			"copy":                figures,
 			"stewards_markdown":   strings.TrimSpace(stewards),
 			"stewards_updated_at": updatedAt,
 		})
