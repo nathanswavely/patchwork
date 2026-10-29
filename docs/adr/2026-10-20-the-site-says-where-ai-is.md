@@ -1,6 +1,10 @@
 # The site says where AI is
 
-Date: 2026-10-20. Status: **proposed**. Builds on docs/adr/028 (shipped
+Date: 2026-10-20. Status: **accepted**; partly implemented; **amended
+2026-10-28** (decisions 5 and 6, see the end). Built: the page at `/ai`, both
+parts, and the tests behind decisions 3 and 6. Not yet: the links from
+About and the Label, and the disclosure paragraph, which waits on the paired
+ADR. Builds on docs/adr/028 (shipped
 legal text with an admin override, every claim checked against the code),
 docs/adr/037 (project-owned text that an instance cannot override), and
 docs/adr/2026-09-18-counting-visitors-without-watching-anyone.md (a policy
@@ -145,3 +149,48 @@ policy it states.
 - Whether the project part federates or appears in the instance actor.
 - A per-patch version of the page. The patch-level declaration in the paired
   ADR covers the case that prompted the question.
+
+## Amendment, 2026-10-28: the page states, the repository counts
+
+Decision 5 is withdrawn as far as the page goes. The page no longer
+publishes the copy ledger's figures or the per-page table. It says that AI
+helped build the software, names the writing a person did (the lining, the
+Label, the pages that explain what Patchwork is), says that much of the rest
+was drafted with AI and reviewed, and points to `copy/REPORT.md` in the
+public repository for the string-by-string record.
+
+The reason is the reader. The figures were accurate, but a visitor deciding
+whether to trust a community site does not need a ledger, and a table of
+percentages invited them to read "53% drafted with AI" as a verdict on the
+whole place, including on writing that is drafted because it is a template.
+The record still exists and is still public; the page stops reciting it.
+
+What this changes:
+
+- The ledger is no longer embedded in the binary (`copy/embed.go` and
+  `internal/copystats` are removed, 2.2 MB lighter).
+- The sentence naming what a person wrote is the one claim on the page that
+  is not mechanical. The ledger holds it instead: a page it names must be
+  recorded as a person's, and where the ledger disagrees, the ledger is
+  corrected in whichever direction is true. On this date it disagreed
+  twice. About was recorded as drafted though it is the author's rewrite
+  (03fc362 chose the understatement on purpose), and the charter templates
+  were recorded as a person's though they are largely drafted.
+- The two-class reporting of decision 5 survives where it belongs, in
+  SlopChop's report, which anyone can regenerate from the repository.
+
+Decision 6 is amended the same day. It required every string unique to the
+page to be a person's. It now requires every one to be *decided*: a
+person's words, or AI wording a person read and chose to keep. That is
+exactly what SlopChop's copy-check already enforces for every string in
+scope, so no test of the page's own repeats it. The stricter rule needed
+one only because copy-check cannot tell a person's words from AI wording a
+person kept. The site's policy is transparency,
+not abstinence, and a disclosure page that is partly drafted is consistent
+with it. The page carries no notice about itself: its account of the
+site's writing already says much of the copy was drafted with AI and
+reviewed, and the copy ledger records which strings, this page's included.
+What the page must never do is ship unread, or claim a person wrote what
+they did not.
+
+Decisions 1 to 4 stand.

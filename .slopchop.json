@@ -26,6 +26,7 @@
   ],
   "languages": {
     "internal/handler/legal_defaults.go": "go",
+    "internal/handler/ai_defaults.go": "go",
     "internal/handler/follower_charters_default.go": "go",
     "internal/handler/**/*.go": "go-errors"
   },

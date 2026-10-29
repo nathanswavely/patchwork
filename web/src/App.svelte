@@ -83,6 +83,7 @@
   import AdminAttestation from './pages/AdminAttestation.svelte';
   import AdminApps from './pages/AdminApps.svelte';
   import LegalDoc from './pages/LegalDoc.svelte';
+  import AiPage from './pages/AiPage.svelte';
   import SubmitPatch from './pages/SubmitPatch.svelte';
   import ClaimPatch from './pages/ClaimPatch.svelte';
   import ClaimVerifyEmail from './pages/ClaimVerifyEmail.svelte';
@@ -133,6 +134,7 @@
   // Legal documents (docs/adr/028) — public, readable logged out.
   addRoute('/privacy', 'privacy');
   addRoute('/terms', 'terms');
+  addRoute('/ai', 'ai');
 
   // Patch routes
   addRoute('/patches/new', 'patchNew');
@@ -763,6 +765,10 @@
       <!-- ===== LEGAL DOCUMENTS (docs/adr/028) ===== -->
       {:else if routeName === 'privacy' || routeName === 'terms'}
         <LegalDoc doc={routeName} />
+
+      <!-- ===== WHERE AI IS (docs/adr/2026-10-20-the-site-says-where-ai-is.md) ===== -->
+      {:else if routeName === 'ai'}
+        <AiPage />
 
       <!-- ===== EMAIL-CLAIM CONFIRMATION (docs/adr/030) ===== -->
       {:else if routeName === 'claimVerifyEmail'}

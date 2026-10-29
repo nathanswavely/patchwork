@@ -3952,6 +3952,13 @@
           "quote": null
         },
         {
+          "file": "internal/handler/ai_page.go",
+          "line": 62,
+          "kind": "go-error-body",
+          "raw": "invalid request body",
+          "quote": null
+        },
+        {
           "file": "internal/handler/amendment_attestations.go",
           "line": 183,
           "kind": "go-error-body",
@@ -6209,6 +6216,376 @@
           "line": 770,
           "kind": "go-error-body",
           "raw": "failed to clear hold",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "207f5871db73",
+      "text": "## Does AI touch what you post here?",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 30,
+          "kind": "go-doc-block",
+          "raw": "## Does AI touch what you post here?",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "8378765ce6af",
+      "text": "No. Nothing on {quilt_name} sends what you write, or anything about you, to an AI model. No model summarizes, ranks, rewrites, moderates or generates anything here. Accounts are for people, and nothing on this site posts by itself. We can't stop other users from taking public content from the site and giving it to AI, but the site itself will not do so.",
+      "words": 63,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 32,
+          "kind": "go-doc-block",
+          "raw": "No. Nothing on {quilt_name} sends what you write, or anything about you, to an AI model. No model summarizes, ranks, rewrites, moderates or generates anything here. Accounts are for people, and nothing on this site posts by itself. We can't stop other users from taking public content from the site and giving it to AI, but the site itself will not do so.",
+          "quote": null
+        }
+      ],
+      "previous_ai_text": "No. Nothing on {quilt_name} sends what you write, or anything about you, to an AI model. No model summarizes, ranks, rewrites, moderates or generates anything here. Accounts are for people, and nothing on this site posts by itself.",
+      "authorship": {
+        "kind": "edited"
+      }
+    },
+    {
+      "id": "bba105368d68",
+      "text": "The server opens connections to other machines for these reasons and no others:",
+      "words": 13,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 34,
+          "kind": "go-doc-block",
+          "raw": "The server opens connections to other machines for these reasons and no others:",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "c898828aeefb",
+      "text": "That list is checked against the code. A change that lets the server reach anything else fails the build until this page says what it is.",
+      "words": 26,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 38,
+          "kind": "go-doc-block",
+          "raw": "That list is checked against the code. A change that lets the server reach anything else fails the build until this page says what it is.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0dd147edfe76",
+      "text": "## Can AI companies take what is here?",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 40,
+          "kind": "go-doc-block",
+          "raw": "## Can AI companies take what is here?",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "3208cd4b2724",
+      "text": "Not with permission. The site's robots.txt asks these crawlers to stay away, and the server refuses the ones that arrive under names that we know are AI including, but not limited to:",
+      "words": 32,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 42,
+          "kind": "go-doc-block",
+          "raw": "Not with permission. The site's robots.txt asks these crawlers to stay away, and the server refuses the ones that arrive under names that we know are AI including, but not limited to:",
+          "quote": null
+        }
+      ],
+      "previous_ai_text": "Not with permission. The site's robots.txt asks these crawlers to stay away, and the server refuses the ones that arrive under their own name anyway:",
+      "authorship": {
+        "kind": "edited"
+      }
+    },
+    {
+      "id": "f26633d5872d",
+      "text": "That has limits. A scraper that lies about its name looks like any other browser and gets in. And public posts that federate are copied to other servers, which keep them under their own rules.",
+      "words": 35,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 46,
+          "kind": "go-doc-block",
+          "raw": "That has limits. A scraper that lies about its name looks like any other browser and gets in. And public posts that federate are copied to other servers, which keep them under their own rules.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ed8ff1d11522",
+      "text": "## Was this software built with AI?",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 48,
+          "kind": "go-doc-block",
+          "raw": "## Was this software built with AI?",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "997a93384fe4",
+      "text": "Yes. Patchwork's codebase was developed with significant help from AI coding tools. People design it, make every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
+      "words": 44,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 50,
+          "kind": "go-doc-block",
+          "raw": "Yes. Patchwork's codebase was developed with significant help from AI coding tools. People design it, make every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
+          "quote": null
+        }
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
+    },
+    {
+      "id": "42d7c0bcd5bc",
+      "text": "The core of what visitors and newcomers read is human written: the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please contribute to the project.",
+      "words": 100,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 52,
+          "kind": "go-doc-block",
+          "raw": "The core of what visitors and newcomers read is human written: the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please contribute to the project.",
+          "quote": null
+        }
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
+    },
+    {
+      "id": "d359b9fa6256",
+      "text": "The project's repository keeps [a public record of who wrote each string](https://github.com/nathanswavely/patchwork/blob/main/copy/REPORT.md) a visitor can read.",
+      "words": 16,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 54,
+          "kind": "go-doc-block",
+          "raw": "The project's repository keeps [a public record of who wrote each string](https://github.com/nathanswavely/patchwork/blob/main/copy/REPORT.md) a visitor can read.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "fec9f4611308",
+      "text": "Other servers in the fediverse, when the stewards have turned federation on, to deliver public posts to their followers and to read their public keys.",
+      "words": 25,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 67,
+          "kind": "go-string",
+          "raw": "Other servers in the fediverse, when the stewards have turned federation on, to deliver public posts to their followers and to read their public keys.",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "64dfd39f5237",
+      "text": "Calendars a patch has connected, to copy in their events.",
+      "words": 10,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 71,
+          "kind": "go-string",
+          "raw": "Calendars a patch has connected, to copy in their events.",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "865a458e2f02",
+      "text": "A patch's own website and domain records, when someone claims the patch and the site checks that they run it.",
+      "words": 20,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 75,
+          "kind": "go-string",
+          "raw": "A patch's own website and domain records, when someone claims the patch and the site checks that they run it.",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "1a101036d076",
+      "text": "The mail server the stewards set up, to send sign-in links and the notifications you turn on.",
+      "words": 17,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 79,
+          "kind": "go-string",
+          "raw": "The mail server the stewards set up, to send sign-in links and the notifications you turn on.",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "c66f90f9b5fc",
+      "text": "text cannot be empty, use remove to clear it",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_page.go",
+          "line": 67,
+          "kind": "go-error-body",
+          "raw": "text cannot be empty, use remove to clear it",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "4c87c360b526",
+      "text": "text is too large",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_page.go",
+          "line": 71,
+          "kind": "go-error-body",
+          "raw": "text is too large",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "1bba2fa8f5a6",
+      "text": "failed to save",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_page.go",
+          "line": 75,
+          "kind": "go-error-body",
+          "raw": "failed to save",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/label.go",
+          "line": 575,
+          "kind": "go-error-body",
+          "raw": "failed to save",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/label.go",
+          "line": 585,
+          "kind": "go-error-body",
+          "raw": "failed to save",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "511feaad1722",
+      "text": "failed to remove",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_page.go",
+          "line": 93,
+          "kind": "go-error-body",
+          "raw": "failed to remove",
           "quote": null
         }
       ]
@@ -11587,31 +11964,6 @@
           "line": 571,
           "kind": "go-error-body",
           "raw": "blurb must be 200 characters or fewer",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "1bba2fa8f5a6",
-      "text": "failed to save",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "internal/handler/label.go",
-          "line": 575,
-          "kind": "go-error-body",
-          "raw": "failed to save",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/label.go",
-          "line": 585,
-          "kind": "go-error-body",
-          "raw": "failed to save",
           "quote": null
         }
       ]
@@ -20463,21 +20815,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 590,
+          "line": 592,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 646,
+          "line": 648,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 709,
+          "line": 711,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
@@ -20495,21 +20847,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 591,
+          "line": 593,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 647,
+          "line": 649,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 710,
+          "line": 712,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
@@ -20527,7 +20879,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 812,
+          "line": 818,
           "kind": "markup",
           "raw": "Page not found",
           "quote": null
@@ -20545,7 +20897,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 813,
+          "line": 819,
           "kind": "markup",
           "raw": "The page you're looking for doesn't exist.",
           "quote": null
@@ -20563,7 +20915,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 826,
+          "line": 832,
           "kind": "markup",
           "raw": "You are seeing this patch as a visitor sees it. Nothing you do here changes anything.",
           "quote": null
@@ -20581,7 +20933,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 827,
+          "line": 833,
           "kind": "markup",
           "raw": "Leave preview",
           "quote": null
@@ -23276,7 +23628,7 @@
       "text": "DELETE",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "not-copy",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23419,6 +23771,14 @@
         {
           "file": "web/src/pages/AdminLegal.svelte",
           "line": 66,
+          "kind": "js-string",
+          "raw": "DELETE",
+          "quote": "'",
+          "at": "method"
+        },
+        {
+          "file": "web/src/pages/AdminLegal.svelte",
+          "line": 101,
           "kind": "js-string",
           "raw": "DELETE",
           "quote": "'",
@@ -24370,7 +24730,7 @@
       "text": "PUT",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "not-copy",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24409,6 +24769,14 @@
         {
           "file": "web/src/pages/AdminLegal.svelte",
           "line": 49,
+          "kind": "js-string",
+          "raw": "PUT",
+          "quote": "'",
+          "at": "method"
+        },
+        {
+          "file": "web/src/pages/AdminLegal.svelte",
+          "line": 98,
           "kind": "js-string",
           "raw": "PUT",
           "quote": "'",
@@ -27397,7 +27765,7 @@
         },
         {
           "file": "web/src/pages/AdminLegal.svelte",
-          "line": 94,
+          "line": 130,
           "kind": "attr:aria-label",
           "raw": "Documents",
           "quote": "\""
@@ -28050,7 +28418,7 @@
         },
         {
           "file": "web/src/components/LabelFooter.svelte",
-          "line": 79,
+          "line": 81,
           "kind": "markup",
           "raw": "The Label",
           "quote": null
@@ -28089,7 +28457,7 @@
       "occurrences": [
         {
           "file": "web/src/components/LabelFooter.svelte",
-          "line": 73,
+          "line": 75,
           "kind": "markup",
           "raw": "{instanceName} is stewarded by {stewardLine}",
           "quote": null
@@ -46037,6 +46405,13 @@
           "quote": "'"
         },
         {
+          "file": "web/src/pages/AdminLegal.svelte",
+          "line": 106,
+          "kind": "js-string",
+          "raw": "Save failed",
+          "quote": "'"
+        },
+        {
           "file": "web/src/pages/AdminOutreach.svelte",
           "line": 74,
           "kind": "js-string",
@@ -46071,6 +46446,42 @@
       ]
     },
     {
+      "id": "23f1f16a3141",
+      "text": "Saved, now live at /ai",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminLegal.svelte",
+          "line": 99,
+          "kind": "js-string",
+          "raw": "Saved, now live at /ai",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "e55790abb1b6",
+      "text": "Removed from /ai",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminLegal.svelte",
+          "line": 102,
+          "kind": "js-string",
+          "raw": "Removed from /ai",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "02881bb0fe83",
       "text": "Legal documents",
       "words": 2,
@@ -46081,7 +46492,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLegal.svelte",
-          "line": 83,
+          "line": 119,
           "kind": "markup",
           "raw": "Legal documents",
           "quote": null
@@ -46099,7 +46510,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLegal.svelte",
-          "line": 85,
+          "line": 121,
           "kind": "markup",
           "raw": "The privacy policy and user agreement, public at /privacy and /terms and linked from every signup form. Patchwork ships honest defaults that describe what the software actually does. Anything you write here replaces the default entirely.",
           "quote": null
@@ -46121,7 +46532,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLegal.svelte",
-          "line": 115,
+          "line": 151,
           "kind": "markup",
           "raw": "Custom text, last saved {current.updated_at?.slice(0, 10) || 'recently'}.",
           "quote": null
@@ -46139,7 +46550,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLegal.svelte",
-          "line": 119,
+          "line": 155,
           "kind": "markup",
           "raw": "The default that ships with Patchwork. It fills in this quilt's\n            name by itself and starts with a note saying it's the default.\n            Saving any edit removes that note along with it.",
           "quote": null
@@ -46160,7 +46571,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLegal.svelte",
-          "line": 125,
+          "line": 161,
+          "kind": "markup",
+          "raw": "View public page",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AdminLegal.svelte",
+          "line": 208,
           "kind": "markup",
           "raw": "View public page",
           "quote": null
@@ -46178,7 +46596,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLegal.svelte",
-          "line": 136,
+          "line": 172,
           "kind": "markup",
           "raw": "Markdown. Links like [the Label](/label) work.",
           "quote": null
@@ -46196,7 +46614,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLegal.svelte",
-          "line": 149,
+          "line": 185,
           "kind": "markup",
           "raw": "Unsaved changes",
           "quote": null
@@ -46207,6 +46625,64 @@
           "kind": "markup",
           "raw": "Unsaved changes",
           "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2d7dc59d56a6",
+      "text": "The AI page: your part",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminLegal.svelte",
+          "line": 192,
+          "kind": "markup",
+          "raw": "The AI page: your part",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "6c998b7b5989",
+      "text": "/ai explains the AI policy for the Patchwork deployment. Below it, this quilt can say what its stewards do and what they ask of members. Leave it empty and the page says you have not added anything.",
+      "words": 37,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminLegal.svelte",
+          "line": 194,
+          "kind": "markup",
+          "raw": "/ai explains the AI policy for the Patchwork deployment. Below it, this quilt can say what its stewards do and what they ask of members. Leave it empty and the page says you have not added anything.",
+          "quote": null
+        }
+      ],
+      "previous_ai_text": "/ai says where AI is in the Patchwork software. That part ships with the software and cannot be edited here. Below it, this quilt can say what its stewards do and what they ask of members. Leave it empty and the page says you have not added anything.",
+      "authorship": {
+        "kind": "edited"
+      }
+    },
+    {
+      "id": "c26396fb0227",
+      "text": "Your part of the AI page, in markdown",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminLegal.svelte",
+          "line": 201,
+          "kind": "attr:aria-label",
+          "raw": "Your part of the AI page, in markdown",
+          "quote": "\""
         }
       ]
     },
@@ -50182,6 +50658,182 @@
           "line": 669,
           "kind": "markup",
           "raw": "Actions",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "3d2301d732a7",
+      "text": "Failed to load",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AiPage.svelte",
+          "line": 29,
+          "kind": "js-string",
+          "raw": "Failed to load",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/LegalDoc.svelte",
+          "line": 32,
+          "kind": "js-string",
+          "raw": "Failed to load",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/PatchSettingsIntro.svelte",
+          "line": 85,
+          "kind": "js-string",
+          "raw": "Failed to load",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "6388661d5144",
+      "text": "Where AI is | {instanceName}",
+      "words": 4,
+      "tier": "label",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AiPage.svelte",
+          "line": 40,
+          "kind": "markup",
+          "raw": "Where AI is | {instanceName}",
+          "quote": null
+        }
+      ],
+      "previous_ai_text": "Where AI is — {instanceName}",
+      "authorship": {
+        "kind": "written"
+      }
+    },
+    {
+      "id": "dd07d4bd15b4",
+      "text": "The fine print",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AiPage.svelte",
+          "line": 50,
+          "kind": "markup",
+          "raw": "The fine print",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/LegalDoc.svelte",
+          "line": 62,
+          "kind": "markup",
+          "raw": "The fine print",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ecb92f1bf332",
+      "text": "Where AI is",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AiPage.svelte",
+          "line": 51,
+          "kind": "markup",
+          "raw": "Where AI is",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "702975820157",
+      "text": "From the stewards of {instanceName}",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AiPage.svelte",
+          "line": 59,
+          "kind": "markup",
+          "raw": "From the stewards of {instanceName}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "8f9150592ef4",
+      "text": "The stewards of {instanceName} have not added anything here yet.",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AiPage.svelte",
+          "line": 63,
+          "kind": "markup",
+          "raw": "The stewards of {instanceName} have not added anything here yet.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f22fd86b263f",
+      "text": "Also see the",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AiPage.svelte",
+          "line": 68,
+          "kind": "markup",
+          "raw": "Also see the",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/LegalDoc.svelte",
+          "line": 74,
+          "kind": "markup",
+          "raw": "Also see the",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "67530ef2efbc",
+      "text": "says who runs {instanceName}.",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AiPage.svelte",
+          "line": 70,
+          "kind": "markup",
+          "raw": "says\n      who runs {instanceName}.",
           "quote": null
         }
       ]
@@ -56840,49 +57492,6 @@
       }
     },
     {
-      "id": "3d2301d732a7",
-      "text": "Failed to load",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/LegalDoc.svelte",
-          "line": 32,
-          "kind": "js-string",
-          "raw": "Failed to load",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/pages/PatchSettingsIntro.svelte",
-          "line": 85,
-          "kind": "js-string",
-          "raw": "Failed to load",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "dd07d4bd15b4",
-      "text": "The fine print",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/LegalDoc.svelte",
-          "line": 62,
-          "kind": "markup",
-          "raw": "The fine print",
-          "quote": null
-        }
-      ]
-    },
-    {
       "id": "712fdd6a2e26",
       "text": "Last updated {updatedDate}.",
       "words": 2,
@@ -56896,24 +57505,6 @@
           "line": 65,
           "kind": "markup",
           "raw": "Last updated {updatedDate}.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "f22fd86b263f",
-      "text": "Also see the",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/LegalDoc.svelte",
-          "line": 74,
-          "kind": "markup",
-          "raw": "Also see the",
           "quote": null
         }
       ]
@@ -73356,6 +73947,68 @@
           "quote": null
         }
       ]
+    },
+    {
+      "id": "a9e5c9e03c0e",
+      "text": "*Draft. A model wrote this text from the design record. A person rewrites it before this page ships, and a test holds the release until they have.*",
+      "words": 27,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 31,
+          "kind": "go-doc-block",
+          "raw": "*Draft. A model wrote this text from the design record. A person rewrites it before this page ships, and a test holds the release until they have.*",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "58dcd22fa676",
+      "text": "Yes. Patchwork's codebase was developed with significant help from AI coding tools. People design it, makes every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
+      "words": 44,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 53,
+          "kind": "go-doc-block",
+          "raw": "Yes. Patchwork's codebase was developed with significant help from AI coding tools. People design it, makes every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
+          "quote": null
+        }
+      ],
+      "previous_ai_text": "Yes. Patchwork is written with a great deal of help from AI coding tools. One person designs it, makes every decision about how its governance works, and reviews what ships. The decision records in its repository were drafted with AI help and left that way.",
+      "authorship": {
+        "kind": "written"
+      }
+    },
+    {
+      "id": "ad09c25c93fe",
+      "text": "The copy that visitors and newcomers touch is human written, including the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please contribute to the project.",
+      "words": 97,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 55,
+          "kind": "go-doc-block",
+          "raw": "The copy that visitors and newcomers touch is human written, including the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please contribute to the project.",
+          "quote": null
+        }
+      ],
+      "authorship": {
+        "kind": "written"
+      },
+      "previous_ai_text": "The writing a visitor meets first is a person's: the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. Much of the rest, including the charter templates, the guides to how governance works, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped."
     }
   ],
   "baseline": [
