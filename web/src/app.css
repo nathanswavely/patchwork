@@ -243,6 +243,20 @@
      a phone and cost the forms 32px of width. */
 }
 
+/* A card that floats on the quilt or map: the patch list's panel and the
+   filter chips' open card. Frosted rather than opaque so the canvas reads
+   through it, and one recipe so cards hanging side by side cannot drift
+   apart. The rail's card wears the same values in SocialShell, where its
+   collapsed and hover states rewrite them. */
+.pw-canvas-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--color-bg) 78%, transparent);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  box-shadow: 0 2px 12px var(--color-shadow);
+}
+
 /* Standard work-mode content area — used by shells and standalone pages.
    No max-width here — content fills the viewport with consistent gutters.
    Individual sections constrain their own width with --pw-measure.

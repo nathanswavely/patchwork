@@ -48,6 +48,10 @@
     // (e.g. the floating patch-card list). The quilt centers and zoom-fits
     // within the remaining visible area while still rendering full-bleed.
     insetRight = 0,
+    // Pixels of overlaid UI along the top edge (the desktop filter chips).
+    // Only the fit reads it: the quilt settles below the chips rather than
+    // under them, and stays full-bleed behind them when panned.
+    insetTop = 0,
     // Clears the tag filter from the filtered-to-nothing overlay. The store
     // stays out of this component — the parent owns the lens state.
     onClearFilter = () => {},
@@ -837,14 +841,14 @@
       const { fitPadLeft, padding, narrow } = fitInsets(vw);
       const fitPadRight = Math.round(vw * insetRight);
       const availW = vw - fitPadLeft - fitPadRight - padding * 2;
-      const availH = vh - padding * 2;
+      const availH = vh - insetTop - padding * 2;
       const targetK = Math.min(availW / bw, availH / bh, 2.0);
       const clampedK = clampFitScale(targetK, narrow);
 
       const bcx = newOX + (minX + maxX) / 2;
       const bcy = newOY + (minY + maxY) / 2;
       const tx = (vw + fitPadLeft - fitPadRight) / 2 - bcx * clampedK;
-      const ty = vh / 2 - bcy * clampedK;
+      const ty = (vh + insetTop) / 2 - bcy * clampedK;
 
       const targetTransform = d3.zoomIdentity.translate(tx, ty).scale(clampedK);
 
@@ -1253,14 +1257,14 @@
       const { fitPadLeft, padding, narrow } = fitInsets(vw);
       const fitPadRight = padRight;
       const availW = vw - fitPadLeft - fitPadRight - padding * 2;
-      const availH = vh - padding * 2;
+      const availH = vh - insetTop - padding * 2;
       const targetK = Math.min(availW / (maxX - minX), availH / (maxY - minY), 2.0);
       const clampedK = clampFitScale(targetK, narrow);
 
       const bcx = oX + (minX + maxX) / 2;
       const bcy = oY + (minY + maxY) / 2;
       const tx = (vw + fitPadLeft - fitPadRight) / 2 - bcx * clampedK;
-      const ty = vh / 2 - bcy * clampedK;
+      const ty = (vh + insetTop) / 2 - bcy * clampedK;
 
       svg.call(zoomBehavior.transform,
         d3.zoomIdentity.translate(tx, ty).scale(clampedK));

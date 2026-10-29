@@ -323,8 +323,8 @@
   {/if}
 
   <!-- Filter chips over the canvas (docs/adr/033): desktop-only here — the
-       row overlays the quilt/map bottom-left corner, bounded away from the
-       rail and the cards pane. Mobile canvases get the FAB + sheet below. -->
+       row overlays the quilt/map top edge, bounded away from the rail and
+       the cards pane. Mobile canvases get the FAB + sheet below. -->
   {#if isQuiltRoute}
     <div class="quilt-chips" class:rail-collapsed={sidebarCollapsed}>
       <FilterChips variant="overlay" />
@@ -334,7 +334,7 @@
   <!-- Canvas view switcher (docs/adr/074): desktop only. On mobile the same
        choice already rides the floating pill, which is canvas chrome too. -->
   {#if isQuiltRoute && mapEnabled}
-    <div class="canvas-view" class:rail-collapsed={sidebarCollapsed} role="group" aria-label="Canvas view">
+    <div class="canvas-view" role="group" aria-label="Canvas view">
       <a
         href={scopedPath('quilt', quiltScope)}
         class:active={!onMapSurface}
@@ -641,31 +641,39 @@
   }
 
   /* --- Filter chips over the canvas (docs/adr/033) --- */
-  /* Desktop only: overlays the quilt/map bottom-left corner, bounded left of
-     the rail's floating card and right of the cards pane — wrapping within
-     that span and growing upward from the bottom edge, never extending across
-     it. The attribution strip owns the bottom-right, so the two never meet. */
+  /* Desktop only: the canvas's top edge, just under the glass bar, bounded
+     right of the rail's floating card and left of the cards pane. One row
+     at first (FilterChips plans it); "more" wraps the rest in downward. */
   .quilt-chips {
     position: fixed;
-    bottom: 12px;
+    top: 68px; /* clear the glass top bar */
     left: 220px; /* clear the rail's floating glass card (8px + 200px + 12px gap) */
     /* Clear the cards pane, whatever width the reader has set it to
        (docs/adr/111). This used to be a literal 45% — a third copy of a
        number SocialHome wrote twice more, in a file that has no other reason
        to know the pane exists. The fallback keeps the chips honest on any
-       route that renders before the surface publishes its width. */
-    right: calc(var(--pw-cards-pane-w, 45%) + 16px);
+       route that renders before the surface publishes its width. The
+       patch list's card sits 16px inside the pane, so pane width less 4px
+       leaves the same 12px between this row (and the card it opens into)
+       and the list that the rail keeps on the left. With the pane put away
+       its width is 0 and the floor takes over: SocialHome's show-the-list
+       button stands at the same top line, 12px in and 32px wide, so 56px
+       keeps the 12px gap. */
+    right: max(calc(var(--pw-cards-pane-w, 45%) - 4px), 56px);
     z-index: 20; /* the canvas chrome layer — same as the view pill */
   }
 
-  /* Canvas chrome, the same floating layer and rail-aware offsets the chips
-     use — clear of the rail on the left, clear of the cards pane on the
-     right. Top-left rather than the chips' bottom-left so the two never
-     compete, and clear of Leaflet's own zoom control at the map's edge. */
+  /* Canvas chrome on the same floating layer: the canvas's bottom-right
+     corner, against the cards pane's edge. It stands above the attribution
+     strip's line (24px tall at the window's foot) at every width, not only
+     when the pane is put away: the strip is a run of text and outgrows the
+     pane on a narrow window, and a switch that hopped when the pane moved
+     would be one more thing to find again. The map's zoom control keeps
+     the bottom-left. */
   .canvas-view {
     position: fixed;
-    top: 68px; /* clear the glass top bar */
-    left: 220px;
+    right: calc(var(--pw-cards-pane-w, 45%) + 16px);
+    bottom: 36px;
     z-index: 20;
     display: flex;
     gap: 3px;
@@ -675,10 +683,6 @@
     backdrop-filter: blur(12px) saturate(1.2);
     -webkit-backdrop-filter: blur(12px) saturate(1.2);
     box-shadow: 0 2px 12px var(--color-shadow);
-  }
-
-  .canvas-view.rail-collapsed {
-    left: 70px;
   }
 
   .canvas-view a {
@@ -703,13 +707,7 @@
 
   .quilt-chips.rail-collapsed {
     /* The collapsed rail hugs at left 8px, 50px wide (its right edge is
-       58px) — keep the same 12px gap the expanded offset has. The map's
-       zoom control lives in the column this leaves free (bottom-left,
-       12px in, 32px wide, so its right edge is 44px — MapView), so this
-       offset is also what keeps the chips off it. Both constraints are
-       read out of the source and checked against each other in
-       map-zoom-control.test.js, so moving the rail again fails there
-       rather than silently landing the chips on the zoom buttons. */
+       58px) — keep the same 12px gap the expanded offset has. */
     left: 70px;
   }
 
@@ -1035,8 +1033,11 @@
 
     /* The filter sheet: rises from the FAB, clearing the floating row so
        its toggle stays visible — the label sheet's geometry. */
+    /* A column with a bounded height: the find field stays put and only the
+       tag list inside it scrolls (FilterChips' sheet, TagFinder). */
     .filter-sheet {
-      display: block;
+      display: flex;
+      flex-direction: column;
       position: fixed;
       left: 8px;
       right: 8px;
@@ -1050,7 +1051,7 @@
       box-shadow: 0 8px 24px var(--color-shadow);
       padding: 14px 16px;
       max-height: 45vh;
-      overflow-y: auto;
+      overflow: hidden;
     }
 
     /* Full-width bottom bar. The extra selectors outrank the desktop

@@ -481,11 +481,9 @@
   }
 
   /* Desktop home of the zoom control. 12px in from the corner so it
-     stands on the same inset the rail (left: 12px) and the filter chips
-     (bottom: 12px) do, rather than Leaflet's 10px. Its right edge lands at
-     44px, well left of where the chips begin even with the rail collapsed
-     (SocialShell keeps that offset at 80px) — a rule this control now
-     relies on, and says so beside it. */
+     stands on the same inset the rail does, rather than Leaflet's 10px.
+     The corner is its alone: the filter chips run along the canvas's top
+     edge and the Quilt/Map switch stands bottom-right (SocialShell). */
   .map-wrapper :global(.leaflet-bottom .leaflet-control-zoom) {
     margin-bottom: 12px;
     margin-left: 12px;

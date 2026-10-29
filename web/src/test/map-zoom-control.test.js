@@ -27,15 +27,13 @@ describe('map zoom control placement', () => {
     expect(map()).toContain("narrow.removeEventListener('change', onBreakpoint)");
   });
 
-  it('stays left of the filter chips with the rail collapsed', () => {
-    // The control's right edge: its left margin plus Leaflet's 30px button
-    // column with our 1px border each side.
-    const margin = map().match(/\.leaflet-bottom \.leaflet-control-zoom\)\s*\{[^}]*margin-left:\s*(\d+)px/);
-    expect(margin, 'zoom control left margin').not.toBeNull();
-    const rightEdge = Number(margin[1]) + 32;
-    const chips = shell().match(/\.quilt-chips\.rail-collapsed\s*\{[^}]*left:\s*(\d+)px/);
-    expect(chips, 'collapsed chips offset').not.toBeNull();
-    expect(Number(chips[1])).toBeGreaterThan(rightEdge);
+  it('has the bottom-left corner to itself on desktop', () => {
+    // The chips moved to the canvas's top edge and the Quilt/Map switch to
+    // its bottom-right, so nothing of ours shares the control's corner.
+    expect(shell()).toMatch(/\.quilt-chips \{[^}]*top: 68px;/);
+    expect(shell()).not.toMatch(/\.quilt-chips \{[^}]*bottom:/);
+    expect(shell()).toMatch(/\.canvas-view \{[^}]*right: calc\(var\(--pw-cards-pane-w/);
+    expect(shell()).not.toMatch(/\.canvas-view \{[^}]*left:/);
   });
 
   it('keeps the top corner under the glass bar for the mobile placement', () => {

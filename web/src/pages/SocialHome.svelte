@@ -120,6 +120,11 @@
   // toggle full-screen instead — no inset, and no control either.
   let quiltInset = $derived(winW <= 768 ? 0 : paneFraction(paneHidden));
 
+  // The desktop filter chips stand along the canvas's top edge, one row
+  // under the glass bar (SocialShell); the quilt fits below them. Mobile
+  // has no top row: its chips are a sheet.
+  let quiltInsetTop = $derived(winW <= 768 ? 0 : 40);
+
   // The one published fact (docs/adr/111). `.cards-pane` sizes from it, the
   // shell's filter chips clear their right edge with it, and the control
   // parks against it — 45% used to be a literal in three places across two
@@ -601,7 +606,7 @@
   </div>
 
   <!-- Main pane: quilt canvas or community map -->
-  <div class="quilt-pane" class:mobile-hidden={mobileView === 'list'}>
+  <div class="quilt-pane" data-canvas class:mobile-hidden={mobileView === 'list'}>
     {#if showMap}
       <!-- One voice per state: with the in-view lens on, the pane already
            says nothing is in view and offers the way back, so the map does
@@ -629,6 +634,7 @@
         myPatchRoles={roles}
         {quiltScope}
         insetRight={quiltInset}
+        insetTop={quiltInsetTop}
         onClearFilter={resetFilters}
         onPatchHover={(patch) => hasPointer && preview(patch, true)}
         onBackgroundClick={backgroundClick}
@@ -666,7 +672,7 @@
          The header used to be its own floating card over loose cards, and
          at desktop width the quilt behind, the header edge and forty card
          edges all competed. -->
-    <div class="cards-panel">
+    <div class="cards-panel pw-canvas-card">
     <!-- The list's header carries only the list's own controls
          (docs/adr/074). The Quilt/Map switch used to sit here and now lives
          on the canvas, which is the thing it changes. -->
@@ -950,14 +956,10 @@
        .sidebar-rail.quilt-mode). The bar paints no edge on this route, so
        the two cards hang from the same line with nothing between. */
     margin: 0 16px 16px;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    background: color-mix(in srgb, var(--color-bg) 78%, transparent);
-    backdrop-filter: blur(12px) saturate(1.2);
-    -webkit-backdrop-filter: blur(12px) saturate(1.2);
-    box-shadow: 0 2px 12px var(--color-shadow);
-    /* The corners clip the scroll area, so the cards slide under the
-       header's edge rather than past the panel's rounded corners. */
+    /* Its glass is .pw-canvas-card (app.css), shared with the filter
+       chips' open card. The corners clip the scroll area, so the cards
+       slide under the header's edge rather than past the panel's rounded
+       corners. */
     overflow: hidden;
   }
 

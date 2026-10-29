@@ -46,7 +46,7 @@ range, a date for everything after it.
 | [030](030-claims-are-assertions-not-reservations.md) | Claims are assertions, not reservations |
 | [031](031-event-sources-vouch-for-the-feed.md) | Event sources: vouch for the feed, not each event |
 | [032](032-event-links-one-owner-two-consents.md) | Event links: one owner, two consents *(amended by 057: trusted contributors speak for unclaimed patches)* |
-| [033](033-search-is-a-dropdown-narrowing-is-explicit.md) | Search is a dropdown; narrowing is explicit |
+| [033](033-search-is-a-dropdown-narrowing-is-explicit.md) | Search is a dropdown; narrowing is explicit *(amended by 2026-10-29: the chips show one row and find the rest)* |
 | [034](034-archive-keeps-its-gravity.md) | Archive keeps its gravity — restore is an instance-admin action |
 | [035](035-scope-lives-in-the-url.md) | Scope lives in the URL — My Quilt is `/my`, the whole quilt stays at `/` |
 | [036](036-charters-are-published-not-exposed.md) | Charters are published, not exposed — per-document visibility |
@@ -112,6 +112,7 @@ range, a date for everything after it.
 | [2026-10-18](2026-10-18-a-nomination-takes-effect-where-the-decision-lands.md) | A nomination takes effect where the decision lands: on a voting patch resolution ratifies, and on an admin-decides patch the maintainer's approval does — an admin's own nomination at creation, `decide` approve, and `apply` on an open proposal all promote, seating an elected patch's nominee into the vacant chair with its remaining term; an election is never the maintainer's (`can_decide`/`advisory` false, `apply` refuses it); an applied amendment carries `base_doc_content`, the text it replaced *(reconciles 051 and 100 with 092; issue #408)* |
 | [2026-10-19](2026-10-19-an-interim-admin-is-asked-first.md) | An interim admin is asked first: when inactivity empties a longest-tenure patch the sweep records an offer for each present member it picks and notifies them with a question, and only their answer makes an admin; a decline passes the question on while the patch still has no admins, a no is not asked again until the council has filled and emptied, and no clock answers for anybody *(applies 098 and 117 to docs/adr/051's succession; leaves a designated successor and the elected and meritocratic models unchanged)* |
 | [2026-10-25](2026-10-25-nonprofit-is-a-fact-not-a-tag.md) | Nonprofit is a fact about a patch, not a tag: `nodes.nonprofit` is a self-declared boolean set by a patch's admins or carried on a community suggestion (correctable at review), worn as a badge, carried on the detail, list and tree payloads, and travelling in a seamrip, while placement affinity and motif derivation never read it *(issue #448; leaves 021 standing — a constitution is not a classification)* |
+| [2026-10-29](2026-10-29-the-chips-show-a-row-and-find-the-rest.md) | The filter chips show one row of the most-used tags, with a selected tag always in it, and every tag is found by typing: "N more" grows the row into a frosted card with a find field, a phone keeps its sheet with the same field, show and hide are one button at the row's start, and the canvas chips return to the top edge with Quilt/Map at the bottom-right *(amends 033; applies 114)* |
 
 ## Partly implemented
 
