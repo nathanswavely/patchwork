@@ -3,21 +3,24 @@
   import * as d3 from 'd3';
   import { api } from '../lib/api.js';
   import { canHover } from '../stores/viewport.svelte.js';
-  import { identityColorForPatch, paletteForPatch, ghostPalette, darken, textOnColor } from '../lib/quiltTheme.js';
+  import { paletteForPatch, ghostPalette, darken, textOnColor } from '../lib/quiltTheme.js';
   import { renderBlock, blockPieces, getRotation, blockKeyAt } from '../lib/quiltBlocks.js';
   import {
     CLOTH, createLattice, warpPolygon, fabricGrain, bakeWrinkles, bakeWeave,
     WEAVES, weaveFor,
   } from '../lib/quiltCloth.js';
   import { quiltLayout } from '../lib/quiltLayout.js';
-  import { createMotifGroup, createMyPatchStarGroup, createFollowedHeartGroup, createUnclaimedMarkGroup } from '../lib/patchIcons.js';
+  import {
+    createMotifGroup, createMotifElement, motifKeyForPatch,
+    createMyPatchStarGroup, createFollowedHeartGroup, createUnclaimedMarkGroup,
+  } from '../lib/patchIcons.js';
   import { buildRemoteGroups, composeGroupLayouts } from '../lib/quiltRegions.js';
   import { blockPageZoom } from '../lib/pageZoom.js';
   import { textMatches } from '../lib/textMatch.js';
   import {
     getRemoteFollows, fetchQuiltInfo, colorForQuilt, refreshFollowSnapshot,
   } from '../stores/multiQuilt.svelte.js';
-  import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
+  import { getSubmissionsEnabled, getTagVocabulary } from '../stores/quilt.svelte.js';
   import { getColorMode } from '../stores/colors.svelte.js';
   import { navigate } from '../stores/router.svelte.js';
 
@@ -196,25 +199,36 @@
   // while the ramp holds at 2. Nothing about a tile's size should be a cliff.
   const LABEL_ROOMY_PX = 80;
   // Corner marks: an on-screen size, like a name badge, not a share of the
-  // tile — see updateCornerMarks. MARK_PX is the diameter one wants,
+  // tile — see updateCornerMarks. MARK_PX is the square a mark occupies,
   // MARK_INSET its gap from the tile's corner, both in canonical units
   // that the counter-scale turns into screen pixels.
   const MARK_PX = 22;
   const MARK_INSET = 6;
   // A mark never eats more than this share of the tile it sits on, and below
   // MARK_MIN_PX on screen it's an illegible speck, so it goes. The share cap
-  // is load-bearing now that two marks share the top edge: at LABEL_MIN_PX a
-  // pair of full-size discs plus their insets would not fit on the tile.
+  // is load-bearing because two marks can share the top edge: at
+  // LABEL_MIN_PX a pair of full-size marks plus their insets would not fit.
   const MARK_TILE_SHARE = 0.3;
   const MARK_MIN_PX = 9;
-  // The glyph inside a disc, and how far the shadow circle sits down-right of
-  // it (matching --lt-shadow-x/y, so the light direction agrees with the
-  // rest of the quilt).
-  const MARK_GLYPH_PX = MARK_PX * 0.64;
-  const MARK_SHADOW_OFFSET = 1;
-  // Status marks (unclaimed, role) wear a neutral disc; identity (the motif)
-  // wears the patch's own color. See CONTEXT.md "Corner mark".
-  const MARK_STATUS_FILL = 'rgba(0,0,0,0.55)';
+  // A mark is a bare glyph on the fabric, with no disc under it (CONTEXT.md
+  // "Corner mark"). The discs were the noise: a colored circle with a ring
+  // and a shadow in up to three corners of every tile, on a surface whose
+  // whole job is to show fabric. The glyph is larger than it was inside a
+  // disc, since it no longer has one to read against.
+  const MARK_GLYPH_PX = MARK_PX * 0.72;
+  // What lets a bare glyph read on any fabric: a dark edge stroked under the
+  // fill (paint-order), so a white glyph holds on pale cloth and a pale
+  // glyph on white. Hardcoded black in both themes, for the reason the
+  // tile's own pillow shadow is: --lt-shadow-color inverts with the theme
+  // because it is built for chrome on the page canvas, and on arbitrary
+  // fabric a pale halo either disappears or reads as a glow. In screen
+  // pixels at full mark size.
+  const MARK_HALO = 'rgba(0,0,0,0.55)';
+  const MARK_HALO_PX = 1.6;
+  // The motif is white whatever the patch's colors: it says what a patch is,
+  // and the fabric already says how it looks. Status glyphs keep their own
+  // colors (gold star, red heart), which is how they stay distinct from it.
+  const MARK_MOTIF_FILL = '#fff';
   // Where each slot's group anchors on the tile (a fraction of the tile's
   // side) and which way it draws inward from there.
   const MARK_CORNERS = {
@@ -251,8 +265,14 @@
     const probe = document.createElement('div');
     probe.className = 'patch-label';
     probe.style.cssText = 'position:absolute;left:-9999px;top:-9999px;visibility:hidden';
+    // The motif's box too, which is in em and moves with the type. A flex
+    // item, so a span computes to the stylesheet's width as the svg does.
+    const motifProbe = document.createElement('span');
+    motifProbe.className = 'label-motif';
+    probe.appendChild(motifProbe);
     document.body.appendChild(probe);
     const cs = getComputedStyle(probe);
+    const ms = getComputedStyle(motifProbe);
     const fontSize = parseFloat(cs.fontSize) || 13;
     const lineH = parseFloat(cs.lineHeight) || Math.round(fontSize * 1.3);
     labelType = {
@@ -265,6 +285,9 @@
         + (parseFloat(cs.borderLeftWidth) || 0) + (parseFloat(cs.borderRightWidth) || 0),
       chromeY: (parseFloat(cs.paddingTop) || 0) + (parseFloat(cs.paddingBottom) || 0)
         + (parseFloat(cs.borderTopWidth) || 0) + (parseFloat(cs.borderBottomWidth) || 0),
+      // The motif glyph and its gap from the name.
+      motifX: (parseFloat(ms.width) || 0)
+        + (parseFloat(ms.marginLeft) || 0) + (parseFloat(ms.marginRight) || 0),
     };
     probe.remove();
     return labelType;
@@ -614,6 +637,21 @@
       if (cornerMarks.size === 0) return;
       for (const entry of cornerMarks.values()) syncRoleMark(entry);
       updateCornerMarks();
+    });
+  });
+
+  // Keep the motifs honest the same way. A motif resolves through the tag
+  // vocabulary (docs/adr/021), which loads on its own request, and on a cold
+  // load the quilt is usually built first: every tile then wore the fallback
+  // quilt mark until something rebuilt the layout. Corner marks redraw in
+  // place; badges notice through their __motif on the next pass.
+  $effect(() => {
+    getTagVocabulary();
+    untrack(() => {
+      if (cornerMarks.size === 0) return;
+      for (const entry of cornerMarks.values()) syncMotifMark(entry);
+      updateCornerMarks();
+      if (placedTiles.length > 0) updateLabels();
     });
   });
 
@@ -1065,18 +1103,17 @@
         // for them and no zoom to reveal them at — same reason it draws no
         // name badges (docs/adr/040).
         if (interactive) {
-          const entry = { tile, inner, role: undefined, slots: new Map() };
+          const entry = { tile, inner, role: undefined, motif: undefined, slots: new Map() };
           cornerMarks.set(tile.data.id, entry);
-          // Identity: the patch's motif on its own color, on every tile —
-          // the quilt says what its patches are at zoom levels where no name
-          // badge survives a collision.
-          const identity = identityColorForPatch(tile.data);
-          drawCornerMark(entry, 'motif', 'tl', identity,
-            createMotifGroup(tile.data, MARK_GLYPH_PX, textOnColor(identity)));
+          // Identity: the patch's motif, on every tile that has no name
+          // badge, so the quilt says what its patches are at zoom levels where
+          // no badge survives a collision. A tile that wins one carries the
+          // motif inside it instead (syncMotifMarks), so it wears one mark.
+          syncMotifMark(entry);
           // Status: unclaimed (docs/adr/030) — a broken chain link, a patch
           // on the quilt with nobody holding the other end.
           if (tile.data.is_unclaimed) {
-            drawCornerMark(entry, 'unclaimed', 'tr', MARK_STATUS_FILL,
+            drawCornerMark(entry, 'unclaimed', 'tr',
               createUnclaimedMarkGroup(MARK_GLYPH_PX, '#fff'));
           }
           syncRoleMark(entry);
@@ -1587,7 +1624,7 @@
    */
   function applyBadgeShape(label, textW, lines) {
     if (label.__textW === textW && label.__lines === lines) return;
-    const nameSpan = label.firstChild;
+    const nameSpan = label.__name;
     nameSpan.style.webkitLineClamp = String(lines);
     nameSpan.style.width = lines > 1 ? textW + 'px' : '';
     nameSpan.style.maxWidth = lines > 1 ? '' : badgeType().textMax + 'px';
@@ -1600,19 +1637,29 @@
   // why updateLabels reuses these rather than building a fresh set on every
   // zoom tick.
   //
-  // The badge is a name and nothing else — the motif and the role mark are
-  // corner marks on the tile itself now, where they show on every tile rather
-  // than only the ones that win a label collision.
-  function createLabelElement(tile, textW, lines, role) {
+  // The badge is the patch's motif and its name. The motif is the same mark
+  // the tile wears in its corner when it has no badge, moved in here so a
+  // labelled tile carries one mark rather than two; the role and unclaimed
+  // marks stay on the tile, since they are about the viewer and the patch's
+  // state rather than what it is.
+  function createLabelElement(tile, textW, lines, role, motif) {
     const label = document.createElement('div');
     label.className = 'patch-label lt-vellum';
 
-    // Text: name only. The shape it wears is applyBadgeShape's, here and on
-    // every later pass.
+    // Sized by the stylesheet in em, so it follows the badge's type; the
+    // attribute size is only what it would be with no stylesheet at all.
+    const motifSvg = createMotifElement(tile.data, 12, 'currentColor');
+    motifSvg.classList.add('label-motif');
+    motifSvg.setAttribute('aria-hidden', 'true');
+    label.appendChild(motifSvg);
+
+    // The shape the name wears is applyBadgeShape's, here and on every later
+    // pass.
     const nameSpan = document.createElement('span');
     nameSpan.className = 'label-name';
     nameSpan.textContent = tile.data.name || '';
     label.appendChild(nameSpan);
+    label.__name = nameSpan;
     applyBadgeShape(label, textW, lines);
 
     // Label hover → tooltip + click → select patch. A badge is stacked above
@@ -1661,9 +1708,12 @@
     // What the badge was built from, so a later pass can tell whether it still
     // matches (compared by identity — a refetch hands out new data objects).
     // __role no longer changes what the badge draws; it stays as a reuse
-    // marker so nothing built under one relationship outlives it.
+    // marker so nothing built under one relationship outlives it. __motif is
+    // compared because the data object can stay the same while its motif
+    // changes under it, when the tag vocabulary lands after the first build.
     label.__data = tile.data;
     label.__role = role;
+    label.__motif = motif;
     return label;
   }
 
@@ -1682,7 +1732,14 @@
 
   function updateLabels() {
     if (!labelsEl) return;
-    if (!showLabels) { dropAllLabels(); return; }
+    if (!showLabels) {
+      dropAllLabels();
+      // The motifs those badges carried go back to their tiles' corners.
+      const before = labeledPatchIds;
+      labeledPatchIds = new Set();
+      syncMotifMarks(before);
+      return;
+    }
 
     const t = currentTransform;
     const k = t.k;
@@ -1732,13 +1789,17 @@
       if (screenX < -150 || screenX > vw + 150 ||
           screenY < -50 || screenY > vh + 50) continue;
 
-      // Nothing but the name is in the pill — motif and role mark are corner
-      // marks on the tile.
+      // The pill carries the motif and the name; the role and unclaimed marks
+      // stay corner marks on the tile.
       const name = tile.data.name || '';
       const role = quiltScope === 'local' ? myPatchRoles.get(tile.data.slug) : undefined;
+      const motif = motifKeyForPatch(tile.data);
       // Footprint from the pill's own computed box, not restated constants —
-      // it is rem-based and the reader can move it.
-      const { chromeX, chromeY, lineH } = badgeType();
+      // it is rem-based and the reader can move it. The motif is chrome as
+      // far as the shapes are concerned: it sits beside the text at every
+      // depth, so it widens each candidate by the same amount.
+      const { chromeX: pillX, chromeY, lineH, motifX } = badgeType();
+      const chromeX = pillX + motifX;
 
       // How much visible quilt this badge owes its neighbours: the full gap to
       // move in, and to stay, a gap that slides toward LABEL_KEEP_GAP as its
@@ -1807,13 +1868,13 @@
       // that has to be written.
       const id = tile.data.id;
       let label = labelEls.get(id);
-      if (label && (label.__data !== tile.data || label.__role !== role)) {
+      if (label && (label.__data !== tile.data || label.__role !== role || label.__motif !== motif)) {
         dropLabelElement(label); // may be under a finger, so not a plain remove
         labelEls.delete(id);
         label = null;
       }
       if (!label) {
-        label = createLabelElement(tile, textW, lines, role);
+        label = createLabelElement(tile, textW, lines, role, motif);
         labelEls.set(id, label);
       }
       if (label.parentNode !== labelsEl) labelsEl.appendChild(label);
@@ -1831,6 +1892,8 @@
       labelEls.delete(id);
       dropLabelElement(el);
     }
+
+    syncMotifMarks(heldBadge);
   }
 
   /**
@@ -2170,44 +2233,48 @@
     clothG.selectAll('[data-ridge]').attr('transform', `translate(${o},${o})`);
   }
 
-  function drawCornerMark(entry, slot, corner, discFill, glyph) {
-    const { ax, ay, sx, sy } = MARK_CORNERS[corner];
+  function drawCornerMark(entry, slot, corner, glyph) {
+    const { sx, sy } = MARK_CORNERS[corner];
     const g = entry.inner.append('g')
       .attr('class', `corner-mark corner-mark-${slot}`)
       .style('pointer-events', 'none');
     const cx = sx * (MARK_INSET + MARK_PX / 2);
     const cy = sy * (MARK_INSET + MARK_PX / 2);
 
-    // Drop shadow drawn as an offset circle rather than a CSS filter: these
-    // transforms are rewritten on every zoom tick, up to three per tile across
-    // the whole quilt, and for a flat circle an offset circle *is* the shadow
-    // at zero compositor cost. Hardcoded black in both themes, like the tile's
-    // own pillow shadow — --lt-shadow-color inverts with the theme because it
-    // is built for chrome on the page canvas, and on arbitrary fabric a pale
-    // halo either disappears or reads as a glow.
-    g.append('circle')
-      .attr('cx', cx + MARK_SHADOW_OFFSET).attr('cy', cy + MARK_SHADOW_OFFSET)
-      .attr('r', MARK_PX / 2)
-      .attr('fill', 'rgba(0,0,0,0.28)');
-
-    // Seam ring, the same stroke the tile's edge wears. Not decorative: the
-    // identity color IS the palette primary and the block is drawn from that
-    // same palette, so a fair number of tiles have primary fabric directly
-    // under this corner and the disc would otherwise vanish into itself.
-    // (No resin dome highlight — that is a pill-scale effect, and these are
-    // too small to carry it.)
-    g.append('circle')
-      .attr('cx', cx).attr('cy', cy).attr('r', MARK_PX / 2)
-      .attr('fill', discFill)
-      .attr('stroke', 'var(--lt-thread-heavy)')
-      .attr('stroke-width', 1.5);
-
+    // The halo is a stroke on the glyph itself rather than a CSS filter or a
+    // second copy of the paths: these transforms are rewritten on every zoom
+    // tick, up to three per tile across the whole quilt, and a stroke painted
+    // under the fill costs nothing a filter would. The glyph is drawn in
+    // Phosphor's 256-unit box, so the width is stated in those units. Every
+    // Phosphor icon also carries an unfilled rect the size of that box, which
+    // the inherited stroke would draw as a frame around the glyph.
+    for (const box of glyph.querySelectorAll('rect[fill="none"]')) box.remove();
+    glyph.setAttribute('stroke', MARK_HALO);
+    glyph.setAttribute('stroke-width', (MARK_HALO_PX * 2 * 256 / MARK_GLYPH_PX).toFixed(1));
+    glyph.setAttribute('stroke-linejoin', 'round');
+    glyph.setAttribute('paint-order', 'stroke');
     glyph.setAttribute('transform',
       `translate(${cx - MARK_GLYPH_PX / 2},${cy - MARK_GLYPH_PX / 2}) ` +
       glyph.getAttribute('transform'));
     g.node().appendChild(glyph);
 
     entry.slots.set(slot, { g, corner });
+  }
+
+  /**
+   * Bring a tile's motif slot in line with the patch's current motif. The
+   * motif resolves through the tag vocabulary (docs/adr/021), which arrives
+   * on its own request, so a quilt built before it lands has drawn every tile
+   * with the fallback quilt mark; this redraws the ones that have since
+   * resolved to something else, without a relayout.
+   */
+  function syncMotifMark(entry) {
+    const key = motifKeyForPatch(entry.tile.data);
+    if (entry.motif === key) return;
+    entry.motif = key;
+    entry.slots.get('motif')?.g.remove();
+    drawCornerMark(entry, 'motif', 'tl',
+      createMotifGroup(entry.tile.data, MARK_GLYPH_PX, MARK_MOTIF_FILL));
   }
 
   /**
@@ -2227,11 +2294,9 @@
       entry.slots.delete('role');
     }
     if (role === 'admin' || role === 'member') {
-      drawCornerMark(entry, 'role', 'br', MARK_STATUS_FILL,
-        createMyPatchStarGroup(MARK_GLYPH_PX));
+      drawCornerMark(entry, 'role', 'br', createMyPatchStarGroup(MARK_GLYPH_PX));
     } else if (role === 'follower') {
-      drawCornerMark(entry, 'role', 'br', MARK_STATUS_FILL,
-        createFollowedHeartGroup(MARK_GLYPH_PX));
+      drawCornerMark(entry, 'role', 'br', createFollowedHeartGroup(MARK_GLYPH_PX));
     }
   }
 
@@ -2243,24 +2308,50 @@
    */
   function updateCornerMarks() {
     const k = currentTransform.k;
-    for (const { tile, slots } of cornerMarks.values()) {
-      // One size for every slot on this tile, so a tile's marks appear and
-      // vanish together — sizing them slot by slot leaves zoom levels where a
-      // tile wears a heart but no motif. Fixed, except on a tile too small to
-      // host a mark: one covering a third of its own patch has stopped being
-      // an annotation.
-      const px = Math.min(MARK_PX, tile.pxSize * k * MARK_TILE_SHARE);
-      const hidden = px < MARK_MIN_PX;
-      for (const { g, corner } of slots.values()) {
-        if (hidden) {
-          g.style('display', 'none');
-          continue;
-        }
-        const { ax, ay } = MARK_CORNERS[corner];
-        g.style('display', null)
-          .attr('transform',
-            `translate(${ax * tile.pxSize},${ay * tile.pxSize}) scale(${px / MARK_PX / k})`);
+    for (const entry of cornerMarks.values()) placeCornerMarks(entry, k);
+  }
+
+  function placeCornerMarks({ tile, slots }, k) {
+    // One size for every slot on this tile, so a tile's marks appear and
+    // vanish together — sizing them slot by slot leaves zoom levels where a
+    // tile wears a heart but no motif. Fixed, except on a tile too small to
+    // host a mark: one covering a third of its own patch has stopped being
+    // an annotation.
+    const px = Math.min(MARK_PX, tile.pxSize * k * MARK_TILE_SHARE);
+    const hidden = px < MARK_MIN_PX;
+    // The one exception to "together": a tile whose name badge is on screen
+    // carries its motif in the badge, and two copies of one mark on one tile
+    // is the noise this layout exists to remove.
+    const badged = labelEls.has(tile.data.id);
+    for (const [slot, { g, corner }] of slots) {
+      if (hidden || (badged && slot === 'motif')) {
+        g.style('display', 'none');
+        continue;
       }
+      const { ax, ay } = MARK_CORNERS[corner];
+      g.style('display', null)
+        .attr('transform',
+          `translate(${ax * tile.pxSize},${ay * tile.pxSize}) scale(${px / MARK_PX / k})`);
+    }
+  }
+
+  /**
+   * Re-place the corner marks of every tile that gained or lost a name badge
+   * since `before`, so the motif moves between the tile's corner and its
+   * badge on the same pass that moved the badge. Only the tiles whose answer
+   * changed: updateLabels runs on every pan tick, and on most of them none did.
+   */
+  function syncMotifMarks(before) {
+    const k = currentTransform.k;
+    for (const id of before) {
+      if (labeledPatchIds.has(id)) continue;
+      const entry = cornerMarks.get(id);
+      if (entry) placeCornerMarks(entry, k);
+    }
+    for (const id of labeledPatchIds) {
+      if (before.has(id)) continue;
+      const entry = cornerMarks.get(id);
+      if (entry) placeCornerMarks(entry, k);
     }
   }
 
@@ -2617,6 +2708,24 @@
   :global(.patch-label.selected) {
     font-weight: 700;
     border-color: var(--color-primary);
+  }
+
+  /* The motif leads the name, in one color whatever the patch's: the pill is
+     the same vellum on every tile, so a glyph colored per patch would be the
+     loudest thing in it. Muted so the name stays what a reader reads first,
+     and centered against a wrapped name rather than hung off its first line,
+     which leaves the pill symmetrical. Sized in em so it follows the type;
+     badgeType() reads this box, so the width and margin live here only. */
+  :global(.patch-label .label-motif) {
+    flex-shrink: 0;
+    width: 1.15em;
+    height: 1.15em;
+    margin-right: 0.3em;
+    color: var(--color-text-muted);
+  }
+
+  :global(.patch-label.selected .label-motif) {
+    color: inherit;
   }
 
   :global(.patch-label .label-name) {

@@ -1,6 +1,7 @@
 /**
  * Motif registry — the curated set of marks that stand for a patch (its
- * corner mark on a quilt tile, beside its name on a patch card).
+ * corner mark or inside its name badge on a quilt tile, beside its name on a
+ * patch card).
  *
  * A patch's motif resolves in order (see docs/adr/004 and docs/adr/021):
  *   1. appearance.icon, when it names a known motif (chosen by admins)

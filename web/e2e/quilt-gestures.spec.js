@@ -20,7 +20,7 @@ test.use({ hasTouch: true, viewport: { width: 390, height: 800 } });
 /** The zoom transform d3 writes onto the canvas's outermost <g>. */
 async function quiltTransform(page) {
   const attr = await page.evaluate(() => {
-    const g = document.querySelector('.canvas-container svg > g');
+    const g = document.querySelector('.canvas-container > svg > g');
     return g?.getAttribute('transform') || '';
   });
   const move = attr.match(/translate\(([-\d.]+)[, ]+([-\d.]+)\)/);
@@ -178,7 +178,7 @@ test('a tap on a name badge previews the patch', async ({ page }) => {
   await expect(page).toHaveURL(/\/patches\/[^/]+$/);
   // The quilt is behind it, not replaced by it — the whole point of an
   // overlay route rather than a page.
-  await expect(page.locator('.quilt-pane svg')).toBeVisible();
+  await expect(page.locator('.quilt-pane .canvas-container > svg')).toBeVisible();
 });
 
 test('a drag that starts on a name badge neither opens nor previews', async ({ page }) => {
