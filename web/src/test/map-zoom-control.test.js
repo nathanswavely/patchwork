@@ -22,7 +22,7 @@ describe('canvas zoom controls', () => {
     expect(shell()).toMatch(/\.canvas-controls \{[^}]*right: calc\(var\(--pw-cards-pane-w/);
     expect(shell()).toMatch(/\.canvas-controls \{[^}]*bottom: 36px/);
     // The switch only exists where the map does; the zoom is always there.
-    expect(shell()).toMatch(/<div class="canvas-controls">\s*\{#if mapEnabled\}\s*<div class="canvas-view"/);
+    expect(shell()).toMatch(/<div class="canvas-controls" class:dock-open=\{dockOpen\}>\s*\{#if mapEnabled\}\s*<div class="canvas-view"/);
     expect(shell()).toMatch(/\{#if hasCanvasZoom\(\)\}\s*<div class="canvas-zoom"/);
     expect(shell()).toContain('aria-label="Zoom in"');
     expect(shell()).toContain('aria-label="Zoom out"');
@@ -52,8 +52,20 @@ describe('canvas zoom controls', () => {
     expect(map()).toMatch(/zoomControl:\s*false/);
     expect(map()).not.toContain('L.control.zoom');
     expect(map()).not.toContain('.leaflet-control-zoom');
-    // Phones pinch: the buttons are desktop chrome.
-    expect(shell()).toMatch(/\.canvas-controls \{\s*display: none;/);
+  });
+
+  it('stand on their side above the filter button on a phone', () => {
+    // The view choice rides the floating pill there, so only the zoom stays,
+    // in the filter button's width, one 44px step (36px and its gap) above
+    // it. The filter sheet sits on a higher layer and opens over it.
+    expect(shell()).toMatch(/\.canvas-controls \{\s*right: 12px;\s*bottom: calc\(var\(--pw-canvas-chrome-bottom\) \+ 44px\);/);
+    expect(shell()).toMatch(/\.canvas-zoom \{\s*flex-direction: column-reverse;\s*width: 36px;/);
+    expect(shell()).toMatch(/\.canvas-controls\.dock-open,\s*\.canvas-view \{\s*display: none;/);
+    const sheetZ = Number(shell().match(/\.filter-sheet \{[^}]*z-index: (\d+)/)?.[1]);
+    const controlsZ = Number(shell().match(/\.canvas-controls \{[^}]*z-index: (\d+)/)?.[1]);
+    expect(sheetZ).toBeGreaterThan(controlsZ);
+    // The List view covers the canvas without unmounting it.
+    expect(source('pages/SocialHome.svelte')).toContain("hideCanvasZoom(winW <= 768 && mobileView === 'list')");
   });
 
   it('keeps the top corner under the glass bar', () => {

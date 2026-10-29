@@ -53,7 +53,9 @@ typing.**
 - **One zoom for both canvases stands beside the switch.** The map wore
   Leaflet's control in the bottom-left and the quilt had none; now a pair of
   buttons drives whichever canvas is showing, about the middle the reader
-  can see. Phones pinch, as they already did on the quilt.
+  can see. On a phone the switch rides the floating pill, so the zoom
+  stands alone on its side above the filter button, and the filter sheet
+  opens over it.
 
 ## Consequences
 

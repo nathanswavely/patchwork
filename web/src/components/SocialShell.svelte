@@ -333,11 +333,11 @@
   {/if}
 
   <!-- Canvas view switcher (docs/adr/074) and the canvas's zoom, together
-       at its bottom-right corner: desktop only. On mobile the view choice
-       already rides the floating pill, and both canvases pinch. The zoom
-       holds the corner, since it is there with or without a map. -->
+       at its bottom-right corner. The zoom holds the corner, since it is
+       there with or without a map. On a phone the view choice already rides
+       the floating pill, so only the zoom stays, above the filter button. -->
   {#if isQuiltRoute}
-    <div class="canvas-controls">
+    <div class="canvas-controls" class:dock-open={dockOpen}>
       {#if mapEnabled}
         <div class="canvas-view" role="group" aria-label="Canvas view">
           <a
@@ -1048,8 +1048,33 @@
       display: none;
     }
 
+    /* Only the zoom, stood on its side above the filter button, in the
+       button's width and ground. The filter sheet (z-index 56) opens over
+       it, and a docked profile puts it away with the rest of the row. */
     .canvas-controls {
+      right: 12px;
+      bottom: calc(var(--pw-canvas-chrome-bottom) + 44px);
+    }
+
+    .canvas-controls.dock-open,
+    .canvas-view {
       display: none;
+    }
+
+    /* Plus on top, the way a vertical zoom reads. Each button fills the
+       36px width, the filter button's size, rather than the desktop's
+       26px. */
+    .canvas-zoom {
+      flex-direction: column-reverse;
+      width: 36px;
+      height: auto;
+      padding: 0;
+      gap: 0;
+      border: 1px solid color-mix(in srgb, var(--color-text-muted) 45%, transparent);
+      background: var(--color-surface);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      box-shadow: none;
     }
 
     /* Filter FAB: opposite the info button, same floating row as the view

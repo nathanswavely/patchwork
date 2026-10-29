@@ -4,6 +4,7 @@
   import { navigate, replaceRoute } from '../stores/router.svelte.js';
   import { scopedPath, surfaceForRoute } from '../lib/scope.js';
   import { canHover } from '../stores/viewport.svelte.js';
+  import { hideCanvasZoom } from '../stores/canvasZoom.svelte.js';
   import { identityColorForPatch } from '../lib/quiltTheme.js';
   import { textMatches } from '../lib/textMatch.js';
   import { motifComponentForPatch } from '../lib/patchIcons.js';
@@ -154,6 +155,13 @@
   // OR map, per the route); 'list' shows the patch cards. Quilt-vs-map stays
   // driven by the route so deep links and the desktop toggle agree.
   let mobileView = $state('main'); // 'main' or 'list'
+
+  // The List view covers the canvas without unmounting it, so the zoom
+  // buttons would drive something nobody can see.
+  $effect(() => {
+    hideCanvasZoom(winW <= 768 && mobileView === 'list');
+    return () => hideCanvasZoom(false);
+  });
 
   // --- Patch list data ---
   let allPatches = $state([]);

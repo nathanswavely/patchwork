@@ -10,6 +10,7 @@
 let driver = $state(null);
 let canIn = $state(false);
 let canOut = $state(false);
+let hidden = $state(false);
 
 /**
  * A canvas offers itself to the buttons. `zoom(direction)` takes 1 or -1.
@@ -34,8 +35,16 @@ export function reportCanvasZoom(zoomIn, zoomOut) {
   canOut = zoomOut;
 }
 
+/**
+ * The page puts the buttons away while its canvas is out of sight: on a
+ * phone the List view covers the canvas, which stays mounted underneath.
+ */
+export function hideCanvasZoom(hide) {
+  hidden = hide;
+}
+
 export function hasCanvasZoom() {
-  return driver !== null;
+  return driver !== null && !hidden;
 }
 
 export function canZoomIn() {
