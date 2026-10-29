@@ -32,7 +32,7 @@
 </script>
 
 <svelte:head>
-  <title>The Lining &mdash; {instanceName}</title>
+  <title>The Lining | {instanceName}</title>
 </svelte:head>
 
 <div class="lining-page lt-fade-in">

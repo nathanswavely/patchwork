@@ -40777,19 +40777,19 @@
       ]
     },
     {
-      "id": "17d28ffdf501",
-      "text": "About — {instanceName}",
+      "id": "0398cd4d7405",
+      "text": "About | {instanceName}",
       "words": 2,
       "tier": "label",
       "status": "human",
       "replacement": null,
-      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28. Separator changed from an em dash to a bar at the author's request, 2026-10-29.",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
           "line": 61,
           "kind": "markup",
-          "raw": "About &mdash; {instanceName}",
+          "raw": "About | {instanceName}",
           "quote": null
         }
       ],
@@ -54777,19 +54777,19 @@
       ]
     },
     {
-      "id": "0c4a7436cf57",
-      "text": "How governance works — {instanceName}",
+      "id": "4bd901e1f179",
+      "text": "How governance works | {instanceName}",
       "words": 4,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175). Separator changed from an em dash to a bar at the owner's request, 2026-10-29.",
       "occurrences": [
         {
           "file": "web/src/pages/Governance.svelte",
           "line": 38,
           "kind": "markup",
-          "raw": "How governance works &mdash; {instanceName}",
+          "raw": "How governance works | {instanceName}",
           "quote": null
         }
       ]
@@ -57156,11 +57156,11 @@
       ]
     },
     {
-      "id": "b9c9d0901c9b",
-      "text": "The Label — {instanceName}",
+      "id": "ce00d7c81b44",
+      "text": "The Label | {instanceName}",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -57168,7 +57168,7 @@
           "file": "web/src/pages/Label.svelte",
           "line": 36,
           "kind": "markup",
-          "raw": "The Label &mdash; {instanceName}",
+          "raw": "The Label | {instanceName}",
           "quote": null
         }
       ]
@@ -57528,11 +57528,11 @@
       ]
     },
     {
-      "id": "5d6a7413714b",
-      "text": "The Lining — {instanceName}",
+      "id": "d8caea0844cf",
+      "text": "The Lining | {instanceName}",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -57540,7 +57540,7 @@
           "file": "web/src/pages/Lining.svelte",
           "line": 35,
           "kind": "markup",
-          "raw": "The Lining &mdash; {instanceName}",
+          "raw": "The Lining | {instanceName}",
           "quote": null
         }
       ]
@@ -74009,6 +74009,45 @@
         "kind": "written"
       },
       "previous_ai_text": "The writing a visitor meets first is a person's: the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. Much of the rest, including the charter templates, the guides to how governance works, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped."
+    },
+    {
+      "id": "17d28ffdf501",
+      "text": "About — {instanceName}",
+      "words": 2,
+      "tier": "label",
+      "status": "human",
+      "replacement": null,
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/About.svelte",
+          "line": 61,
+          "kind": "markup",
+          "raw": "About &mdash; {instanceName}",
+          "quote": null
+        }
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
+    },
+    {
+      "id": "0c4a7436cf57",
+      "text": "How governance works — {instanceName}",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 38,
+          "kind": "markup",
+          "raw": "How governance works &mdash; {instanceName}",
+          "quote": null
+        }
+      ]
     }
   ],
   "baseline": [

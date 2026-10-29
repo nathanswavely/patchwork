@@ -58,7 +58,7 @@
 </script>
 
 <svelte:head>
-  <title>About &mdash; {instanceName}</title>
+  <title>About | {instanceName}</title>
 </svelte:head>
 
 <div class="about-page lt-fade-in">
