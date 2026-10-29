@@ -6,14 +6,14 @@ visitor-readable string in this repository and records who wrote it.
 | | strings | words |
 |---|---:|---:|
 | Written by a person | 81 | 2,743 |
-| A person's words from the start | 130 | 3,864 |
+| A person's words from the start | 84 | 2,348 |
 | Drafted by a model, edited by a person | 1 | 44 |
-| Left as drafted, deliberately | 2273 | 16,757 |
-| Not yet reviewed | 823 | 3,568 |
-| **Total** | **3308** | **26,976** |
+| Left as drafted, deliberately | 2319 | 18,273 |
+| Not yet reviewed | 823 | 3,562 |
+| **Total** | **3308** | **26,970** |
 
 Human-authored or deliberately accepted: **75%** of strings.
-A person's words: **6%** of strings, **24%** of words.
+A person's words: **5%** of strings, **19%** of words.
 Edited from a model's draft: **0%** of strings, counted apart, because an edit leaves most of the model's words in place.
 
 Whether a replacement was a rewrite or small edits is what the person said when they saved it. SlopChop records it and does not check it.
