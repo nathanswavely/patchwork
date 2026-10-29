@@ -67,7 +67,35 @@ const (
 	// the way the legal documents do; no key means the default is in effect.
 	KeyOutreachEnabled  = "outreach_enabled"
 	KeyOutreachTemplate = "outreach_template"
+
+	// Whether posts are asked if AI made them
+	// (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md): "off",
+	// "optional" or "required". Absent means optional, which is what the
+	// software ships: the question costs little and blocks nothing.
+	KeyAIDisclosure = "ai_disclosure"
 )
+
+// The three AI disclosure modes. Optional is the default.
+const (
+	AIDisclosureOff      = "off"
+	AIDisclosureOptional = "optional"
+	AIDisclosureRequired = "required"
+)
+
+// ValidAIDisclosure reports whether v is one of the three modes.
+func ValidAIDisclosure(v string) bool {
+	return v == AIDisclosureOff || v == AIDisclosureOptional || v == AIDisclosureRequired
+}
+
+// AIDisclosure returns this quilt's disclosure mode. A stored value that is
+// not a mode reads as the default rather than as off, so a bad row never
+// stops the question being asked.
+func AIDisclosure(db *database.DB) string {
+	if v, ok := Get(db, KeyAIDisclosure); ok && ValidAIDisclosure(v) {
+		return v
+	}
+	return AIDisclosureOptional
+}
 
 // OutreachEnabled reports whether intro emails may be sent on this quilt.
 // On unless an admin switched it off: the default matches the assumption

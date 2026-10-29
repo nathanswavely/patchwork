@@ -14,9 +14,10 @@
   import { api } from '../lib/api.js';
   import { isLoggedIn } from '../stores/auth.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
+  import { reportReasonLabel } from '../lib/aiUse.js';
 
   let {
-    entityType,       // 'node' | 'event' | 'user' | 'notice' | 'reply'
+    entityType,       // 'node' | 'event' | 'proposal' | 'user' | 'notice' | 'reply'
     entityId = '',
     entityName = '',
     // 'headless' renders the modal with no trigger of its own, for a host
@@ -27,24 +28,32 @@
     open = $bindable(false),
   } = $props();
 
+  // Each reason is sent as its words, except unlabelled AI, which is sent
+  // as a code the moderation queues act on: its first action is to apply
+  // the label (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md,
+  // decision 7). It applies only where the question is asked, so not to a
+  // person or a reply.
   const REASONS = [
-    'Harassment or intimidation',
-    'Hate speech or discrimination',
-    'Threats or incitement',
-    'Sharing private information',
-    'Spam or scam',
-    'Impersonation',
-    'Something else',
+    { value: 'Harassment or intimidation', label: 'Harassment or intimidation' },
+    { value: 'Hate speech or discrimination', label: 'Hate speech or discrimination' },
+    { value: 'Threats or incitement', label: 'Threats or incitement' },
+    { value: 'Sharing private information', label: 'Sharing private information' },
+    { value: 'Spam or scam', label: 'Spam or scam' },
+    { value: 'Impersonation', label: 'Impersonation' },
+    { value: 'unlabelled_ai', label: reportReasonLabel('unlabelled_ai'), ai: true },
+    { value: 'Something else', label: 'Something else' },
   ];
 
-  const NOUN = { node: 'patch', event: 'event', user: 'person', notice: 'notice', reply: 'reply' };
+  const NOUN = { node: 'patch', event: 'event', proposal: 'proposal', user: 'person', notice: 'notice', reply: 'reply' };
+  const AI_ASKED = new Set(['node', 'event', 'proposal', 'notice']);
 
-  let reason = $state(REASONS[0]);
+  let reasons = $derived(REASONS.filter((r) => !r.ai || AI_ASKED.has(entityType)));
+  let reason = $state(REASONS[0].value);
   let details = $state('');
   let submitting = $state(false);
 
   function reset() {
-    reason = REASONS[0];
+    reason = REASONS[0].value;
     details = '';
   }
 
@@ -85,7 +94,7 @@
     <label class="form-label">
       Reason
       <select class="lt-field" bind:value={reason}>
-        {#each REASONS as r}<option value={r}>{r}</option>{/each}
+        {#each reasons as r (r.value)}<option value={r.value}>{r.label}</option>{/each}
       </select>
     </label>
 

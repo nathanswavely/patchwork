@@ -1,10 +1,11 @@
 # The site says where AI is
 
-Date: 2026-10-20. Status: **accepted**; partly implemented; **amended
+Date: 2026-10-20. Status: **accepted**; implemented; **amended
 2026-10-28** (decisions 5 and 6, see the end). Built: the page at `/ai`, both
-parts, and the tests behind decisions 3 and 6. Not yet: the links from
-About and the Label, and the disclosure paragraph, which waits on the paired
-ADR. Builds on docs/adr/028 (shipped
+parts, and the tests behind decisions 3 and 6, then on 2026-10-29 the links
+from About and the Label and the disclosure paragraph, rendered from the
+paired ADR's switch (`{ai_disclosure}` in `internal/handler/ai_defaults.go`).
+Builds on docs/adr/028 (shipped
 legal text with an admin override, every claim checked against the code),
 docs/adr/037 (project-owned text that an instance cannot override), and
 docs/adr/2026-09-18-counting-visitors-without-watching-anyone.md (a policy

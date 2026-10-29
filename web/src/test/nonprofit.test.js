@@ -33,7 +33,7 @@ describe('PatchForm — nonprofit at creation and setup', () => {
 
   it('sends it on create and on the setup PATCH', () => {
     expect(src).toMatch(/nonprofit: nonprofit \|\| undefined,/);
-    expect(src).toMatch(/suggest_tags: suggestTags\.length > 0 \? suggestTags : undefined,\s+nonprofit,\s+\}/);
+    expect(src).toMatch(/suggest_tags: suggestTags\.length > 0 \? suggestTags : undefined,\s+nonprofit,\s+ai_use: /);
   });
 });
 

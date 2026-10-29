@@ -387,6 +387,7 @@ func eraseAccount(db *database.DB, userID string) error {
 			role = 'member',
 			trusted_contributor = 0,
 			hide_amended_linings = 0,
+			hide_ai_work = 0,
 			start_on_my_quilt = 0,
 			feed_secret_hash = NULL,
 			moved_to = NULL,

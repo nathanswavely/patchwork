@@ -10,13 +10,14 @@
   import { withStepUp, stepUpStatus, PasskeyRequiredError } from '../lib/stepUp.js';
   import PasskeyNotice from '../components/PasskeyNotice.svelte';
   import { showToast } from '../stores/toast.svelte.js';
-  import { applyIdentityChange } from '../stores/quilt.svelte.js';
+  import { applyIdentityChange, setAiDisclosure } from '../stores/quilt.svelte.js';
   import { renderDraftBlock } from '../lib/quiltBlocks.js';
   import BlockDrafter from '../components/BlockDrafter.svelte';
   import Skeleton from '../components/Skeleton.svelte';
   import ErrorState from '../components/ErrorState.svelte';
   import { isPlaceZone } from '../lib/datetime.js';
   import { isNarrow } from '../stores/viewport.svelte.js';
+  import SegmentedControl from '../components/SegmentedControl.svelte';
 
   let loading = $state(true);
   let error = $state('');
@@ -28,6 +29,10 @@
   // Quilt policy (docs/adr/037): hide amended-lining patches from discovery
   // for everyone. Personal settings can hide more, never reveal what this hides.
   let hideAmendedLinings = $state(false);
+  // Whether forms ask if AI made what is posted
+  // (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md, decision 1).
+  let aiDisclosure = $state('optional');
+  let savingAiDisclosure = $state(false);
   let savingPolicy = $state(false);
 
   // Where this quilt keeps time (docs/adr/045): the rung an event's zone
@@ -112,6 +117,21 @@
     }
     savingPolicy = false;
   }
+  async function saveAiDisclosure(value) {
+    const before = aiDisclosure;
+    aiDisclosure = value;
+    savingAiDisclosure = true;
+    try {
+      await api('admin/settings', { method: 'PATCH', body: { ai_disclosure: value } });
+      setAiDisclosure(value);
+      showToast('Policy saved', 'success');
+    } catch (e) {
+      aiDisclosure = before;
+      showToast(e.message || 'Failed to save', 'error');
+    }
+    savingAiDisclosure = false;
+  }
+
   let savingIdentity = $state(false);
   let resetting = $state('');
 
@@ -159,6 +179,7 @@
       name = data.name;
       description = data.description;
       hideAmendedLinings = !!data.hide_amended_linings;
+      aiDisclosure = data.ai_disclosure || 'optional';
       timezone = data.timezone || '';
       timezoneConfigured = data.timezone_configured || '';
       seedIcon(data.icon);
@@ -572,6 +593,33 @@
     </section>
 
     <section class="section">
+      <h2>AI Labels</h2>
+      <p class="section-desc">
+        Whether forms ask if AI was used to make a description, image, proposal
+        or notice. Only "AI made this" is shown to readers.
+      </p>
+      <SegmentedControl
+        label="Ask about AI use"
+        options={[
+          { value: 'off', label: 'Off' },
+          { value: 'optional', label: 'Optional' },
+          { value: 'required', label: 'Required' },
+        ]}
+        value={aiDisclosure}
+        onchange={(v) => { if (!savingAiDisclosure && v !== aiDisclosure) saveAiDisclosure(v); }}
+      />
+      <p class="lt-hint ai-disclosure-hint">
+        {#if aiDisclosure === 'off'}
+          The question is not asked anywhere.
+        {:else if aiDisclosure === 'required'}
+          The question is asked and must be answered before posting.
+        {:else}
+          The question is asked and may be left unanswered.
+        {/if}
+      </p>
+    </section>
+
+    <section class="section">
       <h2>Data Export (Seamrip)</h2>
       <div class="settings-card">
         <!-- docs/adr/060: ap_followers and ap_id stay behind, so the community
@@ -688,6 +736,10 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+  }
+
+  .ai-disclosure-hint {
+    margin-top: 0.5rem;
   }
 
   .policy-toggle {

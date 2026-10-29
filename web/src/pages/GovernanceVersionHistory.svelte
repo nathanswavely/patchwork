@@ -4,6 +4,7 @@
   import { getParams, navigate } from '../stores/router.svelte.js';
   import Skeleton from '../components/Skeleton.svelte';
   import ErrorState from '../components/ErrorState.svelte';
+  import MadeWithAI from '../components/MadeWithAI.svelte';
   import DiffView from '../components/DiffView.svelte';
   import { formatDay as formatDate } from '../lib/datetime.js';
 
@@ -144,6 +145,9 @@
                           >{ver.repair === 'rebuilt' ? 'Rebuilt' : 'Restored'}</span
                         >
                       {/if}
+                      <!-- Read from the commit's AI-Use trailer
+                           (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md). -->
+                      <MadeWithAI value={ver.ai_use} />
                     </div>
                     <div class="version-meta">
                       <span>{ver.author_name || 'System'}</span>

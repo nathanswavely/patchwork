@@ -2,6 +2,7 @@ package ap
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 )
@@ -55,7 +56,7 @@ func EventToObject(event model.Event, domain string) Object {
 		Type:      "Event",
 		ID:        apID,
 		Name:      event.Title,
-		Content:   event.Description,
+		Content:   withAINote(event.Description, event.AIUse, event.ImageAI),
 		URL:       fmt.Sprintf("%s/events/%s", baseURL, event.ID),
 		StartTime: event.StartsAt,
 	}
@@ -101,4 +102,32 @@ func UserToActor(user model.User, domain string) Actor {
 		Following:         apID + "/following",
 		MovedTo:           user.MovedTo,
 	}
+}
+
+// The closing lines a federated post carries when its author said AI made it
+// (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md, decision 8).
+// ActivityPub has no field for it, so it travels in the content, where every
+// reader's client shows it. Only "generated" is said: "assisted" is recorded
+// and never shown, here or at home.
+const (
+	aiMadeLine      = "Made with AI."
+	aiMadeImageLine = "Image made with AI."
+)
+
+func withAINote(content string, textAI, imageAI *string) string {
+	var lines []string
+	if textAI != nil && *textAI == "generated" {
+		lines = append(lines, aiMadeLine)
+	}
+	if imageAI != nil && *imageAI == "generated" {
+		lines = append(lines, aiMadeImageLine)
+	}
+	if len(lines) == 0 {
+		return content
+	}
+	note := strings.Join(lines, " ")
+	if strings.TrimSpace(content) == "" {
+		return note
+	}
+	return strings.TrimRight(content, "\n") + "\n\n" + note
 }

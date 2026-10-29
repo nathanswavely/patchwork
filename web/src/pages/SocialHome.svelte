@@ -584,6 +584,14 @@
               {#if patch.description}
                 <p class="card-desc">{patch.description}</p>
               {/if}
+              <!-- Declared by the patch's admins
+                   (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md,
+                   decision 6). The card wears it; the quilt tile does not. -->
+              {#if patch.ai_work === true}
+                <p class="card-ai">
+                  <span class="lt-pill" title="This patch's admins say its work relies heavily on AI.">AI work</span>
+                </p>
+              {/if}
             </div>
           </div>
 {/snippet}
@@ -1240,6 +1248,10 @@
     font-weight: 600;
     color: var(--color-text);
     margin-bottom: 4px;
+  }
+
+  .card-ai {
+    margin-top: 0.3rem;
   }
 
   .card-desc {

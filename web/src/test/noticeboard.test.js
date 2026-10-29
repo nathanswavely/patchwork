@@ -89,9 +89,11 @@ describe('The settings: two switches and the queue, three actions', () => {
     expect(src).toContain('save({ notice_replies_default: v }');
   });
 
-  it('offers exactly dismiss, remove, close_replies', () => {
+  // Plus label, for a notice reported as unlabelled AI
+  // (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md, decision 7).
+  it('offers exactly dismiss, remove, close_replies and label', () => {
     const actions = [...src.matchAll(/<option value="([a-z_]+)"/g)].map((m) => m[1]);
-    expect(actions.sort()).toEqual(['close_replies', 'dismiss', 'remove']);
+    expect(actions.sort()).toEqual(['close_replies', 'dismiss', 'label', 'remove']);
     expect(src).not.toMatch(/suspend_user|remove_content|reset_appearance|"warn"/);
   });
 

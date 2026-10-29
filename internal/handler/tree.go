@@ -56,8 +56,14 @@ type TreeNode struct {
 	// cards render from the tree, so a card can only say it if the tree
 	// carries it (#448). It is never an affinity input — that is what makes
 	// it a field and not a tag (docs/adr/021).
-	Nonprofit bool       `json:"nonprofit,omitempty"`
-	Children  []TreeNode `json:"children"`
+	Nonprofit bool `json:"nonprofit,omitempty"`
+	// AIWork rides here for the same reason: the discovery cards wear the
+	// badge (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md). Only
+	// a declared 1 is sent. The canvas draws no mark for it, since the
+	// quilt shows how people connect and this would make it a map of who
+	// to avoid.
+	AIWork   bool       `json:"ai_work,omitempty"`
+	Children []TreeNode `json:"children"`
 }
 
 // AffinityLink represents a weighted connection between two patches.
@@ -91,7 +97,7 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 			// Scoped to user's patches only (any active membership).
 			query = `
 				SELECT
-					n.id, n.name, n.slug, n.description, COALESCE(n.appearance,''), n.status, n.latitude, n.longitude, n.activated_at, n.created_at, COALESCE(n.moved_to,''), COALESCE(n.membership_policy,''), n.nonprofit,
+					n.id, n.name, n.slug, n.description, COALESCE(n.appearance,''), n.status, n.latitude, n.longitude, n.activated_at, n.created_at, COALESCE(n.moved_to,''), COALESCE(n.membership_policy,''), n.nonprofit, COALESCE(n.ai_work, 0),
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role IN ('admin','member')), 0) AS member_count,
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role = 'follower'), 0) AS follower_count,
 					COALESCE((SELECT COUNT(*) FROM events e WHERE e.node_id = n.id AND e.status = 'active' AND ` + evCond + `), 0)
@@ -107,7 +113,7 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 			// All public patches (default).
 			query = `
 				SELECT
-					n.id, n.name, n.slug, n.description, COALESCE(n.appearance,''), n.status, n.latitude, n.longitude, n.activated_at, n.created_at, COALESCE(n.moved_to,''), COALESCE(n.membership_policy,''), n.nonprofit,
+					n.id, n.name, n.slug, n.description, COALESCE(n.appearance,''), n.status, n.latitude, n.longitude, n.activated_at, n.created_at, COALESCE(n.moved_to,''), COALESCE(n.membership_policy,''), n.nonprofit, COALESCE(n.ai_work, 0),
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role IN ('admin','member')), 0) AS member_count,
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role = 'follower'), 0) AS follower_count,
 					COALESCE((SELECT COUNT(*) FROM events e WHERE e.node_id = n.id AND e.status = 'active' AND ` + evCond + `), 0)
@@ -140,6 +146,7 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 			MovedTo          string
 			MembershipPolicy string
 			Nonprofit        bool
+			AIWork           bool
 			MemberCount      int
 			FollowerCount    int
 			EventCount       int
@@ -148,7 +155,7 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 		var flat []flatNode
 		for rows.Next() {
 			var fn flatNode
-			if err := rows.Scan(&fn.ID, &fn.Name, &fn.Slug, &fn.Description, &fn.Appearance, &fn.Status, &fn.Latitude, &fn.Longitude, &fn.ActivatedAt, &fn.CreatedAt, &fn.MovedTo, &fn.MembershipPolicy, &fn.Nonprofit, &fn.MemberCount, &fn.FollowerCount, &fn.EventCount); err != nil {
+			if err := rows.Scan(&fn.ID, &fn.Name, &fn.Slug, &fn.Description, &fn.Appearance, &fn.Status, &fn.Latitude, &fn.Longitude, &fn.ActivatedAt, &fn.CreatedAt, &fn.MovedTo, &fn.MembershipPolicy, &fn.Nonprofit, &fn.AIWork, &fn.MemberCount, &fn.FollowerCount, &fn.EventCount); err != nil {
 				continue
 			}
 			flat = append(flat, fn)
@@ -162,6 +169,18 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 			kept := flat[:0]
 			for _, fn := range flat {
 				if liningStates[fn.ID] != governance.LiningDiverged {
+					kept = append(kept, fn)
+				}
+			}
+			flat = kept
+		}
+		// A person may hide declared AI work from their own discovery
+		// (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md). Never
+		// under scope=my, for the reason above.
+		if scope != "my" && hideAIWork(db, r) {
+			kept := flat[:0]
+			for _, fn := range flat {
+				if !fn.AIWork {
 					kept = append(kept, fn)
 				}
 			}
@@ -434,6 +453,7 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 				CreatedAt:        fn.CreatedAt,
 				MovedTo:          fn.MovedTo,
 				Nonprofit:        fn.Nonprofit,
+				AIWork:           fn.AIWork,
 				MembershipPolicy: fn.MembershipPolicy,
 				AmendedLining:    liningStates[fn.ID] == governance.LiningDiverged,
 				Children:         []TreeNode{},
