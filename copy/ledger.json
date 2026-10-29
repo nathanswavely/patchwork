@@ -21980,7 +21980,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 361,
+          "line": 374,
           "kind": "js-string",
           "raw": "POST",
           "quote": "'",
@@ -21988,7 +21988,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 364,
+          "line": 377,
           "kind": "js-string",
           "raw": "POST",
           "quote": "'",
@@ -25970,7 +25970,7 @@
         },
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2663,
+          "line": 2697,
           "kind": "markup",
           "raw": "Try Again",
           "quote": null
@@ -26595,7 +26595,7 @@
       "occurrences": [
         {
           "file": "web/src/components/FilterChips.svelte",
-          "line": 45,
+          "line": 295,
           "kind": "attr:title",
           "raw": "Show filters",
           "quote": "\""
@@ -26603,19 +26603,72 @@
       ]
     },
     {
-      "id": "b9274474d099",
-      "text": "Filter by tag",
+      "id": "e1532760acd5",
+      "text": "Find a tag",
       "words": 3,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": null,
       "occurrences": [
         {
           "file": "web/src/components/FilterChips.svelte",
-          "line": 53,
+          "line": 319,
+          "kind": "attr:placeholder",
+          "raw": "Find a tag",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/components/FilterChips.svelte",
+          "line": 320,
           "kind": "attr:aria-label",
-          "raw": "Filter by tag",
+          "raw": "Find a tag",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/components/FilterChips.svelte",
+          "line": 401,
+          "kind": "attr:title",
+          "raw": "Find a tag",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/components/FilterChips.svelte",
+          "line": 402,
+          "kind": "attr:aria-label",
+          "raw": "Find a tag",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/components/TagFinder.svelte",
+          "line": 51,
+          "kind": "attr:placeholder",
+          "raw": "Find a tag",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/components/TagFinder.svelte",
+          "line": 52,
+          "kind": "attr:aria-label",
+          "raw": "Find a tag",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "fa0e97376276",
+      "text": "Clear what you typed",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/FilterChips.svelte",
+          "line": 328,
+          "kind": "attr:aria-label",
+          "raw": "Clear what you typed",
           "quote": "\""
         }
       ]
@@ -26631,10 +26684,42 @@
       "occurrences": [
         {
           "file": "web/src/components/FilterChips.svelte",
-          "line": 76,
+          "line": 336,
           "kind": "markup",
           "raw": "Clear",
           "quote": null
+        },
+        {
+          "file": "web/src/components/FilterChips.svelte",
+          "line": 412,
+          "kind": "markup",
+          "raw": "Clear",
+          "quote": null
+        },
+        {
+          "file": "web/src/components/TagFinder.svelte",
+          "line": 77,
+          "kind": "markup",
+          "raw": "Clear",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b9274474d099",
+      "text": "Filter by tag",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/FilterChips.svelte",
+          "line": 345,
+          "kind": "attr:aria-label",
+          "raw": "Filter by tag",
+          "quote": "\""
         }
       ]
     },
@@ -26649,17 +26734,78 @@
       "occurrences": [
         {
           "file": "web/src/components/FilterChips.svelte",
-          "line": 82,
+          "line": 357,
           "kind": "attr:title",
           "raw": "Hide filters",
           "quote": "\""
         },
         {
           "file": "web/src/components/FilterChips.svelte",
-          "line": 83,
+          "line": 358,
           "kind": "attr:aria-label",
           "raw": "Hide filters",
           "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "07eda29e0924",
+      "text": "No tag matches “{find.trim()}”.",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/FilterChips.svelte",
+          "line": 383,
+          "kind": "markup",
+          "raw": "No tag matches “{find.trim()}”.",
+          "quote": null
+        },
+        {
+          "file": "web/src/components/TagFinder.svelte",
+          "line": 72,
+          "kind": "markup",
+          "raw": "No tag matches “{find.trim()}”.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "104e6778e931",
+      "text": "{hiddenCount} more",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/FilterChips.svelte",
+          "line": 394,
+          "kind": "markup",
+          "raw": "{hiddenCount} more",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a3cf533a6a70",
+      "text": "{ranked.length} more",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/FilterChips.svelte",
+          "line": 425,
+          "kind": "markup",
+          "raw": "{ranked.length} more",
+          "quote": null
         }
       ]
     },
@@ -28288,14 +28434,14 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 401,
+          "line": 424,
           "kind": "attr:title",
           "raw": "What is Patchwork?",
           "quote": "\""
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 404,
+          "line": 427,
           "kind": "markup",
           "raw": "What is Patchwork?",
           "quote": null
@@ -28564,7 +28710,7 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 453,
+          "line": 476,
           "kind": "attr:title",
           "raw": "The Label",
           "quote": "\""
@@ -28657,7 +28803,7 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 499,
+          "line": 522,
           "kind": "markup",
           "raw": "About {formatMoney(label.total_monthly_minor, label.currency)}/month to keep running",
           "quote": null
@@ -28782,7 +28928,7 @@
       "occurrences": [
         {
           "file": "web/src/components/MapView.svelte",
-          "line": 426,
+          "line": 428,
           "kind": "markup",
           "raw": "patch is outside this view",
           "quote": null
@@ -28800,7 +28946,7 @@
       "occurrences": [
         {
           "file": "web/src/components/MapView.svelte",
-          "line": 428,
+          "line": 430,
           "kind": "markup",
           "raw": "patches are outside this view",
           "quote": null
@@ -28851,7 +28997,7 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 492,
+          "line": 515,
           "kind": "attr:aria-label",
           "raw": "Close",
           "quote": "\""
@@ -28951,14 +29097,14 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 429,
+          "line": 452,
           "kind": "attr:title",
           "raw": "Notifications",
           "quote": "\""
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 437,
+          "line": 460,
           "kind": "markup",
           "raw": "Notifications",
           "quote": null
@@ -29439,7 +29585,7 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 182,
+          "line": 183,
           "kind": "js-string",
           "raw": "Events",
           "quote": "'",
@@ -29794,7 +29940,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 587,
+          "line": 597,
           "kind": "attr:title",
           "raw": "This patch's admins say its work relies heavily on AI.",
           "quote": "\""
@@ -29833,7 +29979,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 587,
+          "line": 597,
           "kind": "markup",
           "raw": "AI work",
           "quote": null
@@ -30102,7 +30248,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 515,
+          "line": 525,
           "kind": "markup",
           "raw": "Member",
           "quote": null
@@ -30293,7 +30439,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 364,
+          "line": 377,
           "kind": "js-string",
           "raw": "follower",
           "quote": "'",
@@ -31394,7 +31540,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 714,
+          "line": 724,
           "kind": "js-string",
           "raw": "This quilt",
           "quote": "'"
@@ -31412,7 +31558,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 1081,
+          "line": 1091,
           "kind": "js-string",
           "raw": "'Space Grotesk Variable', system-ui, sans-serif",
           "quote": "\""
@@ -31430,7 +31576,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2658,
+          "line": 2692,
           "kind": "markup",
           "raw": "Loading quilt...",
           "quote": null
@@ -31448,14 +31594,14 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2669,
+          "line": 2703,
           "kind": "markup",
           "raw": "No patches match your\n        {filterTags.length > 0 && searchQuery.trim() ? 'search and filter'\n          : filterTags.length > 0 ? 'filter' : 'search'}{quiltScope === 'my' ? ' in My Quilt' : ''}.",
           "quote": null
         },
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2696,
+          "line": 2730,
           "kind": "markup",
           "raw": "No patches match your\n        {filterTags.length > 0 && searchQuery.trim() ? 'search and filter'\n          : filterTags.length > 0 ? 'filter' : 'search'}{quiltScope === 'my' ? ' in My Quilt' : ''}.",
           "quote": null
@@ -31476,14 +31622,14 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2676,
+          "line": 2710,
           "kind": "markup",
           "raw": "Clear filter",
           "quote": null
         },
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2703,
+          "line": 2737,
           "kind": "markup",
           "raw": "Clear filter",
           "quote": null
@@ -31497,7 +31643,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 756,
+          "line": 767,
           "kind": "markup",
           "raw": "Clear filter",
           "quote": null
@@ -31515,14 +31661,14 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2679,
+          "line": 2713,
           "kind": "markup",
           "raw": "Suggest a patch",
           "quote": null
         },
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2706,
+          "line": 2740,
           "kind": "markup",
           "raw": "Suggest a patch",
           "quote": null
@@ -31547,7 +31693,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2684,
+          "line": 2718,
           "kind": "markup",
           "raw": "This quilt is empty.",
           "quote": null
@@ -31565,7 +31711,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2685,
+          "line": 2719,
           "kind": "markup",
           "raw": "Create the first patch to get started.",
           "quote": null
@@ -32240,14 +32386,14 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 67,
+          "line": 68,
           "kind": "js-string",
           "raw": "My Quilt",
           "quote": "'"
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 287,
+          "line": 288,
           "kind": "markup",
           "raw": "My Quilt",
           "quote": null
@@ -32265,7 +32411,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 180,
+          "line": 181,
           "kind": "js-string",
           "raw": "patches",
           "quote": "'",
@@ -32284,7 +32430,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 180,
+          "line": 181,
           "kind": "js-string",
           "raw": "Patches",
           "quote": "'",
@@ -32314,7 +32460,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 682,
+          "line": 693,
           "kind": "markup",
           "raw": "Patches",
           "quote": null
@@ -32332,7 +32478,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 182,
+          "line": 183,
           "kind": "js-string",
           "raw": "events",
           "quote": "'",
@@ -32367,7 +32513,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 186,
+          "line": 187,
           "kind": "js-string",
           "raw": "discover",
           "quote": "'",
@@ -32386,7 +32532,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 186,
+          "line": 187,
           "kind": "js-string",
           "raw": "Discover",
           "quote": "'",
@@ -32405,7 +32551,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 188,
+          "line": 189,
           "kind": "js-string",
           "raw": "dashboard",
           "quote": "'",
@@ -32424,7 +32570,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 188,
+          "line": 189,
           "kind": "js-string",
           "raw": "Dashboard",
           "quote": "'",
@@ -32450,7 +32596,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 291,
+          "line": 292,
           "kind": "markup",
           "raw": "Connected quilts",
           "quote": null
@@ -32468,14 +32614,14 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 313,
+          "line": 314,
           "kind": "attr:placeholder",
           "raw": "Search patches and events…",
           "quote": "\""
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 337,
+          "line": 338,
           "kind": "attr:placeholder",
           "raw": "Search patches and events…",
           "quote": "\""
@@ -32493,9 +32639,77 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 360,
+          "line": 365,
           "kind": "attr:aria-label",
           "raw": "Canvas view",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "509c517ede79",
+      "text": "Zoom",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/SocialShell.svelte",
+          "line": 381,
+          "kind": "attr:aria-label",
+          "raw": "Zoom",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "bc7b631a689b",
+      "text": "Zoom out",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/SocialShell.svelte",
+          "line": 385,
+          "kind": "attr:title",
+          "raw": "Zoom out",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/components/SocialShell.svelte",
+          "line": 386,
+          "kind": "attr:aria-label",
+          "raw": "Zoom out",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "0e47f09a748f",
+      "text": "Zoom in",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/SocialShell.svelte",
+          "line": 391,
+          "kind": "attr:title",
+          "raw": "Zoom in",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/components/SocialShell.svelte",
+          "line": 392,
+          "kind": "attr:aria-label",
+          "raw": "Zoom in",
           "quote": "\""
         }
       ]
@@ -32511,14 +32725,14 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 414,
+          "line": 437,
           "kind": "attr:title",
           "raw": "Search",
           "quote": "\""
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 419,
+          "line": 442,
           "kind": "markup",
           "raw": "Search",
           "quote": null
@@ -32536,7 +32750,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 454,
+          "line": 477,
           "kind": "attr:aria-label",
           "raw": "About this quilt",
           "quote": "\""
@@ -32554,7 +32768,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 468,
+          "line": 491,
           "kind": "attr:title",
           "raw": "Filter",
           "quote": "\""
@@ -32572,7 +32786,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 495,
+          "line": 518,
           "kind": "markup",
           "raw": "Stewarded by {(label.stewards || []).map((s) => `@${s.username}`).join(', ')}",
           "quote": null
@@ -32590,7 +32804,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 502,
+          "line": 525,
           "kind": "markup",
           "raw": "Run by real people and open source. Feel free to build your own if you don't like this one.",
           "quote": null
@@ -33695,6 +33909,24 @@
           "kind": "markup",
           "raw": "Search the handle in Mastodon to follow new events there. Replies don't\n    reach the patch. The address belongs to {getInstanceName()}, so it\n    doesn't travel if this community moves to another quilt.",
           "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7c39c16dce73",
+      "text": "All tags",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/TagFinder.svelte",
+          "line": 60,
+          "kind": "attr:aria-label",
+          "raw": "All tags",
+          "quote": "\""
         }
       ]
     },
@@ -53643,14 +53875,14 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 369,
+          "line": 382,
           "kind": "js-string",
           "raw": "Something went wrong",
           "quote": "'"
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 468,
+          "line": 478,
           "kind": "js-string",
           "raw": "Something went wrong",
           "quote": "'"
@@ -68442,7 +68674,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 134,
+          "line": 140,
           "kind": "js-string",
           "raw": "Show the patch list",
           "quote": "'"
@@ -68460,7 +68692,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 134,
+          "line": 140,
           "kind": "js-string",
           "raw": "Hide the patch list",
           "quote": "'"
@@ -68478,7 +68710,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 508,
+          "line": 518,
           "kind": "attr:title",
           "raw": "You manage this patch",
           "quote": "\""
@@ -68496,7 +68728,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 510,
+          "line": 520,
           "kind": "markup",
           "raw": "Manage",
           "quote": null
@@ -68514,7 +68746,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 513,
+          "line": 523,
           "kind": "attr:title",
           "raw": "You're a member of this patch",
           "quote": "\""
@@ -68532,7 +68764,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 518,
+          "line": 528,
           "kind": "attr:title",
           "raw": "Your membership request is waiting on this patch's admins",
           "quote": "\""
@@ -68550,7 +68782,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 520,
+          "line": 530,
           "kind": "markup",
           "raw": "Requested",
           "quote": null
@@ -68575,7 +68807,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 555,
+          "line": 565,
           "kind": "attr:title",
           "raw": "Unclaimed",
           "quote": "\""
@@ -68593,7 +68825,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 578,
+          "line": 588,
           "kind": "markup",
           "raw": "{patch.is_unclaimed ? `${patch.follower_count || 0} Following` : `${patch.member_count || 0} member${patch.member_count === 1 ? '' : 's'}`}{' · '}{patch.event_count || 0} event{patch.event_count === 1 ? '' : 's'}",
           "quote": null
@@ -68611,7 +68843,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 684,
+          "line": 695,
           "kind": "markup",
           "raw": "{resultCount} of {ordered.length} in view",
           "quote": null
@@ -68629,7 +68861,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 684,
+          "line": 695,
           "kind": "markup",
           "raw": "{resultCount} results",
           "quote": null
@@ -68647,7 +68879,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 698,
+          "line": 709,
           "kind": "markup",
           "raw": "In view",
           "quote": null
@@ -68665,7 +68897,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 703,
+          "line": 714,
           "kind": "attr:aria-label",
           "raw": "Order patches",
           "quote": "\""
@@ -68683,7 +68915,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 707,
+          "line": 718,
           "kind": "markup",
           "raw": "Quilt order",
           "quote": null
@@ -68701,7 +68933,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 708,
+          "line": 719,
           "kind": "markup",
           "raw": "Recently added",
           "quote": null
@@ -68719,7 +68951,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 744,
+          "line": 755,
           "kind": "markup",
           "raw": "No patches in view. {ordered.length} elsewhere on the quilt.",
           "quote": null
@@ -68737,7 +68969,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 753,
+          "line": 764,
           "kind": "markup",
           "raw": "No patches match your filter{quiltScope === 'my' ? ' in My Quilt' : ''}.",
           "quote": null
@@ -68755,7 +68987,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 765,
+          "line": 776,
           "kind": "markup",
           "raw": "No patches here yet.",
           "quote": null
