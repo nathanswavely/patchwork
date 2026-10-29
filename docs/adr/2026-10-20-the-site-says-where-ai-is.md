@@ -181,9 +181,11 @@ What this changes:
 
 Decision 6 is amended the same day. It required every string unique to the
 page to be a person's. It now requires every one to be *decided*: a
-person's words, or AI wording a person read and chose to keep
-(`TestAIPageWordsAreDecided` fails only on a string nobody has looked at,
-or a rewrite saved and never applied). The site's policy is transparency,
+person's words, or AI wording a person read and chose to keep. That is
+exactly what SlopChop's copy-check already enforces for every string in
+scope, so no test of the page's own repeats it. The stricter rule needed
+one only because copy-check cannot tell a person's words from AI wording a
+person kept. The site's policy is transparency,
 not abstinence, and a disclosure page that is partly drafted is consistent
 with it. The page carries no notice about itself: its account of the
 site's writing already says much of the copy was drafted with AI and

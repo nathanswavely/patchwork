@@ -18,10 +18,9 @@ package handler
 //   - TestNoAIServiceDependency fails when go.mod or web/package.json gains
 //     a model provider's SDK.
 //
-// And nobody ships the page unread: TestAIPageWordsAreDecided reads the copy
-// ledger and fails on any string in this file or in
-// web/src/pages/AiPage.svelte that a person has not decided. Parts of the
-// page are AI wording a person kept; the copy ledger records which.
+// Its words are held like any other copy: SlopChop's copy-check fails CI on
+// a string nobody has decided, and the ledger records which parts are a
+// person's and which are AI wording a person kept.
 //
 // {quilt_name} is substituted at serve time, as in legal_defaults.go.
 //

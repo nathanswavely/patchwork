@@ -9,8 +9,7 @@
    * it. The stewards' part is what this quilt's stewards wrote, and may be
    * empty.
    *
-   * Every string in this file must be decided by a person in the copy
-   * ledger before the page ships (TestAIPageWordsAreDecided).
+   * Its strings are held like any other copy, by SlopChop's copy-check.
    */
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';

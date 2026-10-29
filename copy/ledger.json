@@ -6231,7 +6231,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 31,
+          "line": 30,
           "kind": "go-doc-block",
           "raw": "## Does AI touch what you post here?",
           "quote": null
@@ -6249,7 +6249,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 33,
+          "line": 32,
           "kind": "go-doc-block",
           "raw": "No. Nothing on {quilt_name} sends what you write, or anything about you, to an AI model. No model summarizes, ranks, rewrites, moderates or generates anything here. Accounts are for people, and nothing on this site posts by itself. We can't stop other users from taking public content from the site and giving it to AI, but the site itself will not do so.",
           "quote": null
@@ -6271,7 +6271,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 35,
+          "line": 34,
           "kind": "go-doc-block",
           "raw": "The server opens connections to other machines for these reasons and no others:",
           "quote": null
@@ -6289,7 +6289,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 39,
+          "line": 38,
           "kind": "go-doc-block",
           "raw": "That list is checked against the code. A change that lets the server reach anything else fails the build until this page says what it is.",
           "quote": null
@@ -6307,7 +6307,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 41,
+          "line": 40,
           "kind": "go-doc-block",
           "raw": "## Can AI companies take what is here?",
           "quote": null
@@ -6325,7 +6325,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 43,
+          "line": 42,
           "kind": "go-doc-block",
           "raw": "Not with permission. The site's robots.txt asks these crawlers to stay away, and the server refuses the ones that arrive under names that we know are AI including, but not limited to:",
           "quote": null
@@ -6347,7 +6347,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 47,
+          "line": 46,
           "kind": "go-doc-block",
           "raw": "That has limits. A scraper that lies about its name looks like any other browser and gets in. And public posts that federate are copied to other servers, which keep them under their own rules.",
           "quote": null
@@ -6365,7 +6365,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 49,
+          "line": 48,
           "kind": "go-doc-block",
           "raw": "## Was this software built with AI?",
           "quote": null
@@ -6383,7 +6383,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 51,
+          "line": 50,
           "kind": "go-doc-block",
           "raw": "Yes. Patchwork's codebase was developed with significant help from AI coding tools. People design it, make every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
           "quote": null
@@ -6401,7 +6401,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 53,
+          "line": 52,
           "kind": "go-doc-block",
           "raw": "The core of what visitors and newcomers read is human written: the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please contribute to the project.",
           "quote": null
@@ -6419,7 +6419,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 55,
+          "line": 54,
           "kind": "go-doc-block",
           "raw": "The project's repository keeps [a public record of who wrote each string](https://github.com/nathanswavely/patchwork/blob/main/copy/REPORT.md) a visitor can read.",
           "quote": null
@@ -6437,7 +6437,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 68,
+          "line": 67,
           "kind": "go-string",
           "raw": "Other servers in the fediverse, when the stewards have turned federation on, to deliver public posts to their followers and to read their public keys.",
           "quote": "\""
@@ -6455,7 +6455,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 72,
+          "line": 71,
           "kind": "go-string",
           "raw": "Calendars a patch has connected, to copy in their events.",
           "quote": "\""
@@ -6473,7 +6473,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 76,
+          "line": 75,
           "kind": "go-string",
           "raw": "A patch's own website and domain records, when someone claims the patch and the site checks that they run it.",
           "quote": "\""
@@ -6491,7 +6491,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
-          "line": 80,
+          "line": 79,
           "kind": "go-string",
           "raw": "The mail server the stewards set up, to send sign-in links and the notifications you turn on.",
           "quote": "\""
@@ -50663,7 +50663,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AiPage.svelte",
-          "line": 30,
+          "line": 29,
           "kind": "js-string",
           "raw": "Failed to load",
           "quote": "'"
@@ -50695,7 +50695,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AiPage.svelte",
-          "line": 41,
+          "line": 40,
           "kind": "markup",
           "raw": "Where AI is &mdash; {instanceName}",
           "quote": null
@@ -50713,7 +50713,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AiPage.svelte",
-          "line": 51,
+          "line": 50,
           "kind": "markup",
           "raw": "The fine print",
           "quote": null
@@ -50738,7 +50738,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AiPage.svelte",
-          "line": 52,
+          "line": 51,
           "kind": "markup",
           "raw": "Where AI is",
           "quote": null
@@ -50756,7 +50756,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AiPage.svelte",
-          "line": 60,
+          "line": 59,
           "kind": "markup",
           "raw": "From the stewards of {instanceName}",
           "quote": null
@@ -50774,7 +50774,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AiPage.svelte",
-          "line": 64,
+          "line": 63,
           "kind": "markup",
           "raw": "The stewards of {instanceName} have not added anything here yet.",
           "quote": null
@@ -50792,7 +50792,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AiPage.svelte",
-          "line": 69,
+          "line": 68,
           "kind": "markup",
           "raw": "Also see the",
           "quote": null
@@ -50817,7 +50817,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AiPage.svelte",
-          "line": 71,
+          "line": 70,
           "kind": "markup",
           "raw": "says\n      who runs {instanceName}.",
           "quote": null
