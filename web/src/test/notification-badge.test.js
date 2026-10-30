@@ -73,7 +73,7 @@ describe('unread count store', () => {
 
 describe('every surface that marks a notification read updates the badge', () => {
   const bell = source('components/NotificationBell.svelte');
-  const bar = source('components/GlobalBar.svelte');
+  const dropdown = source('components/NotificationDropdown.svelte');
   const page = source('pages/Notifications.svelte');
 
   it('the bell polls through the store instead of owning the fetch', () => {
@@ -82,14 +82,14 @@ describe('every surface that marks a notification read updates the badge', () =>
     expect(bell).not.toContain("api('notifications/count')");
   });
 
-  it('the desktop panel decrements on read and clears on mark-all-read', () => {
-    expect(bar).toContain("import { clearUnread, decrementUnread } from '../stores/notifications.svelte.js'");
-    expect(bar).toMatch(/notifications\/\$\{notif\.id\}\/read[\s\S]{0,200}decrementUnread\(\)/);
-    expect(bar).toMatch(/notifications\/read-all[\s\S]{0,200}clearUnread\(\)/);
+  it('the desktop dropdown decrements on read and clears on mark-all-read', () => {
+    expect(dropdown).toMatch(/import \{[^}]*clearUnread[^}]*decrementUnread[^}]*\} from '\.\.\/stores\/notifications\.svelte\.js'/);
+    expect(dropdown).toMatch(/notifications\/\$\{notif\.id\}\/read[\s\S]{0,200}decrementUnread\(\)/);
+    expect(dropdown).toMatch(/notifications\/read-all[\s\S]{0,200}clearUnread\(\)/);
   });
 
   it('the notifications page decrements on read and clears on mark-all-read', () => {
-    expect(page).toContain("import { clearUnread, decrementUnread } from '../stores/notifications.svelte.js'");
+    expect(page).toMatch(/import \{[^}]*clearUnread[^}]*decrementUnread[^}]*\} from '\.\.\/stores\/notifications\.svelte\.js'/);
     expect(page).toMatch(/notifications\/\$\{notif\.id\}\/read[\s\S]{0,200}decrementUnread\(\)/);
     expect(page).toMatch(/notifications\/read-all[\s\S]{0,200}clearUnread\(\)/);
   });

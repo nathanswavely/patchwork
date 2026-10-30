@@ -112,16 +112,17 @@ test.describe('Discovery — Sidebar Navigation', () => {
     expect(page.url()).toContain('/events');
   });
 
-  test('9.2 — notification panel opens from bell and closes', async ({ page }) => {
+  test('9.2 — notification dropdown opens from bell and closes', async ({ page }) => {
     await loginAsAdmin(page);
     await page.goto('/');
 
     await page.locator('.bar-bell .bell-btn').click();
-    const panel = page.locator('.sidepanel');
-    await expect(panel).toBeVisible({ timeout: 2000 });
+    const dropdown = page.locator('.notif-dropdown');
+    await expect(dropdown).toBeVisible({ timeout: 2000 });
 
-    await page.locator('.sidepanel .close-btn, .sidepanel-close').first().click();
-    await expect(panel).not.toBeVisible({ timeout: 2000 });
+    // The bell toggles it shut again.
+    await page.locator('.bar-bell .bell-btn').click();
+    await expect(dropdown).toHaveCount(0, { timeout: 2000 });
   });
 });
 

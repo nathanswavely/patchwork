@@ -4233,14 +4233,14 @@
         },
         {
           "file": "internal/handler/notifications.go",
-          "line": 375,
+          "line": 380,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/notifications.go",
-          "line": 439,
+          "line": 444,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -9335,14 +9335,14 @@
         },
         {
           "file": "internal/handler/notifications.go",
-          "line": 394,
+          "line": 399,
           "kind": "go-error-body",
           "raw": "patch not found",
           "quote": null
         },
         {
           "file": "internal/handler/notifications.go",
-          "line": 431,
+          "line": 436,
           "kind": "go-error-body",
           "raw": "patch not found",
           "quote": null
@@ -14934,7 +14934,7 @@
       "occurrences": [
         {
           "file": "internal/handler/notifications.go",
-          "line": 141,
+          "line": 146,
           "kind": "go-error-body",
           "raw": "failed to list notifications",
           "quote": null
@@ -14952,14 +14952,14 @@
       "occurrences": [
         {
           "file": "internal/handler/notifications.go",
-          "line": 192,
+          "line": 197,
           "kind": "go-error-body",
           "raw": "notification id required",
           "quote": null
         },
         {
           "file": "internal/handler/notifications.go",
-          "line": 244,
+          "line": 249,
           "kind": "go-error-body",
           "raw": "notification id required",
           "quote": null
@@ -14977,7 +14977,7 @@
       "occurrences": [
         {
           "file": "internal/handler/notifications.go",
-          "line": 201,
+          "line": 206,
           "kind": "go-error-body",
           "raw": "failed to mark notification read",
           "quote": null
@@ -14995,7 +14995,7 @@
       "occurrences": [
         {
           "file": "internal/handler/notifications.go",
-          "line": 206,
+          "line": 211,
           "kind": "go-error-body",
           "raw": "notification not found or already read",
           "quote": null
@@ -15013,7 +15013,7 @@
       "occurrences": [
         {
           "file": "internal/handler/notifications.go",
-          "line": 225,
+          "line": 230,
           "kind": "go-error-body",
           "raw": "failed to mark all notifications read",
           "quote": null
@@ -15031,7 +15031,7 @@
       "occurrences": [
         {
           "file": "internal/handler/notifications.go",
-          "line": 253,
+          "line": 258,
           "kind": "go-error-body",
           "raw": "failed to delete notification",
           "quote": null
@@ -15049,7 +15049,7 @@
       "occurrences": [
         {
           "file": "internal/handler/notifications.go",
-          "line": 258,
+          "line": 263,
           "kind": "go-error-body",
           "raw": "notification not found",
           "quote": null
@@ -15067,7 +15067,7 @@
       "occurrences": [
         {
           "file": "internal/handler/notifications.go",
-          "line": 275,
+          "line": 280,
           "kind": "go-error-body",
           "raw": "failed to clear notifications",
           "quote": null
@@ -21331,14 +21331,6 @@
           "at": "method"
         },
         {
-          "file": "web/src/components/GlobalBar.svelte",
-          "line": 69,
-          "kind": "js-string",
-          "raw": "POST",
-          "quote": "'",
-          "at": "method"
-        },
-        {
           "file": "web/src/components/GovernanceOverview.svelte",
           "line": 269,
           "kind": "js-string",
@@ -21349,6 +21341,14 @@
         {
           "file": "web/src/components/InterimOffer.svelte",
           "line": 36,
+          "kind": "js-string",
+          "raw": "POST",
+          "quote": "'",
+          "at": "method"
+        },
+        {
+          "file": "web/src/components/NotificationDropdown.svelte",
+          "line": 42,
           "kind": "js-string",
           "raw": "POST",
           "quote": "'",
@@ -21788,7 +21788,7 @@
         },
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 61,
+          "line": 46,
           "kind": "js-string",
           "raw": "POST",
           "quote": "'",
@@ -22465,16 +22465,16 @@
           "at": "method"
         },
         {
-          "file": "web/src/components/GlobalBar.svelte",
-          "line": 78,
+          "file": "web/src/components/GovernanceOverview.svelte",
+          "line": 254,
           "kind": "js-string",
           "raw": "PATCH",
           "quote": "'",
           "at": "method"
         },
         {
-          "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 254,
+          "file": "web/src/components/NotificationDropdown.svelte",
+          "line": 51,
           "kind": "js-string",
           "raw": "PATCH",
           "quote": "'",
@@ -22770,7 +22770,7 @@
         },
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 94,
+          "line": 79,
           "kind": "js-string",
           "raw": "PATCH",
           "quote": "'",
@@ -24384,7 +24384,7 @@
         },
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 70,
+          "line": 55,
           "kind": "js-string",
           "raw": "DELETE",
           "quote": "'",
@@ -24392,7 +24392,7 @@
         },
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 82,
+          "line": 67,
           "kind": "js-string",
           "raw": "DELETE",
           "quote": "'",
@@ -25148,6 +25148,13 @@
           "quote": "\""
         },
         {
+          "file": "web/src/components/NotificationRow.svelte",
+          "line": 33,
+          "kind": "attr:title",
+          "raw": "Dismiss",
+          "quote": "\""
+        },
+        {
           "file": "web/src/components/SetupChecklist.svelte",
           "line": 185,
           "kind": "attr:aria-label",
@@ -25181,13 +25188,6 @@
           "kind": "markup",
           "raw": "Dismiss",
           "quote": null
-        },
-        {
-          "file": "web/src/pages/Notifications.svelte",
-          "line": 175,
-          "kind": "attr:title",
-          "raw": "Dismiss",
-          "quote": "\""
         }
       ]
     },
@@ -26820,7 +26820,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GlobalBar.svelte",
-          "line": 140,
+          "line": 105,
           "kind": "attr:aria-label",
           "raw": "Create new",
           "quote": "\""
@@ -26838,7 +26838,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GlobalBar.svelte",
-          "line": 144,
+          "line": 109,
           "kind": "markup",
           "raw": "New",
           "quote": null
@@ -26863,7 +26863,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GlobalBar.svelte",
-          "line": 173,
+          "line": 143,
           "kind": "markup",
           "raw": "Instance admin",
           "quote": null
@@ -26881,7 +26881,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GlobalBar.svelte",
-          "line": 185,
+          "line": 155,
           "kind": "markup",
           "raw": "Log Out",
           "quote": null
@@ -26899,217 +26899,10 @@
       "occurrences": [
         {
           "file": "web/src/components/GlobalBar.svelte",
-          "line": 203,
+          "line": 173,
           "kind": "attr:aria-label",
           "raw": "Display",
           "quote": "\""
-        }
-      ]
-    },
-    {
-      "id": "788011833a5a",
-      "text": "Notifications",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/GlobalBar.svelte",
-          "line": 222,
-          "kind": "attr:title",
-          "raw": "Notifications",
-          "quote": "\""
-        },
-        {
-          "file": "web/src/components/NotificationBell.svelte",
-          "line": 22,
-          "kind": "attr:aria-label",
-          "raw": "Notifications",
-          "quote": "\""
-        },
-        {
-          "file": "web/src/components/SocialShell.svelte",
-          "line": 452,
-          "kind": "attr:title",
-          "raw": "Notifications",
-          "quote": "\""
-        },
-        {
-          "file": "web/src/components/SocialShell.svelte",
-          "line": 460,
-          "kind": "markup",
-          "raw": "Notifications",
-          "quote": null
-        },
-        {
-          "file": "web/src/components/UserSettingsShell.svelte",
-          "line": 8,
-          "kind": "js-string",
-          "raw": "Notifications",
-          "quote": "'",
-          "at": "label"
-        },
-        {
-          "file": "web/src/lib/patchWorkspace.js",
-          "line": 197,
-          "kind": "js-string",
-          "raw": "Notifications",
-          "quote": "'",
-          "at": "label"
-        },
-        {
-          "file": "web/src/pages/Notifications.svelte",
-          "line": 123,
-          "kind": "markup",
-          "raw": "Notifications",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "3bc62a9e6a39",
-      "text": "Mark all read",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/GlobalBar.svelte",
-          "line": 226,
-          "kind": "markup",
-          "raw": "Mark all read",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/Notifications.svelte",
-          "line": 126,
-          "kind": "markup",
-          "raw": "Mark all read",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "47d2a515ef2f",
-      "text": "Loading...",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/GlobalBar.svelte",
-          "line": 231,
-          "kind": "markup",
-          "raw": "Loading...",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/Activity.svelte",
-          "line": 79,
-          "kind": "markup",
-          "raw": "Loading...",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/GovernanceList.svelte",
-          "line": 140,
-          "kind": "markup",
-          "raw": "Loading...",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/NoticeDetail.svelte",
-          "line": 169,
-          "kind": "markup",
-          "raw": "Loading...",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/NotificationPreferences.svelte",
-          "line": 75,
-          "kind": "markup",
-          "raw": "Loading...",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/Notifications.svelte",
-          "line": 155,
-          "kind": "markup",
-          "raw": "Loading...",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/PatchForm.svelte",
-          "line": 696,
-          "kind": "markup",
-          "raw": "Loading...",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
-          "line": 134,
-          "kind": "markup",
-          "raw": "Loading...",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/PatchSettingsNotifications.svelte",
-          "line": 54,
-          "kind": "markup",
-          "raw": "Loading...",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 344,
-          "kind": "markup",
-          "raw": "Loading...",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/ProposalList.svelte",
-          "line": 182,
-          "kind": "markup",
-          "raw": "Loading...",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 308,
-          "kind": "markup",
-          "raw": "Loading...",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "2f485b9971df",
-      "text": "You're all caught up",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/components/GlobalBar.svelte",
-          "line": 233,
-          "kind": "markup",
-          "raw": "You're all caught up",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/Notifications.svelte",
-          "line": 158,
-          "kind": "markup",
-          "raw": "You're all caught up",
-          "quote": null
         }
       ]
     },
@@ -28359,14 +28152,6 @@
           "raw": "Proposals",
           "quote": "'",
           "at": "label"
-        },
-        {
-          "file": "web/src/pages/Notifications.svelte",
-          "line": 18,
-          "kind": "js-string",
-          "raw": "Proposals",
-          "quote": "'",
-          "at": "label"
         }
       ]
     },
@@ -28422,14 +28207,6 @@
         {
           "file": "web/src/lib/patchWorkspace.js",
           "line": 38,
-          "kind": "js-string",
-          "raw": "Governance",
-          "quote": "'",
-          "at": "label"
-        },
-        {
-          "file": "web/src/pages/Notifications.svelte",
-          "line": 19,
           "kind": "js-string",
           "raw": "Governance",
           "quote": "'",
@@ -29289,6 +29066,249 @@
       ]
     },
     {
+      "id": "788011833a5a",
+      "text": "Notifications",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/NotificationBell.svelte",
+          "line": 28,
+          "kind": "attr:aria-label",
+          "raw": "Notifications",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/components/NotificationDropdown.svelte",
+          "line": 67,
+          "kind": "attr:aria-label",
+          "raw": "Notifications",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/components/NotificationDropdown.svelte",
+          "line": 69,
+          "kind": "markup",
+          "raw": "Notifications",
+          "quote": null
+        },
+        {
+          "file": "web/src/components/SocialShell.svelte",
+          "line": 452,
+          "kind": "attr:title",
+          "raw": "Notifications",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/components/SocialShell.svelte",
+          "line": 460,
+          "kind": "markup",
+          "raw": "Notifications",
+          "quote": null
+        },
+        {
+          "file": "web/src/components/UserSettingsShell.svelte",
+          "line": 8,
+          "kind": "js-string",
+          "raw": "Notifications",
+          "quote": "'",
+          "at": "label"
+        },
+        {
+          "file": "web/src/lib/patchWorkspace.js",
+          "line": 197,
+          "kind": "js-string",
+          "raw": "Notifications",
+          "quote": "'",
+          "at": "label"
+        },
+        {
+          "file": "web/src/pages/Notifications.svelte",
+          "line": 92,
+          "kind": "markup",
+          "raw": "Notifications",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "3bc62a9e6a39",
+      "text": "Mark all read",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/NotificationDropdown.svelte",
+          "line": 71,
+          "kind": "markup",
+          "raw": "Mark all read",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/Notifications.svelte",
+          "line": 95,
+          "kind": "markup",
+          "raw": "Mark all read",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "47d2a515ef2f",
+      "text": "Loading...",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/NotificationDropdown.svelte",
+          "line": 77,
+          "kind": "markup",
+          "raw": "Loading...",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/Activity.svelte",
+          "line": 79,
+          "kind": "markup",
+          "raw": "Loading...",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/GovernanceList.svelte",
+          "line": 140,
+          "kind": "markup",
+          "raw": "Loading...",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/NoticeDetail.svelte",
+          "line": 169,
+          "kind": "markup",
+          "raw": "Loading...",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/NotificationPreferences.svelte",
+          "line": 75,
+          "kind": "markup",
+          "raw": "Loading...",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/Notifications.svelte",
+          "line": 119,
+          "kind": "markup",
+          "raw": "Loading...",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchForm.svelte",
+          "line": 696,
+          "kind": "markup",
+          "raw": "Loading...",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 134,
+          "kind": "markup",
+          "raw": "Loading...",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchSettingsNotifications.svelte",
+          "line": 54,
+          "kind": "markup",
+          "raw": "Loading...",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 344,
+          "kind": "markup",
+          "raw": "Loading...",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/ProposalList.svelte",
+          "line": 182,
+          "kind": "markup",
+          "raw": "Loading...",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 308,
+          "kind": "markup",
+          "raw": "Loading...",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2f485b9971df",
+      "text": "You're all caught up",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/NotificationDropdown.svelte",
+          "line": 79,
+          "kind": "markup",
+          "raw": "You're all caught up",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "c99b9beabfa0",
+      "text": "Unread:",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/NotificationRow.svelte",
+          "line": 25,
+          "kind": "markup",
+          "raw": "Unread:",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b7bb3f342402",
+      "text": "Dismiss notification",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Error string or control label for the notification dismiss/clear doors — mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/NotificationRow.svelte",
+          "line": 33,
+          "kind": "attr:aria-label",
+          "raw": "Dismiss notification",
+          "quote": "\""
+        }
+      ]
+    },
+    {
       "id": "1aa2b739a501",
       "text": "this action",
       "words": 2,
@@ -29616,14 +29636,6 @@
           "kind": "markup",
           "raw": "Events",
           "quote": null
-        },
-        {
-          "file": "web/src/pages/Notifications.svelte",
-          "line": 21,
-          "kind": "js-string",
-          "raw": "Events",
-          "quote": "'",
-          "at": "label"
         }
       ]
     },
@@ -30295,6 +30307,14 @@
           "at": "label"
         },
         {
+          "file": "web/src/lib/notificationRow.js",
+          "line": 39,
+          "kind": "js-string",
+          "raw": "Admin",
+          "quote": "'",
+          "at": "context"
+        },
+        {
           "file": "web/src/pages/AdminUsers.svelte",
           "line": 408,
           "kind": "markup",
@@ -30864,14 +30884,6 @@
           "raw": "governance",
           "quote": "'",
           "at": "id"
-        },
-        {
-          "file": "web/src/pages/Notifications.svelte",
-          "line": 19,
-          "kind": "js-string",
-          "raw": "governance",
-          "quote": "'",
-          "at": "value"
         }
       ]
     },
@@ -32487,14 +32499,6 @@
           "raw": "events",
           "quote": "'",
           "at": "id"
-        },
-        {
-          "file": "web/src/pages/Notifications.svelte",
-          "line": 21,
-          "kind": "js-string",
-          "raw": "events",
-          "quote": "'",
-          "at": "value"
         }
       ]
     },
@@ -39462,6 +39466,24 @@
       ]
     },
     {
+      "id": "66f53417d3b7",
+      "text": "Just now",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/lib/notificationRow.js",
+          "line": 54,
+          "kind": "js-string",
+          "raw": "Just now",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "44373bb2df6c",
       "text": "This patch is archived, so nobody can open it. An instance admin can restore it.",
       "words": 15,
@@ -45539,14 +45561,6 @@
           "kind": "markup",
           "raw": "All",
           "quote": null
-        },
-        {
-          "file": "web/src/pages/Notifications.svelte",
-          "line": 17,
-          "kind": "js-string",
-          "raw": "All",
-          "quote": "'",
-          "at": "label"
         }
       ]
     },
@@ -59465,117 +59479,6 @@
       ]
     },
     {
-      "id": "c0cbf0fbcaf6",
-      "text": "proposals",
-      "words": 1,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/Notifications.svelte",
-          "line": 18,
-          "kind": "js-string",
-          "raw": "proposals",
-          "quote": "'",
-          "at": "value"
-        }
-      ]
-    },
-    {
-      "id": "bf5cf59e3566",
-      "text": "membership",
-      "words": 1,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/Notifications.svelte",
-          "line": 20,
-          "kind": "js-string",
-          "raw": "membership",
-          "quote": "'",
-          "at": "value"
-        },
-        {
-          "file": "web/src/pages/ProposalForm.svelte",
-          "line": 95,
-          "kind": "js-string",
-          "raw": "membership",
-          "quote": "'",
-          "at": "value"
-        }
-      ]
-    },
-    {
-      "id": "9feceb9333b5",
-      "text": "Membership",
-      "words": 1,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/Notifications.svelte",
-          "line": 20,
-          "kind": "js-string",
-          "raw": "Membership",
-          "quote": "'",
-          "at": "label"
-        },
-        {
-          "file": "web/src/pages/ProposalForm.svelte",
-          "line": 95,
-          "kind": "js-string",
-          "raw": "Membership",
-          "quote": "'",
-          "at": "label"
-        }
-      ]
-    },
-    {
-      "id": "a17ba2e01f48",
-      "text": "moderation",
-      "words": 1,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/Notifications.svelte",
-          "line": 25,
-          "kind": "js-string",
-          "raw": "moderation",
-          "quote": "'",
-          "at": "value"
-        }
-      ]
-    },
-    {
-      "id": "126d4415445d",
-      "text": "Moderation",
-      "words": 1,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/Notifications.svelte",
-          "line": 25,
-          "kind": "js-string",
-          "raw": "Moderation",
-          "quote": "'",
-          "at": "label"
-        }
-      ]
-    },
-    {
       "id": "54a548463797",
       "text": "Could not dismiss that notification",
       "words": 5,
@@ -59586,7 +59489,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 74,
+          "line": 59,
           "kind": "js-string",
           "raw": "Could not dismiss that notification",
           "quote": "'"
@@ -59604,7 +59507,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 87,
+          "line": 72,
           "kind": "js-string",
           "raw": "Could not clear notifications",
           "quote": "'"
@@ -59622,63 +59525,9 @@
       "occurrences": [
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 130,
+          "line": 99,
           "kind": "attr:label",
           "raw": "Clear all",
-          "quote": "\""
-        }
-      ]
-    },
-    {
-      "id": "8ab25e81f97f",
-      "text": "Unread only",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/Notifications.svelte",
-          "line": 151,
-          "kind": "markup",
-          "raw": "Unread only",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "2a6e29f4dfec",
-      "text": "No {categoryFilter ? categoryFilter : ''} notifications{unreadOnly ? ' (unread)' : ''}.",
-      "words": 2,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/Notifications.svelte",
-          "line": 159,
-          "kind": "markup",
-          "raw": "No {categoryFilter ? categoryFilter : ''} notifications{unreadOnly ? ' (unread)' : ''}.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "b7bb3f342402",
-      "text": "Dismiss notification",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Error string or control label for the notification dismiss/clear doors — mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/Notifications.svelte",
-          "line": 175,
-          "kind": "attr:aria-label",
-          "raw": "Dismiss notification",
           "quote": "\""
         }
       ]
@@ -66409,6 +66258,44 @@
           "kind": "js-string",
           "raw": "Nominate an active member for admin",
           "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "bf5cf59e3566",
+      "text": "membership",
+      "words": 1,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/ProposalForm.svelte",
+          "line": 95,
+          "kind": "js-string",
+          "raw": "membership",
+          "quote": "'",
+          "at": "value"
+        }
+      ]
+    },
+    {
+      "id": "9feceb9333b5",
+      "text": "Membership",
+      "words": 1,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/ProposalForm.svelte",
+          "line": 95,
+          "kind": "js-string",
+          "raw": "Membership",
+          "quote": "'",
+          "at": "label"
         }
       ]
     },
@@ -75166,6 +75053,24 @@
           "line": 42,
           "kind": "go-error-body",
           "raw": "entity_type must be node, event, user, notice, or reply",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "8ab25e81f97f",
+      "text": "Unread only",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Notifications.svelte",
+          "line": 151,
+          "kind": "markup",
+          "raw": "Unread only",
           "quote": null
         }
       ]

@@ -100,7 +100,12 @@ func ListNotifications(db *database.DB) http.HandlerFunc {
 		after, limit := parsePaginationParams(r)
 		unread := r.URL.Query().Get("unread")
 
-		query := `SELECT id, user_id, type, title, body, link, read_at, created_at FROM notifications`
+		// node_name is the patch the notification is about, when it is about
+		// one, for the line above its title. Nothing else of the patch is
+		// sent: the row names its sender and the link does the rest.
+		query := `SELECT id, user_id, type, title, body, link, read_at, created_at,
+			COALESCE((SELECT name FROM nodes WHERE nodes.id = notifications.node_id), '')
+			FROM notifications`
 		var conditions []string
 		var args []interface{}
 
@@ -146,7 +151,7 @@ func ListNotifications(db *database.DB) http.HandlerFunc {
 		var notifications []model.Notification
 		for rows.Next() {
 			var n model.Notification
-			if err := rows.Scan(&n.ID, &n.UserID, &n.Type, &n.Title, &n.Body, &n.Link, &n.ReadAt, &n.CreatedAt); err != nil {
+			if err := rows.Scan(&n.ID, &n.UserID, &n.Type, &n.Title, &n.Body, &n.Link, &n.ReadAt, &n.CreatedAt, &n.NodeName); err != nil {
 				continue
 			}
 			notifications = append(notifications, n)
