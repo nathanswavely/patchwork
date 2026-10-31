@@ -3,6 +3,7 @@ package handler_test
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 	"reflect"
 	"testing"
 
@@ -163,5 +164,156 @@ func TestUserActivityFeed_MalformedRulesKeepTheShelfShut(t *testing.T) {
 
 	if got := activityTitles(t, db, token); len(got) != 0 {
 		t.Fatalf("a follower read a members-only charter through a malformed rules blob: %v", got)
+	}
+}
+
+// activityPage fetches one page of the caller's feed.
+func activityPage(t *testing.T, db *database.DB, token, query string) ([]map[string]interface{}, string) {
+	t.Helper()
+	r := authedRequest("GET", "/api/v1/activity"+query, nil, token)
+	w := serveMux(t, db, "GET", "/api/v1/activity", handler.UserActivityFeed(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+	body := decodeJSON(t, w)
+	raw, _ := body["items"].([]interface{})
+	var items []map[string]interface{}
+	for _, it := range raw {
+		items = append(items, it.(map[string]interface{}))
+	}
+	cursor, _ := body["next_cursor"].(string)
+	return items, cursor
+}
+
+// TestUserActivityFeed_LinksAreTheCanonicalRoutes: each item points where
+// internal/weblink says that thing lives. The event link was
+// /patches/{slug}/events/{id}, a route the SPA keeps only to redirect and no
+// other client knows (issue #398).
+func TestUserActivityFeed_LinksAreTheCanonicalRoutes(t *testing.T) {
+	db := setupTestDB(t)
+	user, token := createTestUser(t, db, "link-member", "member")
+	nodeID := createTestNode(t, db, user.ID, "Links", "activity-links", "open")
+	createTestMembership(t, db, user.ID, nodeID, "member", "active")
+
+	propID := createTestProposal(t, db, nodeID, user.ID)
+	eventID := seedEvent(t, db, nodeID, user.ID, "Linked event", "2026-09-01T18:00:00Z")
+	docID := seedGovernanceDoc(t, db, nodeID, user.ID, "Linked charter")
+
+	want := map[string]string{
+		propID:  "/patches/activity-links/governance/" + propID,
+		eventID: "/events/" + eventID,
+		docID:   "/patches/activity-links/governance/docs/" + docID,
+	}
+	items, _ := activityPage(t, db, token, "?limit=50")
+	if len(items) != len(want) {
+		t.Fatalf("expected %d items, got %d", len(want), len(items))
+	}
+	for _, it := range items {
+		id := it["id"].(string)
+		if it["link"] != want[id] {
+			t.Errorf("%s %s: link = %v, want %s", it["type"], id, it["link"], want[id])
+		}
+	}
+}
+
+// TestUserActivityFeed_ACharterIsDatedByItsCreation: an edit is not news of
+// a new charter. Dated by updated_at, every edit put an old charter back at
+// the top of the feed as if it had just been written (issue #398).
+func TestUserActivityFeed_ACharterIsDatedByItsCreation(t *testing.T) {
+	db := setupTestDB(t)
+	user, token := createTestUser(t, db, "dating-member", "member")
+	nodeID := createTestNode(t, db, user.ID, "Dating", "activity-dating", "open")
+	createTestMembership(t, db, user.ID, nodeID, "member", "active")
+
+	docID := seedGovernanceDoc(t, db, nodeID, user.ID, "Old charter, new edit")
+	if _, err := db.Exec(`UPDATE governance_docs SET created_at = '2026-01-01T00:00:00Z', updated_at = '2026-10-01T00:00:00Z' WHERE id = ?`, docID); err != nil {
+		t.Fatalf("stamp doc: %v", err)
+	}
+	seedEvent(t, db, nodeID, user.ID, "Newer event", "2026-11-01T18:00:00Z")
+	if _, err := db.Exec(`UPDATE events SET created_at = '2026-06-01T00:00:00Z'`); err != nil {
+		t.Fatalf("stamp event: %v", err)
+	}
+
+	items, _ := activityPage(t, db, token, "?limit=50")
+	if len(items) != 2 {
+		t.Fatalf("expected 2 items, got %d", len(items))
+	}
+	if items[0]["title"] != "Newer event" {
+		t.Fatalf("an edited charter outranked a newer event: first item is %v", items[0]["title"])
+	}
+	if items[1]["created_at"] != "2026-01-01T00:00:00Z" {
+		t.Fatalf("charter dated %v, want its created_at", items[1]["created_at"])
+	}
+}
+
+// TestUserActivityFeed_PagesAcrossTheUnionWithoutLossOrRepeat: next_cursor is
+// a (created_at, id) keyset over a three-way UNION ALL, so a timestamp shared
+// by a proposal, an event and a charter must not drop or repeat any of them at
+// a page boundary. Every row here shares one instant, the worst case: the id
+// tiebreaker is the only thing ordering them.
+func TestUserActivityFeed_PagesAcrossTheUnionWithoutLossOrRepeat(t *testing.T) {
+	db := setupTestDB(t)
+	user, token := createTestUser(t, db, "paging-member", "member")
+	nodeID := createTestNode(t, db, user.ID, "Paging", "activity-paging", "open")
+	createTestMembership(t, db, user.ID, nodeID, "member", "active")
+
+	for i := 0; i < 3; i++ {
+		createTestProposal(t, db, nodeID, user.ID)
+		seedEvent(t, db, nodeID, user.ID, fmt.Sprintf("Event %d", i), "2026-09-01T18:00:00Z")
+		seedGovernanceDoc(t, db, nodeID, user.ID, fmt.Sprintf("Charter %d", i))
+	}
+	// Plus one a second later, so the boundary also crosses a timestamp.
+	seedEvent(t, db, nodeID, user.ID, "Later event", "2026-09-01T18:00:00Z")
+	const tied = "2026-09-01T10:00:00Z"
+	for _, stmt := range []string{
+		`UPDATE proposals SET created_at = '` + tied + `'`,
+		`UPDATE governance_docs SET created_at = '` + tied + `'`,
+		`UPDATE events SET created_at = '` + tied + `' WHERE title != 'Later event'`,
+		`UPDATE events SET created_at = '2026-09-01T10:00:01Z' WHERE title = 'Later event'`,
+	} {
+		if _, err := db.Exec(stmt); err != nil {
+			t.Fatalf("stamp: %v", err)
+		}
+	}
+
+	whole, cursor := activityPage(t, db, token, "?limit=50")
+	if cursor != "" || len(whole) != 10 {
+		t.Fatalf("one page of 50: got %d items, cursor %q", len(whole), cursor)
+	}
+
+	for _, size := range []int{1, 2, 3, 4} {
+		var paged []string
+		seen := map[string]bool{}
+		after := ""
+		for pages := 0; ; pages++ {
+			if pages > 20 {
+				t.Fatalf("limit=%d: cursor never ran out", size)
+			}
+			q := fmt.Sprintf("?limit=%d", size)
+			if after != "" {
+				q += "&after=" + url.QueryEscape(after)
+			}
+			items, next := activityPage(t, db, token, q)
+			for _, it := range items {
+				id := it["id"].(string)
+				if seen[id] {
+					t.Fatalf("limit=%d: %s served twice", size, id)
+				}
+				seen[id] = true
+				paged = append(paged, id)
+			}
+			if next == "" {
+				break
+			}
+			after = next
+		}
+		if len(paged) != len(whole) {
+			t.Fatalf("limit=%d: paged %d items, one page held %d", size, len(paged), len(whole))
+		}
+		for i := range whole {
+			if paged[i] != whole[i]["id"] {
+				t.Fatalf("limit=%d: item %d is %s, one page had %v", size, i, paged[i], whole[i]["id"])
+			}
+		}
 	}
 }
