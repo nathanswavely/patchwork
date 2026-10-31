@@ -11,6 +11,13 @@ import (
 // RequireNodeRole returns middleware that checks the authenticated user has one of the
 // specified roles for the node identified by {slug} in the URL path.
 // Site admins (user.Role == "admin") bypass node role checks.
+//
+// That bypass is the reach docs/adr/115 decided against: an instance admin's
+// standing in a patch is custody, not rank. It is kept for now on purpose
+// (issue #286), and because it runs before any handler, internal/handler's
+// source inventory cannot see it. cmd/patchwork's
+// TestEveryRouteAnInstanceAdminReachesIsDeclared walks the routes instead, so
+// a new route mounted behind this middleware has to be declared there.
 func RequireNodeRole(db *database.DB, roles ...string) func(http.HandlerFunc) http.HandlerFunc {
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {

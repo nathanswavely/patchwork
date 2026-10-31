@@ -23,8 +23,14 @@ import (
 
 // userSpeaksForNode reports whether a user may act for a patch in the
 // link handshake. Speaking for a patch is admin territory: patch admins
-// on active patches, the instance admin everywhere (who holds unclaimed
-// patches' calendars in trust — docs/adr/031).
+// on active patches, and the instance admin on unclaimed ones, whose
+// calendars they hold in trust (docs/adr/031, docs/adr/057).
+//
+// The `user.Role` check below is wider than that: it lets an instance
+// admin speak for a patch that has admins of its own. That is the reach
+// docs/adr/115 decided against, kept for now on purpose and narrowed by
+// issue #286. It is declared in instance_admin_reach.go; it is not the
+// rule, so do not copy it.
 //
 // Plus one seam (docs/adr/057): a trusted contributor speaks for a patch
 // while that patch is unclaimed — at either scope of the grant, quilt-wide

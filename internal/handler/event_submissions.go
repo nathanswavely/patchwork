@@ -162,8 +162,11 @@ func ReviewEventSubmission(db *database.DB) http.HandlerFunc {
 		}
 
 		// Unclaimed calendars are reviewed by the instance admin alone;
-		// active calendars by that patch's admins (global admin override
-		// applies, as on every node endpoint).
+		// active calendars by that patch's admins, never the instance
+		// admin (docs/adr/026). The `user.Role` check in the active branch
+		// is the reach docs/adr/115 decided against, kept for now on
+		// purpose until issue #286 and declared in instance_admin_reach.go.
+		// It is not the rule, so do not copy it.
 		if nodeStatus == "unclaimed" {
 			if user.Role != "admin" {
 				http.Error(w, `{"error":"insufficient permissions"}`, http.StatusForbidden)
