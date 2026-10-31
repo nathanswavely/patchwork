@@ -1,5 +1,6 @@
 <script>
   import { api } from '../lib/api.js';
+  import { dateInputBounds } from '../lib/datetime.js';
   import Skeleton from '../components/Skeleton.svelte';
   import ErrorState from '../components/ErrorState.svelte';
 
@@ -37,8 +38,11 @@
       const params = new URLSearchParams();
       if (actionFilter) params.set('action', actionFilter);
       if (userSearch) params.set('user_id', userSearch);
-      if (dateFrom) params.set('from', dateFrom);
-      if (dateTo) params.set('to', dateTo);
+      // The page shows times in the reader's zone, so its date filter means
+      // the reader's days, sent as the instants that bound them.
+      const bounds = dateInputBounds(dateFrom, dateTo);
+      if (bounds.from) params.set('from', bounds.from);
+      if (bounds.to) params.set('to', bounds.to);
       if (append && nextCursor) params.set('after', nextCursor);
       const data = await api(`admin/audit-log?${params}`);
       if (append) {

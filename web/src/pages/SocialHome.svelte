@@ -4,6 +4,7 @@
   import { navigate, replaceRoute } from '../stores/router.svelte.js';
   import { scopedPath, surfaceForRoute } from '../lib/scope.js';
   import { canHover } from '../stores/viewport.svelte.js';
+  import { hideCanvasZoom } from '../stores/canvasZoom.svelte.js';
   import { identityColorForPatch } from '../lib/quiltTheme.js';
   import { textMatches } from '../lib/textMatch.js';
   import { motifComponentForPatch } from '../lib/patchIcons.js';
@@ -120,6 +121,11 @@
   // toggle full-screen instead — no inset, and no control either.
   let quiltInset = $derived(winW <= 768 ? 0 : paneFraction(paneHidden));
 
+  // The desktop filter chips stand along the canvas's top edge, one row
+  // under the glass bar (SocialShell); the quilt fits below them. Mobile
+  // has no top row: its chips are a sheet.
+  let quiltInsetTop = $derived(winW <= 768 ? 0 : 40);
+
   // The one published fact (docs/adr/111). `.cards-pane` sizes from it, the
   // shell's filter chips clear their right edge with it, and the control
   // parks against it — 45% used to be a literal in three places across two
@@ -149,6 +155,13 @@
   // OR map, per the route); 'list' shows the patch cards. Quilt-vs-map stays
   // driven by the route so deep links and the desktop toggle agree.
   let mobileView = $state('main'); // 'main' or 'list'
+
+  // The List view covers the canvas without unmounting it, so the zoom
+  // buttons would drive something nobody can see.
+  $effect(() => {
+    hideCanvasZoom(winW <= 768 && mobileView === 'list');
+    return () => hideCanvasZoom(false);
+  });
 
   // --- Patch list data ---
   let allPatches = $state([]);
@@ -411,14 +424,11 @@
   // move to.
   let listDimmed = $derived(previewing !== null && hoveredCardId === null);
 
-  function preview(patch, fromMap = false) {
+  // A preview never scrolls the list. Bringing the card to the reader moved
+  // the list on every tile the pointer crossed on its way somewhere else;
+  // the lit card among dimmed ones answers the hover without the motion.
+  function preview(patch) {
     previewing = patch?.id ?? null;
-    // A preview that comes from the map brings its card to the reader; one
-    // that comes from the card must not move the list under their pointer.
-    if (!fromMap || !patch) return;
-    document
-      .querySelector(`[data-patch-id="${CSS.escape(patch.id)}"]`)
-      ?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
 
   // Opening a patch from this surface pushes its address; choosing another
@@ -579,6 +589,14 @@
               {#if patch.description}
                 <p class="card-desc">{patch.description}</p>
               {/if}
+              <!-- Declared by the patch's admins
+                   (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md,
+                   decision 6). The card wears it; the quilt tile does not. -->
+              {#if patch.ai_work === true}
+                <p class="card-ai">
+                  <span class="lt-pill" title="This patch's admins say its work relies heavily on AI.">AI work</span>
+                </p>
+              {/if}
             </div>
           </div>
 {/snippet}
@@ -601,7 +619,7 @@
   </div>
 
   <!-- Main pane: quilt canvas or community map -->
-  <div class="quilt-pane" class:mobile-hidden={mobileView === 'list'}>
+  <div class="quilt-pane" data-canvas class:mobile-hidden={mobileView === 'list'}>
     {#if showMap}
       <!-- One voice per state: with the in-view lens on, the pane already
            says nothing is in view and offers the way back, so the map does
@@ -616,7 +634,7 @@
         onMarkerClick={(node) => openPatch(node.slug, node._source || null)}
         onBackgroundClick={backgroundClick}
         announceOffscreen={!inViewActive}
-        onPatchHover={(node) => hasPointer && preview(node, true)}
+        onPatchHover={(node) => hasPointer && preview(node)}
         hoveredId={previewing}
         onInViewChange={reportInView}
       />
@@ -629,8 +647,9 @@
         myPatchRoles={roles}
         {quiltScope}
         insetRight={quiltInset}
+        insetTop={quiltInsetTop}
         onClearFilter={resetFilters}
-        onPatchHover={(patch) => hasPointer && preview(patch, true)}
+        onPatchHover={(patch) => hasPointer && preview(patch)}
         onBackgroundClick={backgroundClick}
         onInViewChange={reportInView}
         focusPatchId={hoveredCardId}
@@ -666,7 +685,7 @@
          The header used to be its own floating card over loose cards, and
          at desktop width the quilt behind, the header edge and forty card
          edges all competed. -->
-    <div class="cards-panel">
+    <div class="cards-panel pw-canvas-card">
     <!-- The list's header carries only the list's own controls
          (docs/adr/074). The Quilt/Map switch used to sit here and now lives
          on the canvas, which is the thing it changes. -->
@@ -950,14 +969,10 @@
        .sidebar-rail.quilt-mode). The bar paints no edge on this route, so
        the two cards hang from the same line with nothing between. */
     margin: 0 16px 16px;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    background: color-mix(in srgb, var(--color-bg) 78%, transparent);
-    backdrop-filter: blur(12px) saturate(1.2);
-    -webkit-backdrop-filter: blur(12px) saturate(1.2);
-    box-shadow: 0 2px 12px var(--color-shadow);
-    /* The corners clip the scroll area, so the cards slide under the
-       header's edge rather than past the panel's rounded corners. */
+    /* Its glass is .pw-canvas-card (app.css), shared with the filter
+       chips' open card. The corners clip the scroll area, so the cards
+       slide under the header's edge rather than past the panel's rounded
+       corners. */
     overflow: hidden;
   }
 
@@ -1238,6 +1253,10 @@
     font-weight: 600;
     color: var(--color-text);
     margin-bottom: 4px;
+  }
+
+  .card-ai {
+    margin-top: 0.3rem;
   }
 
   .card-desc {

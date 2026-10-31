@@ -27,6 +27,12 @@ type bulkEventRow struct {
 	// spreadsheet usually has a link column, and dropping it meant forty
 	// shows arriving with no way to buy a ticket.
 	EventURL string `json:"event_url"`
+	// Whether AI made the description, for an uploader who knows
+	// (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md). Optional on
+	// every setting: a sheet is usually copied from somebody else's
+	// calendar, which nobody here can answer for, so a blank cell stays
+	// NULL rather than being a refusal.
+	AIUse string `json:"ai_use"`
 }
 
 // BulkCreateEvents handles POST /api/v1/nodes/{slug}/events/bulk — the
@@ -121,6 +127,10 @@ func BulkCreateEvents(db *database.DB) http.HandlerFunc {
 				fail(i, msg)
 			}
 			ev.EventURL = strings.TrimSpace(ev.EventURL)
+			ev.AIUse = strings.ToLower(strings.TrimSpace(ev.AIUse))
+			if ev.AIUse != "" && !validAIUse(ev.AIUse) {
+				fail(i, "ai_use must be none, assisted or generated")
+			}
 		}
 		if rowErrors != nil {
 			w.Header().Set("Content-Type", "application/json")
@@ -172,10 +182,10 @@ func BulkCreateEvents(db *database.DB) http.HandlerFunc {
 			apID := ap.EventAPID(ap.GetDomain(), id)
 			if _, err := tx.Exec(
 				`INSERT INTO events (id, node_id, created_by, title, description, location,
-				 starts_at, ends_at, event_url, recurrence, visibility, status, ap_id)
-				 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, '', ?, 'active', ?)`,
+				 starts_at, ends_at, event_url, recurrence, visibility, status, ap_id, ai_use)
+				 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, '', ?, 'active', ?, ?)`,
 				id, nodeID, user.ID, ev.Title, ev.Description, ev.Location,
-				ev.StartsAt, ev.EndsAt, ev.EventURL, ev.Visibility, apID,
+				ev.StartsAt, ev.EndsAt, ev.EventURL, ev.Visibility, apID, nullIfEmpty(ev.AIUse),
 			); err != nil {
 				http.Error(w, `{"error":"failed to upload events"}`, http.StatusInternalServerError)
 				return

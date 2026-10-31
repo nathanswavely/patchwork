@@ -6,6 +6,10 @@
   import { formatRelative } from '../lib/datetime.js';
   import MarkdownRenderer from '../components/MarkdownRenderer.svelte';
   import SegmentedControl from '../components/SegmentedControl.svelte';
+  import AIUseQuestion from '../components/AIUseQuestion.svelte';
+  import MadeWithAI from '../components/MadeWithAI.svelte';
+  import { aiField, aiAnswerMissing } from '../lib/aiUse.js';
+  import { getAiDisclosure } from '../stores/quilt.svelte.js';
 
   // The noticeboard (docs/adr/081): the room's, and only the room's. The
   // server refuses everyone else; this page just says so kindly.
@@ -54,6 +58,10 @@
   let imageAlt = $state('');
   let repliesOpen = $state(true);
   let tellMembers = $state(false);
+  // Whether AI wrote the notice
+  // (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md). A notice's
+  // image is not asked about.
+  let aiUse = $state(null);
   let previewMode = $state(false);
   let submitting = $state(false);
 
@@ -63,12 +71,14 @@
 
   function openComposer() {
     title = ''; body = ''; imageUrl = ''; imageAlt = '';
-    tellMembers = false; previewMode = false;
+    tellMembers = false; previewMode = false; aiUse = null;
     navigate(`/patches/${slug}/noticeboard/new`);
   }
 
   async function putUp() {
     if (!title.trim()) { showToast('A notice needs a title', 'error'); return; }
+    const aiMissing = aiAnswerMissing(getAiDisclosure(), aiUse);
+    if (aiMissing) { showToast(aiMissing, 'error'); return; }
     submitting = true;
     try {
       const n = await api(`nodes/${slug}/notices`, {
@@ -80,6 +90,7 @@
           image_alt: imageAlt.trim(),
           replies_open: repliesOpen,
           tell_members: tellMembers,
+          ai_use: aiField(getAiDisclosure(), aiUse),
         },
       });
       showToast(tellMembers ? 'Notice put up and members told' : 'Notice put up', 'success');
@@ -129,6 +140,12 @@
             placeholder="Markdown is supported."></textarea>
         {/if}
       </div>
+
+      {#if getAiDisclosure() !== 'off'}
+        <div class="field">
+          <AIUseQuestion bind:value={aiUse} disabled={submitting} />
+        </div>
+      {/if}
 
       <div class="field">
         <label class="lt-label" for="notice-image">Image address</label>
@@ -201,6 +218,7 @@
               <span>{n.author_display_name || n.author_username}</span>
               <span>{formatRelative(n.created_at)}</span>
               {#if n.members_told}<span class="mark">members told</span>{/if}
+              <MadeWithAI value={n.ai_use} />
               {#if n.replies_open}
                 <span>{n.reply_count === 1 ? '1 reply' : `${n.reply_count} replies`}</span>
               {:else}

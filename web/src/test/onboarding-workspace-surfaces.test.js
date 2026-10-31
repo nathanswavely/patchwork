@@ -169,8 +169,8 @@ describe('SetupChecklist', () => {
     expect(src).toMatch(/events\?node_slug=[^`]*include_past=true/);
   });
 
-  it('derives governance decided from a non-lining doc, OR the localStorage visited fallback', () => {
-    expect(src).toMatch(/hasCharterBeyondLining \|\| isGovernanceHubVisited\(userId, node\.id\)/);
+  it('derives governance decided from a non-lining doc, OR the localStorage decided fallback', () => {
+    expect(src).toMatch(/hasCharterBeyondLining \|\| isGovernanceDecided\(userId, node\.id\)/);
     expect(src).toMatch(/docs\.some\(\(d\) => d\.kind !== 'lining'\)/);
   });
 
@@ -190,12 +190,43 @@ describe('SetupChecklist', () => {
   });
 });
 
-describe('GovernanceOverview marks the governance-visited fallback for the setup checklist', () => {
+// The fallback is written by a governance act, never by arriving on the
+// page. A founder watched "Decide how you govern" tick itself off the
+// moment the hub rendered, and said, correctly, that they had decided
+// nothing. These assertions are the ones that would have caught it: the
+// mark sits inside the hub's own decisions, and no $effect may call it.
+describe('GovernanceOverview marks the governance-decided fallback for the setup checklist', () => {
   const src = source('components/GovernanceOverview.svelte');
 
-  it('marks visited for admins only', () => {
-    expect(src).toContain("import { markGovernanceHubVisited } from '../lib/onboarding.js'");
-    expect(src).toMatch(/if \(isAdmin && nodeId\) markGovernanceHubVisited\(getUser\(\)\?\.id, nodeId\)/);
+  it("marks for this patch's own admins only", () => {
+    expect(src).toContain("import { markGovernanceDecided } from '../lib/onboarding.js'");
+    expect(src).toMatch(/if \(isPatchAdmin && nodeId\) markGovernanceDecided\(getUser\(\)\?\.id, nodeId\)/);
+  });
+
+  it('never marks on mount, because a visit is not a decision', () => {
+    expect(src).not.toMatch(/\$effect\(\(\) => \{[^}]*markGovernanceDecided/);
+    expect(src).not.toMatch(/\$effect\(\(\) => \{[^}]*markDecided\(\)/);
+  });
+
+  it("marks after each of the hub's own decisions lands", () => {
+    // Each markDecided() sits after an awaited write, never before it.
+    expect(src).toMatch(/seats\/\$\{seatId\}`, \{ method: 'PATCH'.*\n\s*markDecided\(\);/);
+    expect(src).toMatch(/seats`, \{ method: 'POST' \}\);\n\s*markDecided\(\);/);
+    expect(src).toMatch(/seats\/\$\{seatId\}`, \{ method: 'DELETE' \}\);\n\s*markDecided\(\);/);
+    // Successor: marked once, after both the PUT and the DELETE branches.
+    expect(src).toMatch(/successor`, \{ method: 'DELETE' \}\);\n\s*\}\n\s*markDecided\(\);/);
+  });
+});
+
+describe('RulesProposalEditor marks the governance-decided fallback', () => {
+  const src = source('pages/RulesProposalEditor.svelte');
+
+  it('marks after the proposal is created, for a patch admin', () => {
+    expect(src).toContain("import { markGovernanceDecided } from '../lib/onboarding.js'");
+    expect(src).toMatch(/membershipRole === 'admin' && patch\.value\.node\?\.id/);
+    expect(src).toMatch(
+      /proposals`, \{ method: 'POST', body: payload \}\);[\s\S]{0,400}?markGovernanceDecided\(getUser\(\)\?\.id, patch\.value\.node\.id\)/
+    );
   });
 });
 

@@ -98,13 +98,13 @@ func Tables() []Table {
 				c("suspended_at"), c("deleted_at"), c("created_at"), c("updated_at")),
 		},
 		{
-			File:    "tags.json",
-			Name:    "tags",
+			File: "tags.json",
+			Name: "tags",
 			// status and suggested_by travel: the review queue is instance
 			// state and the admin export is a custody transfer (docs/adr/114).
 			// Without status here every pending and rejected row would land on
 			// the fork as approved vocabulary.
-			Query:   `SELECT id, name, motif, status, suggested_by, decided_by, decided_at, created_at FROM tags`,
+			Query: `SELECT id, name, motif, status, suggested_by, decided_by, decided_at, created_at FROM tags`,
 			// status defaults to 'approved' so an archive written before
 			// docs/adr/114 imports as ordinary vocabulary, which is what it
 			// was. suggested_by and decided_by are user ids and so are
@@ -122,7 +122,7 @@ func Tables() []Table {
 				follower_permissions, governance_config, governance_setup_complete,
 				designated_successor_id, accept_event_suggestions,
 				submitted_by, submission_source, did, activated_at,
-				notice_posting, notice_replies_default, public_member_list, public_governance_record, moved_to, founded_at, created_at, updated_at
+				notice_posting, notice_replies_default, public_member_list, public_governance_record, moved_to, founded_at, nonprofit, ai_use, image_ai, ai_work, created_at, updated_at
 				FROM nodes WHERE removed_at IS NULL`,
 			Columns: cols(id("id"), id("owner_id"), c("name"), c("slug"),
 				c("description"), c("latitude"), c("longitude"),
@@ -201,6 +201,18 @@ func Tables() []Table {
 				// had deliberately kept. def() so archives written before the
 				// column import as NULL - "started with its row".
 				def("founded_at", nil),
+				// Whether the organisation says it is a nonprofit (#448). A
+				// fact about the community, so it travels; def() so archives
+				// written before the column import as 0, which is what every
+				// patch in them said.
+				def("nonprofit", 0),
+				// Whether AI made the description and the image, and whether
+				// the patch says its work relies on AI
+				// (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md).
+				// The answer travels with its row; def() so archives written
+				// before the columns import as NULL, "not stated", which is
+				// what every row in them said.
+				def("ai_use", nil), def("image_ai", nil), def("ai_work", nil),
 				c("created_at"), c("updated_at")),
 		},
 		{
@@ -364,7 +376,7 @@ func Tables() []Table {
 			Name: "events",
 			Query: `SELECT id, node_id, created_by, title, description, location,
 				latitude, longitude, starts_at, ends_at, timezone, recurrence, visibility,
-				image_url, image_alt, event_url,
+				image_url, image_alt, event_url, ai_use, image_ai,
 				source_id, source_uid, source_occurrence,
 				created_at, updated_at FROM events
 				WHERE removed_at IS NULL AND status = 'active'`,
@@ -380,6 +392,9 @@ func Tables() []Table {
 				// else's URL, like the flyer above — the fork keeps pointing
 				// at the venue's listing, which is still the venue's.
 				def("event_url", ""),
+				// The author's AI answers travel with the event, as with a
+				// patch's above.
+				def("ai_use", nil), def("image_ai", nil),
 				id("source_id"), c("source_uid"), def("source_occurrence", ""),
 				c("created_at"), c("updated_at")),
 		},
@@ -434,7 +449,7 @@ func Tables() []Table {
 				proposal_type, duration_hours, voting_ends_at, voting_terms,
 				target_doc, target_user_id, seats_contested, nominations_close_at,
 				proposed_title, proposed_body, applied_at, applied_by, declined_by,
-				created_at, updated_at FROM proposals`,
+				ai_use, created_at, updated_at FROM proposals`,
 			Columns: cols(id("id"), id("node_id"), id("author_id"), c("title"),
 				c("body"), c("status"), c("state"), c("proposal_type"),
 				c("duration_hours"), c("voting_ends_at"),
@@ -460,7 +475,9 @@ func Tables() []Table {
 				// Who declined a proposal on an admin-decides patch
 				// (docs/adr/092, migration 067). Remapped like applied_by;
 				// NULL wherever the electorate decided.
-				id("declined_by"), c("created_at"), c("updated_at")),
+				id("declined_by"),
+				// Whether AI made the proposed text; NULL in older archives.
+				def("ai_use", nil), c("created_at"), c("updated_at")),
 		},
 		{
 			// The council's chairs (docs/adr/051). A seat outlives its holder,
@@ -610,10 +627,10 @@ func Tables() []Table {
 			File: "notices.json",
 			Name: "notices",
 			Query: `SELECT id, node_id, author_id, title, body, image_url, image_alt,
-				replies_open, members_told, created_at, updated_at FROM notices`,
+				replies_open, members_told, ai_use, created_at, updated_at FROM notices`,
 			Columns: cols(id("id"), id("node_id"), id("author_id"), c("title"), c("body"),
 				def("image_url", ""), def("image_alt", ""), def("replies_open", 1),
-				def("members_told", 0), c("created_at"), c("updated_at")),
+				def("members_told", 0), def("ai_use", nil), c("created_at"), c("updated_at")),
 		},
 		{
 			File: "notice_replies.json",

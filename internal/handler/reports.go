@@ -37,9 +37,9 @@ func CreateReport(db *database.DB) http.HandlerFunc {
 
 		// Validate entity_type.
 		switch req.EntityType {
-		case "node", "event", "user", "notice", "reply":
+		case "node", "event", "user", "notice", "reply", "proposal":
 		default:
-			http.Error(w, `{"error":"entity_type must be node, event, user, notice, or reply"}`, http.StatusBadRequest)
+			http.Error(w, `{"error":"entity_type must be node, event, user, notice, reply, or proposal"}`, http.StatusBadRequest)
 			return
 		}
 
@@ -60,6 +60,17 @@ func CreateReport(db *database.DB) http.HandlerFunc {
 			db.QueryRow("SELECT node_id FROM notices WHERE id = ?", req.EntityID).Scan(&roomNodeID)
 		case "reply":
 			db.QueryRow("SELECT n.node_id FROM notice_replies r JOIN notices n ON n.id = r.notice_id WHERE r.id = ?", req.EntityID).Scan(&roomNodeID)
+		case "proposal":
+			// A proposal is reportable for what its text claims about AI
+			// (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md), by
+			// anyone who can read it: the instance queue handles it, as it
+			// does the patch it belongs to. A closed governance record is a
+			// 404 here exactly as it is on the proposal itself.
+			var proposalNodeID string
+			if db.QueryRow("SELECT node_id FROM proposals WHERE id = ?", req.EntityID).Scan(&proposalNodeID) == nil &&
+				canReadGovernanceRecord(db, r, proposalNodeID) {
+				exists = 1
+			}
 		}
 		if roomNodeID != "" && inRoom(db, user, roomNodeID) {
 			exists = 1
@@ -96,7 +107,7 @@ func CreateReport(db *database.DB) http.HandlerFunc {
 				ActorID:  user.ID,
 				EntityID: req.EntityID,
 				Title:    "A " + req.EntityType + " on the noticeboard was reported",
-				Body:     req.Reason,
+				Body:     reportReasonText(req.Reason),
 				Link:     weblink.PatchNoticeboardReports(slug),
 			})
 		}
@@ -191,6 +202,11 @@ func ListReports(db *database.DB) http.HandlerFunc {
 			case "reply":
 				db.QueryRow("SELECT body FROM notice_replies WHERE id = ?", rpt.EntityID).Scan(&rpt.TargetName)
 				rpt.TargetName = excerpt(rpt.TargetName, 120)
+			case "proposal":
+				var slug string
+				if db.QueryRow("SELECT p.title, n.slug FROM proposals p JOIN nodes n ON n.id = p.node_id WHERE p.id = ?", rpt.EntityID).Scan(&rpt.TargetName, &slug) == nil {
+					rpt.TargetLink = weblink.Proposal(slug, rpt.EntityID)
+				}
 			}
 
 			reports = append(reports, rpt)
@@ -262,6 +278,7 @@ var reportStatuses = []string{"pending", "reviewed", "resolved", "dismissed"}
 // value dropped from this list is an admin button that stops working.
 var reportActions = []string{
 	"dismiss", "warn", "remove_content", "reset_appearance", "suspend_user", "remove_image",
+	"label", "label_image",
 }
 
 // UpdateReport handles PATCH /api/v1/admin/reports/{id}.
@@ -408,6 +425,25 @@ func UpdateReport(db *database.DB) http.HandlerFunc {
 						rpt.EntityID,
 					)
 					auth.LogAuditEvent(db, user.ID, "admin.node_update", "node", rpt.EntityID, `{"action":"reset_appearance"}`, clientIP(r))
+				}
+
+			case "label", "label_image":
+				// The first remedy for unlabelled AI content
+				// (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md,
+				// decision 7): set the answer to generated. It corrects
+				// rather than punishes, the way reset_appearance does, and
+				// the audit line records who applied it.
+				column := "ai_use"
+				if *req.Action == "label_image" {
+					column = "image_ai"
+				}
+				if table, ok := labelTable(rpt.EntityType, column); ok {
+					if _, err := db.Exec(`UPDATE `+table+` SET `+column+` = 'generated', updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?`, rpt.EntityID); err != nil {
+						http.Error(w, `{"error":"the report was marked, but the label could not be applied"}`, http.StatusInternalServerError)
+						return
+					}
+					auth.LogAuditEventJSON(db, user.ID, "admin.ai_label", rpt.EntityType, rpt.EntityID,
+						map[string]any{"report_id": reportID, "field": column}, clientIP(r))
 				}
 
 			case "remove_image":

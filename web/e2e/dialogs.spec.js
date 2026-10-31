@@ -36,20 +36,22 @@ test.describe('Dialogs on native <dialog>', () => {
     await expect(page.locator('dialog.template-drawer')).toBeVisible();
   });
 
-  test('the notifications drawer closes on Escape and hands focus to the bell', async ({ page }) => {
+  // Not a <dialog> any more: the bell opens a dropdown under it, which is
+  // not modal, so the page behind it stays usable. It still has to close
+  // on Escape, hand focus back, and open again.
+  test('the notifications dropdown closes on Escape and hands focus to the bell', async ({ page }) => {
     await goto(page, '/');
     const bell = page.locator('.bar-bell .bell-btn');
     await bell.click();
-    const panel = page.locator('dialog.sidepanel');
-    await expect(panel).toBeVisible();
-    expect(await panel.evaluate((d) => d.matches(':modal'))).toBe(true);
+    const dropdown = page.locator('.notif-dropdown');
+    await expect(dropdown).toBeVisible();
 
     await page.keyboard.press('Escape');
-    await expect(panel).not.toBeVisible();
+    await expect(dropdown).toHaveCount(0);
     await expect(bell).toBeFocused();
 
     await bell.click();
-    await expect(panel).toBeVisible();
+    await expect(dropdown).toBeVisible();
   });
 
   test('a modal is centred on the screen, and closes on Escape', async ({ page }) => {
