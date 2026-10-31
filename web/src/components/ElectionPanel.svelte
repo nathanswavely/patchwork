@@ -380,7 +380,7 @@
       <div class="abstain-row">
         {#if iAbstained}
           <p class="ballot-in small">
-            Select to abstain. Selecting a name and saving undoes this.
+            You abstained. Selecting a name and saving undoes this.
           </p>
         {:else}
           <button class="lt-btn-link small" onclick={abstain} disabled={busy}>

@@ -54,11 +54,11 @@ export const VOTING_PERIOD_OPTIONS = [
 // allowed for that.
 export const SUCCESSION_OPTIONS = [
   { value: 'longest_tenure', label: 'Longest-tenured members step in',
-    hint: 'The longest-standing members with recent activity become interim admins. If there\'s no one with activity, the seat will remain vacant' },
+    hint: 'The longest-standing members with recent activity become interim admins. If there\'s no one with activity, the seat will remain vacant.' },
   { value: 'nomination', label: 'Nomination',
-    hint: 'Admins name their successors. If none remain the longest-standing members with recent activity step in.' },
+    hint: 'Admins name their successors. If none remain, the longest-standing members with recent activity step in.' },
   { value: 'election', label: 'Election',
-    hint: 'Members elect the next admins. Until then, the longest-standing members with recent activity step in, and there are none, the seats stay empty until the election.' },
+    hint: 'Members elect the next admins. Until then, the longest-standing members with recent activity step in, and if there are none, the seats stay empty until the election.' },
   { value: 'instance_admin', label: 'Instance admin intervenes',
     hint: 'An instance admin is notified and decides who runs the patch.' },
   { value: 'freeze', label: 'Patch freezes',

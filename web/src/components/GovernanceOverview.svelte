@@ -172,7 +172,7 @@
       // and this one cannot.
       if (vacantSeats.every((s) => s.fill === 'contest_fills')) return '';
       if (isPatchAdmin) {
-        return 'You can nominate someone for a vacant seat. Members ratify it, and the appointee will out that seat’s term.';
+        return 'You can nominate someone for a vacant seat. Members ratify it, and the appointee will serve out that seat’s term.';
       }
       // A follower is not eligible to be nominated \u2014 a nominee must be an
       // active member \u2014 so "ask one to nominate you" would send them at a
