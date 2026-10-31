@@ -88,7 +88,7 @@ describe('GovernanceOverview — what you can do about it today', () => {
 
   it('answers the reader in the second person, by role', () => {
     expect(src).toMatch(/let councilAction = \$derived\.by\(\(\) => \{/);
-    expect(src).toMatch(/You can nominate a member for a vacant seat today\./);
+    expect(src).toMatch(/You can nominate someone for a vacant seat\./);
     expect(src).toMatch(/Only an admin can put a name forward for a vacant seat\. Ask one to nominate you\./);
   });
 

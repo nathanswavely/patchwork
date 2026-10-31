@@ -15,6 +15,14 @@
   let isAdmin = $derived(patch.value.isAdmin);
   let membershipRole = $derived(patch.value.membershipRole);
 
+  // What the door leads to (docs/adr/041, docs/adr/092): on an
+  // admin-decides patch this admin's edit is a direct change, born applied,
+  // and a direct change never says propose. The same derivation the
+  // amendment editor behind it makes, so the door and the page agree.
+  let directChange = $derived(
+    membershipRole === 'admin' && patch.value.node?.governance_config?.decision_method === 'admin'
+  );
+
   let docId = $derived(getParams().id || '');
   let doc = $state(null);
   let loading = $state(true);
@@ -88,7 +96,7 @@
                 class="lt-btn lt-btn-primary"
                 onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/docs/${doc.id}/propose`); }}
               >
-                Propose change
+                {directChange ? 'Edit' : 'Propose change'}
               </a>
             {/if}
           </div>

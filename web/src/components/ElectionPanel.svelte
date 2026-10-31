@@ -380,16 +380,14 @@
       <div class="abstain-row">
         {#if iAbstained}
           <p class="ballot-in small">
-            You are counted as taking part and approving nobody. Ticking a name
-            and saving replaces that.
+            You abstained. Selecting a name and saving undoes this.
           </p>
         {:else}
           <button class="lt-btn-link small" onclick={abstain} disabled={busy}>
             {busy ? 'Saving…' : 'Take part without approving anyone'}
           </button>
           <p class="lt-muted small">
-            Counts toward the turnout this election needs, the way an abstention
-            counts on an ordinary proposal.
+            This election may need a certain turnout, so abstention does impact the result.
           </p>
         {/if}
       </div>

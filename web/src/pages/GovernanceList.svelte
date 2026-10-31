@@ -14,6 +14,14 @@
   let isAdmin = $derived(patch.value.isAdmin);
   let isUnclaimed = $derived(patch.value.isUnclaimed);
   let membershipRole = $derived(patch.value.membershipRole);
+
+  // What the door leads to (docs/adr/041, docs/adr/092): on an
+  // admin-decides patch this admin's edit is a direct change, born applied,
+  // and a direct change never says propose. The same derivation the
+  // amendment editor behind it makes, so the door and the page agree.
+  let directChange = $derived(
+    membershipRole === 'admin' && patch.value.node?.governance_config?.decision_method === 'admin'
+  );
   // `follower_permissions.charters` is deliberately not read on this page.
   // It grants a follower this patch's *members-only* documents
   // (docs/adr/036); it never withholds what the patch published. This page
@@ -197,7 +205,7 @@
                     class="lt-btn lt-btn-secondary lt-btn-sm"
                     onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/docs/${doc.id}/propose`); }}
                   >
-                    Propose change
+                    {directChange ? 'Edit' : 'Propose change'}
                   </a>
                 {/if}
               </div>
