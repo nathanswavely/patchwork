@@ -159,6 +159,7 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 						NodeName: nodeNameN,
 						ActorID:  user.ID,
 						Title:    "New member joined " + nodeNameN,
+						Body:     personName(user) + " joined.",
 						Link:     weblink.PatchMembers(nodeSlugN),
 					})
 
@@ -213,6 +214,7 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 						NodeName: nodeNameN,
 						ActorID:  user.ID,
 						Title:    "New member joined " + nodeNameN,
+						Body:     personName(user) + " joined.",
 						Link:     weblink.PatchMembers(nodeSlugN),
 					})
 				} else if newStatus == "pending" {
@@ -223,7 +225,8 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 						NodeName: nodeNameN,
 						ActorID:  user.ID,
 						Title:    "Membership request for " + nodeNameN,
-						Link:     weblink.PatchMembersPending(nodeSlugN),
+						Body:     personName(user) + " asked to join.",
+						Link:     weblink.PatchJoinRequests(nodeSlugN),
 					})
 				}
 			}
@@ -277,6 +280,7 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 					NodeName: nodeNameN,
 					ActorID:  user.ID,
 					Title:    "New member joined " + nodeNameN,
+					Body:     personName(user) + " joined.",
 					Link:     weblink.PatchMembers(nodeSlugN),
 				})
 			} else if newStatus == "pending" {
@@ -287,7 +291,8 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 					NodeName: nodeNameN,
 					ActorID:  user.ID,
 					Title:    "Membership request for " + nodeNameN,
-					Link:     weblink.PatchMembersPending(nodeSlugN),
+					Body:     personName(user) + " asked to join.",
+					Link:     weblink.PatchJoinRequests(nodeSlugN),
 				})
 			}
 		}
@@ -1182,6 +1187,7 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 			}
 			auth.LogAuditEventJSON(db, user.ID, "membership.role_change", "membership", memID,
 				roleChangePayload, clientIP(r))
+			notifyRoleChanged(db, nodeID, slug, user, targetUserID, currentRole, newRole, restoringEmptyCouncil)
 		}
 
 		// Return the updated membership.
@@ -1198,4 +1204,60 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 			"joined_at": joinedAt,
 		})
 	}
+}
+
+// personName is how a notification names the person who did something: their
+// display name, or their username where they have none. The text is stored on
+// the row, as "Kofi Mensah voted approve" already is.
+func personName(u *model.User) string {
+	if u.DisplayName != "" {
+		return u.DisplayName
+	}
+	return u.Username
+}
+
+// notifyRoleChanged tells a person their role here was changed by hand (F-041).
+//
+// Every other membership transition already told the person it happened to:
+// approval, a ban, an invitation, and the inactivity sweep's own promotions.
+// A role set from the members page told nobody, so three people became admins
+// of a co-op without a word, and one spent a whole sitting trying to find out
+// what an admin is while already being one. A promotion therefore says what
+// the role lets them do, which is the one thing the page they land on does not.
+//
+// An instance admin putting somebody back on an empty council is not named:
+// the instance's admin roster is not published (docs/adr/023), and the person
+// needs to know why it happened rather than who did it.
+func notifyRoleChanged(db *database.DB, nodeID, slug string, actor *model.User, targetUserID, oldRole, newRole string, restoringEmptyCouncil bool) {
+	if oldRole == newRole || actor.ID == targetUserID {
+		return
+	}
+	var name string
+	if err := db.QueryRow("SELECT name FROM nodes WHERE id = ?", nodeID).Scan(&name); err != nil {
+		return
+	}
+	who := personName(actor)
+	var title, body string
+	switch {
+	case newRole == "admin" && restoringEmptyCouncil:
+		title = "You are now an admin of " + name
+		body = "This patch had no admins, so an instance admin put you back. Admins can change this patch's settings and manage its members."
+	case newRole == "admin":
+		title = "You are now an admin of " + name
+		body = who + " made you an admin. Admins can change this patch's settings and manage its members."
+	case oldRole == "admin":
+		title = "You are no longer an admin of " + name
+		body = who + " changed your role to " + newRole + "."
+	default:
+		title = "Your role in " + name + " changed"
+		body = who + " changed your role from " + oldRole + " to " + newRole + "."
+	}
+	notify(notifications.Event{
+		Type: notifications.MembershipRoleChanged, NodeID: nodeID, NodeSlug: slug, NodeName: name,
+		ActorID:  actor.ID,
+		TargetID: targetUserID,
+		Title:    title,
+		Body:     body,
+		Link:     weblink.Patch(slug),
+	})
 }

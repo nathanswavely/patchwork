@@ -57,18 +57,46 @@ describe('a person sends, after seeing it (decisions 1, 2, 5)', () => {
 
   // Decision 4: the probe picks, the admin may overrule.
   it('lets the admin pick a different calendar paragraph', () => {
-    expect(intro).toContain('onchange={() => runPreview(situation)}');
+    expect(intro).toContain('onchange={() => runPreview({ situation, channel })}');
     expect(intro).toContain('Picked because {preview.classification?.reason}.');
   });
 
   it('asks before a second send to the same address', () => {
-    expect(intro).toContain("if (resend && !confirm('An intro already went to this address. Send another one?')) return;");
+    expect(intro).toContain("if (resend && !confirm('An intro already went there. Send another one?')) return;");
   });
 
   // Decision 8: no relay, still the product.
   it('offers copy-and-record where there is no relay', () => {
     expect(intro).toContain("onclick={() => send('copied')}");
     expect(intro).toContain('This quilt has no email relay');
+  });
+});
+
+// Amended 2026-10-19: a contact is a place to reach someone. A link to
+// message them on sits beside the address; a dm is copied out, carries the
+// ordinary claim page, and email is the default when both are on file.
+describe('a link to message them on', () => {
+  it("offers the patch's own links as places to message it", () => {
+    expect(intro).toContain("onclick={() => useLink(l.url)}");
+    expect(intro).toContain('bind:value={url}');
+  });
+
+  it('lets the admin switch channel only when both are on file, and re-renders', () => {
+    expect(intro).toContain('{#if bothChannels}');
+    expect(intro).toContain("runPreview({ channel: 'dm', situation })");
+  });
+
+  it('never relays a dm: copy, send by hand, record', () => {
+    expect(intro).toContain("{#if !isDM && state.smtp}");
+    expect(intro).toContain("Copy it, send it on");
+  });
+
+  it('says the dm carries the ordinary claim page, not the one-click link', () => {
+    expect(intro).toContain('carries the ordinary claim page rather than a one-click link');
+  });
+
+  it('has a dm opener on the template tab', () => {
+    expect(outreach).toContain('bind:value={draft.dm_opener}');
   });
 });
 

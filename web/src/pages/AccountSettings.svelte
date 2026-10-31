@@ -2,6 +2,7 @@
   import { api } from '../lib/api.js';
   import { getUser, checkAuth } from '../stores/auth.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
+  import { selectWhen } from '../lib/selectText.js';
   import { navigate } from '../stores/router.svelte.js';
   import { withStepUp, stepUpStatus, PasskeyRequiredError } from '../lib/stepUp.js';
   import { ltFold } from '../lib/lt.js';
@@ -13,6 +14,11 @@
   // Personal discovery filter (docs/adr/037).
   let hideAmendedLinings = $state(false);
   let hideAmendedSaving = $state(false);
+  // Declared AI work (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md,
+  // decision 6): each person may hide it from their own discovery. There is
+  // no quilt-wide equivalent.
+  let hideAiWork = $state(false);
+  let hideAiWorkSaving = $state(false);
   let bio = $state('');
   let links = $state([]);
   let saving = $state(false);
@@ -47,7 +53,10 @@
 
   $effect(() => {
     api('auth/me')
-      .then((me) => { hideAmendedLinings = !!me.hide_amended_linings; })
+      .then((me) => {
+        hideAmendedLinings = !!me.hide_amended_linings;
+        hideAiWork = !!me.hide_ai_work;
+      })
       .catch(() => {});
   });
 
@@ -60,6 +69,18 @@
       showToast(e.message || 'Failed to save', 'error');
     } finally {
       hideAmendedSaving = false;
+    }
+  }
+
+  async function saveHideAiWork(value) {
+    hideAiWorkSaving = true;
+    try {
+      await api('auth/me', { method: 'PATCH', body: { hide_ai_work: value } });
+      hideAiWork = value;
+    } catch (e) {
+      showToast(e.message || 'Failed to save', 'error');
+    } finally {
+      hideAiWorkSaving = false;
     }
   }
 
@@ -274,6 +295,7 @@
     try {
       const res = await api('users/me/feed-secret', { method: 'POST' });
       feedUrl = res.url;
+      feedCopyFailed = null;
       feedEnabled = true;
     } catch (e) {
       showToast(e.message || 'Failed to create feed', 'error');
@@ -287,6 +309,7 @@
       await api('users/me/feed-secret', { method: 'DELETE' });
       feedEnabled = false;
       feedUrl = '';
+      feedCopyFailed = null;
       showToast('Personal feed disabled', 'info');
     } catch (e) {
       showToast(e.message || 'Failed to disable feed', 'error');
@@ -294,12 +317,19 @@
     feedBusy = false;
   }
 
+  // Set when the clipboard refuses: the address is then shown whole and
+  // selected, to copy by hand (F-031). It is shown only this once, so a
+  // clipped one would be lost. A fresh object per failure reselects it.
+  let feedCopyFailed = $state(null);
+
   async function copyFeedUrl() {
     try {
       await navigator.clipboard.writeText(feedUrl);
+      feedCopyFailed = null;
       showToast('Copied');
     } catch {
-      showToast('Copy failed. Select the address instead.', 'error');
+      feedCopyFailed = { value: feedUrl };
+      showToast('Copy failed. The address is selected for you to copy.', 'error');
     }
   }
 
@@ -641,6 +671,20 @@
         Keeps patches that changed the shared community standards out of your
         quilt, search, map, and event feed. Direct links still work.
       </p>
+      <label class="lt-check toggle-row">
+        <input
+          type="checkbox"
+          checked={hideAiWork}
+          disabled={hideAiWorkSaving}
+          onchange={(e) => saveHideAiWork(e.target.checked)}
+        />
+        <span>Hide patches whose work relies on AI</span>
+      </label>
+      <p class="lt-muted profile-hint">
+        Keeps patches whose admins say their work relies heavily on AI out of
+        your quilt, search, map, and event feed. My Quilt still shows patches
+        you follow. Direct links still work.
+      </p>
     </section>
 
     <section class="lt-section">
@@ -651,7 +695,7 @@
       </p>
       {#if feedUrl}
         <div class="feed-url-row">
-          <code class="feed-url">{feedUrl}</code>
+          <code class="feed-url" class:whole={feedCopyFailed} use:selectWhen={feedCopyFailed}>{feedUrl}</code>
           <button class="lt-btn lt-btn-secondary" onclick={copyFeedUrl}>Copy</button>
         </div>
         <p class="lt-muted profile-hint">
@@ -946,6 +990,13 @@
     white-space: nowrap;
     flex: 1;
     min-width: 0;
+  }
+
+  /* After a refused copy: the whole address, wrapped, for selecting by hand. */
+  .feed-url.whole {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    user-select: all;
   }
 
   form {

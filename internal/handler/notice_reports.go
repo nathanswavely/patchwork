@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
@@ -113,11 +114,13 @@ func ListPatchReports(db *database.DB) http.HandlerFunc {
 	}
 }
 
-// UpdatePatchReport handles PATCH /api/v1/nodes/{slug}/reports/{id}. Three
+// UpdatePatchReport handles PATCH /api/v1/nodes/{slug}/reports/{id}. Four
 // actions, and they are the moderation kit (docs/adr/081, decision 2):
 // `dismiss` leaves the thing up; `remove` takes it down (hard delete,
 // audited); `close_replies` switches replies off on the notice — the
-// report's own, or the one the reported reply sits under. Anything else is
+// report's own, or the one the reported reply sits under; `label` marks a
+// notice as made with AI, the first remedy for unlabelled AI content
+// (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md). Anything else is
 // a forum tool and is refused.
 func UpdatePatchReport(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -174,8 +177,21 @@ func UpdatePatchReport(db *database.DB) http.HandlerFunc {
 			db.Exec("UPDATE notices SET replies_open = 0 WHERE id = ? AND node_id = ?", noticeID, nodeID)
 			auth.LogAuditEventJSON(db, user.ID, "notice.replies", "notice", noticeID,
 				map[string]any{"replies_open": false, "report_id": reportID}, clientIP(r))
+		case "label":
+			// A reply carries no answer to correct: replies are covered by
+			// the written policy and asked nothing.
+			if rpt.EntityType != "notice" {
+				http.Error(w, `{"error":"only a notice can be labelled"}`, http.StatusBadRequest)
+				return
+			}
+			if _, err := db.Exec("UPDATE notices SET ai_use = 'generated', updated_at = ? WHERE id = ? AND node_id = ?", clock.Now(), rpt.EntityID, nodeID); err != nil {
+				http.Error(w, `{"error":"failed to label notice"}`, http.StatusInternalServerError)
+				return
+			}
+			auth.LogAuditEventJSON(db, user.ID, "notice.ai_label", "notice", rpt.EntityID,
+				map[string]any{"node_id": nodeID, "report_id": reportID}, clientIP(r))
 		default:
-			http.Error(w, `{"error":"action must be dismiss, remove, or close_replies"}`, http.StatusBadRequest)
+			http.Error(w, `{"error":"action must be dismiss, remove, close_replies, or label"}`, http.StatusBadRequest)
 			return
 		}
 

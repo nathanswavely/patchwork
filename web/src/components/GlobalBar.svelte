@@ -21,10 +21,7 @@
   import DisplayMenu from './DisplayMenu.svelte';
   import { ltMenu } from '../lib/lt.js';
   import NotificationBell from './NotificationBell.svelte';
-  import SidePanel from './SidePanel.svelte';
-  import NotifIcon from './NotifIcon.svelte';
-  import { api } from '../lib/api.js';
-  import { clearUnread, decrementUnread } from '../stores/notifications.svelte.js';
+  import NotificationDropdown from './NotificationDropdown.svelte';
 
   // shelfBell: the discovery shell shows notifications on its mobile bottom
   // shelf, so the bar's bell hides under 768px there. Workspace/admin shells
@@ -38,61 +35,21 @@
   let newMenuEl = $state(null);
   let displayMenuOpen = $state(false);
 
-  // Notification panel state
-  let notifPanelOpen = $state(false);
-  let notifLoading = $state(false);
-  let notifications = $state([]);
+  // The bell's dropdown. A desktop opens it under the bell; a phone goes
+  // to the notifications page instead, as it always has.
+  let notifMenuOpen = $state(false);
 
   function handleBellOpen() {
-    // On mobile, notifications are a page, not an overlay.
     if (isHandheld()) {
       navigate('/notifications');
       return;
     }
-    openNotifPanel();
+    notifMenuOpen = !notifMenuOpen;
   }
 
-  async function openNotifPanel() {
-    notifPanelOpen = true;
-    notifLoading = true;
-    try {
-      const data = await api('notifications?limit=20');
-      notifications = data.items || [];
-    } catch {
-      notifications = [];
-    }
-    notifLoading = false;
-  }
-
-  async function markAllRead() {
-    try {
-      await api('notifications/read-all', { method: 'POST' });
-      notifications = notifications.map(n => ({ ...n, read_at: new Date().toISOString() }));
-      clearUnread();
-    } catch {}
-  }
-
-  async function clickNotification(notif) {
-    if (!notif.read_at) {
-      try {
-        await api(`notifications/${notif.id}/read`, { method: 'PATCH' });
-        notif.read_at = new Date().toISOString();
-        decrementUnread();
-      } catch {}
-    }
-    notifPanelOpen = false;
-    if (notif.link) navigate(notif.link);
-  }
-
-  function timeAgo(iso) {
-    if (!iso) return '';
-    const diff = Date.now() - new Date(iso).getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 1) return 'just now';
-    if (mins < 60) return `${mins}m ago`;
-    const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return `${hrs}h ago`;
-    return `${Math.floor(hrs / 24)}d ago`;
+  function closeNotifMenu({ refocus = false } = {}) {
+    notifMenuOpen = false;
+    if (refocus) document.querySelector('.notif-menu-container .bell-btn')?.focus();
   }
 
   // Close menus on navigation
@@ -101,6 +58,7 @@
     void path;
     userMenuOpen = false;
     displayMenuOpen = false;
+    notifMenuOpen = false;
   });
 
   function handleNav(e, href) {
@@ -118,10 +76,17 @@
     if (userMenuOpen && !e.target.closest('.user-menu-container')) {
       userMenuOpen = false;
     }
+    if (notifMenuOpen && !e.target.closest('.notif-menu-container')) {
+      notifMenuOpen = false;
+    }
+  }
+
+  function handleWindowKeydown(e) {
+    if (e.key === 'Escape' && notifMenuOpen) closeNotifMenu({ refocus: true });
   }
 </script>
 
-<svelte:window onclick={handleWindowClick} />
+<svelte:window onclick={handleWindowClick} onkeydown={handleWindowKeydown} />
 
 <header class="top-bar" class:quilt-mode={glass} class:bordered class:patch-context={patchContext}>
   {#if leading}
@@ -148,8 +113,13 @@
           <a href="/events/new" class="lt-menu-item" onclick={(e) => handleNav(e, '/events/new')}>New event</a>
         </div>
       </div>
-      <div class="bar-bell" class:shelf-bell={shelfBell}>
-        <NotificationBell onOpen={handleBellOpen} />
+      <div class="notif-menu-container">
+        <div class="bar-bell" class:shelf-bell={shelfBell}>
+          <NotificationBell onOpen={handleBellOpen} expanded={isHandheld() ? undefined : notifMenuOpen} controls="notif-dropdown" />
+        </div>
+        {#if notifMenuOpen}
+          <NotificationDropdown id="notif-dropdown" onClose={closeNotifMenu} />
+        {/if}
       </div>
       <div class="user-menu-container">
         <button
@@ -217,47 +187,6 @@
     {/if}
   </div>
 </header>
-
-<!-- Notification panel -->
-<SidePanel open={notifPanelOpen} onClose={() => { notifPanelOpen = false; }} title="Notifications" side="left">
-  {#snippet children()}
-    {#if notifications.some(n => !n.read_at)}
-      <div class="notif-actions">
-        <button class="notif-mark-all" onclick={markAllRead}>Mark all read</button>
-      </div>
-    {/if}
-
-    {#if notifLoading}
-      <div class="notif-empty">Loading...</div>
-    {:else if notifications.length === 0}
-      <div class="notif-empty">You're all caught up</div>
-    {:else}
-      <div class="notif-list">
-        {#each notifications as notif (notif.id)}
-          <button
-            class="notif-item"
-            class:unread={!notif.read_at}
-            onclick={() => clickNotification(notif)}
-          >
-            <span class="notif-icon"><NotifIcon type={notif.type} /></span>
-            <div class="notif-content">
-              <div class="notif-title">{notif.title}</div>
-              {#if notif.body}
-                <div class="notif-body">{notif.body}</div>
-              {/if}
-              <div class="notif-time">{timeAgo(notif.created_at)}</div>
-            </div>
-          </button>
-        {/each}
-      </div>
-      <a
-        href="/notifications"
-        class="notif-view-all"
-        onclick={(e) => { e.preventDefault(); notifPanelOpen = false; navigate('/notifications'); }}
-      >View all notifications</a>
-    {/if}
-  {/snippet}
-</SidePanel>
 
 <style>
   .top-bar {
@@ -494,110 +423,8 @@
     color: var(--color-accent);
   }
 
-  /* ================================================================
-     NOTIFICATION PANEL CONTENT
-     ================================================================ */
-  .notif-actions {
-    display: flex;
-    justify-content: flex-end;
-    padding: 8px 20px;
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .notif-mark-all {
-    border: none;
-    background: none;
-    color: var(--color-primary);
-    font-size: 0.8rem;
-    cursor: pointer;
-    padding: 0;
-  }
-
-  .notif-mark-all:hover {
-    text-decoration: underline;
-  }
-
-  .notif-empty {
-    padding: 2rem;
-    text-align: center;
-    font-size: 0.88rem;
-    color: var(--color-text-muted);
-  }
-
-  .notif-list {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .notif-item {
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-    width: 100%;
-    padding: 12px 20px;
-    text-align: left;
-    border: none;
-    border-bottom: 1px solid var(--color-border);
-    background: var(--color-surface);
-    cursor: pointer;
-    font-size: 0.88rem;
-    transition: background 100ms ease;
-  }
-
-  .notif-item:hover {
-    background: var(--color-overlay);
-  }
-
-  .notif-item.unread {
-    background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
-  }
-
-  .notif-item.unread:hover {
-    background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
-  }
-
-  .notif-icon {
-    display: flex;
-    flex-shrink: 0;
-    margin-top: 0.1rem;
-    color: var(--color-primary);
-  }
-
-  .notif-content {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .notif-title {
-    font-weight: 600;
-    margin-bottom: 2px;
-    color: var(--color-text);
-  }
-
-  .notif-body {
-    color: var(--color-text-muted);
-    font-size: 0.82rem;
-    line-height: 1.4;
-    margin-bottom: 4px;
-  }
-
-  .notif-time {
-    color: var(--color-text-muted);
-    font-size: 0.72rem;
-  }
-
-  .notif-view-all {
-    display: block;
-    text-align: center;
-    padding: 12px;
-    font-size: 0.85rem;
-    color: var(--color-primary);
-    text-decoration: none;
-    border-top: 1px solid var(--color-border);
-  }
-
-  .notif-view-all:hover {
-    background: var(--color-overlay);
+  .notif-menu-container {
+    position: relative;
   }
 
   /* The bar's buttons and every menu row are at least --lt-target tall,

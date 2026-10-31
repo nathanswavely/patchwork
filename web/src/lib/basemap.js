@@ -26,6 +26,9 @@ const ATTRIBUTION =
 // its budget — a blank map is the worst answer, so fall back to plain OSM
 // raster and approximate the two styles with a filter.
 const RASTER_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+// The deepest level OSM renders. Past it the server answers 400, so Leaflet
+// stretches these tiles instead of asking for ones that do not exist.
+const RASTER_NATIVE_MAX_ZOOM = 19;
 const RASTER_ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 const RASTER_FILTERS = {
@@ -41,8 +44,11 @@ const RASTER_FILTERS = {
 // fallback marks its container and the surface stands its own tint down.
 export const RASTER_FALLBACK_CLASS = 'basemap-raster';
 
-// How long the GL map gets to draw its first frame before we give up on it.
+// How long the GL map gets to draw its first tile before we give up on it,
+// in time the page spent drawing (see `tick` in addBasemap), and the most a
+// single frame adds to that.
 const GL_LOAD_TIMEOUT_MS = 12000;
+const MAX_FRAME_CREDIT_MS = 100;
 
 // The zoom ceiling the map is given; the vector styles overzoom past their
 // native level, so this is a UI choice rather than a data limit.
@@ -107,6 +113,7 @@ function addRasterLayer(map, theme) {
   const layer = L.tileLayer(RASTER_URL, {
     attribution: RASTER_ATTRIBUTION,
     maxZoom: BASEMAP_MAX_ZOOM,
+    maxNativeZoom: RASTER_NATIVE_MAX_ZOOM,
   }).addTo(map);
   map.getContainer()?.classList.add(RASTER_FALLBACK_CLASS);
   const paint = (t) => {
@@ -152,7 +159,7 @@ export async function addBasemap(map, theme = 'light') {
   const gl = glLayer.getMaplibreMap?.();
   const fallBack = () => {
     if (raster || isRemoved(map)) return;
-    clearTimeout(timer);
+    cancelAnimationFrame(frame);
     glLayer.remove();
     glLayer = null;
     raster = addRasterLayer(map, current);
@@ -168,23 +175,33 @@ export async function addBasemap(map, theme = 'light') {
   // A tile reaching the map is the one thing that cannot be true unless the
   // whole pipeline, worker included, is working.
   let painted = false;
-  // A hidden tab throttles the animation frames MapLibre draws in, so a map
-  // in the background hasn't failed — it just hasn't been asked to paint.
-  // Give it another window once someone is looking.
-  const check = () => {
-    if (painted) return;
-    if (document.hidden) {
-      timer = setTimeout(check, GL_LOAD_TIMEOUT_MS);
+  // The window is counted in time the page spent drawing, not time on the
+  // clock. MapLibre asks for tiles from inside its animation frames, so a
+  // page that is given no frames has not let the map try. A check for a
+  // hidden tab covered the background tab and missed the rest: a webview
+  // that is off screen while reporting itself visible ran the clock out with
+  // no frame drawn, and a working map fell back. Counting frames covers both,
+  // and a hidden tab draws none. One frame is worth at most
+  // MAX_FRAME_CREDIT_MS, so a page throttled to a frame a second gets ten
+  // times as long by the clock rather than a single frame's chance.
+  let drawn = 0;
+  let last = null;
+  const tick = (now) => {
+    if (painted || raster || isRemoved(map)) return;
+    if (last !== null) drawn += Math.min(now - last, MAX_FRAME_CREDIT_MS);
+    last = now;
+    if (drawn >= GL_LOAD_TIMEOUT_MS) {
+      fallBack();
       return;
     }
-    fallBack();
+    frame = requestAnimationFrame(tick);
   };
-  let timer = setTimeout(check, GL_LOAD_TIMEOUT_MS);
+  let frame = requestAnimationFrame(tick);
   if (gl) {
     const onTile = (e) => {
       if (!e?.tile) return; // metadata for a source, not a tile of one
       painted = true;
-      clearTimeout(timer);
+      cancelAnimationFrame(frame);
       gl.off('sourcedata', onTile);
     };
     gl.on('sourcedata', onTile);

@@ -37,7 +37,7 @@ func ProposalToObject(p model.Proposal, domain string, attributeAuthor bool) map
 		"type":             "gv:Proposal",
 		"id":               APID(domain, "proposals", p.ID),
 		"name":             p.Title,
-		"content":          p.Body,
+		"content":          withAINote(p.Body, p.AIUse, nil),
 		"gv:proposalType":  p.ProposalType,
 		"gv:status":        p.Status,
 		"gv:durationHours": p.DurationHours,

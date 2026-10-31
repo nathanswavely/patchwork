@@ -36,6 +36,9 @@
   // suggester keep its calendar unreviewed is the second.
   let grantTrustInputs = $state({});
   let attachFeedInputs = $state({});
+  // Whether the place is a nonprofit (#448): starts as the suggester's
+  // answer, and the reviewer may correct it the way they correct the tags.
+  let nonprofitInputs = $state({});
   // The rejection note is shown to the suggester now, not only written to
   // the audit log (decision 8).
   let noteInputs = $state({});
@@ -54,18 +57,21 @@
       const trust = {};
       const feeds = {};
       const notes = {};
+      const nonprofits = {};
       for (const sub of submissions) {
         inputs[sub.id] = sub.suggested_verification_domain || '';
         tags[sub.id] = sub.tags || [];
         trust[sub.id] = true;
         feeds[sub.id] = true;
         notes[sub.id] = '';
+        nonprofits[sub.id] = sub.nonprofit === true;
       }
       domainInputs = inputs;
       tagInputs = tags;
       grantTrustInputs = trust;
       attachFeedInputs = feeds;
       noteInputs = notes;
+      nonprofitInputs = nonprofits;
     } catch {
       submissions = [];
     } finally {
@@ -82,6 +88,7 @@
         body.tags = tagInputs[id] || [];
         body.grant_trust = grantTrustInputs[id] !== false;
         body.attach_feed = Boolean(sub.feed_url) && attachFeedInputs[id] !== false;
+        body.nonprofit = nonprofitInputs[id] === true;
       } else {
         body.note = (noteInputs[id] || '').trim();
       }
@@ -136,6 +143,13 @@
               <TagPicker bind:selected={tagInputs[sub.id]} />
             {/if}
             <span class="lt-hint">The submitter's picks.</span>
+          </div>
+          <div class="sub-nonprofit">
+            <label class="lt-check">
+              <input type="checkbox" bind:checked={nonprofitInputs[sub.id]} />
+              Nonprofit organisation
+            </label>
+            <span class="lt-hint">{sub.nonprofit ? 'The submitter says it is one.' : "The submitter didn't say it is one."}</span>
           </div>
           <div class="sub-meta lt-muted">
             Submitted by {sub.submitter_display_name || sub.submitter_username || 'unknown'}
@@ -228,7 +242,8 @@
     margin-bottom: 0.5rem;
   }
 
-  .sub-tags {
+  .sub-tags,
+  .sub-nonprofit {
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
@@ -333,6 +348,7 @@
     }
 
     .submission-card > .sub-tags,
+    .submission-card > .sub-nonprofit,
     .submission-card > .sub-domain,
     .submission-card > .sub-grants {
       order: 2;

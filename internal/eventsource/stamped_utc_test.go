@@ -130,8 +130,16 @@ func TestSync_CorrectsAPublisherThatStampsLocalAsUTC(t *testing.T) {
 	if afterID != id {
 		t.Errorf("event was replaced (%s → %s), not corrected in place", id, afterID)
 	}
+	// The offset at the wall clock the feed stamped, read in the venue's
+	// zone, which is what the correction applies. Not the offset at the
+	// stamped instant: the two differ for the few hours either side of a
+	// clock change, and this start is two days out, so the test failed on
+	// every run in the window two days before one (2026-10-30, 02:00 to
+	// 06:00 UTC, blocked the v0.34.0 image).
 	ny, _ := time.LoadLocation("America/New_York")
-	wantShift := mustParse(t, before).In(ny)
+	stamped := mustParse(t, before).UTC()
+	wantShift := time.Date(stamped.Year(), stamped.Month(), stamped.Day(),
+		stamped.Hour(), stamped.Minute(), stamped.Second(), 0, ny)
 	_, off := wantShift.Zone()
 	if gap := mustParse(t, after).Sub(mustParse(t, before)); gap != time.Duration(-off)*time.Second {
 		t.Errorf("moved by %s, want %s (the venue's offset)", gap, time.Duration(-off)*time.Second)

@@ -59,7 +59,7 @@ type noticeItem struct {
 }
 
 var noticeSelect = `SELECT n.id, n.node_id, n.author_id, n.title, n.body, n.image_url, n.image_alt,
-	n.replies_open, n.members_told, n.created_at, n.updated_at,
+	n.replies_open, n.members_told, n.ai_use, n.created_at, n.updated_at,
 	` + usernameExpr("u") + `, ` + displayNameExpr("u") + `,
 	(SELECT COUNT(*) FROM notice_replies r WHERE r.notice_id = n.id)
 	FROM notices n JOIN users u ON u.id = n.author_id`
@@ -67,7 +67,7 @@ var noticeSelect = `SELECT n.id, n.node_id, n.author_id, n.title, n.body, n.imag
 func scanNotice(row interface{ Scan(...interface{}) error }) (noticeItem, error) {
 	var n noticeItem
 	err := row.Scan(&n.ID, &n.NodeID, &n.AuthorID, &n.Title, &n.Body, &n.ImageURL, &n.ImageAlt,
-		&n.RepliesOpen, &n.MembersTold, &n.CreatedAt, &n.UpdatedAt,
+		&n.RepliesOpen, &n.MembersTold, &n.AIUse, &n.CreatedAt, &n.UpdatedAt,
 		&n.AuthorUsername, &n.AuthorDisplayName, &n.ReplyCount)
 	return n, err
 }
@@ -152,6 +152,9 @@ type noticeRequest struct {
 	// TellMembers is the one way a notice reaches the bell (docs/adr/081).
 	// Off unless the author reaches for it; honoured on create only.
 	TellMembers bool `json:"tell_members"`
+	// Whether AI made the notice
+	// (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md).
+	AIUse *string `json:"ai_use"`
 }
 
 func (req *noticeRequest) validate() string {
@@ -194,6 +197,10 @@ func CreateNotice(db *database.DB) http.HandlerFunc {
 			writeJSONError(w, http.StatusBadRequest, msg)
 			return
 		}
+		if msg := checkAIAnswer(db, "ai_use", req.AIUse); msg != "" {
+			writeJSONError(w, http.StatusBadRequest, msg)
+			return
+		}
 
 		repliesOpen := true
 		db.QueryRow("SELECT notice_replies_default FROM nodes WHERE id = ?", nodeID).Scan(&repliesOpen)
@@ -203,9 +210,9 @@ func CreateNotice(db *database.DB) http.HandlerFunc {
 
 		id := auth.NewUUIDv7()
 		now := clock.Now()
-		_, err := db.Exec(`INSERT INTO notices (id, node_id, author_id, title, body, image_url, image_alt, replies_open, members_told, created_at, updated_at)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-			id, nodeID, user.ID, req.Title, req.Body, req.ImageURL, req.ImageAlt, repliesOpen, req.TellMembers, now, now)
+		_, err := db.Exec(`INSERT INTO notices (id, node_id, author_id, title, body, image_url, image_alt, replies_open, members_told, ai_use, created_at, updated_at)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			id, nodeID, user.ID, req.Title, req.Body, req.ImageURL, req.ImageAlt, repliesOpen, req.TellMembers, aiAnswerValue(req.AIUse), now, now)
 		if err != nil {
 			http.Error(w, `{"error":"failed to create notice"}`, http.StatusInternalServerError)
 			return
@@ -278,13 +285,16 @@ func UpdateNotice(db *database.DB) http.HandlerFunc {
 			ImageURL    *string `json:"image_url"`
 			ImageAlt    *string `json:"image_alt"`
 			RepliesOpen *bool   `json:"replies_open"`
+			// Absent keeps the stored answer; "" withdraws it, except
+			// where the quilt requires one.
+			AIUse *string `json:"ai_use"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
 			return
 		}
 
-		editing := req.Title != nil || req.Body != nil || req.ImageURL != nil || req.ImageAlt != nil
+		editing := req.Title != nil || req.Body != nil || req.ImageURL != nil || req.ImageAlt != nil || req.AIUse != nil
 		if editing {
 			if !isAuthor {
 				http.Error(w, `{"error":"only the author can edit a notice"}`, http.StatusForbidden)
@@ -307,8 +317,16 @@ func UpdateNotice(db *database.DB) http.HandlerFunc {
 				writeJSONError(w, http.StatusBadRequest, msg)
 				return
 			}
-			if _, err := db.Exec(`UPDATE notices SET title = ?, body = ?, image_url = ?, image_alt = ?, updated_at = ? WHERE id = ?`,
-				full.Title, full.Body, full.ImageURL, full.ImageAlt, clock.Now(), n.ID); err != nil {
+			aiUse := n.AIUse
+			if req.AIUse != nil {
+				if msg := checkAIAnswer(db, "ai_use", req.AIUse); msg != "" {
+					writeJSONError(w, http.StatusBadRequest, msg)
+					return
+				}
+				aiUse = aiAnswerValue(req.AIUse)
+			}
+			if _, err := db.Exec(`UPDATE notices SET title = ?, body = ?, image_url = ?, image_alt = ?, ai_use = ?, updated_at = ? WHERE id = ?`,
+				full.Title, full.Body, full.ImageURL, full.ImageAlt, aiUse, clock.Now(), n.ID); err != nil {
 				http.Error(w, `{"error":"failed to update notice"}`, http.StatusInternalServerError)
 				return
 			}
@@ -546,11 +564,15 @@ func DeleteReply(db *database.DB) http.HandlerFunc {
 	}
 }
 
-// excerpt trims a body for a notification line.
+// excerpt trims a body for a notification line. Notices, proposals and
+// comments all send one: a notification carrying a whole proposal is the
+// proposal, read in the wrong place. n counts characters, not bytes, so a
+// cut never lands inside a multi-byte one and leaves invalid UTF-8.
 func excerpt(s string, n int) string {
 	s = strings.TrimSpace(s)
-	if len(s) <= n {
+	r := []rune(s)
+	if len(r) <= n {
 		return s
 	}
-	return s[:n] + "…"
+	return strings.TrimSpace(string(r[:n])) + "…"
 }

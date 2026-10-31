@@ -1,29 +1,19 @@
 <script>
-  import NotifIcon from '../components/NotifIcon.svelte';
-  import { formatDay } from '../lib/datetime.js';
+  import NotificationRow from '../components/NotificationRow.svelte';
   import ConfirmAction from '../components/ConfirmAction.svelte';
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
-  import { clearUnread, decrementUnread } from '../stores/notifications.svelte.js';
+  import { clearUnread, decrementUnread, getUnread } from '../stores/notifications.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
 
   let notifications = $state([]);
   let loading = $state(true);
   let nextCursor = $state('');
-  let categoryFilter = $state('');
+  // All or unread, and nothing finer. The type chips this replaced covered
+  // five prefixes, so a reply on a notice, an admin queue, a claim or a
+  // trust answer appeared under All and nowhere else, and most people's list
+  // is short enough to read. The API keeps its category filter.
   let unreadOnly = $state(false);
-
-  const categories = [
-    { value: '', label: 'All' },
-    { value: 'proposals', label: 'Proposals' },
-    { value: 'governance', label: 'Governance' },
-    { value: 'membership', label: 'Membership' },
-    { value: 'events', label: 'Events' },
-    // What a moderator did about you, or about something you reported. The
-    // backend decides which types those are — account.email_changed is not
-    // one of them (internal/handler/notifications.go).
-    { value: 'moderation', label: 'Moderation' },
-  ];
 
   $effect(() => {
     loadNotifications();
@@ -33,7 +23,6 @@
     if (!append) loading = true;
     try {
       let params = '?limit=20';
-      if (categoryFilter) params += `&category=${categoryFilter}`;
       if (unreadOnly) params += '&unread=true';
       if (append && nextCursor) params += `&after=${nextCursor}`;
       const data = await api(`notifications${params}`);
@@ -47,14 +36,10 @@
     }
   }
 
-  function setFilter(cat) {
-    categoryFilter = cat;
-    loadNotifications();
-  }
-
-  function toggleUnread() {
-    unreadOnly = !unreadOnly;
-    loadNotifications();
+  // The effect above reads unreadOnly before its first await, so setting
+  // it is the reload. Calling loadNotifications here as well fetched twice.
+  function setUnreadOnly(value) {
+    unreadOnly = value;
   }
 
   async function markAllRead() {
@@ -99,22 +84,6 @@
     }
     if (notif.link) navigate(notif.link);
   }
-
-  function timeAgo(iso) {
-    if (!iso) return '';
-    const diff = Date.now() - new Date(iso).getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 1) return 'just now';
-    if (mins < 60) return `${mins}m ago`;
-    const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return `${hrs}h ago`;
-    const days = Math.floor(hrs / 24);
-    if (days < 30) return `${days}d ago`;
-    // The same words the rest of the app uses for a date. This column
-    // mixes relative and absolute already; it should not also mix
-    // "Aug 15, 2026" with "8/15/2026".
-    return formatDay(iso);
-  }
 </script>
 
 <div class="lt-fade-in">
@@ -122,7 +91,7 @@
     <div class="notif-page-header">
       <h1>Notifications</h1>
       <div class="header-actions">
-        {#if notifications.some(n => !n.read_at)}
+        {#if getUnread() > 0 || notifications.some(n => !n.read_at)}
           <button class="lt-btn lt-btn-secondary lt-btn-sm" onclick={markAllRead}>Mark all read</button>
         {/if}
         {#if notifications.length > 0}
@@ -133,47 +102,29 @@
             onConfirm={clearAll}
           />
         {/if}
+        <a
+          href="/settings/notifications"
+          class="lt-btn lt-btn-ghost lt-btn-sm"
+          onclick={(e) => { e.preventDefault(); navigate('/settings/notifications'); }}
+        >Settings</a>
       </div>
     </div>
 
     <div class="filters">
-      {#each categories as cat}
-        <button
-          class="lt-chip"
-          aria-pressed={categoryFilter === cat.value}
-          onclick={() => setFilter(cat.value)}
-        >{cat.label}</button>
-      {/each}
-      <button
-        class="lt-chip"
-        aria-pressed={unreadOnly}
-        onclick={toggleUnread}
-      >Unread only</button>
+      <button class="lt-chip" aria-pressed={!unreadOnly} onclick={() => setUnreadOnly(false)}>All</button>
+      <button class="lt-chip" aria-pressed={unreadOnly} onclick={() => setUnreadOnly(true)}>Unread</button>
     </div>
 
     {#if loading}
       <p class="lt-muted center-text">Loading...</p>
     {:else if notifications.length === 0}
       <div class="lt-empty">
-        <p class="lt-empty-title">You're all caught up</p>
-        <p class="lt-muted">No {categoryFilter ? categoryFilter : ''} notifications{unreadOnly ? ' (unread)' : ''}.</p>
+        <p class="lt-empty-title">{unreadOnly ? "You're all caught up" : 'No notifications'}</p>
       </div>
     {:else}
       <div class="notif-list">
         {#each notifications as notif (notif.id)}
-          <div class="notif-item" class:unread={!notif.read_at}>
-            <button class="notif-main" onclick={() => clickNotif(notif)}>
-              <span class="notif-icon"><NotifIcon type={notif.type} /></span>
-              <div class="notif-content">
-                <div class="notif-title">{notif.title}</div>
-                {#if notif.body}
-                  <div class="notif-body">{notif.body}</div>
-                {/if}
-              </div>
-              <span class="notif-time">{timeAgo(notif.created_at)}</span>
-            </button>
-            <button class="notif-dismiss" onclick={() => dismissNotif(notif)} aria-label="Dismiss notification" title="Dismiss">&times;</button>
-          </div>
+          <NotificationRow {notif} onOpen={clickNotif} onDismiss={dismissNotif} />
         {/each}
       </div>
 
@@ -189,8 +140,10 @@
 <style>
   .notif-page-header {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
+    gap: 0.5rem;
     padding: 0 0 1rem;
   }
 
@@ -198,89 +151,29 @@
     font-size: 1.3rem;
   }
 
+  /* A narrow screen puts the actions under the heading rather than
+     wrapping each button's label onto two lines beside it. */
   .header-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.4rem;
+  }
+
+  .header-actions :global(.lt-btn) {
+    white-space: nowrap;
   }
 
   .filters {
     display: flex;
     gap: 0.4rem;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
+    margin-bottom: 1rem;
   }
 
   .notif-list {
-    display: flex;
-    flex-direction: column;
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
-    overflow: hidden;
-  }
-
-  .notif-item {
-    display: flex;
-    align-items: stretch;
-    border-bottom: 1px solid var(--color-border);
     background: var(--color-surface);
-    font-size: 0.85rem;
-  }
-
-  .notif-main {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    align-items: flex-start;
-    gap: 0.6rem;
-    padding: 0.75rem;
-    border: none;
-    background: none;
-    cursor: pointer;
-    text-align: left;
-    font-size: inherit;
-    color: inherit;
-  }
-
-  .notif-dismiss {
-    flex-shrink: 0;
-    border: none;
-    background: none;
-    color: var(--color-text-muted);
-    cursor: pointer;
-    padding: 0 0.75rem;
-    font-size: 1.1rem;
-    line-height: 1;
-  }
-
-  .notif-dismiss:hover { color: var(--color-text); }
-
-  .notif-item:last-child { border-bottom: none; }
-  .notif-item:hover { background: var(--color-bg); }
-
-  .notif-item.unread {
-    background: color-mix(in srgb, var(--color-primary) 5%, var(--color-surface));
-  }
-  .notif-item.unread:hover {
-    background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
-  }
-
-  .notif-icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
-
-  .notif-content { flex: 1; min-width: 0; }
-  .notif-title { font-weight: 500; color: var(--color-text); margin-bottom: 0.1rem; }
-  .notif-body {
-    color: var(--color-text-muted);
-    font-size: 0.8rem;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .notif-time {
-    color: var(--color-text-muted);
-    font-size: 0.72rem;
-    flex-shrink: 0;
-    white-space: nowrap;
   }
 
   .center-text { text-align: center; padding: 2rem 0; }
@@ -288,20 +181,5 @@
   .load-more {
     text-align: center;
     padding: 1rem 0;
-  }
-
-  /* A narrow screen puts the actions under the heading rather than
-     wrapping each button's label onto two lines beside it. */
-  .notif-page-header {
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .header-actions {
-    flex-wrap: wrap;
-  }
-
-  .header-actions :global(.lt-btn) {
-    white-space: nowrap;
   }
 </style>

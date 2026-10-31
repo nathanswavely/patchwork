@@ -5,6 +5,8 @@
   import { getSelectedTags, getSearchQuery, resetFilters } from '../stores/quilt.svelte.js';
   import FilterChips from '../components/FilterChips.svelte';
   import EventTierChip from '../components/EventTierChip.svelte';
+  import MadeWithAI from '../components/MadeWithAI.svelte';
+  import { listAiValue } from '../lib/aiUse.js';
   import { getRemoteFollows } from '../stores/multiQuilt.svelte.js';
   import { sortByDate } from '../lib/multiQuilt.js';
   import { textMatches } from '../lib/textMatch.js';
@@ -315,6 +317,7 @@
             <div class="event-title">
               {event.title}
               <EventTierChip visibility={event.visibility} />
+              <MadeWithAI value={listAiValue(event)} />
             </div>
             {#if event.location}
               <div class="event-location">{event.location}</div>

@@ -83,3 +83,23 @@ func TestRobotsTxt(t *testing.T) {
 		}
 	}
 }
+
+// The AI page lists AICrawlerNames as crawlers this site refuses, so every
+// name on it must be turned away when it arrives. The two robots-only
+// opt-out tokens are the exception the package notes explain: Google and
+// Apple never send them as a user agent, so robots.txt is the whole refusal.
+func TestAICrawlerNamesAreRefused(t *testing.T) {
+	robotsOnly := map[string]bool{"Google-Extended": true, "Applebot-Extended": true}
+	names := middleware.AICrawlerNames()
+	if len(names) < 10 {
+		t.Fatalf("parsed only %d crawler names from robots.txt: %v", len(names), names)
+	}
+	for _, name := range names {
+		if robotsOnly[name] {
+			continue
+		}
+		if code := requestWithUA("Mozilla/5.0 (compatible; " + name + "/1.0)"); code != http.StatusForbidden {
+			t.Errorf("%s is listed on the AI page but answered %d, not 403", name, code)
+		}
+	}
+}

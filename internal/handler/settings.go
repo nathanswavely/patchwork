@@ -80,6 +80,9 @@ func AdminGetSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			// Visitor counting (docs/adr/2026-09-18-counting-visitors-without-watching-anyone.md).
 			// Off until an admin turns it on; the privacy policy says which.
 			"usage_stats": settings.UsageStatsEnabled(db),
+			// Whether posts are asked if AI made them
+			// (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md).
+			"ai_disclosure": settings.AIDisclosure(db),
 		})
 	}
 }
@@ -118,9 +121,19 @@ func AdminUpdateSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			// Audited on its own line: turning it on is the one act here
 			// that changes what the site keeps about people.
 			UsageStats *bool `json:"usage_stats"`
+			// "off", "optional" or "required"
+			// (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md).
+			// The AI page renders its disclosure paragraph from it.
+			AIDisclosure *string `json:"ai_disclosure"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
+			return
+		}
+		// Refused before anything is written, so a bad mode never leaves
+		// half a settings change behind.
+		if req.AIDisclosure != nil && !settings.ValidAIDisclosure(*req.AIDisclosure) {
+			http.Error(w, `{"error":"ai_disclosure must be off, optional or required"}`, http.StatusBadRequest)
 			return
 		}
 
@@ -303,6 +316,15 @@ func AdminUpdateSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 				return
 			}
 			auth.LogAuditEvent(db, adminUser.ID, "admin.usage_stats_set", "instance", "", `{"enabled":`+v+`}`, clientIP(r))
+		}
+
+		if req.AIDisclosure != nil {
+			if err := settings.Set(db, settings.KeyAIDisclosure, *req.AIDisclosure); err != nil {
+				http.Error(w, `{"error":"failed to save the AI disclosure setting"}`, http.StatusInternalServerError)
+				return
+			}
+			auth.LogAuditEventJSON(db, adminUser.ID, "admin.ai_disclosure_set", "instance", "",
+				map[string]any{"mode": *req.AIDisclosure}, clientIP(r))
 		}
 
 		auth.LogAuditEvent(db, adminUser.ID, "admin.instance_settings_update", "instance", "", "{}", clientIP(r))
