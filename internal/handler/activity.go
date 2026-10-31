@@ -23,10 +23,24 @@ func UserActivityFeed(db *database.DB) http.HandlerFunc {
 		// its activity has to leave the feed too — the links would 404.
 		// No *node* visibility gate here: the feed is scoped to the viewer's
 		// own memberships, and a private patch you belong to is yours to
-		// see. An event's own tier is a different question and is asked —
-		// every active relationship lands rows in this feed, follower
-		// included, so without it a patch's members-only night would
-		// announce itself to the people its tier excludes.
+		// see. What each row is *about* is a different question, and every
+		// branch asks it — every active relationship lands rows in this
+		// feed, follower included, and following costs nothing and needs
+		// nobody's approval (docs/adr/116). So each branch asks exactly what
+		// the REST read of the same thing asks, as SQL beside its Go twin:
+		//
+		//   - an event: its own tier (eventVisibleToMatchedMembership);
+		//   - a proposal: the patch's governance record, open or the room's
+		//     (governanceRecordReadableSQL ↔ canReadGovernanceRecord). A
+		//     follower is an outsider to a closed record; the proposals key
+		//     gates taking part, not reading (docs/adr/050);
+		//   - a charter: published, or the members-only shelf for the room
+		//     and a follower the patch grants charters
+		//     (patchDocReadableSQL ↔ canReadPatchDocs).
+		//
+		// Before issue #398 the proposal and charter branches asked nothing,
+		// so any signed-in account could read the titles of an invite-only
+		// patch's closed proposals and unpublished charters by following it.
 		query := `
 			SELECT id, type, title, body, link, patch_slug, patch_name, actor_name, created_at
 			FROM (
@@ -39,8 +53,9 @@ func UserActivityFeed(db *database.DB) http.HandlerFunc {
 				FROM proposals p
 				JOIN nodes n ON n.id = p.node_id
 					AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL
+				JOIN memberships m ON m.node_id = p.node_id AND m.user_id = ? AND m.status = 'active'
 				LEFT JOIN users u ON u.id = p.author_id
-				WHERE p.node_id IN (SELECT node_id FROM memberships WHERE user_id = ? AND status = 'active')
+				WHERE ` + governanceRecordReadableSQL("m", "n") + `
 
 				UNION ALL
 
@@ -69,7 +84,8 @@ func UserActivityFeed(db *database.DB) http.HandlerFunc {
 				FROM governance_docs g
 				JOIN nodes n ON n.id = g.node_id
 					AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL
-				WHERE g.node_id IN (SELECT node_id FROM memberships WHERE user_id = ? AND status = 'active')
+				JOIN memberships m ON m.node_id = g.node_id AND m.user_id = ? AND m.status = 'active'
+				WHERE ` + patchDocReadableSQL("m", "g", "n") + `
 			)
 			`
 
