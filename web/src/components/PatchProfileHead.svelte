@@ -34,6 +34,7 @@
   import { getPendingMembershipSlugs, getInvitedMembershipSlugs, getMembershipRoles, loadMemberships } from '../stores/memberships.svelte.js';
   import { GearSix } from 'phosphor-svelte';
   import { identityColorForPatch } from '../lib/quiltTheme.js';
+  import MadeWithAI from './MadeWithAI.svelte';
 
   // `layout` is the container's word about the room, never about the patch:
   // 'docked' is a box the profile fills — the sheet at the foot of a phone,
@@ -211,6 +212,36 @@
 
     {#if node.description}
       <p class="profile-desc">{node.description}</p>
+      {#if node.ai_use === 'generated'}
+        <p class="ai-row"><MadeWithAI value={node.ai_use} /></p>
+      {/if}
+    {/if}
+
+    <!-- Nonprofit (#448): self-declared, so the title says who declared it.
+         Seeded from the tree, which carries the flag, so it is right on the
+         first frame. -->
+    {#if node.nonprofit}
+      <p class="nonprofit-row">
+        <span
+          class="lt-pill"
+          title={isUnclaimed
+            ? 'Whoever added this listing says it is a nonprofit organisation.'
+            : "This patch's admins say it is a nonprofit organisation."}
+        >Nonprofit</span>
+      </p>
+    {/if}
+
+    <!-- AI work (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md,
+         decision 6): declared by the patch's admins. The tree carries it
+         only when declared, so the seed draws it on the first frame. The
+         quilt draws no mark for it; only the page and cards do. -->
+    {#if node.ai_work === true}
+      <p class="ai-row">
+        <span
+          class="lt-pill"
+          title="This patch's admins say its work relies heavily on AI."
+        >AI work</span>
+      </p>
     {/if}
 
     <!-- State is worn in the header, never disguised as an action. The
@@ -429,7 +460,9 @@
     color: var(--color-text);
   }
 
-  .amended-lining-row {
+  .amended-lining-row,
+  .nonprofit-row,
+  .ai-row {
     text-align: center;
     margin-top: 0.5rem;
   }
@@ -481,7 +514,8 @@
      card's did — centred copy in a narrow box puts every line's start
      somewhere else. */
   .profile-head.docked .profile-header,
-  .profile-head.docked .amended-lining-row {
+  .profile-head.docked .amended-lining-row,
+  .profile-head.docked .ai-row {
     text-align: left;
   }
 

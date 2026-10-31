@@ -22,14 +22,14 @@ describe('previewing a patch', () => {
     // A previewed id per surface would let the map and the quilt disagree
     // about what is being pointed at, and the card would have to pick.
     expect(home).toMatch(/let previewing = \$state\(null\)/);
-    expect(home).toMatch(/function preview\(patch, fromMap = false\)/);
+    expect(home).toMatch(/function preview\(patch\)/);
   });
 
   it('is reported by both surfaces through the same door', () => {
     expect(map).toMatch(/onPatchHover/);
     expect(quilt).toMatch(/onPatchHover/);
     // Both funnel into the one preview(), rather than each keeping its own.
-    expect(home.match(/onPatchHover=\{\(\w+\) => hasPointer && preview\(\w+, true\)\}/g) || [])
+    expect(home.match(/onPatchHover=\{\(\w+\) => hasPointer && preview\(\w+\)\}/g) || [])
       .toHaveLength(2);
   });
 
@@ -41,11 +41,11 @@ describe('previewing a patch', () => {
     expect(home).toMatch(/hasPointer = \$derived\(canHover\(\)\)/);
   });
 
-  it('brings a card to the reader only when the pointer is elsewhere', () => {
-    // Scrolling the list under a pointer that is *on* the list would move
-    // the card out from under it — the hover would chase itself.
-    expect(home).toMatch(/if \(!fromMap \|\| !patch\) return;/);
-    expect(home).toMatch(/scrollIntoView/);
+  it('never scrolls the list', () => {
+    // Bringing the card to the reader moved the list on every tile the
+    // pointer crossed on its way somewhere else. The lit card among dimmed
+    // ones answers the hover without moving anything.
+    expect(home).not.toMatch(/scrollIntoView/);
   });
 
   it('answers on any tile, badge or no badge', () => {

@@ -25,6 +25,8 @@
   import { handleFromDID } from '../lib/atproto.js';
   import { isDirectRow } from '../lib/proposalRow.js';
   import { formatEventDate, formatEventTime, upcomingFrom, formatDay } from '../lib/datetime.js';
+  import MadeWithAI from './MadeWithAI.svelte';
+  import { listAiValue } from '../lib/aiUse.js';
 
   // The glimpse shows three, not the five it used to fetch. A stacked row
   // is taller than the clipped one-liner it replaces, and the section
@@ -293,6 +295,9 @@
            looking at" faster than a domain name does. -->
       {#if node.image_url}
         <img class="patch-image" src={node.image_url} alt={node.image_alt} loading="lazy" />
+        {#if node.image_ai === 'generated'}
+          <p class="image-ai"><MadeWithAI value={node.image_ai} image /></p>
+        {/if}
       {/if}
       {#if node.website}
         <a href={node.website} class="about-link" target="_blank" rel="noopener">{extractDomain(node.website)}</a>
@@ -359,6 +364,9 @@
                        (docs/adr/046), so the ellipsis eats the postal
                        tail and keeps the venue. -->
                   <span class="event-location lt-muted">{event.location}</span>
+                {/if}
+                {#if listAiValue(event)}
+                  <span><MadeWithAI value={listAiValue(event)} /></span>
                 {/if}
               </span>
             </a>
@@ -662,6 +670,10 @@
   }
 
   /* About */
+  .image-ai {
+    margin: 0 0 0.5rem;
+  }
+
   .patch-image {
     display: block;
     width: 100%;

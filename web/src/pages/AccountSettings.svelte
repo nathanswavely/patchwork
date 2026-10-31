@@ -14,6 +14,11 @@
   // Personal discovery filter (docs/adr/037).
   let hideAmendedLinings = $state(false);
   let hideAmendedSaving = $state(false);
+  // Declared AI work (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md,
+  // decision 6): each person may hide it from their own discovery. There is
+  // no quilt-wide equivalent.
+  let hideAiWork = $state(false);
+  let hideAiWorkSaving = $state(false);
   let bio = $state('');
   let links = $state([]);
   let saving = $state(false);
@@ -48,7 +53,10 @@
 
   $effect(() => {
     api('auth/me')
-      .then((me) => { hideAmendedLinings = !!me.hide_amended_linings; })
+      .then((me) => {
+        hideAmendedLinings = !!me.hide_amended_linings;
+        hideAiWork = !!me.hide_ai_work;
+      })
       .catch(() => {});
   });
 
@@ -61,6 +69,18 @@
       showToast(e.message || 'Failed to save', 'error');
     } finally {
       hideAmendedSaving = false;
+    }
+  }
+
+  async function saveHideAiWork(value) {
+    hideAiWorkSaving = true;
+    try {
+      await api('auth/me', { method: 'PATCH', body: { hide_ai_work: value } });
+      hideAiWork = value;
+    } catch (e) {
+      showToast(e.message || 'Failed to save', 'error');
+    } finally {
+      hideAiWorkSaving = false;
     }
   }
 
@@ -650,6 +670,20 @@
       <p class="lt-muted profile-hint">
         Keeps patches that changed the shared community standards out of your
         quilt, search, map, and event feed. Direct links still work.
+      </p>
+      <label class="lt-check toggle-row">
+        <input
+          type="checkbox"
+          checked={hideAiWork}
+          disabled={hideAiWorkSaving}
+          onchange={(e) => saveHideAiWork(e.target.checked)}
+        />
+        <span>Hide patches whose work relies on AI</span>
+      </label>
+      <p class="lt-muted profile-hint">
+        Keeps patches whose admins say their work relies heavily on AI out of
+        your quilt, search, map, and event feed. My Quilt still shows patches
+        you follow. Direct links still work.
       </p>
     </section>
 

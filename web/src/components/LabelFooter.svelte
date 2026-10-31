@@ -63,6 +63,8 @@
     <span class="strip-sep">&middot;</span>
     <a href="/about" onclick={(e) => goTo(e, '/about')}>About Patchwork</a>
     <span class="strip-sep">&middot;</span>
+    <a href="/ai" onclick={(e) => goTo(e, '/ai')}>AI</a>
+    <span class="strip-sep">&middot;</span>
     <a href="/privacy" onclick={(e) => goTo(e, '/privacy')}>Privacy</a>
     <span class="strip-sep">&middot;</span>
     <a href="/terms" onclick={(e) => goTo(e, '/terms')}>Terms</a>
@@ -80,6 +82,8 @@
         <span class="strip-sep">&middot;</span>
       {/if}
       <a href="/about" onclick={(e) => goTo(e, '/about')}>About Patchwork</a>
+      <span class="strip-sep">&middot;</span>
+      <a href="/ai" onclick={(e) => goTo(e, '/ai')}>AI</a>
       <span class="strip-sep">&middot;</span>
       <a href="/privacy" onclick={(e) => goTo(e, '/privacy')}>Privacy</a>
       <span class="strip-sep">&middot;</span>

@@ -245,7 +245,7 @@ describe('copy pass A and C (2026-09-28)', () => {
   });
 
   it("names what a report is about in the UI's words", () => {
-    expect(source('pages/AdminReports.svelte')).toContain("const ENTITY_LABELS = { node: 'patch', event: 'event', user: 'person' };");
+    expect(source('pages/AdminReports.svelte')).toContain("const ENTITY_LABELS = { node: 'patch', event: 'event', proposal: 'proposal', user: 'person' };");
   });
 
   it("shows the rules editor's explanations only for the choice made", () => {

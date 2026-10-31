@@ -5,6 +5,9 @@
   import { formatDay } from '../lib/datetime.js';
   import MarkdownRenderer from '../components/MarkdownRenderer.svelte';
   import SegmentedControl from '../components/SegmentedControl.svelte';
+  import AIUseQuestion from '../components/AIUseQuestion.svelte';
+  import { aiField, aiAnswerMissing } from '../lib/aiUse.js';
+  import { getAiDisclosure } from '../stores/quilt.svelte.js';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -42,6 +45,10 @@
 
   let title = $state('');
   let body = $state('');
+  // Whether AI wrote the proposal
+  // (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md). Null until
+  // somebody answers.
+  let aiUse = $state(null);
   // The council page links here with ?type=membership from a vacant chair's
   // "Nominate a member", so the form opens on the thing that was clicked
   // rather than on Action with the reader hunting for the radio they just
@@ -136,6 +143,11 @@
       error = 'Choose the member this nomination is about';
       return;
     }
+    const aiMissing = aiAnswerMissing(getAiDisclosure(), aiUse);
+    if (aiMissing) {
+      error = aiMissing;
+      return;
+    }
 
     error = '';
     submitting = true;
@@ -144,6 +156,7 @@
         title: title.trim(),
         body: body.trim() || '',
         proposal_type: proposalType,
+        ai_use: aiField(getAiDisclosure(), aiUse),
       };
       // A window only where a vote will run. A direct change and a request
       // to the maintainer have no ballot, so sending one would be a number
@@ -216,6 +229,12 @@
             ></textarea>
           {/if}
         </div>
+
+        {#if getAiDisclosure() !== 'off'}
+          <div class="field">
+            <AIUseQuestion bind:value={aiUse} disabled={submitting} />
+          </div>
+        {/if}
 
         <div class="field">
           <label class="lt-label">Type</label>

@@ -12,12 +12,22 @@ function source(relPath) {
 // assert source text; each was also checked on screen against a running app.
 
 describe('F-072: a notification body is read in full', () => {
-  const src = source('pages/Notifications.svelte');
-  const rule = src.slice(src.indexOf('.notif-body {'), src.indexOf('}', src.indexOf('.notif-body {')));
+  // The row is one component now, shared with the bell's dropdown, which
+  // clamps through its own .clamp rule. The page must never ask for it.
+  const row = source('components/NotificationRow.svelte');
+  const rule = row.slice(row.indexOf('.notif-body {'), row.indexOf('}', row.indexOf('.notif-body {')));
+  const page = source('pages/Notifications.svelte');
 
   it('does not clamp the body to one line', () => {
     expect(rule).not.toContain('nowrap');
     expect(rule).not.toContain('text-overflow');
+    expect(rule).not.toContain('line-clamp');
+  });
+
+  it('the page shows the body whole; only the dropdown clamps', () => {
+    expect(page).toMatch(/<NotificationRow [^>]*onDismiss/);
+    expect(page).not.toMatch(/<NotificationRow [^>]*clamp/);
+    expect(source('components/NotificationDropdown.svelte')).toMatch(/<NotificationRow [^>]*clamp/);
   });
 
   it('keeps a long URL from widening the row', () => {

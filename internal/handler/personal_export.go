@@ -114,7 +114,7 @@ func personalExportSections() []personalExportSection {
 			Query: `SELECT p.id, p.node_id, n.slug AS node_slug, p.title, p.body, p.status, p.state,
 				p.proposal_type, p.duration_hours, p.voting_ends_at, p.voting_terms,
 				p.target_doc, p.target_user_id, p.seats_contested, p.nominations_close_at,
-				p.proposed_title, p.proposed_body, p.applied_at, p.created_at, p.updated_at
+				p.proposed_title, p.proposed_body, p.applied_at, p.ai_use, p.created_at, p.updated_at
 				FROM proposals p JOIN nodes n ON n.id = p.node_id
 				WHERE p.author_id = ? ORDER BY p.created_at`,
 		},
@@ -166,7 +166,7 @@ func personalExportSections() []personalExportSection {
 			// the query never leaves author_id.
 			Key: "notices", Args: 1,
 			Query: `SELECT nt.id, nt.node_id, n.slug AS node_slug, nt.title, nt.body,
-				nt.image_url, nt.image_alt, nt.replies_open, nt.members_told,
+				nt.image_url, nt.image_alt, nt.replies_open, nt.members_told, nt.ai_use,
 				nt.created_at, nt.updated_at
 				FROM notices nt JOIN nodes n ON n.id = nt.node_id
 				WHERE nt.author_id = ? ORDER BY nt.created_at`,
@@ -184,7 +184,7 @@ func personalExportSections() []personalExportSection {
 			Query: `SELECT e.id, e.node_id, n.slug AS node_slug, e.title, e.description,
 				e.location, e.latitude, e.longitude, e.starts_at, e.ends_at, e.timezone,
 				e.recurrence, e.visibility, e.status, e.event_url, e.image_url, e.image_alt,
-				e.source_id, e.source_uid, e.created_at, e.updated_at
+				e.ai_use, e.image_ai, e.source_id, e.source_uid, e.created_at, e.updated_at
 				FROM events e JOIN nodes n ON n.id = e.node_id
 				WHERE e.created_by = ? ORDER BY e.starts_at`,
 		},
@@ -321,7 +321,7 @@ func personalExportSections() []personalExportSection {
 // private_key, public_key, feed_secret_hash — are secrets, and ap_id/ap_type
 // name an actor on this domain rather than telling the person anything.
 const personalExportUserColumns = `id, username, display_name, email, bio, avatar_url,
-	links, role, trusted_contributor, start_on_my_quilt, hide_amended_linings,
+	links, role, trusted_contributor, start_on_my_quilt, hide_amended_linings, hide_ai_work,
 	contact_phone, contact_email, contact_note, suspended_at, created_at, updated_at`
 
 // PersonalExport handles GET /api/v1/users/me/export.
@@ -431,9 +431,9 @@ func personalExportProfile(db *database.DB, userID string) (map[string]any, erro
 			profile["links"] = parsed
 		}
 	}
-	// SQLite has no bool; these three are switches in the UI and read as
+	// SQLite has no bool; these four are switches in the UI and read as
 	// switches here.
-	for _, flag := range []string{"trusted_contributor", "start_on_my_quilt", "hide_amended_linings"} {
+	for _, flag := range []string{"trusted_contributor", "start_on_my_quilt", "hide_amended_linings", "hide_ai_work"} {
 		if n, ok := profile[flag].(int64); ok {
 			profile[flag] = n != 0
 		}

@@ -4,6 +4,9 @@
   import { showToast } from '../stores/toast.svelte.js';
   import { isTrustedContributor } from '../stores/auth.svelte.js';
   import TagPicker from '../components/TagPicker.svelte';
+  import AIUseQuestion from '../components/AIUseQuestion.svelte';
+  import { aiField, aiAnswerMissing } from '../lib/aiUse.js';
+  import { getAiDisclosure } from '../stores/quilt.svelte.js';
 
   // Arriving from a search that found nothing: the query becomes the name so
   // nobody retypes what they just typed. Editable like any other field.
@@ -20,6 +23,13 @@
   // Tags are optional on a community suggestion — an admin can add them at
   // review time if the submitter skips this (docs/adr/021).
   let tags = $state([]);
+  // Whether the place is a nonprofit, as far as the suggester knows (#448).
+  // The reviewer sees it and can correct it; the owner can change it later.
+  let nonprofit = $state(false);
+  // Whether AI wrote the description: the suggester answers for what they
+  // typed (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md). There is
+  // no patch-level declaration here, since an unclaimed patch carries none.
+  let aiUse = $state(null);
   let submitting = $state(false);
   let error = $state('');
 
@@ -38,6 +48,8 @@
 
   async function handleSubmit() {
     if (!name.trim()) { error = 'Name is required'; return; }
+    const aiMissing = aiAnswerMissing(getAiDisclosure(), aiUse);
+    if (aiMissing) { error = aiMissing; return; }
     submitting = true;
     error = '';
     try {
@@ -53,6 +65,8 @@
         address: address.trim() || undefined,
         feed_url: feedUrl.trim() || undefined,
         tags: tags.length > 0 ? tags : undefined,
+        nonprofit: nonprofit || undefined,
+        ai_use: aiField(getAiDisclosure(), aiUse),
       };
       const result = await api('submissions', { method: 'POST', body });
       if (result.node) {
@@ -89,6 +103,12 @@
       <textarea class="lt-field" id="description" bind:value={description} rows="3" placeholder="What is this place/group about?" disabled={submitting}></textarea>
     </div>
 
+    {#if getAiDisclosure() !== 'off'}
+      <div class="field">
+        <AIUseQuestion bind:value={aiUse} disabled={submitting} />
+      </div>
+    {/if}
+
     <div class="field">
       <label class="lt-label" for="website">Website</label>
       <input class="lt-field" id="website" type="url" bind:value={website} placeholder="https://..." disabled={submitting} />
@@ -123,6 +143,11 @@
       <label class="lt-label"><span>Tags <span class="lt-optional">(optional)</span></span></label>
       <TagPicker bind:selected={tags} disabled={submitting} />
     </div>
+
+    <label class="lt-check">
+      <input type="checkbox" bind:checked={nonprofit} disabled={submitting} />
+      <span>This is a nonprofit organisation</span>
+    </label>
 
     {#if error}
       <p class="lt-error-text">{error}</p>

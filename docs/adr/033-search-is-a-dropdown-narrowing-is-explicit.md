@@ -1,6 +1,8 @@
 # ADR 033: Search is a dropdown; narrowing is explicit
 
-Date: 2026-07-22. Status: accepted. Amends ADR 022. Decided while
+Date: 2026-07-22. Status: accepted. Amends ADR 022. Amended by
+docs/adr/2026-10-29-the-chips-show-a-row-and-find-the-rest.md (the chips
+show one row and find the rest). Decided while
 grilling the search rethink after the lens-persistence bug (search
 survived navigation invisibly).
 

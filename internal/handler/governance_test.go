@@ -294,3 +294,53 @@ func TestGovernanceDocVisibilityForNonMembers(t *testing.T) {
 		}
 	}
 }
+
+// Who may write a patch's charters, pinned as it stands rather than as
+// docs/adr/115 says it should become. A patch admin may; a signed-in person
+// holding no role may not; and an instance admin holding no role still may —
+// the reach 115 decides should end and deliberately defers to issue #286 as
+// the operator's recovery hatch. Create and update move together: closing
+// one door of a shelf whose other stays open protects nothing. When #286
+// lands, the instance-admin rows flip to 403 here, in one place.
+func TestGovernanceDocWrites_WhoMay(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "gwadmin", "member")
+	_, strangerToken := createTestUser(t, db, "gwstranger", "member")
+	_, instanceToken := createTestUser(t, db, "gwinstance", "admin")
+	nodeID := createTestNode(t, db, admin.ID, "Gov Writes", "gov-writes", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	create := func(token, title string) (int, map[string]interface{}) {
+		r := authedRequest("POST", "/api/v1/nodes/gov-writes/governance", map[string]interface{}{"title": title, "body": "text"}, token)
+		w := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/governance", handler.CreateGovernanceDoc(db), r)
+		if w.Code != http.StatusCreated {
+			return w.Code, nil
+		}
+		return w.Code, decodeJSON(t, w)
+	}
+	update := func(token, docID string) int {
+		r := authedRequest("PUT", "/api/v1/governance/"+docID, map[string]interface{}{"body": "edited"}, token)
+		return serveMux(t, db, "PUT", "/api/v1/governance/{id}", handler.UpdateGovernanceDoc(db), r).Code
+	}
+
+	code, doc := create(adminToken, "Patch Admin's")
+	if code != http.StatusCreated {
+		t.Fatalf("patch admin create: want 201, got %d", code)
+	}
+	docID := doc["id"].(string)
+
+	if code, _ := create(strangerToken, "Stranger's"); code != http.StatusForbidden {
+		t.Errorf("roleless member create: want 403, got %d", code)
+	}
+	if code := update(strangerToken, docID); code != http.StatusForbidden {
+		t.Errorf("roleless member update: want 403, got %d", code)
+	}
+
+	// The deferred reach (docs/adr/115, issue #286).
+	if code, _ := create(instanceToken, "Steward's"); code != http.StatusCreated {
+		t.Errorf("roleless instance admin create: pinned at 201 until #286, got %d", code)
+	}
+	if code := update(instanceToken, docID); code != http.StatusOK {
+		t.Errorf("roleless instance admin update: pinned at 200 until #286, got %d", code)
+	}
+}

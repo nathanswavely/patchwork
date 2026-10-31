@@ -8,6 +8,10 @@
   import MarkdownRenderer from '../components/MarkdownRenderer.svelte';
   import ReportButton from '../components/ReportButton.svelte';
   import ConfirmAction from '../components/ConfirmAction.svelte';
+  import AIUseQuestion from '../components/AIUseQuestion.svelte';
+  import MadeWithAI from '../components/MadeWithAI.svelte';
+  import { aiField, aiAnswerMissing } from '../lib/aiUse.js';
+  import { getAiDisclosure } from '../stores/quilt.svelte.js';
 
   // One notice and its replies (docs/adr/081). Replies are a flat list — no
   // reply to a reply, no reactions — and the reply box is there only while
@@ -85,6 +89,9 @@
   let editBody = $state('');
   let editImageUrl = $state('');
   let editImageAlt = $state('');
+  // Pre-filled from the notice and sent back as shown
+  // (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md).
+  let editAiUse = $state(null);
   let saving = $state(false);
 
   function startEdit() {
@@ -92,15 +99,24 @@
     editBody = notice.body;
     editImageUrl = notice.image_url || '';
     editImageAlt = notice.image_alt || '';
+    editAiUse = notice.ai_use ?? null;
     editing = true;
   }
 
   async function saveEdit() {
+    const aiMissing = aiAnswerMissing(getAiDisclosure(), editAiUse);
+    if (aiMissing) { showToast(aiMissing, 'error'); return; }
     saving = true;
     try {
       notice = await api(`notices/${noticeId}`, {
         method: 'PATCH',
-        body: { title: editTitle.trim(), body: editBody.trim(), image_url: editImageUrl.trim(), image_alt: editImageAlt.trim() },
+        body: {
+          title: editTitle.trim(),
+          body: editBody.trim(),
+          image_url: editImageUrl.trim(),
+          image_alt: editImageAlt.trim(),
+          ai_use: aiField(getAiDisclosure(), editAiUse),
+        },
       });
       editing = false;
       showToast('Notice updated', 'success');
@@ -163,6 +179,11 @@
         <label class="lt-label" for="edit-body">Notice</label>
         <textarea class="lt-field" id="edit-body" bind:value={editBody} rows="8" disabled={saving}></textarea>
       </div>
+      {#if getAiDisclosure() !== 'off'}
+        <div class="field">
+          <AIUseQuestion bind:value={editAiUse} disabled={saving} />
+        </div>
+      {/if}
       <div class="field">
         <label class="lt-label" for="edit-image">Image address</label>
         <input class="lt-field" id="edit-image" type="url" bind:value={editImageUrl} disabled={saving} placeholder="https://..." />
@@ -186,6 +207,7 @@
         <span>{formatRelative(notice.created_at)}</span>
         {#if notice.members_told}<span class="mark">members told</span>{/if}
         {#if !notice.replies_open}<span class="mark">replies off</span>{/if}
+        <MadeWithAI value={notice.ai_use} />
       </div>
 
       {#if notice.image_url}

@@ -875,9 +875,10 @@ func Me(db *database.DB) http.HandlerFunc {
 		loadContactCard(db, user)
 		loadMovedTo(db, user)
 		loadTrustedPatches(db, user)
-		var hide int
-		db.QueryRow("SELECT hide_amended_linings FROM users WHERE id = ?", user.ID).Scan(&hide)
+		var hide, hideAI int
+		db.QueryRow("SELECT hide_amended_linings, hide_ai_work FROM users WHERE id = ?", user.ID).Scan(&hide, &hideAI)
 		user.HideAmendedLinings = hide == 1
+		user.HideAIWork = hideAI == 1
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(user)
 	}
@@ -894,6 +895,9 @@ func UpdateMe(db *database.DB) http.HandlerFunc {
 			Links              *[]model.NodeLink `json:"links"`
 			StartOnMyQuilt     *bool             `json:"start_on_my_quilt"`
 			HideAmendedLinings *bool             `json:"hide_amended_linings"`
+			// Hide patches that declare their work relies on AI from this
+			// person's discovery (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md).
+			HideAIWork *bool `json:"hide_ai_work"`
 			// MovedTo is the person's own "we've moved" pointer
 			// (docs/adr/090). "" clears it.
 			MovedTo *string `json:"moved_to"`
@@ -975,12 +979,20 @@ func UpdateMe(db *database.DB) http.HandlerFunc {
 				return
 			}
 		}
+		if req.HideAIWork != nil {
+			if _, err := db.Exec("UPDATE users SET hide_ai_work = ?, updated_at = ? WHERE id = ?",
+				*req.HideAIWork, clock.Now(), user.ID); err != nil {
+				http.Error(w, `{"error":"failed to update setting"}`, http.StatusInternalServerError)
+				return
+			}
+		}
 		loadUserLinks(db, user)
 		loadContactCard(db, user)
 		loadMovedTo(db, user)
-		var hide int
-		db.QueryRow("SELECT hide_amended_linings FROM users WHERE id = ?", user.ID).Scan(&hide)
+		var hide, hideAI int
+		db.QueryRow("SELECT hide_amended_linings, hide_ai_work FROM users WHERE id = ?", user.ID).Scan(&hide, &hideAI)
 		user.HideAmendedLinings = hide == 1
+		user.HideAIWork = hideAI == 1
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(user)

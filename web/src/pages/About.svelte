@@ -36,7 +36,7 @@
   // The canonical project repo (README.md's clone instructions point at
   // "<this-repo>" rather than a fixed URL; the go.mod module path is the
   // closest thing to a canonical address, so that's the fallback).
-  const REPO_URL = 'https://github.com/patchwork-toolkit/patchwork';
+  const REPO_URL = 'https://github.com/nathanswavely/patchwork';
 
   let instanceName = $derived(getInstanceName());
   let instanceDescription = $derived(getInstanceDescription());
@@ -54,6 +54,10 @@
   function goGovernance(e) {
     e.preventDefault();
     navigate('/governance');
+  }
+  function goAi(e) {
+    e.preventDefault();
+    navigate('/ai');
   }
 </script>
 
@@ -179,6 +183,9 @@
         but you like some of it, take it with you and start another quilt.
         It's open source, and this quilt's data can be exported whole and
         stood up somewhere else.
+      </li>
+      <li>
+        <a href="/ai" onclick={goAi}>Where AI is used here</a>, and how posts made with it are labelled.
       </li>
     </ul>
   </section>

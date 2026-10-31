@@ -178,9 +178,122 @@ describe('the bulletin offer', () => {
 
 // The engine's other consumer (docs/adr/075 consequences).
 describe('filter chips', () => {
+  const chips = () => source('components/FilterChips.svelte');
+
   it('render in usage order too — raw vocabulary order was never a decision', () => {
-    const src = source('components/FilterChips.svelte');
-    expect(src).toContain('{#each getRankedTags() as tag (tag)}');
+    expect(chips()).toContain('let ranked = $derived(getRankedTags());');
+    // The row is planned from the ranked list and drawn from the plan; it
+    // never reorders, only stops early.
+    expect(chips()).toContain('return ranked.filter((t) => keep.has(t));');
+    expect(chips()).toContain('let shown = $derived(open ? findTags(order, find) : rowTags);');
+  });
+
+  it('never hide an active tag behind the count', () => {
+    // docs/adr/033: a filter is announced where it bites. A selected tag
+    // that ranks below the fold is pinned into the row, in rank order.
+    expect(chips()).toContain('const keep = new Set(selected);');
+    expect(chips()).toContain('for (const t of ranked) if (selected.has(t)) budget -= w(t);');
+  });
+
+  it('keep the ruler out of reach and out of the page width', () => {
+    expect(chips()).toContain('<div class="chips-measure" aria-hidden="true" inert>');
+    expect(chips()).toMatch(/\.chips-measure \{[^}]*width: 0;[^}]*overflow: hidden;[^}]*visibility: hidden;/);
+  });
+
+  it('grow the row into a card from "N more", or from find when every tag fits', () => {
+    expect(chips()).toContain('{hiddenCount} more');
+    expect(chips()).toMatch(/class="chips-round chips-find-open"[\s\S]*?onclick=\{openCard\}/);
+    expect(chips()).toContain('<div class="chips-card pw-canvas-card" bind:this={cardEl}></div>');
+  });
+
+  it('keep the first row as it stood when the card opens', () => {
+    // The open list is the row, then the rest. Re-planning the row while
+    // open would move a chip under the pointer.
+    expect(chips()).toContain('order = [...rowTags, ...ranked.filter((t) => !rowTags.includes(t))];');
+    expect(chips()).toContain('if (!open) rowWidth = measuredRowWidth;');
+    // The card leaves the flow; the root holds the closed height so the
+    // page under it does not move.
+    expect(chips()).toContain('style:height={open ? `${closedHeight}px` : null}');
+  });
+
+  it('cap the find field at the width a tag needs, not the card', () => {
+    expect(chips()).toMatch(/\.chips-find \{[^}]*flex: 0 1 280px;/);
+    expect(chips()).toMatch(/@container \(max-width: 380px\) \{\s*\.chips-count \{\s*display: none;/);
+  });
+
+  it('animate with a clip and a FLIP, and not at all under reduced motion', () => {
+    expect(chips()).toContain("const CLIP_SHUT = 'inset(-16px -16px 100% -16px)';");
+    expect(chips()).toContain("window.matchMedia('(prefers-reduced-motion: reduce)').matches");
+    // A close during the open starts from where things are on screen.
+    expect(chips()).toContain('new DOMMatrix(getComputedStyle(rowEl).transform)');
+  });
+
+  it('show and hide from one button that never moves', () => {
+    // Hidden, the funnel stands alone; shown, the same spot leads the row
+    // as a hide button. Not an X: an X read as clearing the filter.
+    expect(chips()).toMatch(/class="chips-toggle"[\s\S]*?aria-label="Show filters[\s\S]*?<FunnelSimple /);
+    expect(chips()).toMatch(/class="chips-toggle on"[\s\S]*?aria-label="Hide filters"[\s\S]*?<EyeSlash /);
+    expect(chips()).not.toContain('chips-collapse');
+    // One size in both states, or showing the chips would move it.
+    expect(chips()).toMatch(/\.chips-toggle \{[^}]*width: var\(--pw-canvas-control-h\);[^}]*height: var\(--pw-canvas-control-h\);/);
+  });
+
+  it('stand as tall as every other control on the canvas', () => {
+    // One height for the row and the Quilt/Map switch and zoom at the
+    // canvas's foot, rather than five sizes that nearly agree.
+    const shell = readFileSync(resolve(process.cwd(), 'src', 'components/SocialShell.svelte'), 'utf8');
+    const app = readFileSync(resolve(process.cwd(), 'src', 'app.css'), 'utf8');
+    expect(app).toMatch(/--pw-canvas-control-h: 32px;/);
+    expect(chips()).toMatch(/\.lt-chip \{\s*height: var\(--pw-canvas-control-h\);/);
+    expect(chips()).toMatch(/\.chips-find input \{[^}]*height: var\(--pw-canvas-control-h\);/);
+    expect(chips()).toMatch(/\.chips-more \{[^}]*height: var\(--pw-canvas-control-h\);/);
+    expect(chips()).toMatch(/\.chips-round \{[^}]*height: var\(--pw-canvas-control-h\);/);
+    expect(shell).toMatch(/\.canvas-zoom \{[^}]*height: var\(--pw-canvas-control-h\);/);
+  });
+
+  it('slide the row home past the funnel when the card closes', () => {
+    expect(chips()).toContain('const dx = home.left + collapseWidth + GAP - (chip.left - shift.e);');
+    expect(chips()).toContain("return rowEl?.querySelector('.lt-chip');");
+  });
+
+  it('close on Done, Escape, or a click outside, and keep a canvas click from going through', () => {
+    expect(chips()).toContain("if (open && e.key === 'Escape') closeCard({ refocus: true });");
+    expect(chips()).toContain('<svelte:window onclickcapture={onWindowClickCapture} onkeydown={onWindowKeydown} />');
+    expect(chips()).toContain("el.hasAttribute('data-canvas')");
+    expect(source('pages/SocialHome.svelte')).toContain('<div class="quilt-pane" data-canvas');
+  });
+
+  it('give the phone sheet the finder, without stealing the keyboard', () => {
+    expect(chips()).toMatch(/\{#if variant === 'sheet'\}[\s\S]*?<TagFinder \/>/);
+  });
+});
+
+// The phone sheet's body: every tag, found by typing.
+describe('tag finder', () => {
+  const finder = () => source('components/TagFinder.svelte');
+
+  it('lists every tag in usage order, narrowed by the shared find rule', () => {
+    expect(finder()).toContain('findTags(getRankedTags(), find)');
+  });
+
+  it('applies at once, with no Apply step', () => {
+    expect(finder()).toContain('onclick={() => toggleTag(tag)}');
+    expect(finder()).not.toMatch(/>\s*Apply\b/);
+  });
+
+  it('takes the first match on Enter and starts the field over', () => {
+    expect(finder()).toContain('toggleTag(shown[0]);');
+    expect(finder()).toContain("find = '';");
+  });
+
+  it('says so when nothing matches', () => {
+    expect(finder()).toContain('No tag matches');
+  });
+
+  it('keeps the chips plain, like the row', () => {
+    // The same reason as the row (tag counts, below): node_count is a
+    // whole-quilt number, and this list narrows My Quilt and events too.
+    expect(finder()).not.toContain('getTagCounts');
   });
 });
 

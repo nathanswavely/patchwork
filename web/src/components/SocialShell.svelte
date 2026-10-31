@@ -25,7 +25,8 @@
   import FilterChips from './FilterChips.svelte';
   import { discoveryFinderProvider } from '../lib/finderProviders.js';
   import { getUnread } from '../stores/notifications.svelte.js';
-  import { ArrowSquareOut, Bell, CaretDown, Compass, FunnelSimple, Info, MagnifyingGlass, SquaresFour, CalendarBlank, Gauge, SidebarSimple, House } from 'phosphor-svelte';
+  import { ArrowSquareOut, Bell, CaretDown, Compass, FunnelSimple, Info, MagnifyingGlass, Minus, Plus, SquaresFour, CalendarBlank, Gauge, SidebarSimple, House } from 'phosphor-svelte';
+  import { hasCanvasZoom, canZoomIn, canZoomOut, zoomCanvas } from '../stores/canvasZoom.svelte.js';
   import LabelFooter from './LabelFooter.svelte';
   import IntroCard from './IntroCard.svelte';
   import { getLabel, loadLabel, formatMoney } from '../stores/label.svelte.js';
@@ -65,6 +66,24 @@
   }
 
   let activeScopeLabel = $derived(quiltScope === 'my' ? 'My Quilt' : getInstanceName());
+
+  // On a narrow bar the name shrinks to the room it has. The fade at its
+  // right edge goes on only when the name is actually cut off, so a short
+  // name keeps its last letters, and the title carries the whole name then.
+  let logoLabelEl = $state(null);
+  let logoLabelClipped = $state(false);
+  $effect(() => {
+    activeScopeLabel;
+    const el = logoLabelEl;
+    if (!el) return;
+    const measure = () => { logoLabelClipped = el.scrollWidth - el.clientWidth > 1; };
+    measure();
+    document.fonts?.ready.then(measure);
+    if (typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  });
 
   // The quilt switcher's other-quilt entries: neighbors (instance-curated,
   // visible to everyone) + personal connected quilts + registry overlay.
@@ -239,7 +258,12 @@
               <rect x="13" y="13" width="9" height="9" rx="1" stroke="currentColor" stroke-width="2"/>
             </svg>
           {/if}
-          <span class="lt-type-name logo-label">{activeScopeLabel}</span>
+          <span
+            class="lt-type-name logo-label"
+            class:clipped={logoLabelClipped}
+            title={logoLabelClipped ? activeScopeLabel : undefined}
+            bind:this={logoLabelEl}
+          >{activeScopeLabel}</span>
           <span class="logo-chevron">
             <CaretDown size={12} weight="bold" />
           </span>
@@ -323,30 +347,52 @@
   {/if}
 
   <!-- Filter chips over the canvas (docs/adr/033): desktop-only here — the
-       row overlays the quilt/map bottom-left corner, bounded away from the
-       rail and the cards pane. Mobile canvases get the FAB + sheet below. -->
+       row overlays the quilt/map top edge, bounded away from the rail and
+       the cards pane. Mobile canvases get the FAB + sheet below. -->
   {#if isQuiltRoute}
     <div class="quilt-chips" class:rail-collapsed={sidebarCollapsed}>
       <FilterChips variant="overlay" />
     </div>
   {/if}
 
-  <!-- Canvas view switcher (docs/adr/074): desktop only. On mobile the same
-       choice already rides the floating pill, which is canvas chrome too. -->
-  {#if isQuiltRoute && mapEnabled}
-    <div class="canvas-view" class:rail-collapsed={sidebarCollapsed} role="group" aria-label="Canvas view">
-      <a
-        href={scopedPath('quilt', quiltScope)}
-        class:active={!onMapSurface}
-        aria-current={!onMapSurface ? 'page' : undefined}
-        onclick={(e) => handleNav(e, scopedPath('quilt', quiltScope))}
-      >Quilt</a>
-      <a
-        href={scopedPath('map', quiltScope)}
-        class:active={onMapSurface}
-        aria-current={onMapSurface ? 'page' : undefined}
-        onclick={(e) => handleNav(e, scopedPath('map', quiltScope))}
-      >Map</a>
+  <!-- Canvas view switcher (docs/adr/074) and the canvas's zoom, together
+       at its bottom-right corner. The zoom holds the corner, since it is
+       there with or without a map. On a phone the view choice already rides
+       the floating pill, so only the zoom stays, above the filter button. -->
+  {#if isQuiltRoute}
+    <div class="canvas-controls" class:dock-open={dockOpen}>
+      {#if mapEnabled}
+        <div class="canvas-view" role="group" aria-label="Canvas view">
+          <a
+            href={scopedPath('quilt', quiltScope)}
+            class:active={!onMapSurface}
+            aria-current={!onMapSurface ? 'page' : undefined}
+            onclick={(e) => handleNav(e, scopedPath('quilt', quiltScope))}
+          >Quilt</a>
+          <a
+            href={scopedPath('map', quiltScope)}
+            class:active={onMapSurface}
+            aria-current={onMapSurface ? 'page' : undefined}
+            onclick={(e) => handleNav(e, scopedPath('map', quiltScope))}
+          >Map</a>
+        </div>
+      {/if}
+      {#if hasCanvasZoom()}
+        <div class="canvas-zoom" role="group" aria-label="Zoom">
+          <button
+            onclick={() => zoomCanvas(-1)}
+            disabled={!canZoomOut()}
+            title="Zoom out"
+            aria-label="Zoom out"
+          ><Minus size={14} weight="bold" /></button>
+          <button
+            onclick={() => zoomCanvas(1)}
+            disabled={!canZoomIn()}
+            title="Zoom in"
+            aria-label="Zoom in"
+          ><Plus size={14} weight="bold" /></button>
+        </div>
+      {/if}
     </div>
   {/if}
 
@@ -591,13 +637,39 @@
     line-height: 1;
   }
 
-  /* Narrow bars drop the quilt's name from the switcher trigger — the
-     mark and chevron carry it (the mark is the identity, and My Quilt
-     scope still reads from the house icon). The dropdown keeps full
-     names. */
+  /* Narrow bars keep the quilt's name but let it give way: the switcher
+     shrinks in the row instead of pushing the right cluster, and a name
+     longer than its room fades out at the right edge. The fade is a mask,
+     not a wash of the bar's colour, so it holds in both themes and over
+     the quilt, and it replaces .lt-type-name's ellipsis rather than fading
+     one. The line height leaves room for descenders the clip would
+     otherwise cut. */
   @media (max-width: 900px) {
+    .scope-switcher,
+    .scope-btn {
+      flex-shrink: 1;
+      min-width: 0;
+    }
+
     .logo-label {
-      display: none;
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: clip;
+      line-height: 1.3;
+    }
+
+    .logo-label.clipped {
+      -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 2rem), transparent);
+      mask-image: linear-gradient(to right, #000 calc(100% - 2rem), transparent);
+    }
+  }
+
+  /* Beside the search pill the name gets a share of the row, not all of
+     it, so a long one cannot squeeze the search out. */
+  @media (min-width: 769px) and (max-width: 900px) {
+    .logo-label {
+      max-width: 11rem;
     }
   }
 
@@ -641,33 +713,49 @@
   }
 
   /* --- Filter chips over the canvas (docs/adr/033) --- */
-  /* Desktop only: overlays the quilt/map bottom-left corner, bounded left of
-     the rail's floating card and right of the cards pane — wrapping within
-     that span and growing upward from the bottom edge, never extending across
-     it. The attribution strip owns the bottom-right, so the two never meet. */
+  /* Desktop only: the canvas's top edge, just under the glass bar, bounded
+     right of the rail's floating card and left of the cards pane. One row
+     at first (FilterChips plans it); "more" wraps the rest in downward. */
   .quilt-chips {
     position: fixed;
-    bottom: 12px;
+    top: 68px; /* clear the glass top bar */
     left: 220px; /* clear the rail's floating glass card (8px + 200px + 12px gap) */
     /* Clear the cards pane, whatever width the reader has set it to
        (docs/adr/111). This used to be a literal 45% — a third copy of a
        number SocialHome wrote twice more, in a file that has no other reason
        to know the pane exists. The fallback keeps the chips honest on any
-       route that renders before the surface publishes its width. */
-    right: calc(var(--pw-cards-pane-w, 45%) + 16px);
+       route that renders before the surface publishes its width. The
+       patch list's card sits 16px inside the pane, so pane width less 4px
+       leaves the same 12px between this row (and the card it opens into)
+       and the list that the rail keeps on the left. With the pane put away
+       its width is 0 and the floor takes over: SocialHome's show-the-list
+       button stands at the same top line, 12px in and 32px wide, so 56px
+       keeps the 12px gap. */
+    right: max(calc(var(--pw-cards-pane-w, 45%) - 4px), 56px);
     z-index: 20; /* the canvas chrome layer — same as the view pill */
   }
 
-  /* Canvas chrome, the same floating layer and rail-aware offsets the chips
-     use — clear of the rail on the left, clear of the cards pane on the
-     right. Top-left rather than the chips' bottom-left so the two never
-     compete, and clear of Leaflet's own zoom control at the map's edge. */
-  .canvas-view {
+  /* Canvas chrome on the same floating layer: the canvas's bottom-right
+     corner, against the cards pane's edge. It stands above the attribution
+     strip's line (24px tall at the window's foot) at every width, not only
+     when the pane is put away: the strip is a run of text and outgrows the
+     pane on a narrow window, and a switch that hopped when the pane moved
+     would be one more thing to find again. */
+  .canvas-controls {
     position: fixed;
-    top: 68px; /* clear the glass top bar */
-    left: 220px;
+    right: calc(var(--pw-cards-pane-w, 45%) + 16px);
+    bottom: 36px;
     z-index: 20;
     display: flex;
+    gap: 8px;
+  }
+
+  /* The switch and the zoom wear one glass pill each, as tall as the
+     filter chips at the canvas's top edge (app.css). */
+  .canvas-view,
+  .canvas-zoom {
+    display: flex;
+    height: var(--pw-canvas-control-h);
     gap: 3px;
     padding: 3px;
     border-radius: 999px;
@@ -677,12 +765,10 @@
     box-shadow: 0 2px 12px var(--color-shadow);
   }
 
-  .canvas-view.rail-collapsed {
-    left: 70px;
-  }
-
   .canvas-view a {
-    padding: 4px 12px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
     border-radius: 999px;
     font-size: 0.78rem;
     font-weight: 600;
@@ -701,15 +787,34 @@
     box-shadow: 0 1px 3px var(--color-shadow);
   }
 
+  /* Round, as tall as a switch option, so the two pills share a line. */
+  .canvas-zoom button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: background 150ms ease, color 150ms ease;
+  }
+
+  .canvas-zoom button:hover:not(:disabled) {
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+
+  .canvas-zoom button:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
   .quilt-chips.rail-collapsed {
     /* The collapsed rail hugs at left 8px, 50px wide (its right edge is
-       58px) — keep the same 12px gap the expanded offset has. The map's
-       zoom control lives in the column this leaves free (bottom-left,
-       12px in, 32px wide, so its right edge is 44px — MapView), so this
-       offset is also what keeps the chips off it. Both constraints are
-       read out of the source and checked against each other in
-       map-zoom-control.test.js, so moving the rail again fails there
-       rather than silently landing the chips on the zoom buttons. */
+       58px) — keep the same 12px gap the expanded offset has. */
     left: 70px;
   }
 
@@ -992,8 +1097,33 @@
       display: none;
     }
 
+    /* Only the zoom, stood on its side above the filter button, in the
+       button's width and ground. The filter sheet (z-index 56) opens over
+       it, and a docked profile puts it away with the rest of the row. */
+    .canvas-controls {
+      right: 12px;
+      bottom: calc(var(--pw-canvas-chrome-bottom) + 44px);
+    }
+
+    .canvas-controls.dock-open,
     .canvas-view {
       display: none;
+    }
+
+    /* Plus on top, the way a vertical zoom reads. Each button fills the
+       36px width, the filter button's size, rather than the desktop's
+       26px. */
+    .canvas-zoom {
+      flex-direction: column-reverse;
+      width: 36px;
+      height: auto;
+      padding: 0;
+      gap: 0;
+      border: 1px solid color-mix(in srgb, var(--color-text-muted) 45%, transparent);
+      background: var(--color-surface);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      box-shadow: none;
     }
 
     /* Filter FAB: opposite the info button, same floating row as the view
@@ -1035,8 +1165,11 @@
 
     /* The filter sheet: rises from the FAB, clearing the floating row so
        its toggle stays visible — the label sheet's geometry. */
+    /* A column with a bounded height: the find field stays put and only the
+       tag list inside it scrolls (FilterChips' sheet, TagFinder). */
     .filter-sheet {
-      display: block;
+      display: flex;
+      flex-direction: column;
       position: fixed;
       left: 8px;
       right: 8px;
@@ -1050,7 +1183,7 @@
       box-shadow: 0 8px 24px var(--color-shadow);
       padding: 14px 16px;
       max-height: 45vh;
-      overflow-y: auto;
+      overflow: hidden;
     }
 
     /* Full-width bottom bar. The extra selectors outrank the desktop
