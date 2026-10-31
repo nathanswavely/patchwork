@@ -8,11 +8,17 @@
    * passkeys. That is a grant outward, so the add runs through the same
    * step-up flow the export and the attestation run through (docs/adr/017).
    * Removing is a plain admin act: taking trust back is the safe direction.
+   *
+   * An Apple app also carries a switch: open this quilt's links in it
+   * (docs/adr/2026-10-18-a-listed-app-may-open-the-quilts-links.md). Off by
+   * default and no step-up, because it names nobody the listing did not
+   * already name; it only says where a tapped link lands.
    */
   import { api } from '../lib/api.js';
   import { showToast } from '../stores/toast.svelte.js';
   import { withStepUp, stepUpStatus, PasskeyRequiredError } from '../lib/stepUp.js';
   import PasskeyNotice from '../components/PasskeyNotice.svelte';
+  import ToggleSwitch from '../components/ToggleSwitch.svelte';
 
   let apps = $state([]);
   let urls = $state({ apple: '', android: '' });
@@ -25,6 +31,7 @@
   let label = $state('');
   let busy = $state(false);
   let error = $state('');
+  let switching = $state('');
 
   const PLACEHOLDERS = {
     apple: 'ABCDE12345.org.example.app',
@@ -84,6 +91,22 @@
     }
   }
 
+  async function setOpenLinks(app, input) {
+    const open = input.checked;
+    switching = app.id;
+    try {
+      const updated = await api(`admin/native-apps/${app.id}`, { method: 'PATCH', body: { open_links: open } });
+      apps = apps.map((a) => (a.id === app.id ? { ...a, open_links: updated.open_links } : a));
+      showToast(open ? 'Links open in the app' : 'Links open in the browser');
+    } catch (e) {
+      // The row did not change, so neither does the switch.
+      input.checked = app.open_links;
+      showToast(e.data?.error || 'Could not change that', 'error');
+    } finally {
+      switching = '';
+    }
+  }
+
   function platformLabel(value) {
     return value === 'android' ? 'Android' : 'Apple';
   }
@@ -139,6 +162,22 @@
             {/if}
             {#if addedOn(app.created_at)}
               <span class="lt-muted added">Listed {addedOn(app.created_at)}</span>
+            {/if}
+            {#if app.platform === 'apple'}
+              <div class="lt-setting open-links">
+                <div>
+                  <span class="open-links-label">Open this quilt's links in the app</span>
+                  <p class="lt-hint">
+                    iPhones with the app installed will open this quilt's patch, event, people and governance links in the app instead of the browser. Apple can take up to a day to notice a change.
+                  </p>
+                </div>
+                <ToggleSwitch
+                  checked={app.open_links}
+                  disabled={switching === app.id}
+                  label="Open this quilt's links in the app"
+                  onchange={(e) => setOpenLinks(app, e.currentTarget)}
+                />
+              </div>
             {/if}
           </div>
           <button class="lt-btn lt-btn-danger lt-btn-sm" onclick={() => handleRemove(app)}>Remove</button>
@@ -302,6 +341,22 @@
     display: block;
     font-size: 0.78rem;
     margin-top: 0.35rem;
+  }
+
+  .open-links {
+    margin-top: 0.6rem;
+    padding-bottom: 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .open-links-label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+
+  .open-links .lt-hint {
+    margin-top: 0.2rem;
   }
 
   .add-form {

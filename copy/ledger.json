@@ -21532,7 +21532,7 @@
         },
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 63,
+          "line": 70,
           "kind": "js-string",
           "raw": "POST",
           "quote": "'",
@@ -22545,6 +22545,14 @@
           "at": "method"
         },
         {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 98,
+          "kind": "js-string",
+          "raw": "PATCH",
+          "quote": "'",
+          "at": "method"
+        },
+        {
           "file": "web/src/pages/AdminClaims.svelte",
           "line": 35,
           "kind": "js-string",
@@ -23452,7 +23460,7 @@
         },
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 119,
+          "line": 142,
           "kind": "markup",
           "raw": "Loading…",
           "quote": null
@@ -24288,7 +24296,7 @@
         },
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 79,
+          "line": 86,
           "kind": "js-string",
           "raw": "DELETE",
           "quote": "'",
@@ -35786,7 +35794,7 @@
         },
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 186,
+          "line": 225,
           "kind": "markup",
           "raw": "Label",
           "quote": null
@@ -44779,7 +44787,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 64,
+          "line": 71,
           "kind": "js-string",
           "raw": "App listed",
           "quote": "'"
@@ -44797,7 +44805,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 71,
+          "line": 78,
           "kind": "js-string",
           "raw": "Could not list that app.",
           "quote": "'"
@@ -44815,7 +44823,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 80,
+          "line": 87,
           "kind": "js-string",
           "raw": "App removed",
           "quote": "'"
@@ -44833,9 +44841,63 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 83,
+          "line": 90,
           "kind": "js-string",
           "raw": "Could not remove that app",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "79f0a4f55b06",
+      "text": "Links open in the app",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 100,
+          "kind": "js-string",
+          "raw": "Links open in the app",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "200e70db3406",
+      "text": "Links open in the browser",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 100,
+          "kind": "js-string",
+          "raw": "Links open in the browser",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "fe705a52b448",
+      "text": "Could not change that",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 104,
+          "kind": "js-string",
+          "raw": "Could not change that",
           "quote": "'"
         }
       ]
@@ -44851,7 +44913,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 102,
+          "line": 125,
           "kind": "markup",
           "raw": "Apps this quilt vouches for",
           "quote": null
@@ -44869,7 +44931,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 104,
+          "line": 127,
           "kind": "markup",
           "raw": "A native app can hold this quilt's passkeys only if approved by this quilt. Listing an app publishes its identifier at the address the app stores check.",
           "quote": null
@@ -44891,7 +44953,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 108,
+          "line": 131,
           "kind": "markup",
           "raw": "What gets published",
           "quote": null
@@ -44909,7 +44971,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 112,
+          "line": 135,
           "kind": "markup",
           "raw": "Each address answers \"not found\" until you list an app for that\n      platform. Apple caches the file for up to a day, so a change can take\n      that long to reach a phone.",
           "quote": null
@@ -44927,7 +44989,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 122,
+          "line": 145,
           "kind": "markup",
           "raw": "No apps listed.",
           "quote": null
@@ -44945,7 +45007,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 123,
+          "line": 146,
           "kind": "markup",
           "raw": "This quilt vouches for nobody, and publishes neither file.",
           "quote": null
@@ -44963,9 +45025,52 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 141,
+          "line": 164,
           "kind": "markup",
           "raw": "Listed {addedOn(app.created_at)}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "32ad19cd422f",
+      "text": "Open this quilt's links in the app",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 169,
+          "kind": "markup",
+          "raw": "Open this quilt's links in the app",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 177,
+          "kind": "attr:label",
+          "raw": "Open this quilt's links in the app",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "dc94499ab395",
+      "text": "iPhones with the app installed will open this quilt's patch, event, people and governance links in the app instead of the browser. Apple can take up to a day to notice a change.",
+      "words": 33,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 171,
+          "kind": "markup",
+          "raw": "iPhones with the app installed will open this quilt's patch, event, people and governance links in the app instead of the browser. Apple can take up to a day to notice a change.",
           "quote": null
         }
       ]
@@ -44981,7 +45086,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 150,
+          "line": 189,
           "kind": "markup",
           "raw": "List an app",
           "quote": null
@@ -44999,7 +45104,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 154,
+          "line": 193,
           "kind": "markup",
           "raw": "Platform",
           "quote": null
@@ -45017,7 +45122,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 156,
+          "line": 195,
           "kind": "markup",
           "raw": "Apple",
           "quote": null
@@ -45035,7 +45140,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 157,
+          "line": 196,
           "kind": "markup",
           "raw": "Android",
           "quote": null
@@ -45053,7 +45158,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 162,
+          "line": 201,
           "kind": "markup",
           "raw": "Identifier",
           "quote": null
@@ -45071,7 +45176,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 174,
+          "line": 213,
           "kind": "markup",
           "raw": "Signing-certificate fingerprints",
           "quote": null
@@ -45089,7 +45194,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 179,
+          "line": 218,
           "kind": "attr:placeholder",
           "raw": "AA:BB:CC:…, one per line",
           "quote": "\""
@@ -45107,7 +45212,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 192,
+          "line": 231,
           "kind": "attr:placeholder",
           "raw": "What you call this app",
           "quote": "\""
