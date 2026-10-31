@@ -11,17 +11,23 @@ package handler
 // It exists because of how the reach got here. Nobody decided it. Every
 // `user.Role == "admin"` on a node-scoped route was copied from the handler
 // next door, about thirty times, past the point where its own justification
-// still applied — `event_links.go` grants the reach "everywhere" in a sentence
-// whose own parenthetical says "unclaimed", and `event_submissions.go` calls
+// still applied. `event_links.go` granted the reach "everywhere" in a sentence
+// whose own parenthetical said "unclaimed", and `event_submissions.go` called
 // it "global admin override ... as on every node endpoint" three lines below
 // code implementing ADR 026's rule that active calendars are reviewed by that
-// patch's admins, "never the instance admin".
+// patch's admins, "never the instance admin". ADR 115 quotes both; the
+// comments now state the rule and point here.
 //
 // A reflex that spreads by copying will keep spreading while the rule waits.
 // So every site is declared here with what ADR 115 says it should end up as,
 // and `TestEveryInstanceAdminReachIsDeclared` fails the build on a
 // thirty-first. The cost of adding one is now reading this file; the cost of
 // adding one silently is gone.
+//
+// This file sees the checks in this package and nothing else. The routes they
+// open, and the six that middleware.RequireNodeRole opens before any handler
+// runs, are declared from the caller's side by cmd/patchwork's
+// TestEveryRouteAnInstanceAdminReachesIsDeclared.
 //
 // When #286 is implemented this file stops being a snapshot and becomes the
 // rule: the `settled` column goes all true, and anything that is not
@@ -102,8 +108,8 @@ var instanceAdminReach = map[string]struct {
 			"inside the workspace', and an instance admin holding no role is neither."},
 
 	"event_links.go:userSpeaksForNode": {reachCustodyUnclaimed, 1, false,
-		"The link handshake. Its comment already says 'who holds unclaimed patches' calendars in trust' " +
-			"and the code says everywhere; ADR 115 is that parenthetical winning."},
+		"The link handshake. Its comment says the instance admin speaks for unclaimed patches, whose " +
+			"calendars they hold in trust, and the code says everywhere; ADR 115 is the comment winning."},
 
 	"event_sources.go:sourceNodeAccess": {reachCustodyUnclaimed, 1, false,
 		"Owning a patch's calendar feeds."},
@@ -116,8 +122,8 @@ var instanceAdminReach = map[string]struct {
 			"the patch's."},
 
 	"event_submissions.go:ReviewEventSubmission": {reachCustodyUnclaimed, 2, false,
-		"Two branches. The unclaimed one is already right and is ADR 026 working; the active one carries " +
-			"the comment that asserts the reflex as the rule. Only the second changes."},
+		"Two branches. The unclaimed one is already right and is ADR 026 working; the active one is the " +
+			"reflex, and its comment used to call it the rule. Only the second changes."},
 
 	"event_upload.go:BulkCreateEvents": {reachCustodyUnclaimed, 1, false,
 		"The CSV door onto a patch's calendar."},
@@ -175,12 +181,18 @@ var instanceAdminReach = map[string]struct {
 			"which is instance curation and the moderation lever of last resort. CONTEXT.md already grants " +
 			"it and ADR 034 already makes restore instance-admin-only on purpose."},
 
+	"nodes.go:writeNodeNotFound": {reachInstanceSurface, 1, true,
+		"Tells a caller that a slug is an archived patch rather than a missing one, so the person who " +
+			"can bring it back knows it is there. Archive and restore are the named exception " +
+			"(docs/adr/034, docs/adr/115), and the patch's own admins are told the same. Spelled " +
+			"`viewer.Role`, which is why the first, name-matching version of the guard never saw it."},
+
 	"proposals.go:WithdrawProposal": {reachNone, 1, false,
 		"Withdrawing a patch's proposal. Not enumerated in ADR 115's own list, but it is a held patch's " +
-			"governance act and the rule reaches it. Note that CreateProposal's comment still describes " +
-			"stewardship as 'withdrawing, applying, moderating' — ApplyProposal's bypass is already gone, " +
-			"so that sentence is half stale and should be fixed with this site."},
+			"governance act and the rule reaches it. CreateProposal's comment used to call withdrawing, " +
+			"applying and moderating stewardship the instance admin keeps; ApplyProposal's bypass was " +
+			"already gone, and the comment now keeps only commenting."},
 
 	"proposals.go:UpdateProposal": {reachNone, 1, false,
-		"Editing a patch's proposal. Same reasoning as WithdrawProposal, and same stale comment."},
+		"Editing a patch's proposal. Same reasoning as WithdrawProposal."},
 }
