@@ -21254,7 +21254,7 @@
       "text": "POST",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "not-copy",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25892,11 +25892,11 @@
       ]
     },
     {
-      "id": "f8040dddb3a5",
-      "text": "You are counted as taking part and approving nobody. Ticking a name and saving replaces that.",
-      "words": 16,
-      "tier": "prose",
-      "status": "unreviewed",
+      "id": "03a6cf61a858",
+      "text": "Select to abstain. Selecting a name and saving undoes this.",
+      "words": 10,
+      "tier": "helper",
+      "status": "human",
       "replacement": null,
       "note": "The state after abstaining, and how to leave it. Reads back what the server holds rather than what was clicked, so it survives a reload.",
       "occurrences": [
@@ -25904,28 +25904,36 @@
           "file": "web/src/components/ElectionPanel.svelte",
           "line": 383,
           "kind": "markup",
-          "raw": "You are counted as taking part and approving nobody. Ticking a name\n            and saving replaces that.",
+          "raw": "Select to abstain. Selecting a name and saving undoes this.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "written"
+      },
+      "previous_ai_text": "You are counted as taking part and approving nobody. Ticking a name and saving replaces that."
     },
     {
-      "id": "1c0d9e8c19ca",
-      "text": "Counts toward the turnout this election needs, the way an abstention counts on an ordinary proposal.",
-      "words": 16,
-      "tier": "prose",
-      "status": "unreviewed",
+      "id": "2a504754e5bb",
+      "text": "This election may need a certain turnout, so abstention does impact the result.",
+      "words": 13,
+      "tier": "helper",
+      "status": "human",
       "replacement": null,
       "note": "Answers the question two members could not resolve between a notice asking them to turn up and a page saying it would do nothing. Names the ordinary proposal on purpose: the behaviour is the same one they already know.",
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 391,
+          "line": 390,
           "kind": "markup",
-          "raw": "Counts toward the turnout this election needs, the way an abstention\n            counts on an ordinary proposal.",
+          "raw": "This election may need a certain turnout, so abstention does impact the result.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "written"
+      },
+      "previous_ai_text": "Counts toward the turnout this election needs, the way an abstention counts on an ordinary proposal."
     },
     {
       "id": "0c953ab32c60",
@@ -27033,11 +27041,11 @@
       ]
     },
     {
-      "id": "3e36f0041284",
-      "text": "You can nominate a member for a vacant seat today. The members ratify it, and the appointee serves out that seat’s term.",
-      "words": 22,
+      "id": "e93694017b0a",
+      "text": "You can nominate someone for a vacant seat. Members ratify it, and the appointee will out that seat’s term.",
+      "words": 19,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -27045,10 +27053,14 @@
           "file": "web/src/components/GovernanceOverview.svelte",
           "line": 175,
           "kind": "js-string",
-          "raw": "You can nominate a member for a vacant seat today. The members ratify it, and the appointee serves out that seat\\u2019s term.",
+          "raw": "You can nominate someone for a vacant seat. Members ratify it, and the appointee will out that seat’s term.",
           "quote": "'"
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "written"
+      },
+      "previous_ai_text": "You can nominate a member for a vacant seat today. The members ratify it, and the appointee serves out that seat’s term."
     },
     {
       "id": "cb4da358c6d1",
@@ -27073,7 +27085,7 @@
       "text": "A vacant seat is filled by nomination, and only this patch’s members can be nominated for one.",
       "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -27084,7 +27096,10 @@
           "raw": "A vacant seat is filled by nomination, and only this patch\\u2019s members can be nominated for one.",
           "quote": "'"
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "72cb57863850",
@@ -38477,11 +38492,11 @@
       ]
     },
     {
-      "id": "4474cf7ca062",
-      "text": "The longest-standing members who have taken part recently become interim admins. If nobody has, nobody steps in.",
-      "words": 17,
+      "id": "8aebed88fa1d",
+      "text": "The longest-standing members with recent activity become interim admins. If there's no one with activity, the seat will remain vacant",
+      "words": 20,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": "Corrected, not reworded. docs/adr/102 made interim promotion require presence as well as tenure and promote nobody where nobody qualifies, and the old hint promised \"the three longest-standing members step in\" in the present tense. Two members read it against patches where nobody had.",
       "occurrences": [
@@ -38489,10 +38504,14 @@
           "file": "web/src/lib/governanceRules.js",
           "line": 57,
           "kind": "js-string",
-          "raw": "The longest-standing members who have taken part recently become interim admins. If nobody has, nobody steps in.",
+          "raw": "The longest-standing members with recent activity become interim admins. If there\\'s no one with activity, the seat will remain vacant",
           "quote": "'"
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "written"
+      },
+      "previous_ai_text": "The longest-standing members who have taken part recently become interim admins. If nobody has, nobody steps in."
     },
     {
       "id": "fc5d6641e893",
@@ -38533,11 +38552,11 @@
       ]
     },
     {
-      "id": "a920ba08e058",
-      "text": "Admins name their successors. If none are left to, the longest-standing members who have taken part recently step in.",
-      "words": 19,
-      "tier": "prose",
-      "status": "unreviewed",
+      "id": "8161d6d4c1b8",
+      "text": "Admins name their successors. If none remain the longest-standing members with recent activity step in.",
+      "words": 15,
+      "tier": "helper",
+      "status": "human",
       "replacement": null,
       "note": "Corrected, not reworded. docs/adr/102 made interim promotion require presence as well as tenure and promote nobody where nobody qualifies, and the old hint promised \"the three longest-standing members step in\" in the present tense. Two members read it against patches where nobody had.",
       "occurrences": [
@@ -38545,10 +38564,14 @@
           "file": "web/src/lib/governanceRules.js",
           "line": 59,
           "kind": "js-string",
-          "raw": "Admins name their successors. If none are left to, the longest-standing members who have taken part recently step in.",
+          "raw": "Admins name their successors. If none remain the longest-standing members with recent activity step in.",
           "quote": "'"
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "written"
+      },
+      "previous_ai_text": "Admins name their successors. If none are left to, the longest-standing members who have taken part recently step in."
     },
     {
       "id": "4b9e99d2bd5e",
@@ -38589,11 +38612,11 @@
       ]
     },
     {
-      "id": "2abee9d8f799",
-      "text": "Members elect the next admins. Until then the longest-standing members who have taken part recently step in, and if nobody has the seats stay empty until the election.",
-      "words": 28,
+      "id": "9fcf636766a5",
+      "text": "Members elect the next admins. Until then, the longest-standing members with recent activity step in, and there are none, the seats stay empty until the election.",
+      "words": 26,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": "Corrected, not reworded. docs/adr/102 made interim promotion require presence as well as tenure and promote nobody where nobody qualifies, and the old hint promised \"the three longest-standing members step in\" in the present tense. Two members read it against patches where nobody had.",
       "occurrences": [
@@ -38601,10 +38624,14 @@
           "file": "web/src/lib/governanceRules.js",
           "line": 61,
           "kind": "js-string",
-          "raw": "Members elect the next admins. Until then the longest-standing members who have taken part recently step in, and if nobody has the seats stay empty until the election.",
+          "raw": "Members elect the next admins. Until then, the longest-standing members with recent activity step in, and there are none, the seats stay empty until the election.",
           "quote": "'"
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "written"
+      },
+      "previous_ai_text": "Members elect the next admins. Until then the longest-standing members who have taken part recently step in, and if nobody has the seats stay empty until the election."
     },
     {
       "id": "35694277f81e",
@@ -52134,7 +52161,7 @@
       "text": "Failed to create proposal",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -52184,7 +52211,7 @@
       "text": "Become a member to take part in how this patch governs itself.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -52356,7 +52383,7 @@
       "text": "Help others understand why this change matters.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -54581,7 +54608,7 @@
       "text": "Timezone must name a place, like America/New_York. A fixed-offset name like EST is an hour wrong for half the year.",
       "words": 20,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -57129,7 +57156,7 @@
       "text": "Their seat was vacated: they had taken no part in governance here for the patch’s inactivity period.",
       "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": "The sentence a founder came back for twice. Says both halves of her question, when and why, and names the rule rather than a number, because the inactivity period is per patch.",
       "occurrences": [
@@ -66778,7 +66805,7 @@
       "text": "This patch decides its proposals at its meetings. Yours opens here for discussion, with no vote, and the decision is recorded once the meeting has made it.",
       "words": 27,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -67433,7 +67460,7 @@
       "text": "This patch decides at its meetings, and the rules are not something a meeting adopts, so an admin applies a rules change directly. Ask an admin to make this one.",
       "words": 30,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -67451,7 +67478,7 @@
       "text": "This goes to this patch's maintainer, who decides whether to apply it and may ask the members first. These rules do not change unless they approve it.",
       "words": 27,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -67505,7 +67532,7 @@
       "text": "Failed to load rules",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -67541,7 +67568,7 @@
       "text": "Only members can propose a change to these rules.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -67559,7 +67586,7 @@
       "text": "Restored unsaved changes from {draftTimestamp ? new Date(draftTimestamp).toLocaleTimeString() : 'earlier'}",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
