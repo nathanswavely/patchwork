@@ -12,8 +12,11 @@
    * (clicking Copy Link is the only signal there is), and the optional
    * "Decide how you govern" item, which also derives from real state (any
    * published charter beyond the lining) but falls back to "the admin has
-   * visited the governance hub" (set from GovernanceOverview.svelte) so a
-   * patch that never amends anything doesn't nag forever.
+   * performed a governance act" (set from GovernanceOverview.svelte and
+   * RulesProposalEditor.svelte) so a patch that never writes a charter
+   * doesn't nag forever. A visit is not an act: opening the hub used to
+   * tick this item, which told a founder they had decided something they
+   * had not.
    *
    * Never blocks anything; collapses entirely once every item is done.
    */
@@ -22,6 +25,7 @@
   import { api } from '../lib/api.js';
   import { navigate, getPath } from '../stores/router.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
+  import { selectWhen } from '../lib/selectText.js';
   import { getUser } from '../stores/auth.svelte.js';
   import { hasMapLocation } from '../lib/mapLocation.js';
   import {
@@ -29,7 +33,7 @@
     dismissSetupChecklist,
     isPatchLinkShared,
     markPatchLinkShared,
-    isGovernanceHubVisited,
+    isGovernanceDecided,
   } from '../lib/onboarding.js';
 
   const patch = getContext('patch');
@@ -85,14 +89,14 @@
   // rendering below; each carries its own navigation target.
   let items = $derived.by(() => {
     if (!node) return [];
-    // Re-read on every route change (getPath()) — visiting the governance
-    // hub sets a localStorage flag that isn't itself reactive, so this is
-    // what notices the admin came back from there without a full reload.
+    // Re-read on every route change (getPath()) — a governance act sets a
+    // localStorage flag that isn't itself reactive, so this is what notices
+    // the admin came back from the hub without a full reload.
     getPath();
     const hasTile = node.appearance != null;
     const hasTags = Array.isArray(node.tags) && node.tags.length > 0;
     const hasWhereabouts = !!(node.address && node.address.trim()) || hasMapLocation(node.latitude, node.longitude);
-    const governanceDecided = hasCharterBeyondLining || isGovernanceHubVisited(userId, node.id);
+    const governanceDecided = hasCharterBeyondLining || isGovernanceDecided(userId, node.id);
 
     return [
       {
@@ -153,13 +157,20 @@
     };
   }
 
+  // Set when the clipboard refuses: the address is then put on screen,
+  // selected, for the person to copy by hand (F-031). A fresh object per
+  // failure so a second refusal selects it again.
+  let copyFailed = $state(null);
+
   async function shareLink() {
     const url = `${location.origin}/patches/${slug}`;
     try {
       await navigator.clipboard.writeText(url);
+      copyFailed = null;
       showToast('Copied');
     } catch {
-      showToast('Copy failed. Select the address instead', 'error');
+      copyFailed = { value: url };
+      showToast('Copy failed. The address is selected for you to copy.', 'error');
       return;
     }
     shared = true;
@@ -192,6 +203,9 @@
           {/if}
           {#if item.hint}
             <span class="checklist-hint">({item.hint})</span>
+          {/if}
+          {#if item.action === 'share' && copyFailed}
+            <code class="copy-fallback" use:selectWhen={copyFailed}>{copyFailed.value}</code>
           {/if}
         </li>
       {/each}
@@ -252,8 +266,22 @@
   .checklist-item {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 0.5rem;
     font-size: 0.85rem;
+  }
+
+  /* The address, whole, when the clipboard refused it: its own line under
+     the item, wrapping rather than clipping, one tap selects all of it. */
+  .copy-fallback {
+    flex-basis: 100%;
+    padding: 0.35rem 0.5rem;
+    font-size: 0.8rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    overflow-wrap: anywhere;
+    user-select: all;
   }
 
   .checklist-icon {

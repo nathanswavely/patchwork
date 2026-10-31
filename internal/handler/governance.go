@@ -251,7 +251,15 @@ func CreateGovernanceDoc(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		// Require admin role on the node or global admin.
+		// A patch admin, or an instance admin holding no role here. The
+		// second is the instance-admin reach docs/adr/115 decides should end
+		// (custody, not rank) and deliberately leaves in place until issue
+		// #286, as the operator's recovery hatch. It matches
+		// UpdateGovernanceDoc and canReadPatchDocs on purpose: closing one
+		// door of a shelf whose others stay open protects nothing, so this
+		// changes with them, in #286, and not on its own. Distinct from the
+		// proposal verbs (apply, decide), whose bypass docs/adr/092 removed
+		// because a patch's *decision* was never the steward's to make.
 		if user.Role != "admin" && !userHasNodeRole(db, user.ID, nodeID, "admin") {
 			http.Error(w, `{"error":"admin access required"}`, http.StatusForbidden)
 			return
@@ -453,7 +461,8 @@ func UpdateGovernanceDoc(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		// Require admin role on the node or global admin.
+		// The same reach as CreateGovernanceDoc, for the same deferred
+		// reason (docs/adr/115, issue #286).
 		if user.Role != "admin" && !userHasNodeRole(db, user.ID, nodeID, "admin") {
 			http.Error(w, `{"error":"admin access required"}`, http.StatusForbidden)
 			return
@@ -463,10 +472,22 @@ func UpdateGovernanceDoc(db *database.DB) http.HandlerFunc {
 			Title      *string `json:"title"`
 			Body       *string `json:"body"`
 			Visibility *string `json:"visibility"`
+			// Whether AI made this revision's text
+			// (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md). A
+			// charter's revisions live in git, so the answer is written as
+			// an AI-Use trailer on the commit rather than a column, and the
+			// history view reads it back. Asked only of a body edit.
+			AIUse *string `json:"ai_use"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
 			return
+		}
+		if req.Body != nil {
+			if msg := checkAIAnswer(db, "ai_use", req.AIUse); msg != "" {
+				writeJSONError(w, http.StatusBadRequest, msg)
+				return
+			}
 		}
 		if req.Title == nil && req.Body == nil && req.Visibility == nil {
 			http.Error(w, `{"error":"title, body, or visibility is required"}`, http.StatusBadRequest)
@@ -544,7 +565,7 @@ func UpdateGovernanceDoc(db *database.DB) http.HandlerFunc {
 			author, authorEmail := commitIdentity(user)
 			if _, gitErr := governance.DirectEdit(dataDir, nodeID, governanceFilename(newTitle),
 				newBody, author, authorEmail,
-				"Update "+newTitle+" (v"+strconv.Itoa(newVersion)+")"); gitErr != nil {
+				governance.WithAIUseTrailer("Update "+newTitle+" (v"+strconv.Itoa(newVersion)+")", aiAnswerValue(req.AIUse))); gitErr != nil {
 				log.Printf("governance: git mirror of doc %s failed: %v", docID, gitErr)
 			}
 		}

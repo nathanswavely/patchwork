@@ -1,9 +1,11 @@
 <script>
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
-  import { timeLeft, timeLeftShort } from '../lib/datetime.js';
+  import { timeLeft, timeLeftShort, formatDay } from '../lib/datetime.js';
   import { docLabel } from '../lib/docLabel.js';
+  import { isDirectRow } from '../lib/proposalRow.js';
   import { navigate } from '../stores/router.svelte.js';
+  import { getPendingMembershipSlugs } from '../stores/memberships.svelte.js';
 
   import { isLoggedIn } from '../stores/auth.svelte.js';
   import VocabLabel from '../components/VocabLabel.svelte';
@@ -31,6 +33,11 @@
   let permissionDenied = $derived(
     recordWithheld || (membershipRole === 'follower' && followerPermissions?.proposals === false)
   );
+  // An unanswered join request. The node payload gives a pending row no
+  // role, so without asking the store by name a requester read "Follow or
+  // join this patch to get started" about the patch they had just asked to
+  // join (F-055).
+  let requestPending = $derived(getPendingMembershipSlugs().has(slug));
   let statusFilter = $state('open');
   // On an admin-decides patch an admin's new proposal is a change they
   // apply, and the button says so (docs/adr/041, docs/adr/092). The patch's
@@ -90,13 +97,6 @@
     return Math.round((approve / total) * 100);
   }
 
-  // Approved with zero votes = a direct change, born applied under
-  // admin-decides rules (docs/adr/041) — no vote to speak of, so the row
-  // says "applied" rather than "approved".
-  function isDirectRow(p) {
-    return p.status === 'approved' && !((p.approve_count || 0) + (p.reject_count || 0) + (p.abstain_count || 0));
-  }
-
   // What the row calls the proposal's outcome. A lapsed vote carries the
   // schema's terminal "rejected" status (docs/adr/097) but nobody rejected
   // it, so the row says what happened instead of what the column holds. An
@@ -133,7 +133,11 @@
 {#if permissionDenied}
   <div class="lt-empty">
     <p class="lt-empty-title">This content is only visible to members.</p>
-    <p class="lt-muted">Become a member to access proposals.</p>
+    {#if requestPending}
+      <p class="lt-muted">Your request to join is waiting on an admin.</p>
+    {:else}
+      <p class="lt-muted">Become a member to access proposals.</p>
+    {/if}
   </div>
 {:else}
 <div class="lt-fade-in">
@@ -147,6 +151,8 @@
           >
             {newLabel}
           </a>
+        {:else if requestPending}
+          <p class="role-prompt lt-muted">Your request to join is waiting on an admin.</p>
         {:else if membershipRole === 'follower'}
           <p class="role-prompt lt-muted">Become a member to create proposals and vote.</p>
         {:else}
@@ -202,7 +208,12 @@
                   {/if}
                 </div>
                 <div class="proposal-meta">
-                  {#if proposal.author_name}
+                  <!-- An election has no proposer (docs/adr/109): it says
+                       what opened it, as its own page does, rather than
+                       the name in the author column (F-137). -->
+                  {#if proposal.election_phase}
+                    <span class="lt-muted">opened by the election calendar</span>
+                  {:else if proposal.author_name}
                     <span class="lt-muted">{isDirectRow(proposal) ? 'applied by' : 'by'} {proposal.author_name}</span>
                   {/if}
                   {#if proposal.state === 'awaiting_admin'}
@@ -212,8 +223,13 @@
                     <span class="lt-muted">waiting on the maintainer</span>
                   {:else if proposal.status === 'open' && proposal.voting_ends_at}
                     <span class="time-remaining">{timeRemaining(proposal.voting_ends_at)}</span>
-                  {:else if proposal.status !== 'open' && !isDirectRow(proposal)}
-                    <span class="lt-muted">{rowLabel(proposal)}</span>
+                  {:else if proposal.status !== 'open' && !isDirectRow(proposal) && proposal.decided_at}
+                    <!-- When it closed, which is the question this slot
+                         answers on every other row ("6d left", "waiting on
+                         the maintainer"). It used to repeat the outcome the
+                         pill on the right already says, so a settled row
+                         read "nobody elected [nobody elected]" (F-136). -->
+                    <span class="lt-muted">closed {formatDay(proposal.decided_at)}</span>
                   {/if}
                 </div>
                 {#if (proposal.approve_count || 0) + (proposal.reject_count || 0) > 0}

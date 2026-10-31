@@ -60,6 +60,41 @@ type CommitInfo struct {
 	// it brought one file back in line with the database, empty otherwise
 	// (docs/adr/084). The history view reads this to say so out loud.
 	Repair string `json:"repair,omitempty"`
+	// AIUse is the edit's answer to whether AI made its text, read from the
+	// commit's AI-Use trailer (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md).
+	// Empty when the commit carries none: older edits, merges, repairs.
+	AIUse string `json:"ai_use,omitempty"`
+}
+
+// aiUseTrailer is the git trailer a direct charter edit records its AI answer
+// in. A trailer rather than a database column, because a charter's
+// revisions already live in git and the answer belongs to the revision.
+const aiUseTrailer = "AI-Use: "
+
+// WithAIUseTrailer appends the AI-Use trailer to a commit message when the
+// author answered. Unanswered leaves the message alone.
+func WithAIUseTrailer(message string, aiUse *string) string {
+	if aiUse == nil || *aiUse == "" {
+		return message
+	}
+	return strings.TrimRight(message, "\n") + "\n\n" + aiUseTrailer + *aiUse
+}
+
+// splitAIUseTrailer separates the AI-Use trailer from a commit message, so
+// the history view shows the message as written and the answer as a field.
+func splitAIUseTrailer(message string) (string, string) {
+	lines := strings.Split(message, "\n")
+	for i := len(lines) - 1; i >= 0; i-- {
+		line := strings.TrimSpace(lines[i])
+		if line == "" {
+			continue
+		}
+		if strings.HasPrefix(line, aiUseTrailer) {
+			return strings.TrimSpace(strings.Join(lines[:i], "\n")), strings.TrimSpace(strings.TrimPrefix(line, aiUseTrailer))
+		}
+		break
+	}
+	return message, ""
 }
 
 // repoPath returns the filesystem path for a governance repo.
@@ -368,6 +403,46 @@ func GetDocumentAtVersion(dataDir, nodeID, filename, commitSHA string) (string, 
 	return content, nil
 }
 
+// GetDocumentBefore returns a file's content as it stood just before a
+// commit: at its first parent. For the commit a merge produced that is the
+// main branch the moment before the merge (MergeBranch puts main first, and a
+// fast-forward lands the branch commit, whose only parent is main); for an
+// amendment branch's commit it is main when the branch was cut. Either way it
+// is the text the change was made against, which the live document stops
+// being the moment the change applies.
+//
+// A file the parent does not have was created by the commit, so its prior
+// content is empty rather than an error. A commit the repo does not hold
+// (a repo rebuilt from rows, docs/adr/084) and a root commit are errors: no
+// prior text can be said.
+func GetDocumentBefore(dataDir, nodeID, filename, commitSHA string) (string, error) {
+	repo, err := openBare(NodeRepoPath(dataDir, nodeID))
+	if err != nil {
+		return "", fmt.Errorf("open repo: %w", err)
+	}
+
+	commit, err := repo.CommitObject(plumbing.NewHash(commitSHA))
+	if err != nil {
+		return "", fmt.Errorf("commit %s: %w", commitSHA, err)
+	}
+	if commit.NumParents() == 0 {
+		return "", fmt.Errorf("commit %s has no parent", commitSHA)
+	}
+	parent, err := commit.Parent(0)
+	if err != nil {
+		return "", fmt.Errorf("parent of %s: %w", commitSHA, err)
+	}
+
+	file, err := parent.File(filename)
+	if err == object.ErrFileNotFound {
+		return "", nil
+	}
+	if err != nil {
+		return "", fmt.Errorf("file %s before %s: %w", filename, commitSHA, err)
+	}
+	return file.Contents()
+}
+
 // GetHistory returns the commit log for a specific file (most recent first).
 func GetHistory(dataDir, nodeID, filename string) ([]CommitInfo, error) {
 	repo, err := openBare(NodeRepoPath(dataDir, nodeID))
@@ -392,9 +467,11 @@ func GetHistory(dataDir, nodeID, filename string) ([]CommitInfo, error) {
 
 	var history []CommitInfo
 	logIter.ForEach(func(c *object.Commit) error {
+		message, aiUse := splitAIUseTrailer(strings.TrimSpace(c.Message))
 		history = append(history, CommitInfo{
 			SHA:         c.Hash.String(),
-			Message:     strings.TrimSpace(c.Message),
+			Message:     message,
+			AIUse:       aiUse,
 			AuthorName:  c.Author.Name,
 			AuthorEmail: c.Author.Email,
 			Date:        c.Author.When,

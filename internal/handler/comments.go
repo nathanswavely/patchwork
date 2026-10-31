@@ -259,7 +259,7 @@ func CreateComment(db *database.DB) http.HandlerFunc {
 			ActorID:  user.ID,
 			EntityID: proposalID,
 			Title:    "New comment on: " + proposalTitle,
-			Body:     req.Body,
+			Body:     excerpt(req.Body, 200),
 			Link:     weblink.Proposal(nodeSlugN, proposalID),
 		})
 

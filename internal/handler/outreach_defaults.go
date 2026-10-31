@@ -43,3 +43,9 @@ var defaultIntroCalendar = map[string]string{
 
 const defaultIntroSignoff = `Thanks,
 {sender_name}`
+
+// The opener for a message on a link (an Instagram DM, a contact form):
+// the first two lines are all that shows in a preview, so it says who and
+// what before anything else. No subject, no sign-off. The calendar
+// paragraph follows it as it does in the email.
+const defaultIntroDMOpener = `Hi, I'm {sender_name}, and I run {quilt_name} ({quilt_url}), a free shared calendar and map of what's going on around here. No ads, no algorithm, open source. I made a page for {patch_name} on it: {patch_url}. You can claim it and run it yourselves whenever you want ({claim_url}), or tell me and I'll take it down.`

@@ -23,6 +23,9 @@ type InstanceResponse struct {
 	Federation  bool              `json:"federation"`
 	Modules     map[string]bool   `json:"modules"`
 	Submissions bool              `json:"submissions_enabled"`
+	// Whether the forms ask if AI made a post: "off", "optional" or
+	// "required" (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md).
+	AIDisclosure string `json:"ai_disclosure"`
 	// Whether this quilt can send mail. Signup reads it to decide which
 	// floor an account gets — a magic-link address, or recovery codes
 	// (docs/adr/071) — and the sign-in page to decide whether offering to
@@ -134,6 +137,7 @@ func Instance(db *database.DB, cfg *config.Config) http.HandlerFunc {
 				"ledger":     cfg.Modules.Ledger,
 			},
 			Submissions:    cfg.Submissions.Enabled,
+			AIDisclosure:   settings.AIDisclosure(db),
 			NeighborQuilts: neighbors,
 			Label:          labelSummary(db),
 		}

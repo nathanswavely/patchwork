@@ -15,21 +15,31 @@ test.describe('Notifications — Bell', () => {
     await expect(bell).toBeVisible();
   });
 
-  // The bell lives in the global bar and opens a side panel (not a dropdown).
-  test('clicking the bell opens the panel', async ({ page }) => {
+  // On a desktop the bell opens a dropdown under it. A phone goes to the
+  // page instead; see the phone test below.
+  test('clicking the bell opens the dropdown', async ({ page }) => {
     await goto(page, '/dashboard');
     await page.locator('.bell-btn').click();
-    await expect(page.locator('.sidepanel')).toBeVisible({ timeout: 3000 });
+    await expect(page.locator('.notif-dropdown')).toBeVisible({ timeout: 3000 });
+    await expect(page.locator('.bell-btn')).toHaveAttribute('aria-expanded', 'true');
   });
 
-  test('panel has "View all notifications" link', async ({ page }) => {
+  test('on a phone the bell goes to the notifications page', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await goto(page, '/events');
+    await page.locator('.rail-notif').click();
+    await page.waitForURL((url) => new URL(url).pathname === '/notifications', { timeout: 5000 });
+    await expect(page.locator('.notif-dropdown')).toHaveCount(0);
+  });
+
+  test('dropdown has "See all notifications" link', async ({ page }) => {
     await goto(page, '/dashboard');
     await page.locator('.bell-btn').click();
     const viewAll = page.locator('.notif-view-all');
     await expect(viewAll).toBeVisible({ timeout: 3000 });
   });
 
-  test('"View all" link navigates to /notifications', async ({ page }) => {
+  test('"See all" link navigates to /notifications', async ({ page }) => {
     await goto(page, '/dashboard');
     await page.locator('.bell-btn').click();
     const viewAll = page.locator('.notif-view-all');
@@ -39,7 +49,7 @@ test.describe('Notifications — Bell', () => {
     expect(page.url()).toContain('/notifications');
   });
 
-  test('empty panel shows "You\'re all caught up"', async ({ page }) => {
+  test('empty dropdown shows "You\'re all caught up"', async ({ page }) => {
     await loginAs(page, 'new');
     await escapeOnboarding(page);
     await goto(page, '/dashboard');
@@ -64,7 +74,7 @@ test.describe('Notifications — Reading and navigating', () => {
     await loginAsAdmin(page);
   });
 
-  // Find an unread notification by title prefix, open the panel, click it.
+  // Find an unread notification by title prefix, open the dropdown, click it.
   async function clickNotification(page, prefix) {
     await goto(page, '/dashboard');
     const feed = await page.request.get('/api/v1/notifications?limit=20').then((r) => r.json());
@@ -75,8 +85,8 @@ test.describe('Notifications — Reading and navigating', () => {
     expect(before).toBeGreaterThan(0);
 
     await page.locator('.bell-btn').click();
-    await expect(page.locator('.sidepanel')).toBeVisible({ timeout: 3000 });
-    await page.locator('.notif-item', { hasText: target.title }).first().click();
+    await expect(page.locator('.notif-dropdown')).toBeVisible({ timeout: 3000 });
+    await page.locator('.notif-dropdown .notif-item', { hasText: target.title }).first().locator('.notif-main').click();
     return { target, before };
   }
 
@@ -123,14 +133,14 @@ test.describe('Notifications — Reading and navigating', () => {
   test('"mark all read" clears the badge', async ({ page }) => {
     await goto(page, '/dashboard');
     await page.locator('.bell-btn').click();
-    await expect(page.locator('.sidepanel')).toBeVisible({ timeout: 3000 });
+    await expect(page.locator('.notif-dropdown')).toBeVisible({ timeout: 3000 });
 
     const markAll = page.locator('.notif-mark-all');
     await expect(markAll).toBeVisible({ timeout: 3000 });
     await markAll.click();
 
     // Gone, not decremented — read-all clears the whole table server-side,
-    // not just the rows the panel happens to have loaded.
+    // not just the rows the dropdown happens to have loaded.
     await expect(page.locator('.badge-count')).toHaveCount(0, { timeout: 3000 });
     const count = await page.request.get('/api/v1/notifications/count').then((r) => r.json());
     expect(count.unread).toBe(0);
@@ -146,28 +156,23 @@ test.describe('Notifications — Full Page', () => {
     await goto(page, '/notifications');
     await expectNoError(page);
     await expect(page.locator('h1', { hasText: 'Notifications' })).toBeVisible();
-    // Filter chips should be present
-    await expect(page.locator('.lt-chip', { hasText: 'All' })).toBeVisible();
+    // All and Unread, and no type chips (they missed half the types).
+    await expect(page.locator('.filters .lt-chip')).toHaveText(['All', 'Unread']);
   });
 
-  test('category filter chips work', async ({ page }) => {
+  test('unread filter asks for unread rows', async ({ page }) => {
     await goto(page, '/notifications');
-    const proposalsChip = page.locator('.lt-chip', { hasText: 'Proposals' });
-    if (await proposalsChip.isVisible()) {
-      await proposalsChip.click();
-      await page.waitForLoadState('networkidle');
-      await expectNoError(page);
-    }
+    const request = page.waitForRequest((req) => req.url().includes('/api/v1/notifications?') && req.url().includes('unread=true'));
+    await page.locator('.filters .lt-chip', { hasText: 'Unread' }).click();
+    await request;
+    await expect(page.locator('.filters .lt-chip', { hasText: 'Unread' })).toHaveAttribute('aria-pressed', 'true');
+    await expectNoError(page);
   });
 
-  test('unread toggle works', async ({ page }) => {
+  test('the page links to notification settings', async ({ page }) => {
     await goto(page, '/notifications');
-    const unreadChip = page.locator('.lt-chip', { hasText: 'Unread only' });
-    if (await unreadChip.isVisible()) {
-      await unreadChip.click();
-      await page.waitForLoadState('networkidle');
-      await expectNoError(page);
-    }
+    await page.locator('.header-actions a', { hasText: 'Settings' }).click();
+    await page.waitForURL((url) => new URL(url).pathname === '/settings/notifications', { timeout: 5000 });
   });
 });
 

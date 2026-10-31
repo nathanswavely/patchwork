@@ -23,12 +23,15 @@ _Avoid_: ghost patch, placeholder, stub
 **Intro**:
 The one email a quilt sends to an unclaimed patch's owner to say the page
 exists (docs/adr/2026-10-16-a-page-made-for-someone-tells-them-so.md).
-Sent by an instance admin, after reading the whole message, to a contact
-address a person entered; never on creation, never to an address the
-software found. Its calendar paragraph is picked by reading the site once
-and can be overruled. Sent to the verification domain, it carries a claim
-link that stands in for the email proof. One per address; a second is a
-resend, chosen on purpose.
+Sent by an instance admin, after reading the whole message, to a contact a
+person entered: an email address, or a link to message them on (usually
+Instagram), never one the software found, and never on creation. Its
+calendar paragraph is picked by reading the site once and can be
+overruled. An email to the verification domain carries a claim link that
+stands in for the email proof; a message on a link is copied out and sent
+by hand and carries the ordinary claim page, since a social account proves
+nothing about the domain. One per destination; a second is a resend,
+chosen on purpose.
 _Avoid_: outreach email (the admin page is "Outreach"; the thing sent is
 an intro), campaign, drip, notification (it goes to someone with no account)
 
@@ -1804,9 +1807,13 @@ _Avoid_: border, gap, gutter, raw edge (the retired per-tile outline),
 sashing (that is the framing between remote-quilt regions — see above)
 
 **Name badge**:
-The pill floating over a tile that names its patch — the name, centered,
-and nothing else; what a patch *is* and how the viewer stands with it are
-corner marks on the tile itself. Badges reveal progressively as tiles earn
+The pill floating over a tile that names its patch: the patch's motif and
+its name, centered. The motif is the same mark the tile otherwise wears in
+its corner, moved into the badge while the badge is on screen, so a tile
+carries one mark of what it is rather than two. How the viewer stands with
+the patch, and whether it is unclaimed, stay corner marks on the tile
+itself. The glyph is one muted color on every badge, never the patch's
+own. Badges reveal progressively as tiles earn
 on-screen room, and where badges would crowd the larger tile's wins — the
 rest wait for a closer zoom. What a badge needs to *appear* and what it
 needs to *stay* are deliberately different: a badge already on screen is
@@ -1825,26 +1832,32 @@ _Avoid_: label / quilt label (the Label is the stewardship disclosure),
 pin (retired — docs/adr/027), card, marker
 
 **Corner mark**:
-A small disc a quilt tile wears in one of its corners, carrying one glyph.
-Three of them, one per corner and one job each: the **motif** (top-left)
-says what the patch is, the **unclaimed mark** (top-right) and the viewer's
-**role mark** (bottom-right) say how it stands. Identity wears the patch's
-own identity color; status wears a neutral dark disc — so a tile's own color
-never means "unclaimed" and a status disc never claims to be the patch's.
-Every disc carries a seam ring and a drop shadow, because a mark sits on
-arbitrary fabric and an identity disc is often the very color underneath it.
+A small glyph a quilt tile wears in one of its corners, drawn straight on
+the fabric with no disc under it. Three of them, one per corner and one job
+each: the **motif** (top-left) says what the patch is, the **unclaimed
+mark** (top-right) and the viewer's **role mark** (bottom-right) say how it
+stands. The motif is white on every tile, never the patch's identity color:
+the fabric already shows how a patch looks, and a colored disc in three
+corners of every tile was the loudest thing on the quilt. The role mark
+keeps its gold star and red heart, which is how it stays distinct from the
+motif beside it. Where the fabric a glyph can land on is too light for it to
+read alone (under 3:1 against the glyph's own color), the glyph sits on a
+soft dark shadow that fades to nothing at its edge; everywhere else it is
+bare. The shadow is decided from the block's own fabrics when the tile is
+built, never from what is on screen, so it does not come and go with zoom.
 Status, not fabric: like a name badge a corner mark holds a fixed on-screen
 size whatever the zoom, and it is never clipped by the tile's seam. One
 size is computed per tile and shared by all of its marks, so a tile's marks
 appear and vanish together; they shrink, then go, when the tile is too small
-to host them. The motif is worn by every tile, at every zoom a mark survives
-— which is how the quilt still says what its patches are where no name badge
-fits. A static hero miniature wears none of them, the same way it wears no
-name badges.
+to host them. The one exception is the motif on a tile whose name badge is
+on screen: the badge carries it, and the corner gives it up until the badge
+goes. So every tile still says what it is at every zoom a mark survives,
+including where no name badge fits, and none says it twice. A static hero
+miniature wears none of them, the same way it wears no name badges.
 _Avoid_: pip, chip, badge (that's the name badge), overlay
 
 **Unclaimed mark**:
-The broken chain link on a dark disc that marks an unclaimed patch, worn in
+The broken chain link that marks an unclaimed patch, worn in
 the same corner on a quilt tile (where it is one of the three corner marks)
 and on a patch card. The word it carries is "Unclaimed" — the patch's state,
 not what a visitor should do about it.

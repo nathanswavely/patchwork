@@ -568,9 +568,14 @@ func TestSync_PatchWithoutAZoneUsesTheInstances(t *testing.T) {
 		t.Fatalf("set instance zone: %v", err)
 	}
 
-	local := time.Now().In(time.FixedZone("EDT", -4*3600)).Add(48 * time.Hour).Truncate(time.Hour)
-	feed := newFeedServer(t, wrap(vevent("inherit@test", "Inherited Zone",
-		local.Format("20060102T150405"))))
+	// The wall clock is taken in New York itself, not a fixed EDT: a fixed
+	// -4 is wrong all winter, and this start is two days out, so the test
+	// failed on every run from 2026-10-30 until March. Wall clocks are
+	// compared below rather than instants, because 01:00 on fall-back day
+	// happens twice and either reading is the instance's zone.
+	ny, _ := time.LoadLocation("America/New_York")
+	wall := time.Now().In(ny).Add(48*time.Hour).Format("20060102T15") + "0000"
+	feed := newFeedServer(t, wrap(vevent("inherit@test", "Inherited Zone", wall)))
 	sourceID := seedSource(t, db, feed.srv.URL) // node.timezone left NULL
 
 	if err := Sync(context.Background(), db, nil, sourceID); err != nil {
@@ -580,10 +585,9 @@ func TestSync_PatchWithoutAZoneUsesTheInstances(t *testing.T) {
 	if err := db.QueryRow(`SELECT starts_at FROM events WHERE source_id = ?`, sourceID).Scan(&startsAt); err != nil {
 		t.Fatalf("read stored event: %v", err)
 	}
-	ny, _ := time.LoadLocation("America/New_York")
-	if got := mustParse(t, startsAt).In(ny); !got.Equal(local) {
+	if got := mustParse(t, startsAt).In(ny); got.Format("20060102T150405") != wall {
 		t.Errorf("stored %s (%s in New York); feed said %s",
-			startsAt, got.Format(time.RFC3339), local.Format(time.RFC3339))
+			startsAt, got.Format(time.RFC3339), wall)
 	}
 }
 

@@ -1,5 +1,13 @@
 <script>
-  let { currentRules = null, electorate = null, onSave = () => {} } = $props();
+  let {
+    currentRules = null,
+    // The change being composed, which is not the same thing as the stored
+    // rules: the parent holds it across both steps of the editor, and this
+    // form is only mounted on one of them (see the seeding effect below).
+    proposedRules = null,
+    electorate = null,
+    onSave = () => {},
+  } = $props();
 
   // The option wording is shared with the read-only rules page
   // (web/src/lib/governanceRules.js). Two surfaces naming one setting two
@@ -106,40 +114,67 @@
     return `${canVoteToday} of your ${memberCount} members have been here ${minVotingTenureDays} days. The other ${held} cannot vote yet, and ${held === 1 ? 'is' : 'are'} not counted toward a quorum.`;
   });
 
-  // Initialize from currentRules
+  // What this form last told the parent, so it can tell a change made
+  // somewhere else from the echo of its own. Deliberately not `$state`:
+  // nothing renders from it.
+  let emitted = '';
+
+  // Seed the form from the change in progress, falling back to the stored
+  // rules when there is none.
+  //
+  // The parent renders this form on its 'editing' step only, so going to
+  // 'reviewing' and back builds a new instance of it. Seeding from
+  // `currentRules` meant that instance opened on the stored rules and then
+  // notified the parent of them, discarding every pending change with no
+  // warning on the one screen whose whole job is composing a governed
+  // change. The pending change is the parent's, survives the step flip, and
+  // is what the form has to open on.
+  //
+  // The guard is what keeps that from fighting an edit in progress. The
+  // parent hands straight back what this form emits, and re-seeding from an
+  // echo normalizes what somebody is still typing: emptying the Quorum field
+  // emits no `quorum_percent` at all, and reading that back as `?? 0` snapped
+  // the field to 0 under the cursor. So the comparison is against what was
+  // sent, not against what was last shown — the two differ on exactly the
+  // keystroke that matters.
   $effect(() => {
-    if (currentRules) {
-      // 'admin_decides' is a value an older editor build could have written
-      // into a rules file; the backend's word is 'admin'.
-      const dm = currentRules.decision_method === 'admin_decides' ? 'admin' : currentRules.decision_method;
-      decisionMethod = dm || 'majority';
-      quorumPercent = currentRules.quorum_percent ?? 0;
-      votingPeriodHours = currentRules.default_vote_duration_hours || 72;
-      amendmentThreshold = currentRules.amendment_threshold || 'majority';
-      autoApply = currentRules.amendment_auto_apply ?? true;
-      successionPolicy = currentRules.succession_policy || 'longest_tenure';
-      minVotingTenureDays = currentRules.min_voting_tenure_days ?? 0;
-      subjectRecusal = currentRules.subject_recusal === true;
-      leadershipVenue = currentRules.leadership_venue === 'elsewhere' ? 'elsewhere' : 'patchwork';
-      proposalVenue = currentRules.proposal_venue === 'elsewhere' ? 'elsewhere' : 'patchwork';
-      membershipPolicy = currentRules.membership_policy || 'open';
-      const fp = currentRules.follower_permissions || {};
-      followerEvents = fp.events !== false;
-      followerProposals = fp.proposals !== false;
-      // Charters alone reads `=== true`, matching the server's default
-      // (docs/adr/116): the other three are on unless a patch turned them
-      // off, this one is off unless a patch turned it on. Reading it the
-      // same way as its neighbours is what made a patch that had never
-      // chosen show the box ticked.
-      followerCharters = fp.charters === true;
-      followerMembers = fp.members !== false;
-    }
+    const incoming = proposedRules || currentRules;
+    if (!incoming) return;
+    if (JSON.stringify(incoming) === emitted) return;
+    // 'admin_decides' is a value an older editor build could have written
+    // into a rules file; the backend's word is 'admin'.
+    const dm = incoming.decision_method === 'admin_decides' ? 'admin' : incoming.decision_method;
+    decisionMethod = dm || 'majority';
+    quorumPercent = incoming.quorum_percent ?? 0;
+    votingPeriodHours = incoming.default_vote_duration_hours || 72;
+    amendmentThreshold = incoming.amendment_threshold || 'majority';
+    autoApply = incoming.amendment_auto_apply ?? true;
+    successionPolicy = incoming.succession_policy || 'longest_tenure';
+    minVotingTenureDays = incoming.min_voting_tenure_days ?? 0;
+    subjectRecusal = incoming.subject_recusal === true;
+    leadershipVenue = incoming.leadership_venue === 'elsewhere' ? 'elsewhere' : 'patchwork';
+    proposalVenue = incoming.proposal_venue === 'elsewhere' ? 'elsewhere' : 'patchwork';
+    membershipPolicy = incoming.membership_policy || 'open';
+    const fp = incoming.follower_permissions || {};
+    followerEvents = fp.events !== false;
+    followerProposals = fp.proposals !== false;
+    // Charters alone reads `=== true`, matching the server's default
+    // (docs/adr/116): the other three are on unless a patch turned them
+    // off, this one is off unless a patch turned it on. Reading it the
+    // same way as its neighbours is what made a patch that had never
+    // chosen show the box ticked.
+    followerCharters = fp.charters === true;
+    followerMembers = fp.members !== false;
   });
 
   function buildRules() {
     // Spread first: fields this form doesn't edit (leadership_model,
     // succession_method, max_admins, …) must survive the round trip —
-    // the rules file is whole-document, not a patch.
+    // the rules file is whole-document, not a patch. The stored rules are the
+    // base even though the form seeds from the change in progress, so the
+    // voting knobs below keep passing through as stored: this form has no
+    // control for a field it does not spread, and a value typed before
+    // admin-decides hid the knobs is not smuggled into the change.
     const rules = {
       ...(currentRules || {}),
       decision_method: decisionMethod,
@@ -168,8 +203,12 @@
     return rules;
   }
 
-  function handleSave() {
-    onSave(buildRules());
+  // Hand the whole rules file to the parent, and remember what was sent: the
+  // seeding effect above tells its own echo from a change by that string.
+  function notify() {
+    const rules = buildRules();
+    emitted = JSON.stringify(rules);
+    onSave(rules);
   }
 
   // Auto-notify parent on every change
@@ -179,7 +218,7 @@
     autoApply; successionPolicy; minVotingTenureDays; membershipPolicy;
     subjectRecusal; leadershipVenue; proposalVenue;
     followerEvents; followerProposals; followerCharters; followerMembers;
-    onSave(buildRules());
+    notify();
   });
 </script>
 

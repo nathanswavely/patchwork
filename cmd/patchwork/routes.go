@@ -116,6 +116,10 @@ func buildRoutes(d serverDeps) (*http.ServeMux, []route) {
 	// Legal documents (docs/adr/028) — public read, defaults ship in the
 	// binary so this never 404s on a fresh deployment.
 	t.handleFunc("GET /api/v1/legal/{doc}", handler.LegalDoc(d.db, d.cfg))
+
+	// The AI page (docs/adr/2026-10-20-the-site-says-where-ai-is.md) — public
+	// read. The project part ships in the binary; the stewards' part is theirs.
+	t.handleFunc("GET /api/v1/ai", handler.AIPage(d.db, d.cfg))
 	t.handleFunc("GET /api/v1/users/me/steward", middleware.AuthRequired(d.db, handler.GetMyStewardListing(d.db)))
 	t.handleFunc("PATCH /api/v1/users/me/steward", middleware.AuthRequired(d.db, handler.UpdateMyStewardListing(d.db)))
 	t.handleFunc("DELETE /api/v1/users/me/steward", middleware.AuthRequired(d.db, handler.DeleteMyStewardListing(d.db)))
@@ -243,6 +247,12 @@ func buildRoutes(d serverDeps) (*http.ServeMux, []route) {
 	t.handleFunc("POST /api/v1/nodes/{slug}/invitations/decline", middleware.AuthRequired(d.db, handler.DeclineInvitation(d.db)))
 	t.handleFunc("DELETE /api/v1/nodes/{slug}/invitations/{userId}", middleware.AuthRequired(d.db, handler.RescindInvitation(d.db)))
 	t.handleFunc("GET /api/v1/users/me/invitations", middleware.AuthRequired(d.db, handler.ListMyInvitations(d.db)))
+	// Interim admin offers (docs/adr/2026-10-19-an-interim-admin-is-asked-first.md):
+	// the inactivity sweep asks, the person answers. Anybody nobody asked gets
+	// the same 404 as an unknown patch.
+	t.handleFunc("POST /api/v1/nodes/{slug}/interim-offer/accept", middleware.AuthRequired(d.db, handler.AcceptInterimOffer(d.db)))
+	t.handleFunc("POST /api/v1/nodes/{slug}/interim-offer/decline", middleware.AuthRequired(d.db, handler.DeclineInterimOffer(d.db)))
+	t.handleFunc("GET /api/v1/users/me/interim-offers", middleware.AuthRequired(d.db, handler.ListMyInterimOffers(d.db)))
 	// Maintainer succession (docs/adr/051). Naming a successor decides who
 	// inherits the patch, so it is step-up gated like the other power moves.
 	t.handleFunc("PUT /api/v1/nodes/{slug}/successor", middleware.AuthRequired(d.db, middleware.SudoRequired(d.db, handler.SetSuccessor(d.db))))
@@ -510,6 +520,8 @@ func buildRoutes(d serverDeps) (*http.ServeMux, []route) {
 	t.handleFunc("GET /api/v1/admin/legal", middleware.AdminRequired(d.db, handler.AdminGetLegal(d.db, d.cfg)))
 	t.handleFunc("PUT /api/v1/admin/legal/{doc}", middleware.AdminRequired(d.db, handler.AdminUpdateLegal(d.db)))
 	t.handleFunc("DELETE /api/v1/admin/legal/{doc}", middleware.AdminRequired(d.db, handler.AdminResetLegal(d.db)))
+	t.handleFunc("PUT /api/v1/admin/ai-page", middleware.AdminRequired(d.db, handler.AdminUpdateAIStewards(d.db)))
+	t.handleFunc("DELETE /api/v1/admin/ai-page", middleware.AdminRequired(d.db, handler.AdminResetAIStewards(d.db)))
 	t.handleFunc("GET /api/v1/admin/label", middleware.AdminRequired(d.db, handler.AdminGetLabel(d.db)))
 	t.handleFunc("PATCH /api/v1/admin/label", middleware.AdminRequired(d.db, handler.AdminUpdateLabel(d.db)))
 	t.handleFunc("PUT /api/v1/admin/label/costs", middleware.AdminRequired(d.db, handler.AdminPutLabelCosts(d.db)))

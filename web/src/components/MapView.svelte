@@ -3,12 +3,13 @@
   import L from 'leaflet';
   import 'leaflet/dist/leaflet.css';
   import { getResolvedTheme } from '../stores/theme.svelte.js';
-  import { media } from '../lib/lt.js';
+  import { attachCanvasZoom, reportCanvasZoom } from '../stores/canvasZoom.svelte.js';
   import { identityColorForPatch, textOnColor } from '../lib/quiltTheme.js';
   import { blockPageZoom } from '../lib/pageZoom.js';
   import { addBasemap, BASEMAP_MAX_ZOOM } from '../lib/basemap.js';
   import { clusterNodes, patchActivity } from '../lib/mapClusters.js';
   import { placeLabels } from '../lib/mapLabels.js';
+  import { fitPadding, hasRoomToFit } from '../lib/mapFit.js';
   import { createMotifGroup } from '../lib/patchIcons.js';
   import { getTagVocabulary } from '../stores/quilt.svelte.js';
 
@@ -87,26 +88,27 @@
     const instance = L.map(mapContainer, {
       fadeAnimation: false,
       maxZoom: BASEMAP_MAX_ZOOM,
-      // Placed by hand below rather than at Leaflet's default corner.
+      // The canvas chrome's zoom buttons drive the map (stores/canvasZoom),
+      // the same pair the quilt answers to. Phones pinch.
       zoomControl: false,
     }).setView(defaultCenter, 12);
     map = instance;
 
-    // Where the zoom control lives is decided by what else stands at the
-    // map's corners, and that differs by breakpoint. On desktop the nav
-    // rail floats over the top-left (SocialShell's `.sidebar-rail.quilt-mode`,
-    // hugging its items from 56px down, open or collapsed) — Leaflet's
-    // default corner put the control straight under it, unreachable. The
-    // bottom-left is the one desktop corner nothing else claims: the filter
-    // chips start right of the collapsed rail's column, the cards pane owns
-    // the right, and the rail never reaches the foot. On mobile the rail is
-    // the bottom bar and the filter FAB stacks above it at the bottom-left,
-    // so there the control keeps the top-left, under the glass top bar.
-    const narrow = window.matchMedia(media.handheld);
-    const zoomCorner = (isNarrow) => (isNarrow ? 'topleft' : 'bottomleft');
-    const zoomControl = L.control.zoom({ position: zoomCorner(narrow.matches) }).addTo(instance);
-    const onBreakpoint = (e) => zoomControl.setPosition(zoomCorner(e.matches));
-    narrow.addEventListener('change', onBreakpoint);
+    // A step zooms about the middle of the map the reader can see, which
+    // stops short of the cards pane floating over the right. Leaflet's own
+    // zoomIn would zoom about the container's middle, behind the pane's edge.
+    const detachZoom = attachCanvasZoom((direction) => {
+      const size = instance.getSize();
+      const middle = L.point((size.x - size.x * insetRight) / 2, size.y / 2);
+      const animate = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      instance.setZoomAround(middle, instance.getZoom() + direction, { animate });
+    });
+    const reportZoom = () => reportCanvasZoom(
+      instance.getZoom() < instance.getMaxZoom(),
+      instance.getZoom() > instance.getMinZoom(),
+    );
+    reportZoom();
+    instance.on('zoomend', reportZoom);
 
     // The basemap loads its renderer on demand, so it lands a tick or two
     // after the map; the theme effect below picks it up when it does.
@@ -118,9 +120,13 @@
 
     // Leaflet caches the container size at init; recompute whenever it
     // changes — a viewport resize across the mobile/desktop breakpoint, or
-    // the pane being shown after starting hidden (mobile List → Map).
+    // the pane being shown after starting hidden (mobile List → Map). A map
+    // that mounted with no room to frame its markers is still waiting for its
+    // opening fit, and this is the moment it gets the room.
     const ro = new ResizeObserver(() => {
-      if (map) map.invalidateSize();
+      if (!map) return;
+      map.invalidateSize();
+      if (!hasFit) updateMarkers();
     });
     ro.observe(mapContainer);
 
@@ -144,7 +150,8 @@
 
     return () => {
       ro.disconnect();
-      narrow.removeEventListener('change', onBreakpoint);
+      detachZoom();
+      instance.off('zoomend', reportZoom);
       unblockZoom();
       instance.off('zoomend', onZoom);
       if (map) {
@@ -248,12 +255,14 @@
   function showAll(animate = true) {
     const placed = nodes.filter((n) => n.latitude != null && n.longitude != null);
     if (!placed.length) return;
-    const padRight = Math.round((mapContainer?.clientWidth || 0) * insetRight);
     map.fitBounds(L.latLngBounds(placed.map((n) => [n.latitude, n.longitude])), {
-      paddingTopLeft: [24, 24],
-      paddingBottomRight: [24 + padRight, 24],
+      ...openingPadding(),
       animate,
     });
+  }
+
+  function openingPadding() {
+    return fitPadding(map.getSize().x, insetRight);
   }
 
   // The font the names are drawn in, read once from the rendered label so
@@ -304,7 +313,11 @@
     // Frame first, then group. Grouping is a function of zoom, so grouping at
     // the default zoom and fitting afterwards paints one 33-marker disc that
     // exists for no reason and is gone a moment later.
-    if (!hasFit && placed.length > 0) {
+    //
+    // Only once the map has room to frame them (lib/mapFit.js): a fit on a
+    // map with no width yet pins the zoom at the ceiling, and that view
+    // outlives the map being shown. The ResizeObserver comes back here.
+    if (!hasFit && placed.length > 0 && hasRoomToFit(map.getSize(), openingPadding())) {
       hasFit = true;
       showAll(false);
     }
@@ -462,22 +475,9 @@
   }
 
   /* The map sits full-bleed behind the fixed global bar (56px) — keep the
-     top corners clear of it. On desktop nothing of ours is up here any
-     more (the zoom control sits bottom-left, see the script); on mobile
-     the zoom control is, and this is what holds it under the bar. */
+     top corners clear of it. */
   .map-wrapper :global(.leaflet-top) {
     top: 64px;
-  }
-
-  /* Desktop home of the zoom control. 12px in from the corner so it
-     stands on the same inset the rail (left: 12px) and the filter chips
-     (bottom: 12px) do, rather than Leaflet's 10px. Its right edge lands at
-     44px, well left of where the chips begin even with the rail collapsed
-     (SocialShell keeps that offset at 80px) — a rule this control now
-     relies on, and says so beside it. */
-  .map-wrapper :global(.leaflet-bottom .leaflet-control-zoom) {
-    margin-bottom: 12px;
-    margin-left: 12px;
   }
 
   /* On mobile the bottom nav bar overlaps the map's lower edge — lift the
@@ -496,8 +496,7 @@
   }
 
   /* Textile popups: surface card, hairline border, app radius + font. */
-  /* Sits over the map it is describing, clear of the zoom controls and of
-     the cards pane. Not an Interruption (CONTEXT.md) — nothing is wrong,
+  /* Sits over the map it is describing, clear of the cards pane. Not an Interruption (CONTEXT.md) — nothing is wrong,
      the reader has simply moved away from everything. */
   .map-offscreen {
     position: absolute;
@@ -579,7 +578,7 @@
     cursor: pointer;
   }
 
-  /* Theme the attribution + zoom controls so they read as app chrome. */
+  /* Theme the attribution so it reads as app chrome. */
   .map-wrapper :global(.leaflet-control-attribution) {
     background: var(--color-glass);
     color: var(--color-text-muted);
@@ -592,23 +591,4 @@
     color: var(--color-primary);
   }
 
-  /* Zoom control: textile card with a hairline border, no default chrome. */
-  .map-wrapper :global(.leaflet-control-zoom) {
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    box-shadow: 0 2px 10px var(--color-shadow);
-    overflow: hidden;
-  }
-
-  .map-wrapper :global(.leaflet-control-zoom a) {
-    background: var(--color-surface);
-    color: var(--color-text);
-    border-color: var(--color-border);
-    font-weight: 600;
-  }
-
-  .map-wrapper :global(.leaflet-control-zoom a:hover) {
-    background: var(--color-overlay);
-    color: var(--color-primary);
-  }
 </style>

@@ -3,6 +3,7 @@
   import { withStepUp, stepUpStatus, PasskeyRequiredError } from '../lib/stepUp.js';
   import PasskeyNotice from './PasskeyNotice.svelte';
   import { formatDay } from '../lib/datetime.js';
+  import { navigate } from '../stores/router.svelte.js';
 
   // Decisions a community made somewhere Patchwork was not (docs/adr/052).
   // Shown to everyone: an attestation's whole value is that the people who
@@ -168,7 +169,7 @@
 </script>
 
 <div class="records">
-  <h4>Decisions recorded here</h4>
+  <h4>Leadership decisions recorded here</h4>
 
   {#if loading}
     <p class="lt-muted small">Loading…</p>
@@ -245,7 +246,15 @@
   {#if isAdmin}
     {#if formOpen}
       <div class="form">
-        <p class="form-head">{correcting ? 'Correct the record' : 'Record a decision'}</p>
+        <p class="form-head">{correcting ? 'Correct the record' : 'Record a leadership decision'}</p>
+        <!-- This records who holds the admin role and nothing else
+             (docs/adr/052). Headed "Record a decision", it read as the
+             place for any decision a meeting made (F-039). -->
+        <p class="form-note lt-muted">
+          This records who a meeting put in place as admins. Minutes and other
+          decisions go in a document under
+          <a href="/patches/{slug}/governance/docs" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/docs`); }}>Documents</a>.
+        </p>
 
         <label for="att-date">When it was decided</label>
         <input class="lt-field" id="att-date" type="date" bind:value={decidedAt} disabled={saving} />
@@ -281,7 +290,7 @@
           by name and holds nothing until they join.
         </p>
 
-        <PasskeyNotice show={!hasPasskey} action="record a decision" />
+        <PasskeyNotice show={!hasPasskey} action="record a leadership decision" />
         {#if error}<p class="err">{error}</p>{/if}
 
         <div class="form-actions">
@@ -293,7 +302,7 @@
       </div>
     {:else}
       <div class="actions">
-        <button class="lt-btn lt-btn-sm" onclick={() => openForm('')}>Record a decision</button>
+        <button class="lt-btn lt-btn-sm" onclick={() => openForm('')}>Record a leadership decision</button>
         {#if current}
           <button class="lt-btn lt-btn-sm lt-btn-ghost" onclick={() => openForm(current.id)}>Correct the last one</button>
         {/if}

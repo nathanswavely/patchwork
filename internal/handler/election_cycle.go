@@ -221,7 +221,7 @@ func scheduleFor(db *database.DB, nodeID, slug string, gc model.GovernanceConfig
 		return
 	}
 
-	if id := openElectionFor(db, nodeID, gc, due); id != "" {
+	if id := openElectionFor(db, nodeID, gc, due, "calendar"); id != "" {
 		log.Printf("election: %s is due (%d seat(s) at term end), opened %s", slug, len(due), id)
 	}
 }

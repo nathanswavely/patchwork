@@ -411,6 +411,16 @@ function fromDateInput(s) {
 }
 
 /**
+ * Bounds for a pair of <input type="date"> values, read as local days. Either
+ * may be empty, and an empty one stays open.
+ */
+export function dateInputBounds(fromDate, toDate) {
+  const f = fromDateInput(fromDate);
+  const t = fromDateInput(toDate);
+  return { from: f ? dayStart(f) : '', to: t ? dayEnd(t) : '' };
+}
+
+/**
  * Bounds for one of the events list's date presets. `now` is injectable so
  * the presets can be tested against a fixed day.
  */

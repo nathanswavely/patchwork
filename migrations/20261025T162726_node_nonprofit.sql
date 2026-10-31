@@ -1,0 +1,14 @@
+-- Whether the organisation behind a patch says it is a nonprofit (#448).
+--
+-- A column, not a tag. A tag classifies what a patch is, and the quilt acts on
+-- that: shared tags pull patches together in placement affinity and the first
+-- motif-bearing tag draws the tile (docs/adr/021). How a group is constituted
+-- says nothing about who it is like — a nonprofit theatre and a nonprofit food
+-- bank have no reason to sit side by side — so this is a fact about the patch,
+-- the way founded_at is, and none of that machinery reads it.
+--
+-- Self-declared, like the rest of a patch's profile: set by the patch's admins,
+-- or by whoever suggested a listing, and nothing here checks a registration.
+-- The word is "nonprofit" and not any one country's legal category, because
+-- the quilt is white-label.
+ALTER TABLE nodes ADD COLUMN nonprofit INTEGER NOT NULL DEFAULT 0 CHECK (nonprofit IN (0, 1));

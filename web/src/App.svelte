@@ -17,7 +17,7 @@
   import { loadInstance, loadTags } from './stores/quilt.svelte.js';
   import { scopeForRoute, surfaceForRoute, scopedPath } from './lib/scope.js';
   import { loadRegistry } from './lib/registry.js';
-  import { isOnboardingDismissed } from './lib/onboarding.js';
+  import { isOnboardingDismissed, welcomePath } from './lib/onboarding.js';
   import { markFamiliar } from './lib/vocab.js';
 
   // Layout shells
@@ -83,6 +83,7 @@
   import AdminAttestation from './pages/AdminAttestation.svelte';
   import AdminApps from './pages/AdminApps.svelte';
   import LegalDoc from './pages/LegalDoc.svelte';
+  import AiPage from './pages/AiPage.svelte';
   import SubmitPatch from './pages/SubmitPatch.svelte';
   import ClaimPatch from './pages/ClaimPatch.svelte';
   import ClaimVerifyEmail from './pages/ClaimVerifyEmail.svelte';
@@ -133,6 +134,7 @@
   // Legal documents (docs/adr/028) — public, readable logged out.
   addRoute('/privacy', 'privacy');
   addRoute('/terms', 'terms');
+  addRoute('/ai', 'ai');
 
   // Patch routes
   addRoute('/patches/new', 'patchNew');
@@ -549,7 +551,12 @@
       // orientation from the surface orientation hands off to is a loop.
       if (!['welcome', 'discover', 'login', 'invite', 'signupComplete', 'claimPatch', 'patchSetup', 'patchNew', 'signInLink'].includes(routeName)
           && !isOnboardingDismissed(getUser()?.id)) {
-        navigate('/welcome');
+        // The address they asked for rides along (F-053): someone who
+        // followed a link to a patch is returned there, not to /discover.
+        // Replaced rather than pushed, so Back does not land on the page
+        // that redirects here again.
+        const qs = getQuery().toString();
+        replaceRoute(welcomePath(getPath() + (qs ? `?${qs}` : '')));
       }
     }
   });
@@ -758,6 +765,10 @@
       <!-- ===== LEGAL DOCUMENTS (docs/adr/028) ===== -->
       {:else if routeName === 'privacy' || routeName === 'terms'}
         <LegalDoc doc={routeName} />
+
+      <!-- ===== WHERE AI IS (docs/adr/2026-10-20-the-site-says-where-ai-is.md) ===== -->
+      {:else if routeName === 'ai'}
+        <AiPage />
 
       <!-- ===== EMAIL-CLAIM CONFIRMATION (docs/adr/030) ===== -->
       {:else if routeName === 'claimVerifyEmail'}

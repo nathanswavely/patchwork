@@ -3,9 +3,15 @@
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
+  import { getUser } from '../stores/auth.svelte.js';
+  import { markGovernanceDecided } from '../lib/onboarding.js';
   import StructuredRulesEditor from '../components/StructuredRulesEditor.svelte';
   import StructuredRulesDiff from '../components/StructuredRulesDiff.svelte';
+  import { summarizeRuleChanges } from '../lib/rulesDiff.js';
   import Skeleton from '../components/Skeleton.svelte';
+  import AIUseQuestion from '../components/AIUseQuestion.svelte';
+  import { aiField, aiAnswerMissing } from '../lib/aiUse.js';
+  import { getAiDisclosure } from '../stores/quilt.svelte.js';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -76,6 +82,10 @@
   let step = $state('editing');
   let title = $state('');
   let description = $state('');
+  // Whether AI wrote the proposal
+  // (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md). Null until
+  // somebody answers.
+  let aiUse = $state(null);
   let submitting = $state(false);
 
   let currentRulesJSON = $derived(currentRules ? JSON.stringify(currentRules) : '');
@@ -164,49 +174,38 @@
     proposedRules = newRules;
   }
 
-  // Generate title from changed fields.
-  const TITLE_VALUES = {
-    admin: 'admin decides',
-    majority: 'majority vote',
-    supermajority: 'supermajority vote',
-    consensus: 'consensus',
-    approval_required: 'approval-required',
-    invite_only: 'invite-only',
-  };
-  function titleValue(v) {
-    return TITLE_VALUES[v] || String(v).replace(/_/g, ' ');
-  }
-  function generateTitle() {
-    if (!currentRules || !proposedRules) return 'Update governance rules';
-    const changes = [];
-    if (currentRules.decision_method !== proposedRules.decision_method) {
-      changes.push(`decisions by ${titleValue(proposedRules.decision_method)}`);
-    }
-    if (currentRules.quorum_percent !== proposedRules.quorum_percent) {
-      changes.push(`set quorum to ${proposedRules.quorum_percent}%`);
-    }
-    if (currentRules.default_vote_duration_hours !== proposedRules.default_vote_duration_hours) {
-      const days = Math.round(proposedRules.default_vote_duration_hours / 24);
-      changes.push(`${days}-day voting period`);
-    }
-    if (currentRules.membership_policy !== proposedRules.membership_policy) {
-      changes.push(`${titleValue(proposedRules.membership_policy)} membership`);
-    }
-    if (currentRules.leadership_model !== proposedRules.leadership_model) {
-      changes.push(`${titleValue(proposedRules.leadership_model)} leadership`);
-    }
-    if (changes.length === 0) return 'Update governance rules';
-    return changes.join(', ').replace(/^./, c => c.toUpperCase());
-  }
+  // The prefilled Summary of changes, derived from the same answer the diff
+  // beside it renders (web/src/lib/rulesDiff.js). It used to be generated
+  // here from a list of five fields out of eighteen, so a change to either
+  // venue produced "Update governance rules" over a diff naming both, and
+  // three changes at once produced the name of one of them (F-038). The
+  // value is submitted as `change_summary`, which is the entry the
+  // governance Record keeps, so a summary describing a subset as the whole
+  // is a misfiled act rather than a bad placeholder.
+  //
+  // `suggestedTitle` is only ever written into an empty field or over a
+  // suggestion nobody has edited. Going back to editing, changing something
+  // else and returning refreshes it; a sentence the author typed is theirs
+  // and stays.
+  let suggestedTitle = $state('');
 
   function goToReview() {
-    if (!title) title = generateTitle();
+    const suggestion = summarizeRuleChanges(currentRules, proposedRules);
+    if (!title || title === suggestedTitle) {
+      title = suggestion;
+      suggestedTitle = suggestion;
+    }
     step = 'reviewing';
   }
 
   async function handleSubmit() {
     if (!title.trim()) {
       showToast('Title is required', 'error');
+      return;
+    }
+    const aiMissing = aiAnswerMissing(getAiDisclosure(), aiUse);
+    if (aiMissing) {
+      showToast(aiMissing, 'error');
       return;
     }
     submitting = true;
@@ -219,8 +218,16 @@
         proposed_body: JSON.stringify(proposedRules, null, 2),
         proposed_title: 'Governance Rules',
         change_summary: title.trim(),
+        ai_use: aiField(getAiDisclosure(), aiUse),
       };
       const result = await api(`nodes/${slug}/proposals`, { method: 'POST', body: payload });
+      // Changing the rules is the plainest answer to "decide how you
+      // govern", so it ticks that checklist item (lib/onboarding.js). Only
+      // for this patch's own admins, who are the only people the checklist
+      // is shown to, and only once the write has landed.
+      if (membershipRole === 'admin' && patch.value.node?.id) {
+        markGovernanceDecided(getUser()?.id, patch.value.node.id);
+      }
       if (draftKey) localStorage.removeItem(draftKey);
       showToast(directChange ? 'Change applied' : 'Proposal created', 'success');
       navigate(`/patches/${slug}/governance/${result.id}`);
@@ -267,8 +274,13 @@
 
     {#if step === 'editing'}
       <div class="editor-card">
+        <!-- Both halves of the change: the stored rules it is measured
+             against, and the change in progress the form opens on. This step
+             is unmounted while the review step is up, so the pending change
+             has to come back in through a prop. -->
         <StructuredRulesEditor
           currentRules={currentRules}
+          proposedRules={proposedRules}
           electorate={electorate}
           onSave={handleRulesChange}
         />
@@ -286,7 +298,7 @@
       {#if hasChanges}
         <div class="changes-section">
           <h2>Changes</h2>
-          <StructuredRulesDiff {currentRules} {proposedRules} />
+          <StructuredRulesDiff {currentRules} {proposedRules} heading={directChange ? 'Rule changes' : undefined} />
         </div>
       {/if}
 
@@ -295,7 +307,7 @@
         <div class="review-card">
           <div class="review-card-header lt-muted">Your changes</div>
           <div class="review-card-body">
-            <StructuredRulesDiff {currentRules} {proposedRules} />
+            <StructuredRulesDiff {currentRules} {proposedRules} heading={directChange ? 'Rule changes' : undefined} />
           </div>
         </div>
 
@@ -311,6 +323,12 @@
               <label class="lt-label" for="rules-desc"><span>{directChange ? 'Why this change?' : 'Why are you proposing this?'} <span class="lt-optional">(optional)</span></span></label>
               <textarea class="lt-field" id="rules-desc" bind:value={description} rows="4" disabled={submitting} placeholder="Help others understand why this change matters."></textarea>
             </div>
+
+            {#if getAiDisclosure() !== 'off'}
+              <div class="field">
+                <AIUseQuestion bind:value={aiUse} disabled={submitting} />
+              </div>
+            {/if}
 
             <p class="submit-consequence lt-muted">{submitConsequence}</p>
 

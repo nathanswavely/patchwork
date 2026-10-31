@@ -7,6 +7,7 @@
     serializeCreationResponse,
     passkeyErrorMessage,
   } from '../lib/webauthn.js';
+  import { welcomePath } from '../lib/onboarding.js';
 
   let query = $derived(getQuery());
   let token = $derived(query.get('token') || '');
@@ -117,8 +118,9 @@
     }
   }
 
+  // The page sign-up was asked from rides through welcome (F-053).
   function goToDashboard() {
-    navigate('/welcome');
+    navigate(welcomePath(redirectTo));
   }
 </script>
 
