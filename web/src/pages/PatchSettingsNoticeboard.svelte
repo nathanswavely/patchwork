@@ -8,11 +8,14 @@
   import SegmentedControl from '../components/SegmentedControl.svelte';
   import ToggleSwitch from '../components/ToggleSwitch.svelte';
   import ConfirmAction from '../components/ConfirmAction.svelte';
+  import { reportReasonLabel } from '../lib/aiUse.js';
 
   // The noticeboard's two settings and its report queue (docs/adr/081).
   // The queue is the patch's own: reports about notices and replies come
   // here, never to the instance panel, and the actions are the kit's
-  // three — dismiss, remove, switch replies off. Nothing else is offered.
+  // three (dismiss, remove, switch replies off), plus applying the AI
+  // label to a notice (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md,
+  // decision 7). A reply carries no AI answer, so it cannot be labelled.
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
   let node = $derived(patch.value.node);
@@ -149,7 +152,7 @@
               </a>
             {/if}
           </p>
-          <p class="report-reason">{r.reason}</p>
+          <p class="report-reason">{reportReasonLabel(r.reason)}</p>
           {#if r.details}<p class="lt-muted report-details">{r.details}</p>{/if}
 
           {#if tab === 'pending'}
@@ -162,6 +165,9 @@
                     {#if !r.gone}
                       <option value="remove">Remove the {r.entity_type}</option>
                       <option value="close_replies">Switch replies off on the notice</option>
+                      {#if r.entity_type === 'notice'}
+                        <option value="label">Apply the Made with AI label</option>
+                      {/if}
                     {/if}
                   </select>
                 </label>

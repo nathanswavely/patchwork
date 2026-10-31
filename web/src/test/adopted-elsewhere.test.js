@@ -329,7 +329,9 @@ describe('Patch settings — the image and its description', () => {
   it('saves both halves in one request, unlike every other field here', () => {
     // Two separate inline edits would force the description to be written
     // first and refuse the address until it was.
-    expect(src).toMatch(/body: \{ image_url: imageUrl\.trim\(\), image_alt: imageAlt\.trim\(\) \}/);
+    // The image's AI answer (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md)
+    // travels in the same request.
+    expect(src).toMatch(/body: \{\s+image_url: imageUrl\.trim\(\),\s+image_alt: imageAlt\.trim\(\),\s+\/\/[^\n]*\n\s+image_ai: /);
   });
 
   it('asks for a description only once there is something to describe', () => {

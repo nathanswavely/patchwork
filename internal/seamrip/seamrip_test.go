@@ -711,6 +711,7 @@ func TestEveryColumnHasABoundaryDecision(t *testing.T) {
 			"feed_secret_hash":     "a personal calendar URL secret",
 			"trusted_contributor":  "one instance's judgement about a person, not the community's",
 			"hide_amended_linings": "a per-user discovery filter, not community data",
+			"hide_ai_work":         "same",
 			"start_on_my_quilt":    "a per-user landing preference",
 			"last_seen_at":         "derived, and rebuilt by using the fork",
 		},

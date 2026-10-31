@@ -4,7 +4,10 @@
   import { navigate } from '../stores/router.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
   import { loadMemberships } from '../stores/memberships.svelte.js';
-  import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
+  import { getSubmissionsEnabled, getAiDisclosure } from '../stores/quilt.svelte.js';
+  import AIUseQuestion from '../components/AIUseQuestion.svelte';
+  import AIWorkQuestion from '../components/AIWorkQuestion.svelte';
+  import { aiField, aiAnswerMissing } from '../lib/aiUse.js';
   import TemplatePreviewDrawer from '../components/TemplatePreviewDrawer.svelte';
   import MarkdownRenderer from '../components/MarkdownRenderer.svelte';
   import TagPicker from '../components/TagPicker.svelte';
@@ -213,6 +216,16 @@
   // Words that are not in the vocabulary yet (docs/adr/114). They travel in
   // their own field so an unknown name in `tags` stays an error.
   let suggestTags = $state([]);
+  // Whether the organisation is a nonprofit (#448). In setup it starts from
+  // what the listing's suggester said, and the claimant confirms or corrects.
+  let nonprofit = $state(initial?.nonprofit === true);
+  // Whether AI wrote the description, and whether this patch's work relies
+  // on AI (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md). In setup
+  // the description answer starts from the suggester's, who answered for
+  // what they typed. The declaration never does: an unclaimed patch carries
+  // none, and claiming is where it is first asked.
+  let aiUse = $state(initial?.ai_use ?? null);
+  let aiWork = $state(null);
 
   // Tile appearance. At creation the form always shows a concrete pick —
   // seeded randomly so every new patch starts somewhere real — and
@@ -300,6 +313,8 @@
   function validate() {
     if (!name.trim()) return 'Name is required';
     if (!membershipPolicy) return 'Choose a membership policy';
+    const aiMissing = aiAnswerMissing(getAiDisclosure(), aiUse);
+    if (aiMissing) return aiMissing;
     return '';
   }
 
@@ -370,6 +385,9 @@
             appearance,
             tags: tags.length > 0 ? tags : undefined,
             suggest_tags: suggestTags.length > 0 ? suggestTags : undefined,
+            nonprofit,
+            ai_use: aiField(getAiDisclosure(), aiUse),
+            ai_work: aiWork,
           },
         });
         showToast('This patch is yours', 'success');
@@ -399,6 +417,9 @@
         appearance,
         tags: tags.length > 0 ? tags : undefined,
         suggest_tags: suggestTags.length > 0 ? suggestTags : undefined,
+        nonprofit: nonprofit || undefined,
+        ai_use: aiField(getAiDisclosure(), aiUse),
+        ai_work: aiWork,
       };
       const result = await api('nodes', { method: 'POST', body });
       // A word an admin already declined does not fail the creation; the
@@ -484,6 +505,12 @@
           <textarea class="lt-field" id="description" bind:value={description} rows="4" disabled={submitting} placeholder="What is this patch about?"></textarea>
         </div>
 
+        {#if getAiDisclosure() !== 'off'}
+          <div class="field">
+            <AIUseQuestion bind:value={aiUse} disabled={submitting} />
+          </div>
+        {/if}
+
         <div class="field">
           <!-- "Location" names an event's venue and never this field
                (CONTEXT.md, docs/adr/046). The patch's own prose field is
@@ -533,6 +560,15 @@
             it, and an admin decides whether it joins the quilt's tags.
           </p>
           <TagPicker bind:selected={tags} bind:suggested={suggestTags} disabled={submitting} />
+        </div>
+
+        <label class="lt-check">
+          <input type="checkbox" bind:checked={nonprofit} disabled={submitting} />
+          <span>This is a nonprofit organisation</span>
+        </label>
+
+        <div class="field">
+          <AIWorkQuestion bind:value={aiWork} disabled={submitting} />
         </div>
 
         <!-- The tile and its motif are optional here and editable later in

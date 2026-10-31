@@ -102,7 +102,7 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 		status := r.URL.Query().Get("status")
 
 		query := `SELECT p.id, p.node_id, p.author_id, p.title, p.body, p.status, COALESCE(p.state,''), p.proposal_type, p.duration_hours, p.voting_ends_at, p.created_at, p.updated_at,
-			COALESCE(p.target_doc,''), COALESCE(p.proposed_branch,''), COALESCE(p.proposed_body,''), COALESCE(p.proposed_title,''), COALESCE(p.git_sha,''),
+			COALESCE(p.target_doc,''), COALESCE(p.proposed_branch,''), COALESCE(p.proposed_body,''), COALESCE(p.proposed_title,''), COALESCE(p.git_sha,''), p.ai_use,
 			` + displayNameExpr("u") + ` as author_name,
 			(SELECT COUNT(*) FROM votes v JOIN memberships m ON m.user_id = v.user_id AND m.node_id = p.node_id
 				WHERE v.proposal_id = p.id AND v.value = 'approve' AND ` + countedBallot + `) as approve_count,
@@ -198,7 +198,7 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 		for rows.Next() {
 			var p proposalItem
 			var decidedAt, nominationsCloseAt string
-			if err := rows.Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.State, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &p.AuthorName, &p.ApproveCount, &p.RejectCount, &p.AbstainCount, &decidedAt, &p.SeatsContested, &nominationsCloseAt); err != nil {
+			if err := rows.Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.State, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &p.AIUse, &p.AuthorName, &p.ApproveCount, &p.RejectCount, &p.AbstainCount, &decidedAt, &p.SeatsContested, &nominationsCloseAt); err != nil {
 				continue
 			}
 			p.ElectionPhase = electionPhase(p.SeatsContested, nominationsCloseAt, p.Status)
@@ -300,6 +300,9 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			// everywhere else: on a voting patch every proposal is put to a
 			// vote, and there is nothing for the flag to choose.
 			PutToVote bool `json:"put_to_vote"`
+			// Whether AI made the proposed text, an amendment's included
+			// (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md).
+			AIUse *string `json:"ai_use"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -307,6 +310,10 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 		}
 		if req.Title == "" {
 			http.Error(w, `{"error":"title is required"}`, http.StatusBadRequest)
+			return
+		}
+		if msg := checkAIAnswer(db, "ai_use", req.AIUse); msg != "" {
+			writeJSONError(w, http.StatusBadRequest, msg)
 			return
 		}
 
@@ -399,6 +406,10 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			if commitMsg == "" {
 				commitMsg = fmt.Sprintf("Proposed amendment: %s", req.Title)
 			}
+			// The proposed text's AI answer rides on its commit as well as on
+			// the proposal, so the charter's history says it once the
+			// amendment lands (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md).
+			commitMsg = governance.WithAIUseTrailer(commitMsg, aiAnswerValue(req.AIUse))
 			authorName, authorEmail := commitIdentity(user)
 			sha, branchErr := governance.CreateBranch(governance.GetDataDir(), nodeID, branchName, req.TargetDoc, req.ProposedBody, authorName, authorEmail, commitMsg)
 			if branchErr != nil {
@@ -472,8 +483,8 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 		// could have changed it — the terms in force at the moment voting
 		// opens. From here the node's rules may move; this vote's may not.
 		_, err := db.Exec(
-			`INSERT INTO proposals (id, node_id, author_id, title, body, status, proposal_type, duration_hours, voting_ends_at, created_at, updated_at, ap_id, target_doc, proposed_branch, proposed_body, proposed_title, git_sha, base_sha, state, voting_terms, target_user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-			id, nodeID, user.ID, req.Title, req.Body, "open", req.ProposalType, req.DurationHours, votingEnds, createdAt, createdAt, apID, req.TargetDoc, branchName, req.ProposedBody, req.ProposedTitle, gitSHA, baseSHA, initialState, gcJSON, nullIfEmpty(req.TargetUserID),
+			`INSERT INTO proposals (id, node_id, author_id, title, body, status, proposal_type, duration_hours, voting_ends_at, created_at, updated_at, ap_id, target_doc, proposed_branch, proposed_body, proposed_title, git_sha, base_sha, state, voting_terms, target_user_id, ai_use) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			id, nodeID, user.ID, req.Title, req.Body, "open", req.ProposalType, req.DurationHours, votingEnds, createdAt, createdAt, apID, req.TargetDoc, branchName, req.ProposedBody, req.ProposedTitle, gitSHA, baseSHA, initialState, gcJSON, nullIfEmpty(req.TargetUserID), aiAnswerValue(req.AIUse),
 		)
 		if err != nil {
 			http.Error(w, `{"error":"failed to create proposal"}`, http.StatusInternalServerError)
@@ -537,8 +548,8 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 
 		var p model.Proposal
 		db.QueryRow(
-			`SELECT id, node_id, author_id, title, body, status, proposal_type, duration_hours, voting_ends_at, created_at, updated_at, COALESCE(target_doc,''), COALESCE(proposed_branch,''), COALESCE(proposed_body,''), COALESCE(proposed_title,''), COALESCE(git_sha,''), COALESCE(state,'voting') FROM proposals WHERE id = ?`, id,
-		).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &p.State)
+			`SELECT id, node_id, author_id, title, body, status, proposal_type, duration_hours, voting_ends_at, created_at, updated_at, COALESCE(target_doc,''), COALESCE(proposed_branch,''), COALESCE(proposed_body,''), COALESCE(proposed_title,''), COALESCE(git_sha,''), COALESCE(state,'voting'), ai_use FROM proposals WHERE id = ?`, id,
+		).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &p.State, &p.AIUse)
 
 		// Broadcast to node followers, behind two gates that answer different
 		// questions. Whether this patch publishes its deliberation at all
@@ -581,7 +592,7 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			ActorID:  user.ID,
 			EntityID: id,
 			Title:    "New proposal: " + req.Title,
-			Body:     req.Body,
+			Body:     excerpt(req.Body, 200),
 			Link:     weblink.Proposal(slug, id),
 		})
 
@@ -1267,13 +1278,13 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 		err := db.QueryRow(
 			`SELECT p.id, p.node_id, p.author_id, p.title, p.body, p.status, COALESCE(p.state,''), COALESCE(p.applied_at,''), p.proposal_type, p.duration_hours, p.voting_ends_at, p.created_at, p.updated_at,
 			 COALESCE(p.target_doc,''), COALESCE(p.target_user_id,''), COALESCE(p.proposed_branch,''), COALESCE(p.proposed_body,''), COALESCE(p.proposed_title,''), COALESCE(p.git_sha,''),
-			 p.seats_contested, COALESCE(p.nominations_close_at,''),
+			 p.seats_contested, COALESCE(p.nominations_close_at,''), p.ai_use,
 			 `+displayNameExpr("u")+` as author_name,
 			 `+displayNameExpr("tu")+` as target_user_name
 			 FROM proposals p LEFT JOIN users u ON u.id = p.author_id
 			 LEFT JOIN users tu ON tu.id = p.target_user_id
 			 WHERE p.id = ?`, proposalID,
-		).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.State, &appliedAt, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.TargetUserID, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &seatsContested, &nominationsCloseAt, &authorName, &targetUserName)
+		).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.State, &appliedAt, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.TargetUserID, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &seatsContested, &nominationsCloseAt, &p.AIUse, &authorName, &targetUserName)
 		if err != nil {
 			http.Error(w, `{"error":"proposal not found"}`, http.StatusNotFound)
 			return
@@ -1485,21 +1496,24 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			// the panel can render the ballot they hold rather than an empty
 			// form that reads as not having voted (F-092).
 			"i_abstained": abstained(db, proposalID, viewerID),
-			"title":                p.Title,
-			"body":                 p.Body,
-			"status":               p.Status,
-			"proposal_type":        p.ProposalType,
-			"duration_hours":       p.DurationHours,
-			"voting_ends_at":       p.VotingEndsAt,
-			"created_at":           p.CreatedAt,
-			"updated_at":           p.UpdatedAt,
-			"approve_count":        approveCount,
-			"reject_count":         rejectCount,
-			"abstain_count":        abstainCount,
-			"voters":               voters,
-			"my_vote":              myVote,
-			"eligible_voters":      eligibleCount,
-			"can_vote":             canVote,
+			"title":       p.Title,
+			"body":        p.Body,
+			// Whether AI made the proposed text
+			// (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md).
+			"ai_use":          p.AIUse,
+			"status":          p.Status,
+			"proposal_type":   p.ProposalType,
+			"duration_hours":  p.DurationHours,
+			"voting_ends_at":  p.VotingEndsAt,
+			"created_at":      p.CreatedAt,
+			"updated_at":      p.UpdatedAt,
+			"approve_count":   approveCount,
+			"reject_count":    rejectCount,
+			"abstain_count":   abstainCount,
+			"voters":          voters,
+			"my_vote":         myVote,
+			"eligible_voters": eligibleCount,
+			"can_vote":        canVote,
 			// On a closed proposal with no ballot from this viewer, whether
 			// they were somebody who could have cast one, so the page can say
 			// "You did not vote" only where that is true (F-070).
@@ -1907,6 +1921,9 @@ func UpdateProposal(db *database.DB) http.HandlerFunc {
 			// bug in the caller; the SPA carried a "Submit for voting" button
 			// against this endpoint for exactly that reason. Say why instead.
 			State *string `json:"state"`
+			// Absent keeps the stored answer; "" withdraws it, except where
+			// the quilt requires one.
+			AIUse *string `json:"ai_use"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -1947,6 +1964,14 @@ func UpdateProposal(db *database.DB) http.HandlerFunc {
 			setClauses = append(setClauses, "status = ?")
 			args = append(args, *req.Status)
 		}
+		if req.AIUse != nil {
+			if msg := checkAIAnswer(db, "ai_use", req.AIUse); msg != "" {
+				writeJSONError(w, http.StatusBadRequest, msg)
+				return
+			}
+			setClauses = append(setClauses, "ai_use = ?")
+			args = append(args, aiAnswerValue(req.AIUse))
+		}
 
 		if len(setClauses) == 0 {
 			http.Error(w, `{"error":"no valid fields to update"}`, http.StatusBadRequest)
@@ -1969,8 +1994,8 @@ func UpdateProposal(db *database.DB) http.HandlerFunc {
 
 		var p model.Proposal
 		db.QueryRow(
-			`SELECT id, node_id, author_id, title, body, status, proposal_type, duration_hours, voting_ends_at, created_at, updated_at FROM proposals WHERE id = ?`, proposalID,
-		).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt)
+			`SELECT id, node_id, author_id, title, body, status, proposal_type, duration_hours, voting_ends_at, created_at, updated_at, ai_use FROM proposals WHERE id = ?`, proposalID,
+		).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.AIUse)
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(p)

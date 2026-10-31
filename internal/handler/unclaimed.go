@@ -97,6 +97,16 @@ func SubmitPatch(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			// an address Patchwork cannot make sense of is refused while the
 			// person who typed it is still looking at the screen.
 			FeedURL string `json:"feed_url"`
+			// Whether the place is a nonprofit, as the suggester understands
+			// it (#448). Self-declared like everything else on a listing; the
+			// reviewer sees it in the queue, and the owner who claims the
+			// patch can change it at Settings -> Info.
+			Nonprofit bool `json:"nonprofit"`
+			// Whether AI wrote the description the suggester typed
+			// (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md). They
+			// answer for what they wrote and nothing else: a listing carries
+			// no AI work declaration, which waits for whoever claims it.
+			AIUse *string `json:"ai_use"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -104,6 +114,10 @@ func SubmitPatch(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		}
 		if req.Name == "" {
 			http.Error(w, `{"error":"name is required"}`, http.StatusBadRequest)
+			return
+		}
+		if msg := checkAIAnswer(db, "ai_use", req.AIUse); msg != "" {
+			writeJSONError(w, http.StatusBadRequest, msg)
 			return
 		}
 
@@ -209,9 +223,9 @@ func SubmitPatch(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		// patch went live admitting anyone, chosen by nobody. Same at the
 		// two admin-side listing inserts below.
 		_, err := db.Exec(
-			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, visibility, membership_policy, status, submitted_by, submission_source, verification_domain, ap_id, created_at, updated_at, follower_permissions, suggested_feed_url, suggested_feed_count)
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'public', 'invite_only', ?, ?, 'community', ?, ?, ?, ?, '{}', ?, ?)`,
-			id, model.SystemUserID, req.Name, slug, req.Description, req.Latitude, req.Longitude, req.Address, req.Website, linksStr, status, user.ID, verificationDomain, apID, now, now, storedFeedURL, storedFeedCount,
+			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, visibility, membership_policy, status, submitted_by, submission_source, verification_domain, ap_id, created_at, updated_at, follower_permissions, suggested_feed_url, suggested_feed_count, nonprofit, ai_use)
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'public', 'invite_only', ?, ?, 'community', ?, ?, ?, ?, '{}', ?, ?, ?, ?)`,
+			id, model.SystemUserID, req.Name, slug, req.Description, req.Latitude, req.Longitude, req.Address, req.Website, linksStr, status, user.ID, verificationDomain, apID, now, now, storedFeedURL, storedFeedCount, req.Nonprofit, aiAnswerValue(req.AIUse),
 		)
 		if err != nil {
 			http.Error(w, `{"error":"failed to create submission"}`, http.StatusInternalServerError)
@@ -319,6 +333,7 @@ func CreateUnclaimedPatch(db *database.DB) http.HandlerFunc {
 			Latitude           *float64         `json:"latitude"`
 			Longitude          *float64         `json:"longitude"`
 			Tags               []string         `json:"tags"`
+			Nonprofit          bool             `json:"nonprofit"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -354,9 +369,9 @@ func CreateUnclaimedPatch(db *database.DB) http.HandlerFunc {
 		now := clock.Now()
 
 		_, err := db.Exec(
-			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, visibility, membership_policy, status, submitted_by, submission_source, verification_domain, ap_id, created_at, updated_at, follower_permissions)
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'public', 'invite_only', 'unclaimed', ?, 'admin', ?, ?, ?, ?, '{}')`,
-			id, model.SystemUserID, req.Name, slug, req.Description, req.Latitude, req.Longitude, req.Address, req.Website, linksStr, user.ID, verificationDomain, apID, now, now,
+			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, visibility, membership_policy, status, submitted_by, submission_source, verification_domain, ap_id, created_at, updated_at, follower_permissions, nonprofit)
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'public', 'invite_only', 'unclaimed', ?, 'admin', ?, ?, ?, ?, '{}', ?)`,
+			id, model.SystemUserID, req.Name, slug, req.Description, req.Latitude, req.Longitude, req.Address, req.Website, linksStr, user.ID, verificationDomain, apID, now, now, req.Nonprofit,
 		)
 		if err != nil {
 			http.Error(w, `{"error":"failed to create unclaimed patch"}`, http.StatusInternalServerError)
@@ -397,6 +412,7 @@ func BulkCreateUnclaimed(db *database.DB) http.HandlerFunc {
 				Latitude           *float64         `json:"latitude"`
 				Longitude          *float64         `json:"longitude"`
 				Tags               []string         `json:"tags"`
+				Nonprofit          bool             `json:"nonprofit"`
 			} `json:"nodes"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -435,9 +451,9 @@ func BulkCreateUnclaimed(db *database.DB) http.HandlerFunc {
 
 			apID := ap.NodeAPID(ap.GetDomain(), id)
 			_, err := db.Exec(
-				`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, visibility, membership_policy, status, submitted_by, submission_source, verification_domain, ap_id, created_at, updated_at, follower_permissions)
-				 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'public', 'invite_only', 'unclaimed', ?, 'admin', ?, ?, ?, ?, '{}')`,
-				id, model.SystemUserID, n.Name, slug, n.Description, n.Latitude, n.Longitude, n.Address, n.Website, linksStr, user.ID, verificationDomain, apID, now, now,
+				`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, visibility, membership_policy, status, submitted_by, submission_source, verification_domain, ap_id, created_at, updated_at, follower_permissions, nonprofit)
+				 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'public', 'invite_only', 'unclaimed', ?, 'admin', ?, ?, ?, ?, '{}', ?)`,
+				id, model.SystemUserID, n.Name, slug, n.Description, n.Latitude, n.Longitude, n.Address, n.Website, linksStr, user.ID, verificationDomain, apID, now, now, n.Nonprofit,
 			)
 			if err != nil {
 				errors = append(errors, fmt.Sprintf("item %d (%s): %v", i, n.Name, err))
@@ -471,7 +487,7 @@ func ListSubmissions(db *database.DB) http.HandlerFunc {
 
 		query := `SELECT n.id, n.name, n.slug, n.description, n.website, COALESCE(n.links,'[]'), n.address, n.submitted_by, n.created_at,
 			` + usernameExpr("u") + `, ` + displayNameExpr("u") + `,
-			COALESCE(n.suggested_feed_url,''), COALESCE(n.suggested_feed_count,0)
+			COALESCE(n.suggested_feed_url,''), COALESCE(n.suggested_feed_count,0), n.nonprofit
 			FROM nodes n LEFT JOIN users u ON n.submitted_by = u.id
 			WHERE n.status = 'pending_review' AND n.removed_at IS NULL`
 		args := []interface{}{}
@@ -491,20 +507,20 @@ func ListSubmissions(db *database.DB) http.HandlerFunc {
 		defer rows.Close()
 
 		type submission struct {
-			ID              string `json:"id"`
-			Name            string `json:"name"`
-			Slug            string `json:"slug"`
+			ID   string `json:"id"`
+			Name string `json:"name"`
+			Slug string `json:"slug"`
 			// What the website would derive as a trust anchor — shown to the
 			// reviewing admin as a suggestion, never applied automatically.
-			SuggestedVerificationDomain string `json:"suggested_verification_domain"`
-			Description     string `json:"description"`
-			Website         string `json:"website"`
-			Links           json.RawMessage `json:"links"`
-			Address         string `json:"address"`
-			SubmittedBy     string `json:"submitted_by"`
-			CreatedAt       string `json:"created_at"`
-			SubmitterName   string `json:"submitter_username"`
-			SubmitterDisplay string `json:"submitter_display_name"`
+			SuggestedVerificationDomain string          `json:"suggested_verification_domain"`
+			Description                 string          `json:"description"`
+			Website                     string          `json:"website"`
+			Links                       json.RawMessage `json:"links"`
+			Address                     string          `json:"address"`
+			SubmittedBy                 string          `json:"submitted_by"`
+			CreatedAt                   string          `json:"created_at"`
+			SubmitterName               string          `json:"submitter_username"`
+			SubmitterDisplay            string          `json:"submitter_display_name"`
 			// Tags the submitter picked, in priority order — shown so the
 			// reviewer can see what the community suggested before approving
 			// (docs/adr/021). Corrections happen after approval, once the
@@ -518,13 +534,17 @@ func ListSubmissions(db *database.DB) http.HandlerFunc {
 			// before deciding to attach it.
 			FeedURL           string `json:"feed_url"`
 			FeedUpcomingCount int    `json:"feed_upcoming_count"`
+			// Whether the suggester says the place is a nonprofit (#448),
+			// shown so the reviewer can see what was claimed and correct it
+			// at approval.
+			Nonprofit bool `json:"nonprofit"`
 		}
 
 		var items []submission
 		for rows.Next() {
 			var s submission
 			var linksStr string
-			if err := rows.Scan(&s.ID, &s.Name, &s.Slug, &s.Description, &s.Website, &linksStr, &s.Address, &s.SubmittedBy, &s.CreatedAt, &s.SubmitterName, &s.SubmitterDisplay, &s.FeedURL, &s.FeedUpcomingCount); err != nil {
+			if err := rows.Scan(&s.ID, &s.Name, &s.Slug, &s.Description, &s.Website, &linksStr, &s.Address, &s.SubmittedBy, &s.CreatedAt, &s.SubmitterName, &s.SubmitterDisplay, &s.FeedURL, &s.FeedUpcomingCount, &s.Nonprofit); err != nil {
 				continue
 			}
 			s.Links = json.RawMessage(linksStr)
@@ -584,6 +604,10 @@ func ReviewSubmission(db *database.DB) http.HandlerFunc {
 			// is what keeps ADR 026's "given explicitly" true.
 			GrantTrust *bool `json:"grant_trust"`
 			AttachFeed *bool `json:"attach_feed"`
+			// Reviewer's correction of the suggester's nonprofit answer
+			// (#448), the way Tags above corrects their tags: absent keeps
+			// what was submitted.
+			Nonprofit *bool `json:"nonprofit"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -617,6 +641,15 @@ func ReviewSubmission(db *database.DB) http.HandlerFunc {
 			if unknownTag != "" {
 				writeJSONError(w, http.StatusBadRequest, "unknown tag: "+unknownTag)
 				return
+			}
+			// The reviewer's nonprofit correction lands before the approval
+			// does, so a failed write leaves the submission pending rather
+			// than approved with an answer the reviewer meant to change.
+			if req.Nonprofit != nil {
+				if _, err := db.Exec(`UPDATE nodes SET nonprofit = ? WHERE id = ?`, *req.Nonprofit, nodeID); err != nil {
+					http.Error(w, `{"error":"failed to update node"}`, http.StatusInternalServerError)
+					return
+				}
 			}
 			// The review is over either way, so the parked feed goes either
 			// way: attached below, or dropped here. Leaving it on the row

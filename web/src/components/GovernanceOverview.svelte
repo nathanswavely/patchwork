@@ -12,6 +12,7 @@
   import Skeleton from './Skeleton.svelte';
   import UnlockPanel from './UnlockPanel.svelte';
   import SetupChecklist from './SetupChecklist.svelte';
+  import AIWorkPrompt from './AIWorkPrompt.svelte';
   import InterimOffer from './InterimOffer.svelte';
 
   const patch = getContext('patch');
@@ -444,6 +445,7 @@
        doesn't apply. -->
   <UnlockPanel />
   <SetupChecklist />
+  <AIWorkPrompt />
   {#if loading}
     <Skeleton lines={6} height="1rem" />
   {:else if !overview}

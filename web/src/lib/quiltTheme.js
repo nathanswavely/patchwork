@@ -240,15 +240,32 @@ export function darken(hex, amount = 0.2) {
  */
 export function textOnColor(hex) {
   if (!hex || hex.charAt(0) !== '#' || hex.length < 7) return '#ffffff';
+  return luminance(hex) > 0.18 ? '#151820' : '#ffffff';
+}
+
+/**
+ * WCAG relative luminance of a hex color (#rgb, #rrggbb, or #rrggbbaa with
+ * the alpha ignored), or null for anything else. `dim` is the opacity of a
+ * black wash laid over it, composited in sRGB the way a browser paints one,
+ * so the answer is what the eye gets with a shadow on top.
+ */
+export function luminance(hex, dim = 0) {
+  if (typeof hex !== 'string' || !/^#(?:[0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test(hex)) return null;
+  const full = hex.length === 4
+    ? '#' + [...hex.slice(1)].map((c) => c + c).join('')
+    : hex;
   const chan = (s) => {
-    const c = parseInt(s, 16) / 255;
+    const c = (parseInt(s, 16) / 255) * (1 - dim);
     return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
   };
-  const lum =
-    0.2126 * chan(hex.slice(1, 3)) +
-    0.7152 * chan(hex.slice(3, 5)) +
-    0.0722 * chan(hex.slice(5, 7));
-  return lum > 0.18 ? '#151820' : '#ffffff';
+  return 0.2126 * chan(full.slice(1, 3)) +
+    0.7152 * chan(full.slice(3, 5)) +
+    0.0722 * chan(full.slice(5, 7));
+}
+
+/** WCAG contrast ratio between two relative luminances. */
+export function contrastRatio(a, b) {
+  return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
 }
 
 // --- PALETTE FUNCTIONS ---

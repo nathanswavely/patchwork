@@ -2,7 +2,9 @@
   import { Bell } from 'phosphor-svelte';
   import { getUnread, refreshUnread } from '../stores/notifications.svelte.js';
 
-  let { onOpen = () => {} } = $props();
+  // expanded and controls are set where the bell opens a dropdown (a desktop
+  // GlobalBar). A phone's bell is a way to a page, so neither applies there.
+  let { onOpen = () => {}, expanded = undefined, controls = undefined } = $props();
 
   let intervalId = $state(null);
 
@@ -19,7 +21,14 @@
 </script>
 
 <div class="notif-container">
-  <button class="bell-btn" onclick={onOpen} aria-label="Notifications">
+  <button
+    class="bell-btn"
+    class:open={expanded}
+    onclick={onOpen}
+    aria-label="Notifications"
+    aria-expanded={expanded}
+    aria-controls={expanded ? controls : undefined}
+  >
     <Bell size={18} weight="duotone" />
     {#if getUnread() > 0}
       <span class="lt-count lt-count-corner lt-tone-error badge-count">{getUnread() > 99 ? '99+' : getUnread()}</span>
@@ -47,8 +56,13 @@
     min-height: var(--lt-target);
   }
 
-  .bell-btn:hover {
+  .bell-btn:hover,
+  .bell-btn.open {
     color: var(--color-text);
+  }
+
+  .bell-btn.open {
+    background: var(--color-overlay);
   }
 
   .badge-count {

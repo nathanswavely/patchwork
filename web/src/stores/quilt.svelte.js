@@ -28,6 +28,10 @@ let instanceFederation = $state(false);
 // Defaults true so a failed /instance fetch still shows the email option
 // rather than hiding the only door someone may have.
 let instanceEmailEnabled = $state(true);
+// Whether forms ask if AI made what is posted (docs/adr/2026-10-20-a-post-
+// says-whether-ai-made-it.md): 'off', 'optional' or 'required'. Defaults to
+// the shipped 'optional', so a failed fetch still asks and blocks nothing.
+let instanceAiDisclosure = $state('optional');
 
 // --- Filter state (docs/adr/033) ---
 // The filter — tag selection plus the search chip — is standing state that
@@ -58,6 +62,10 @@ export function getNeighborQuilts() { return neighborQuilts; }
 export function getInstanceDomain() { return instanceDomain; }
 export function getInstanceFederation() { return instanceFederation; }
 export function getEmailEnabled() { return instanceEmailEnabled; }
+export function getAiDisclosure() { return instanceAiDisclosure; }
+// Called after the admin changes the switch so open forms follow it without
+// a reload.
+export function setAiDisclosure(mode) { instanceAiDisclosure = mode; }
 export function getInstanceIconUrl() { return instanceIconUrl; }
 export function getInstanceModules() { return instanceModules; }
 export function getInstanceStats() { return instanceStats; }
@@ -243,6 +251,7 @@ export async function loadInstance() {
     if (data?.domain) instanceDomain = data.domain;
     if (data?.federation !== undefined) instanceFederation = data.federation;
     if (data?.email_enabled !== undefined) instanceEmailEnabled = data.email_enabled;
+    if (data?.ai_disclosure) instanceAiDisclosure = data.ai_disclosure;
     if (data?.geography?.timezone) instanceTimezone = data.geography.timezone;
     instanceLoaded = true;
   } catch { /* keep defaults */ }

@@ -106,3 +106,27 @@ describe('rowsToEvents', () => {
     expect(errors[0].row).toBe(2);
   });
 });
+
+// An optional column for an uploader who knows whether AI wrote the
+// description (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md). A
+// blank cell sends nothing, so the row stays unanswered.
+describe('the ai_use column', () => {
+  it('passes a known answer through and leaves a blank one out', () => {
+    const rows = parseCsv(
+      'title,date,time,ai_use\n' +
+        'Opening Night,2026-09-12,7:00 PM,Generated\n' +
+        'Artist Talk,2026-09-19,6:30 PM,\n'
+    );
+    const { events, errors } = rowsToEvents(rows);
+    expect(errors).toEqual([]);
+    expect(events[0].ai_use).toBe('generated');
+    expect('ai_use' in events[1]).toBe(false);
+  });
+
+  it('refuses a value that is not one of the three', () => {
+    const rows = parseCsv('title,date,time,ai_use\nOpening Night,2026-09-12,7:00 PM,maybe\n');
+    const { events, errors } = rowsToEvents(rows);
+    expect(events).toHaveLength(0);
+    expect(errors[0].message).toMatch(/none, assisted or generated/);
+  });
+});

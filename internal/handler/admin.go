@@ -230,8 +230,13 @@ func AuditLog(db *database.DB) http.HandlerFunc {
 		action := r.URL.Query().Get("action")
 		entityType := r.URL.Query().Get("entity_type")
 		userID := r.URL.Query().Get("user_id")
-		from := r.URL.Query().Get("from")
-		to := r.URL.Query().Get("to")
+		// created_at is a full timestamp compared as text, so a bare date
+		// sorts before every entry on the day it names: a `to` of 2026-10-19
+		// dropped all of Oct 19. Widened the way ListEvents widens its bounds,
+		// except that `from` carries the fraction every created_at has: 'Z'
+		// sorts after '.', so a bare T00:00:00Z drops the day's first entry.
+		from := dayBound(r.URL.Query().Get("from"), "T00:00:00.000Z")
+		to := dayBound(r.URL.Query().Get("to"), "T23:59:59Z")
 
 		query := `SELECT a.id, a.user_id, a.action, a.entity_type, a.entity_id, a.metadata, a.ip_address, a.created_at,
 			` + usernameExpr("u") + ` AS username, ` + displayNameExpr("u") + ` AS display_name

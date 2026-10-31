@@ -10,6 +10,8 @@
   import { showToast } from '../stores/toast.svelte.js';
   import SubscribeFeeds from '../components/SubscribeFeeds.svelte';
   import EventTierChip from '../components/EventTierChip.svelte';
+  import MadeWithAI from '../components/MadeWithAI.svelte';
+  import { listAiValue } from '../lib/aiUse.js';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -376,6 +378,7 @@
               <span class="event-title">
                 {event.title}
                 <EventTierChip visibility={event.visibility} />
+                <MadeWithAI value={listAiValue(event)} />
               </span>
               <span class="event-detail">
                 {formatTime(event.starts_at, event.timezone)}

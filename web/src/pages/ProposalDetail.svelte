@@ -16,6 +16,8 @@
   import VoteSection from '../components/VoteSection.svelte';
   import ElectionPanel from '../components/ElectionPanel.svelte';
   import StickyVoteBar from '../components/StickyVoteBar.svelte';
+  import MadeWithAI from '../components/MadeWithAI.svelte';
+  import ReportButton from '../components/ReportButton.svelte';
   import { formatDay } from '../lib/datetime.js';
   const patch = getContext('patch');
   let patchIsAdmin = $derived(patch.value.isAdmin);
@@ -294,6 +296,8 @@
           <span class="lt-muted">{isDirectChange ? 'Applied by' : 'Proposed by'} {proposal.author_name || 'unknown'}</span>
         {/if}
         <span class="lt-muted">{formatDay(proposal.created_at)}</span>
+        <MadeWithAI value={proposal.ai_use} />
+        <ReportButton entityType="proposal" entityId={proposal.id} entityName={proposal.title} />
       </div>
     </div>
 

@@ -162,6 +162,11 @@
       </section>
     {/if}
 
+    <!-- The paired AI page (docs/adr/2026-10-20-the-site-says-where-ai-is.md). -->
+    <p class="lt-muted">
+      <a href="/ai" onclick={(e) => { e.preventDefault(); navigate('/ai'); }}>Where AI is used on this quilt</a>
+    </p>
+
     {#if label.seamripped_from_name}
       <p class="seamripped-from lt-muted">
         Seamripped from

@@ -470,7 +470,7 @@ func ListNodes(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		query := "SELECT n.id, n.owner_id, n.name, n.slug, n.description, n.latitude, n.longitude, n.address, COALESCE(n.timezone,'') AS timezone, n.website, COALESCE(n.image_url,''), COALESCE(n.image_alt,''), COALESCE(n.links,'[]'), COALESCE(n.follower_permissions,'{}'), COALESCE(n.governance_config,'{}'), n.visibility, n.membership_policy, COALESCE(n.appearance,''), n.status, n.accept_event_suggestions, COALESCE(n.moved_to,''), n.founded_at, n.created_at, n.updated_at FROM nodes n"
+		query := "SELECT n.id, n.owner_id, n.name, n.slug, n.description, n.latitude, n.longitude, n.address, COALESCE(n.timezone,'') AS timezone, n.website, COALESCE(n.image_url,''), COALESCE(n.image_alt,''), COALESCE(n.links,'[]'), COALESCE(n.follower_permissions,'{}'), COALESCE(n.governance_config,'{}'), n.visibility, n.membership_policy, COALESCE(n.appearance,''), n.status, n.accept_event_suggestions, COALESCE(n.moved_to,''), n.founded_at, n.nonprofit, n.ai_use, n.image_ai, n.ai_work, n.created_at, n.updated_at FROM nodes n"
 		var conditions []string
 		var args []interface{}
 
@@ -551,6 +551,12 @@ func ListNodes(db *database.DB) http.HandlerFunc {
 			}
 		}
 
+		// The personal filter for declared AI work, same shape and same
+		// exemption (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md).
+		if !myScope && hideAIWork(db, r) {
+			conditions = append(conditions, "COALESCE(n.ai_work, 0) = 0")
+		}
+
 		if after != "" {
 			conditions = append(conditions, "n.id > ?")
 			args = append(args, after)
@@ -575,7 +581,7 @@ func ListNodes(db *database.DB) http.HandlerFunc {
 			var n model.Node
 			var linksJSON, fpJSON, gcJSON, apJSON string
 			if err := rows.Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.Status, &n.AcceptEventSuggestions, &n.MovedTo,
-				&n.FoundedAt, &n.CreatedAt, &n.UpdatedAt); err != nil {
+				&n.FoundedAt, &n.Nonprofit, &n.AIUse, &n.ImageAI, &n.AIWork, &n.CreatedAt, &n.UpdatedAt); err != nil {
 				continue
 			}
 			scanNodeLinks(linksJSON, &n)
@@ -620,9 +626,9 @@ func GetNode(db *database.DB) http.HandlerFunc {
 		var n model.Node
 		var linksJSON, fpJSON, gcJSON, apJSON string
 		err := db.QueryRow(
-			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, COALESCE(timezone,'') AS timezone, website, COALESCE(did,''), COALESCE(image_url,''), COALESCE(image_alt,''), COALESCE(links,'[]'), COALESCE(follower_permissions,'{}'), COALESCE(governance_config,'{}'), visibility, membership_policy, COALESCE(appearance,''), status, COALESCE(submission_source,'owner'), accept_event_suggestions, notice_posting, notice_replies_default, public_member_list, public_governance_record, COALESCE(moved_to,''), founded_at, created_at, updated_at
+			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, COALESCE(timezone,'') AS timezone, website, COALESCE(did,''), COALESCE(image_url,''), COALESCE(image_alt,''), COALESCE(links,'[]'), COALESCE(follower_permissions,'{}'), COALESCE(governance_config,'{}'), visibility, membership_policy, COALESCE(appearance,''), status, COALESCE(submission_source,'owner'), accept_event_suggestions, notice_posting, notice_replies_default, public_member_list, public_governance_record, COALESCE(moved_to,''), founded_at, nonprofit, ai_use, image_ai, ai_work, created_at, updated_at
 			 FROM nodes WHERE slug = ? AND status IN ('active','unclaimed') AND removed_at IS NULL`, slug,
-		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.DID, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.Status, &n.SubmissionSource, &n.AcceptEventSuggestions, &n.NoticePosting, &n.NoticeRepliesDefault, &n.PublicMemberList, &n.PublicGovernanceRecord, &n.MovedTo, &n.FoundedAt, &n.CreatedAt, &n.UpdatedAt)
+		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.DID, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.Status, &n.SubmissionSource, &n.AcceptEventSuggestions, &n.NoticePosting, &n.NoticeRepliesDefault, &n.PublicMemberList, &n.PublicGovernanceRecord, &n.MovedTo, &n.FoundedAt, &n.Nonprofit, &n.AIUse, &n.ImageAI, &n.AIWork, &n.CreatedAt, &n.UpdatedAt)
 		if err != nil {
 			writeNodeNotFound(db, w, viewer, slug)
 			return
@@ -829,6 +835,17 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 			// value gets it validated rather than silently replaced.
 			PublicMemberList       *string `json:"public_member_list"`
 			PublicGovernanceRecord *string `json:"public_governance_record"`
+			// Whether the organisation says it is a nonprofit (#448). A
+			// plain bool: absent and false mean the same thing here, since
+			// a patch being created has no earlier answer to keep.
+			Nonprofit bool `json:"nonprofit"`
+			// Whether AI made the description, and whether the patch's work
+			// relies heavily on AI, which is a declaration and not a label
+			// (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md). A
+			// patch is created without an image, so there is no image
+			// answer to take here.
+			AIUse  *string `json:"ai_use"`
+			AIWork *bool   `json:"ai_work"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -836,6 +853,10 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 		}
 		if req.Name == "" {
 			http.Error(w, `{"error":"name is required"}`, http.StatusBadRequest)
+			return
+		}
+		if msg := checkAIAnswer(db, "ai_use", req.AIUse); msg != "" {
+			writeJSONError(w, http.StatusBadRequest, msg)
 			return
 		}
 		if req.Visibility == "" {
@@ -930,9 +951,9 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 		// different path and stay NULL until a claim completes.
 		activatedAt := clock.Now()
 		_, err := db.Exec(
-			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, follower_permissions, visibility, membership_policy, appearance, ap_id, activated_at, public_member_list, public_governance_record)
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-			id, user.ID, req.Name, slug, req.Description, req.Latitude, req.Longitude, req.Address, req.Website, linksStr, fpStr, req.Visibility, req.MembershipPolicy, appearanceStr, apID, activatedAt, publicMemberList, publicGovernanceRecord,
+			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, follower_permissions, visibility, membership_policy, appearance, ap_id, activated_at, public_member_list, public_governance_record, nonprofit, ai_use, ai_work)
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			id, user.ID, req.Name, slug, req.Description, req.Latitude, req.Longitude, req.Address, req.Website, linksStr, fpStr, req.Visibility, req.MembershipPolicy, appearanceStr, apID, activatedAt, publicMemberList, publicGovernanceRecord, req.Nonprofit, aiAnswerValue(req.AIUse), req.AIWork,
 		)
 		if err != nil {
 			http.Error(w, `{"error":"failed to create node"}`, http.StatusInternalServerError)
@@ -1025,9 +1046,9 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 		var n model.Node
 		var linksJSON, fpJSON, gcJSON, apJSON string
 		db.QueryRow(
-			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, COALESCE(timezone,'') AS timezone, website, COALESCE(image_url,''), COALESCE(image_alt,''), COALESCE(links,'[]'), COALESCE(follower_permissions,'{}'), COALESCE(governance_config,'{}'), visibility, membership_policy, COALESCE(appearance,''), founded_at, created_at, updated_at
+			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, COALESCE(timezone,'') AS timezone, website, COALESCE(image_url,''), COALESCE(image_alt,''), COALESCE(links,'[]'), COALESCE(follower_permissions,'{}'), COALESCE(governance_config,'{}'), visibility, membership_policy, COALESCE(appearance,''), founded_at, nonprofit, ai_use, image_ai, ai_work, created_at, updated_at
 			 FROM nodes WHERE id = ?`, id,
-		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.FoundedAt, &n.CreatedAt, &n.UpdatedAt)
+		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.FoundedAt, &n.Nonprofit, &n.AIUse, &n.ImageAI, &n.AIWork, &n.CreatedAt, &n.UpdatedAt)
 		scanNodeLinks(linksJSON, &n)
 		scanFollowerPermissions(fpJSON, &n)
 		scanGovernanceConfig(gcJSON, &n)
@@ -1096,10 +1117,12 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 			"website":  true, "links": true, "visibility": true,
 			"appearance": true, "accept_event_suggestions": true,
 			"notice_posting": true, "notice_replies_default": true,
-			"public_member_list":        true,
+			"public_member_list":       true,
 			"public_governance_record": true,
-			"image_url":          true, "image_alt": true,
+			"image_url":                true, "image_alt": true,
 			"moved_to": true, "founded_at": true,
+			"nonprofit": true,
+			"ai_use":    true, "image_ai": true, "ai_work": true,
 		}
 
 		// When the group started (docs/adr/098). A date, never in the
@@ -1224,6 +1247,55 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 		if raw, present := req["notice_replies_default"]; present {
 			if _, isBool := raw.(bool); !isBool {
 				http.Error(w, `{"error":"notice_replies_default must be true or false"}`, http.StatusBadRequest)
+				return
+			}
+		}
+		// Whether AI made the description and the image
+		// (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md). Absent
+		// keeps the stored answer. A cleared image takes its answer with it,
+		// so no label is left standing on a picture that is gone.
+		aiFields := []string{"ai_use", "image_ai"}
+		if raw, present := req["image_url"]; present {
+			if u, _ := raw.(string); strings.TrimSpace(u) == "" {
+				req["image_ai"] = nil
+				aiFields = aiFields[:1]
+			}
+		}
+		for _, field := range aiFields {
+			if msg := checkPatchedAIAnswer(db, field, req); msg != "" {
+				writeJSONError(w, http.StatusBadRequest, msg)
+				return
+			}
+		}
+		// Whether the patch's work relies heavily on AI: true, false, or null
+		// for not stated. An unclaimed patch carries no declaration
+		// (docs/adr/039 holds it carries no governance either); the claim
+		// is where it is first asked. A change is audited on its own line
+		// below, so a patch cannot quietly drop the badge.
+		var aiWorkBefore *bool
+		aiWorkChanged := false
+		if raw, present := req["ai_work"]; present {
+			if _, isBool := raw.(bool); raw != nil && !isBool {
+				http.Error(w, `{"error":"ai_work must be true, false or null"}`, http.StatusBadRequest)
+				return
+			}
+			var status string
+			if err := db.QueryRow("SELECT status, ai_work FROM nodes WHERE id = ?", nodeID).Scan(&status, &aiWorkBefore); err != nil {
+				http.Error(w, `{"error":"failed to read node"}`, http.StatusInternalServerError)
+				return
+			}
+			if status == "unclaimed" {
+				http.Error(w, `{"error":"an unclaimed patch carries no AI work declaration; whoever claims it answers"}`, http.StatusBadRequest)
+				return
+			}
+			after, _ := raw.(bool)
+			aiWorkChanged = (aiWorkBefore == nil) != (raw == nil) || (aiWorkBefore != nil && raw != nil && *aiWorkBefore != after)
+		}
+		// Whether the organisation says it is a nonprofit (#448): a bool, so
+		// a stray string is a 400 rather than the CHECK constraint's 500.
+		if raw, present := req["nonprofit"]; present {
+			if _, isBool := raw.(bool); !isBool {
+				http.Error(w, `{"error":"nonprofit must be true or false"}`, http.StatusBadRequest)
 				return
 			}
 		}
@@ -1409,6 +1481,10 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 		// an audit row is not the place to copy them. Sorted so two edits of
 		// the same fields read the same.
 		auth.LogAuditEvent(db, user.ID, "node.update", "node", nodeID, changedFields(req, allowedFields), clientIP(r))
+		if aiWorkChanged {
+			auth.LogAuditEventJSON(db, user.ID, "node.ai_work_set", "node", nodeID,
+				map[string]any{"from": aiWorkBefore, "to": req["ai_work"]}, clientIP(r))
+		}
 		if zonePlan != nil {
 			// Its own entry, because "node.update" with an empty detail
 			// blob cannot tell a patch that renamed itself from one that
@@ -1423,9 +1499,9 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 		var n model.Node
 		var linksJSON, fpJSON, gcJSON, apJSON string
 		db.QueryRow(
-			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, COALESCE(timezone,'') AS timezone, website, COALESCE(image_url,''), COALESCE(image_alt,''), COALESCE(links,'[]'), COALESCE(follower_permissions,'{}'), COALESCE(governance_config,'{}'), visibility, membership_policy, COALESCE(appearance,''), notice_posting, notice_replies_default, COALESCE(moved_to,''), founded_at, created_at, updated_at
+			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, COALESCE(timezone,'') AS timezone, website, COALESCE(image_url,''), COALESCE(image_alt,''), COALESCE(links,'[]'), COALESCE(follower_permissions,'{}'), COALESCE(governance_config,'{}'), visibility, membership_policy, COALESCE(appearance,''), notice_posting, notice_replies_default, COALESCE(moved_to,''), founded_at, nonprofit, ai_use, image_ai, ai_work, created_at, updated_at
 			 FROM nodes WHERE id = ?`, nodeID,
-		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.NoticePosting, &n.NoticeRepliesDefault, &n.MovedTo, &n.FoundedAt, &n.CreatedAt, &n.UpdatedAt)
+		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.NoticePosting, &n.NoticeRepliesDefault, &n.MovedTo, &n.FoundedAt, &n.Nonprofit, &n.AIUse, &n.ImageAI, &n.AIWork, &n.CreatedAt, &n.UpdatedAt)
 		scanNodeLinks(linksJSON, &n)
 		scanFollowerPermissions(fpJSON, &n)
 		scanGovernanceConfig(gcJSON, &n)

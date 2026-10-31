@@ -59,7 +59,13 @@ const HEADER_ALIASES = {
   // The event's own page out on the web (docs/adr/079). A season
   // spreadsheet nearly always has this column, under one of a dozen names.
   url: ['url', 'link', 'event url', 'event link', 'event page', 'tickets', 'ticket link', 'ticket url', 'website', 'more info'],
+  // Whether AI made the description, for an uploader who knows
+  // (docs/adr/2026-10-20-a-post-says-whether-ai-made-it.md). Optional: a
+  // sheet copied from somebody else's calendar leaves it blank.
+  ai_use: ['ai_use', 'ai use'],
 };
+
+const AI_USE_VALUES = ['none', 'assisted', 'generated'];
 
 function mapHeaders(headerRow) {
   const map = {};
@@ -211,6 +217,14 @@ export function rowsToEvents(rows) {
         continue;
       }
       event.event_url = parsed.href;
+    }
+    const aiUse = cell(row, 'ai_use').toLowerCase();
+    if (aiUse) {
+      if (!AI_USE_VALUES.includes(aiUse)) {
+        errors.push({ row: rowNum, message: `ai_use has to be none, assisted or generated, not "${aiUse}"` });
+        continue;
+      }
+      event.ai_use = aiUse;
     }
     events.push(event);
   }
