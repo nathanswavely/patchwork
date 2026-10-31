@@ -7,6 +7,7 @@
   import MadeWithAI from '../components/MadeWithAI.svelte';
   import DiffView from '../components/DiffView.svelte';
   import { formatDay as formatDate } from '../lib/datetime.js';
+  import { textsFromDiff } from '../lib/governanceDiff.js';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -22,6 +23,10 @@
   let expandedVersion = $state(-1);
   let diffData = $state(null);
   let diffLoading = $state(false);
+  // Both versions, rebuilt from the hunks the server sends (it has never
+  // sent the texts themselves), so the side-by-side view renders rather
+  // than the raw patch.
+  let diffTexts = $derived(textsFromDiff(diffData));
 
   // A repair pass writes commits the community did not (docs/adr/084). The
   // oldest "rebuilt" entry stands in for a history that no longer exists, so
@@ -35,6 +40,13 @@
   let compareTo = $state('');
   let compareDiff = $state(null);
   let compareLoading = $state(false);
+  let compareTexts = $derived(textsFromDiff(compareDiff));
+  // Either version can be picked in either box, so "Older" and "Newer" were
+  // wrong half the time; the version numbers never are.
+  function versionLabel(sha) {
+    const v = versions.find((x) => x.sha === sha);
+    return v ? `v${v.version_number}` : '';
+  }
 
   $effect(() => {
     if (docId) loadDoc();
@@ -172,10 +184,10 @@
                         {/if}
                       {:else if diffLoading}
                         <Skeleton lines={3} height="0.8rem" />
-                      {:else if diffData?.old_content != null && diffData?.new_content != null}
+                      {:else if diffTexts}
                         <DiffView
-                          oldText={diffData.old_content}
-                          newText={diffData.new_content}
+                          oldText={diffTexts.oldText}
+                          newText={diffTexts.newText}
                           oldLabel="v{versions[i + 1].version_number}"
                           newLabel="v{ver.version_number}"
                         />
@@ -216,12 +228,12 @@
 
               {#if compareDiff}
                 <div class="compare-result">
-                  {#if compareDiff.old_content != null && compareDiff.new_content != null}
+                  {#if compareTexts}
                     <DiffView
-                      oldText={compareDiff.old_content}
-                      newText={compareDiff.new_content}
-                      oldLabel="Older"
-                      newLabel="Newer"
+                      oldText={compareTexts.oldText}
+                      newText={compareTexts.newText}
+                      oldLabel={versionLabel(compareDiff.from_sha)}
+                      newLabel={versionLabel(compareDiff.to_sha)}
                     />
                   {:else if compareDiff.unified}
                     <pre class="unified-diff">{compareDiff.unified}</pre>

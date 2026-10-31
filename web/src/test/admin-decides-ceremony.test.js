@@ -43,7 +43,7 @@ describe('ProposalForm — ceremony follows the decision method', () => {
   });
 
   it('asks for a voting duration only where a vote will run', () => {
-    expect(src).toMatch(/asksDuration = \$derived\(!adminDecides \|\| advisoryVote\)/);
+    expect(src).toMatch(/asksDuration = \$derived\(!forDiscussion && \(!adminDecides \|\| advisoryVote\)\)/);
     expect(src).toMatch(/\{#if asksDuration\}/);
     expect(src).toMatch(/if \(asksDuration\) payload\.duration_hours = durationHours/);
   });

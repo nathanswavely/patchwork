@@ -1,6 +1,7 @@
 <script>
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
+  import { allMembers } from '../lib/patchMembers.js';
   import { navigate, getQuery } from '../stores/router.svelte.js';
   import { formatDay } from '../lib/datetime.js';
   import MarkdownRenderer from '../components/MarkdownRenderer.svelte';
@@ -32,11 +33,25 @@
   let decisionMethod = $derived(patch.value.node?.governance_config?.decision_method || '');
   let adminDecides = $derived(decisionMethod === 'admin');
   let isPatchAdmin = $derived(membershipRole === 'admin');
+  // Where the patch decides (docs/adr/053). Elsewhere, CreateProposal opens
+  // a proposal for discussion with no ballot and no clock, and the decision
+  // comes back as an attestation — so there is no window to choose and
+  // nothing to "submit" to a vote. The form used to offer both regardless.
+  let decidesElsewhere = $derived(patch.value.node?.governance_config?.proposal_venue === 'elsewhere');
   let putToVote = $state(false);
+  // The cases in CreateProposal's order, so the form says what the server
+  // will do: an admin's direct change wins even elsewhere; past that a
+  // patch that decides elsewhere discusses, whoever raised it; and only
+  // then does admin-decides send a member's to the maintainer or let an
+  // admin ask the members first.
   let directChange = $derived(adminDecides && isPatchAdmin && !putToVote);
-  let advisoryVote = $derived(adminDecides && isPatchAdmin && putToVote);
-  let toMaintainer = $derived(adminDecides && !isPatchAdmin);
-  let asksDuration = $derived(!adminDecides || advisoryVote);
+  let forDiscussion = $derived(decidesElsewhere && !directChange);
+  let advisoryVote = $derived(adminDecides && isPatchAdmin && putToVote && !decidesElsewhere);
+  let toMaintainer = $derived(adminDecides && !isPatchAdmin && !decidesElsewhere);
+  let asksDuration = $derived(!forDiscussion && (!adminDecides || advisoryVote));
+  // The document door's own label, so the pointer to it names the button
+  // the reader will actually find (GovernanceList, GovernanceDetail).
+  let docDoor = $derived(adminDecides && isPatchAdmin ? 'Edit' : 'Propose change');
 
   $effect(() => {
     patch.value.setBreadcrumbExtra?.([{ label: adminDecides && isPatchAdmin ? 'New change' : 'New Proposal' }]);
@@ -56,18 +71,43 @@
   // nominate, so a stale or hand-typed link cannot select an option the
   // server would refuse.
   let proposalType = $state(getQuery().get('type') === 'membership' ? 'membership' : 'action');
+  // The patch's own default window, which is also what the server uses
+  // when none is sent. 72 hours stands in only where the patch names none.
   let durationHours = $state(72);
+  let durationTouched = $state(false);
+  let defaultDuration = $derived(patch.value.node?.governance_config?.default_vote_duration_hours || 72);
+  $effect(() => {
+    if (!durationTouched) durationHours = defaultDuration;
+  });
   let submitting = $state(false);
   let error = $state('');
   let previewMode = $state(false);
 
-  const durationOptions = [
+  const baseDurationOptions = [
     { value: 24, label: '24 hours' },
     { value: 48, label: '48 hours' },
     { value: 72, label: '72 hours (3 days)' },
     { value: 168, label: '1 week' },
     { value: 336, label: '2 weeks' },
   ];
+  // A patch whose default is not one of the presets still gets it offered,
+  // rather than a select that silently shows the first option.
+  let durationOptions = $derived(
+    baseDurationOptions.some((o) => o.value === defaultDuration)
+      ? baseDurationOptions
+      : [...baseDurationOptions, { value: defaultDuration, label: hoursLabel(defaultDuration) }].sort((a, b) => a.value - b.value)
+  );
+  function hoursLabel(h) {
+    if (h % 168 === 0) {
+      const w = h / 168;
+      return w === 1 ? '1 week' : `${w} weeks`;
+    }
+    if (h % 24 === 0) {
+      const d = h / 24;
+      return d === 1 ? '1 day' : `${d} days`;
+    }
+    return `${h} hours`;
+  }
 
   // Nominating an admin (docs/adr/051, docs/adr/100). A meritocratic patch
   // ratifies admins, and an elected one fills a mid-term vacancy the same
@@ -122,10 +162,10 @@
       vacantSeats = (ov?.seats || []).filter((s) => s.vacant).length;
       nextContestOpens = ov?.next_contest_opens || '';
       if (!canNominate) return;
-      const data = await api(`nodes/${slug}/members`);
       // Only plain members can be nominated: an admin already holds the role,
-      // and a follower is not on the ladder.
-      nominatable = (data.items || data || []).filter((m) => m.role === 'member');
+      // and a follower is not on the ladder. Every page of them: the listing
+      // is paged, and a picker built on page one hid everyone after it.
+      nominatable = (await allMembers(slug, { role: 'member' })).filter((m) => m.role === 'member');
     } catch {
       leadershipModel = '';
       nominatable = [];
@@ -192,7 +232,7 @@
 <div class="lt-fade-in">
   <div class="container-narrow">
     <div style="padding-top: 2rem;">
-      <p class="amendment-hint lt-muted">Want to change a governance document or rules? Go to the <a href="/patches/{slug}/governance/docs" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/docs`); }}>Documents</a> page and click "Propose change" on the document you want to edit.</p>
+      <p class="amendment-hint lt-muted">Want to change a governance document or rules? Go to the <a href="/patches/{slug}/governance/docs" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/docs`); }}>Documents</a> page and click "{docDoor}" on the document you want to change.</p>
 
       <form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
         <div class="field">
@@ -316,8 +356,13 @@
               <label class="type-radio-option" class:selected={putToVote}>
                 <input type="radio" name="ceremony" value={true} bind:group={putToVote} disabled={submitting} />
                 <div class="type-radio-content">
-                  <span class="type-radio-label">Ask the members first</span>
-                  <span class="type-radio-desc">Opens an advisory vote. You still decide, at any time, with the tally in front of you.</span>
+                  {#if decidesElsewhere}
+                    <span class="type-radio-label">Open it for discussion</span>
+                    <span class="type-radio-desc">Nobody votes here. It stays open for discussion until the meeting's decision is recorded.</span>
+                  {:else}
+                    <span class="type-radio-label">Ask the members first</span>
+                    <span class="type-radio-desc">Opens an advisory vote. You still decide, at any time, with the tally in front of you.</span>
+                  {/if}
                 </div>
               </label>
             </div>
@@ -326,17 +371,21 @@
           <p class="ceremony-note lt-muted">
             This patch's maintainer decides proposals. Yours goes to them, and they may ask the members before deciding.
           </p>
+        {:else if forDiscussion}
+          <p class="ceremony-note lt-muted">
+            This patch decides its proposals at its meetings. Yours opens here for discussion, with no vote, and the decision is recorded once the meeting has made it.
+          </p>
         {/if}
 
         {#if asksDuration}
           <div class="field">
             <label class="lt-label" for="duration">{advisoryVote ? 'How long to ask' : 'Voting Duration'}</label>
-            <select class="lt-field" id="duration" bind:value={durationHours} disabled={submitting}>
+            <select class="lt-field" id="duration" bind:value={durationHours} onchange={() => { durationTouched = true; }} disabled={submitting}>
               {#each durationOptions as opt}
                 <option value={opt.value}>{opt.label}</option>
               {/each}
             </select>
-            <span class="duration-tip">Tip: 72 hours gives everyone a chance to vote before the question goes stale.</span>
+            <span class="duration-tip">This patch's default is {hoursLabel(defaultDuration)}.</span>
           </div>
         {/if}
 
@@ -352,6 +401,8 @@
               {submitting ? 'Opening...' : 'Open advisory vote'}
             {:else if toMaintainer}
               {submitting ? 'Sending...' : 'Send to the maintainer'}
+            {:else if forDiscussion}
+              {submitting ? 'Opening...' : 'Open for discussion'}
             {:else}
               {submitting ? 'Creating...' : 'Submit Proposal'}
             {/if}
