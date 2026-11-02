@@ -19,7 +19,7 @@
   import { patchLoadError, archivedPatchName } from '../lib/patchError.js';
   import { navigate } from '../stores/router.svelte.js';
   import { setPatchName } from '../stores/patchName.svelte.js';
-  import { workspaceFinderProvider } from '../lib/finderProviders.js';
+  import { workspaceFinderProvider, workspaceFinderSearch, WORKSPACE_TYPE_ORDER } from '../lib/finderProviders.js';
   import { workspaceTabs } from '../lib/patchWorkspace.js';
   import { ltTabs } from '../lib/lt.js';
   import GlobalBar from './GlobalBar.svelte';
@@ -201,6 +201,7 @@
   );
 
   let finderProvider = $derived(workspaceFinderProvider(slug));
+  let finderSearch = $derived(workspaceFinderSearch(slug));
 
   // Unclaimed patches carry no governance at all (docs/adr/039) — absence,
   // not an empty state. workspaceTabs() already drops Governance from the
@@ -257,7 +258,7 @@
       </div>
     {/snippet}
     {#snippet search()}
-      <WorkspaceSearch placeholder="Search this patch…" provider={finderProvider} />
+      <WorkspaceSearch placeholder="Search this patch…" provider={finderProvider} search={finderSearch} typeOrder={WORKSPACE_TYPE_ORDER} />
     {/snippet}
   </GlobalBar>
 

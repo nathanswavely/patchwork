@@ -28,8 +28,8 @@ const patchesSrc = source('pages/UserSettingsPatches.svelte');
 
 describe('Admin claims: approval leaves a trace an admin can return to', () => {
   it('loads the approved queue alongside the review queue', () => {
-    expect(adminSrc).toContain("api('admin/claims?status=approved')");
-    expect(adminSrc).toMatch(/awaitingSetup = approved\?\.items \|\| \[\]/);
+    expect(adminSrc).toContain("allPages('admin/claims', { status: 'approved' })");
+    expect(adminSrc).toMatch(/awaitingSetup = approved;/);
   });
 
   it('files them under their own heading, separate from review', () => {
@@ -55,8 +55,8 @@ describe('Admin claims: approval leaves a trace an admin can return to', () => {
 
   it('refreshes both queues after a verdict, so an approval lands in the other one', () => {
     const load = adminSrc.slice(adminSrc.indexOf('async function loadClaims'));
-    expect(load).toContain("api('admin/claims')");
-    expect(load).toContain("api('admin/claims?status=approved')");
+    expect(load).toContain("allPages('admin/claims')");
+    expect(load).toContain("allPages('admin/claims', { status: 'approved' })");
     expect(adminSrc).toMatch(/handleAction[\s\S]{0,600}await loadClaims\(\)/);
   });
 });

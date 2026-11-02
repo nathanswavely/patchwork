@@ -12,15 +12,21 @@ import { api } from './api.js';
  *
  * Capped, and stops on a cursor that does not move, so a server that
  * ignores the cursor costs a few requests rather than a loop.
+ *
+ * `key` names the array for the one listing that does not call it `items`
+ * (admin/nodes says `nodes`). `onPage` sees each whole payload, for a caller
+ * that also wants what rides beside the rows: the members listing's
+ * `invited` and counts, which no array of rows can carry.
  */
-export async function allPages(path, params = {}, { maxPages = 20 } = {}) {
+export async function allPages(path, params = {}, { maxPages = 20, key = 'items', onPage = null } = {}) {
   const found = [];
   let after = '';
   for (let page = 0; page < maxPages; page++) {
     const query = new URLSearchParams({ limit: '100', ...params });
     if (after) query.set('after', after);
     const data = await api(`${path}?${query}`);
-    found.push(...(data?.items || []));
+    onPage?.(data);
+    found.push(...(data?.[key] || []));
     const next = data?.next_cursor || '';
     if (!next || next === after) break;
     after = next;

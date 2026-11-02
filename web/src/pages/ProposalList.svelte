@@ -17,6 +17,10 @@
   let membershipRole = $derived(patch.value.membershipRole);
   let proposals = $state([]);
   let loading = $state(true);
+  // The list is paged newest first, so a patch with more than twenty
+  // proposals under a filter had its oldest ones simply missing from "All".
+  let nextCursor = $state('');
+  let loadingMore = $state(false);
   let followerPermissions = $derived(patch.value.followerPermissions);
   // Two different refusals that land on the same notice. The follower key is
   // workspace tidiness over a read that used to stay public (docs/adr/095);
@@ -51,16 +55,26 @@
     }
   });
 
-  async function loadProposals() {
-    loading = true;
+  async function loadProposals(after = '') {
+    if (after) loadingMore = true;
+    else loading = true;
     try {
-      const params = statusFilter && statusFilter !== 'all' ? `?status=${encodeURIComponent(statusFilter)}` : '';
-      const data = await api(`nodes/${slug}/proposals${params}`);
-      proposals = data.items || data || [];
+      const params = new URLSearchParams();
+      if (statusFilter && statusFilter !== 'all') params.set('status', statusFilter);
+      if (after) params.set('after', after);
+      const q = params.toString() ? `?${params}` : '';
+      const data = await api(`nodes/${slug}/proposals${q}`);
+      const items = data.items || [];
+      proposals = after ? [...proposals, ...items] : items;
+      nextCursor = data.next_cursor || '';
     } catch {
-      proposals = [];
+      if (!after) {
+        proposals = [];
+        nextCursor = '';
+      }
     } finally {
       loading = false;
+      loadingMore = false;
     }
   }
 
@@ -248,6 +262,13 @@
             </a>
           {/each}
         </div>
+        {#if nextCursor}
+          <button
+            class="lt-btn lt-btn-secondary lt-btn-sm load-more"
+            disabled={loadingMore}
+            onclick={() => loadProposals(nextCursor)}
+          >{loadingMore ? 'Loading...' : 'Load more'}</button>
+        {/if}
       {/if}
     </div>
   </div>
@@ -256,6 +277,10 @@
 </GovernanceShell>
 
 <style>
+
+  .load-more {
+    margin-top: 0.75rem;
+  }
 
   .page-header {
     display: flex;

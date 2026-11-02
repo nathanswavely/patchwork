@@ -1,5 +1,6 @@
 <script>
   import { api } from '../lib/api.js';
+  import { allMembers } from '../lib/patchMembers.js';
   import { withStepUp, stepUpStatus, PasskeyRequiredError } from '../lib/stepUp.js';
   import PasskeyNotice from './PasskeyNotice.svelte';
   import { formatDay } from '../lib/datetime.js';
@@ -52,8 +53,8 @@
     }
     if (isAdmin) {
       try {
-        const m = await api(`nodes/${slug}/members`);
-        members = (m.items || m || []).filter((x) => x.role === 'admin' || x.role === 'member');
+        // Every member, not the first page: a record can name anyone here.
+        members = (await allMembers(slug)).filter((x) => x.role === 'admin' || x.role === 'member');
       } catch {
         members = [];
       }

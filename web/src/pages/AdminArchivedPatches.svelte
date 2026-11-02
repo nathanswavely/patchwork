@@ -3,6 +3,7 @@
   // Restore is instance-admin-only and silent — the patch reappearing in
   // the quilt is the announcement. Rejected submissions never show here.
   import { api } from '../lib/api.js';
+  import { allPages } from '../lib/pages.js';
   import { showToast } from '../stores/toast.svelte.js';
   import ConfirmAction from '../components/ConfirmAction.svelte';
   import { formatDay as formatDate } from '../lib/datetime.js';
@@ -13,8 +14,8 @@
   async function load() {
     loading = true;
     try {
-      const data = await api('admin/nodes?status=archived');
-      nodes = data.nodes || [];
+      // Every archived patch: one past the first page could not be restored.
+      nodes = await allPages('admin/nodes', { status: 'archived' }, { key: 'nodes' });
     } catch {
       nodes = [];
     } finally {
