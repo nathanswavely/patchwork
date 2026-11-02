@@ -6254,7 +6254,10 @@
           "raw": "Patchwork doesn't use AI to evaluate, train on, or compile any user behavior or attributes. I am trying to build something that is human-first. Humans have been successfully building community for millennia without AI, and while there may be AI tools that promise to help with things like moderation, aggregation, etc... I am trying to move slowly in this regard as our culture figures out how to build shared language around this divisive technology. Patchwork is open source, so if you truly believe there is a particular AI tool that aligns with the mission, you are free to suggest. However be warned that you will need to make a case that goes beyond just \"convenience.\"",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "4f75d76555cb",
@@ -6290,7 +6293,10 @@
           "raw": "This list is built into the code, so a change that reaches out to anything else will cause the build to fail.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "0dd147edfe76",
@@ -6326,7 +6332,10 @@
           "raw": "Not as far as we can control. The site's robots.txt instructs these crawlers to stay away, and the server refuses these known crawlers:",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "cca017113456",
@@ -6344,7 +6353,10 @@
           "raw": "If you know of any others, or any more sophisticated ways of preventing this, please let me know.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "ed8ff1d11522",
@@ -6380,7 +6392,10 @@
           "raw": "Yes. Patchwork's codebase was developed with help from AI coding tools. People design it, make every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "50d6c24268f8",
@@ -6398,7 +6413,10 @@
           "raw": "The core of what visitors and newcomers read is human written by me: the lining, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, and the buttons and messages around them, was drafted with AI and reviewed by me. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please reach out to me or better yet, contribute to the project.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "d359b9fa6256",
@@ -28425,7 +28443,10 @@
           "raw": "Like Wikipedia but for connecting your community. Built and managed by your",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "5e049d9bb2c8",
@@ -28443,7 +28464,10 @@
           "raw": "real human neighbors",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "21b9aef1386b",
@@ -28461,7 +28485,10 @@
           "raw": "without ads, personalized algorithm, or AI training.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "e45beba922fb",
@@ -52001,8 +52028,8 @@
       ]
     },
     {
-      "id": "6388661d5144",
-      "text": "Where AI is | {instanceName}",
+      "id": "1ffedf4bc9ed",
+      "text": "Patchwork & AI | {instanceName}",
       "words": 4,
       "tier": "label",
       "status": "human",
@@ -52013,57 +52040,34 @@
           "file": "web/src/pages/AiPage.svelte",
           "line": 40,
           "kind": "markup",
-          "raw": "Where AI is | {instanceName}",
+          "raw": "Patchwork & AI | {instanceName}",
           "quote": null
         }
       ],
-      "previous_ai_text": "Where AI is — {instanceName}",
       "authorship": {
         "kind": "written"
       }
     },
     {
-      "id": "dd07d4bd15b4",
-      "text": "The fine print",
+      "id": "384b1da40d79",
+      "text": "Patchwork & AI",
       "words": 3,
       "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AiPage.svelte",
-          "line": 50,
-          "kind": "markup",
-          "raw": "The fine print",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/LegalDoc.svelte",
-          "line": 62,
-          "kind": "markup",
-          "raw": "The fine print",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "ecb92f1bf332",
-      "text": "Where AI is",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AiPage.svelte",
-          "line": 51,
+          "line": 50,
           "kind": "markup",
-          "raw": "Where AI is",
+          "raw": "Patchwork & AI",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "written"
+      }
     },
     {
       "id": "702975820157",
@@ -52076,7 +52080,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AiPage.svelte",
-          "line": 59,
+          "line": 58,
           "kind": "markup",
           "raw": "From the stewards of {instanceName}",
           "quote": null
@@ -52094,7 +52098,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AiPage.svelte",
-          "line": 63,
+          "line": 62,
           "kind": "markup",
           "raw": "The stewards of {instanceName} have not added anything here yet.",
           "quote": null
@@ -52112,7 +52116,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AiPage.svelte",
-          "line": 68,
+          "line": 67,
           "kind": "markup",
           "raw": "Also see the",
           "quote": null
@@ -52137,7 +52141,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AiPage.svelte",
-          "line": 70,
+          "line": 69,
           "kind": "markup",
           "raw": "says\n      who runs {instanceName}.",
           "quote": null
@@ -58829,6 +58833,24 @@
       "authorship": {
         "kind": "written"
       }
+    },
+    {
+      "id": "dd07d4bd15b4",
+      "text": "The fine print",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/LegalDoc.svelte",
+          "line": 62,
+          "kind": "markup",
+          "raw": "The fine print",
+          "quote": null
+        }
+      ]
     },
     {
       "id": "712fdd6a2e26",
@@ -75753,6 +75775,46 @@
       "authorship": {
         "kind": "written"
       }
+    },
+    {
+      "id": "6388661d5144",
+      "text": "Where AI is | {instanceName}",
+      "words": 4,
+      "tier": "label",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AiPage.svelte",
+          "line": 40,
+          "kind": "markup",
+          "raw": "Where AI is | {instanceName}",
+          "quote": null
+        }
+      ],
+      "previous_ai_text": "Where AI is — {instanceName}",
+      "authorship": {
+        "kind": "written"
+      }
+    },
+    {
+      "id": "ecb92f1bf332",
+      "text": "Where AI is",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AiPage.svelte",
+          "line": 51,
+          "kind": "markup",
+          "raw": "Where AI is",
+          "quote": null
+        }
+      ]
     }
   ],
   "baseline": [
