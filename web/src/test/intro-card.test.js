@@ -83,3 +83,14 @@ describe('intro card variant', () => {
     expect(set).not.toContain("'patchProfile'");
   });
 });
+
+// "Real human neighbors" points at the Label, which names the people running
+// the quilt. A quilt that hasn't published one would send a newcomer to
+// "No Label yet", so the words stay plain text until there is one.
+describe('intro card Label link', () => {
+  it('links to the Label only once it is published', () => {
+    const src = source('components/IntroCard.svelte');
+    expect(src).toContain("from '../stores/label.svelte.js'");
+    expect(src).toMatch(/\{#if label\?\.published\}<a href="\/label"[^>]*>real human neighbors<\/a>\{:else\}real human neighbors\{\/if\}/);
+  });
+});
