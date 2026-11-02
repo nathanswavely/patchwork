@@ -25154,7 +25154,7 @@
         },
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 126,
+          "line": 131,
           "kind": "attr:aria-label",
           "raw": "Dismiss",
           "quote": "\""
@@ -28395,14 +28395,14 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 110,
+          "line": 115,
           "kind": "markup",
           "raw": "{instanceName} is a quilt of the communities around you.",
           "quote": null
         },
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 124,
+          "line": 129,
           "kind": "markup",
           "raw": "{instanceName} is a quilt of the communities around you.",
           "quote": null
@@ -28410,26 +28410,58 @@
       ]
     },
     {
-      "id": "3d3751ea38b0",
-      "text": "Every tile is a real group, placed near the groups it shares people with. No ads, no personalized algorithm. Run by people here.",
-      "words": 23,
-      "tier": "prose",
+      "id": "9706215e6169",
+      "text": "Like Wikipedia but for connecting your community. Built and managed by your",
+      "words": 12,
+      "tier": "helper",
       "status": "human",
       "replacement": null,
-      "note": null,
+      "note": "Nathan rewrote the intro card, 2026-11-02",
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 112,
+          "line": 117,
           "kind": "markup",
-          "raw": "Every tile is a real group, placed near the groups it shares people with. No ads, no personalized algorithm. Run by people here.",
+          "raw": "Like Wikipedia but for connecting your community. Built and managed by your",
           "quote": null
         }
-      ],
-      "previous_ai_text": "Every tile is a real group, placed near the groups it shares people with. No ads, no algorithm. Run by people here.",
-      "authorship": {
-        "kind": "written"
-      }
+      ]
+    },
+    {
+      "id": "5e049d9bb2c8",
+      "text": "real human neighbors",
+      "words": 3,
+      "tier": "label",
+      "status": "human",
+      "replacement": null,
+      "note": "Nathan rewrote the intro card, 2026-11-02",
+      "occurrences": [
+        {
+          "file": "web/src/components/IntroCard.svelte",
+          "line": 117,
+          "kind": "markup",
+          "raw": "real human neighbors",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "21b9aef1386b",
+      "text": "without ads, personalized algorithm, or AI training.",
+      "words": 7,
+      "tier": "helper",
+      "status": "human",
+      "replacement": null,
+      "note": "Nathan rewrote the intro card, 2026-11-02",
+      "occurrences": [
+        {
+          "file": "web/src/components/IntroCard.svelte",
+          "line": 117,
+          "kind": "markup",
+          "raw": "without ads, personalized algorithm, or AI training.",
+          "quote": null
+        }
+      ]
     },
     {
       "id": "e45beba922fb",
@@ -28442,14 +28474,14 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 115,
+          "line": 120,
           "kind": "markup",
           "raw": "What is Patchwork?",
           "quote": null
         },
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 125,
+          "line": 130,
           "kind": "markup",
           "raw": "What is Patchwork?",
           "quote": null
@@ -28481,7 +28513,7 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 116,
+          "line": 121,
           "kind": "markup",
           "raw": "Join",
           "quote": null
@@ -28499,7 +28531,7 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 122,
+          "line": 127,
           "kind": "markup",
           "raw": "I'll lurk for now",
           "quote": null
@@ -75629,6 +75661,28 @@
           "quote": null
         }
       ]
+    },
+    {
+      "id": "3d3751ea38b0",
+      "text": "Every tile is a real group, placed near the groups it shares people with. No ads, no personalized algorithm. Run by people here.",
+      "words": 23,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/IntroCard.svelte",
+          "line": 112,
+          "kind": "markup",
+          "raw": "Every tile is a real group, placed near the groups it shares people with. No ads, no personalized algorithm. Run by people here.",
+          "quote": null
+        }
+      ],
+      "previous_ai_text": "Every tile is a real group, placed near the groups it shares people with. No ads, no algorithm. Run by people here.",
+      "authorship": {
+        "kind": "written"
+      }
     }
   ],
   "baseline": [

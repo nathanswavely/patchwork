@@ -93,6 +93,11 @@
     navigate('/about');
   }
 
+  function goLabel(e) {
+    e.preventDefault();
+    navigate('/label');
+  }
+
   function goJoin(e) {
     e.preventDefault();
     navigate('/login');
@@ -109,7 +114,7 @@
     {#if variant === 'full'}
       <h2 class="intro-heading">{instanceName} is a quilt of the communities around you.</h2>
       <p class="intro-body">
-        Every tile is a real group, placed near the groups it shares people with. No ads, no personalized algorithm. Run by people here.
+        Like Wikipedia but for connecting your community. Built and managed by your <a href="/label" class="intro-label-link" onclick={goLabel}>real human neighbors</a> without ads, personalized algorithm, or AI training.
       </p>
       <div class="intro-actions">
         <a href="/about" class="intro-about" onclick={goAbout}>What is Patchwork?</a>
@@ -191,6 +196,11 @@
     font-size: 0.85rem;
     color: var(--color-text-muted);
     line-height: 1.5;
+  }
+
+  .intro-label-link {
+    color: var(--color-primary);
+    text-decoration: underline;
   }
 
   .intro-actions {
