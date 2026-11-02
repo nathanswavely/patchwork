@@ -140,6 +140,12 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 			filter = " AND p.status = ?"
 			filterArgs = append(filterArgs, status)
 		}
+		// A search is part of the filter, so `total` counts the matches and
+		// the finder's question gets the same answer the list would.
+		if search := searchParam(r); search != "" {
+			filter += " AND p.title LIKE ?" + likeEscape
+			filterArgs = append(filterArgs, containsPattern(search))
+		}
 		query += filter
 		args = append(args, filterArgs...)
 

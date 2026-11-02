@@ -1,0 +1,22 @@
+{
+  "_comment": "Every GET route whose handler calls parsePaginationParams: twenty rows unless asked, a hundred at most, the rest behind next_cursor. Kept in step with the Go handlers by TestPagedEndpointListMatchesTheHandlers (cmd/patchwork/paged_routes_test.go); read by every-paged-read-pages.test.js.",
+  "endpoints": [
+    "GET /api/v1/activity",
+    "GET /api/v1/admin/audit-log",
+    "GET /api/v1/admin/claims",
+    "GET /api/v1/admin/event-submissions",
+    "GET /api/v1/admin/nodes",
+    "GET /api/v1/admin/reports",
+    "GET /api/v1/admin/submissions",
+    "GET /api/v1/admin/users",
+    "GET /api/v1/events",
+    "GET /api/v1/me/nodes",
+    "GET /api/v1/nodes",
+    "GET /api/v1/nodes/{slug}/members",
+    "GET /api/v1/nodes/{slug}/notices",
+    "GET /api/v1/nodes/{slug}/proposals",
+    "GET /api/v1/nodes/{slug}/reports",
+    "GET /api/v1/notices/{id}/replies",
+    "GET /api/v1/notifications"
+  ]
+}

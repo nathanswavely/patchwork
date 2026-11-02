@@ -41,7 +41,7 @@ describe('choosing a patch is the picker, over the whole quilt', () => {
   it('opens on the corpus instead of demanding a guess first', () => {
     expect(form).toMatch(/<WorkspaceSearch[\s\S]*?browse/);
     expect(picker).toMatch(/browse = false,/);
-    expect(picker).toMatch(/if \(!query\.trim\(\)\) return browse \? items\.slice\(0, 12\) : \[\]/);
+    expect(picker).toMatch(/if \(!trimmed\) return browse && items \? items\.slice\(0, 12\) : \[\]/);
     expect(picker).toMatch(/\{#if open && \(query\.trim\(\) \|\| browse\)\}/);
   });
 

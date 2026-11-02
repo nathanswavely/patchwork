@@ -1,6 +1,7 @@
 <script>
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
+  import { allPages } from '../lib/pages.js';
   import { ltTabs } from '../lib/lt.js';
   import { navigate } from '../stores/router.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
@@ -67,8 +68,7 @@
   async function loadReports(status) {
     loadingReports = true;
     try {
-      const data = await api(`nodes/${slug}/reports?status=${status}`);
-      reports = data.items || [];
+      reports = await allPages(`nodes/${slug}/reports`, { status });
     } catch {
       reports = [];
     } finally {

@@ -98,7 +98,7 @@ describe('The settings: two switches and the queue, three actions', () => {
   });
 
   it('reads the patch queue, not the instance panel', () => {
-    expect(src).toMatch(/api\(`nodes\/\$\{slug\}\/reports\?status=/);
+    expect(src).toMatch(/allPages\(`nodes\/\$\{slug\}\/reports`, \{ status \}\)/);
     expect(src).not.toContain('admin/reports');
   });
 });

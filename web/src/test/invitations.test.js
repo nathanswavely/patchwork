@@ -125,7 +125,8 @@ describe('PatchSettingsMembers — the admin side', () => {
   });
 
   it('reads the invited list from the members payload and offers Rescind', () => {
-    expect(src).toMatch(/invited = data\.invited \|\| \[\]/);
+    expect(src).toMatch(/invitedNow = d\?\.invited \|\| invitedNow/);
+    expect(src).toMatch(/invited = invitedNow;/);
     expect(src).toMatch(/\{#each invited as person \(person\.user_id\)\}/);
     expect(src).toMatch(/label="Rescind"/);
     expect(src).toMatch(/api\(`nodes\/\$\{slug\}\/invitations\/\$\{userId\}`, \{ method: 'DELETE' \}\)/);

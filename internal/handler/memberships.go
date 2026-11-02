@@ -601,6 +601,15 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 		if !insider {
 			query += " AND m.visible = 1 AND m.role IN ('member','admin')" + rosterClause
 		}
+		// Inside the roster gate above, so a search can only find somebody
+		// this viewer's listing would already hand over: a hidden member is
+		// not discoverable by typing their name (docs/adr/006). The counts
+		// below stay the patch's size and ignore it.
+		if search := searchParam(r); search != "" {
+			query += " AND (u.username LIKE ?" + likeEscape + " OR u.display_name LIKE ?" + likeEscape + ")"
+			p := containsPattern(search)
+			args = append(args, p, p)
+		}
 
 		if after != "" {
 			query += " AND m.id > ?"

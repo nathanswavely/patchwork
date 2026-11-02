@@ -974,6 +974,14 @@ func ListClaims(db *database.DB) http.HandlerFunc {
 			// on a running instance.
 			query += " AND n.status = 'unclaimed' AND n.removed_at IS NULL"
 		}
+		// One patch's claims, for the patch's own verification settings,
+		// which used to read the instance's first page of the queue and
+		// count the rows that were theirs: a claim on page two was "No open
+		// claims".
+		if nodeID := r.URL.Query().Get("node_id"); nodeID != "" {
+			query += " AND cr.node_id = ?"
+			args = append(args, nodeID)
+		}
 
 		if sortKey, id, ok := decodeCursor(after); after != "" && ok {
 			query += " AND " + keysetCondition("cr.created_at", "cr.id", true)

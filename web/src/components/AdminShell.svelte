@@ -18,7 +18,7 @@
   import { navigate, getPath } from '../stores/router.svelte.js';
   import { api } from '../lib/api.js';
   import { adminTabs, adminTabForPath } from '../lib/adminPanel.js';
-  import { adminFinderProvider } from '../lib/finderProviders.js';
+  import { adminFinderProvider, adminFinderSearch } from '../lib/finderProviders.js';
   import GlobalBar from './GlobalBar.svelte';
   import ContextCrumb from './ContextCrumb.svelte';
   import WorkspaceSearch from './WorkspaceSearch.svelte';
@@ -90,6 +90,7 @@
   }
 
   const finderProvider = adminFinderProvider();
+  const finderSearch = adminFinderSearch();
 </script>
 
 <div class="workspace">
@@ -98,7 +99,7 @@
       <ContextCrumb label="Administration" href="/admin" />
     {/snippet}
     {#snippet search()}
-      <WorkspaceSearch placeholder="Search administration…" provider={finderProvider} />
+      <WorkspaceSearch placeholder="Search administration…" provider={finderProvider} search={finderSearch} />
     {/snippet}
   </GlobalBar>
 

@@ -1,32 +1,69 @@
 /**
  * Providers for the global bar's scoped finder (WorkspaceSearch).
  *
- * A provider returns the full entity list for its context — fetched once on
- * first focus, cached by the component for the visit, filtered client-side.
- * Community-scale data (a patch has dozens of members, a handful of
- * proposals), so no server index and no per-keystroke requests; see
- * docs/adr/005. Each entry: { type, label, sublabel, href }.
+ * Two halves, because a context holds two kinds of thing. A provider returns
+ * what is small and whole (a patch's charters, the admin panel's sections,
+ * the quilt's tree): fetched once on first focus, cached for the visit,
+ * filtered in the browser (docs/adr/005). A search function asks the server
+ * for matches in what is paged (events, proposals, people, queues), once per
+ * query, debounced by the component.
+ *
+ * The paged lists used to be fetched once and filtered here too. A paged
+ * list fetched once is its first twenty rows, so a search inside a patch
+ * with 264 events never found the twenty-first. Each entry:
+ * { type, label, sublabel, href }.
  */
 import { api } from './api.js';
-import { formatDay } from './datetime.js';
+import { formatDay, upcomingFrom } from './datetime.js';
+
+// Matches asked for per kind of thing. The finder shows twelve rows, so
+// four of each leaves room for the in-memory kinds beside them.
+const PER_TYPE = 4;
+
+export const WORKSPACE_TYPE_ORDER = ['People', 'Proposals', 'Documents', 'Events'];
 
 /**
- * Everything searchable inside a patch workspace.
- * People land on their profile pages (/users/:username). The members
- * endpoint is viewer-aware: outsiders only get visible member/admin rows,
- * so the finder never reveals more than the member list itself would
- * (docs/adr/006).
+ * What is whole inside a patch workspace: its charters, one short list.
  */
 export function workspaceFinderProvider(slug) {
   return async () => {
     const base = `/patches/${slug}`;
-    const [proposals, docs, events, members] = await Promise.all([
-      api(`nodes/${slug}/proposals`).catch(() => null),
-      api(`nodes/${slug}/governance`).catch(() => null),
-      // Searching a patch should reach what already happened — you look up
-      // last month's show by name as readily as next month's.
-      api(`events?node_slug=${encodeURIComponent(slug)}&include_past=true`).catch(() => null),
-      api(`nodes/${slug}/members`).catch(() => null),
+    const docs = await api(`nodes/${slug}/governance`).catch(() => null);
+
+    const items = [];
+    for (const d of docs?.items || []) {
+      items.push({
+        type: 'Documents',
+        label: d.title,
+        sublabel: '',
+        href: `${base}/governance/docs/${d.id}`,
+      });
+    }
+    return items;
+  };
+}
+
+/**
+ * The paged half of a patch workspace, asked per query. People land on their
+ * profile pages (/users/:username). The members endpoint is viewer-aware and
+ * searches inside its own roster gate, so the finder never reveals more than
+ * the member list itself would (docs/adr/006).
+ */
+export function workspaceFinderSearch(slug) {
+  return async (query) => {
+    const base = `/patches/${slug}`;
+    const q = encodeURIComponent(query);
+    const node = encodeURIComponent(slug);
+    const now = encodeURIComponent(upcomingFrom());
+    const [proposals, upcoming, past, members] = await Promise.all([
+      api(`nodes/${slug}/proposals?search=${q}&limit=${PER_TYPE}`).catch(() => null),
+      // Searching a patch reaches what already happened too: you look up
+      // last month's show by name as readily as next month's. Upcoming
+      // matches lead, because the list sorts oldest first and a weekly night
+      // would otherwise answer with its first four from years ago.
+      api(`events?node_slug=${node}&from=${now}&search=${q}&limit=${PER_TYPE}`).catch(() => null),
+      api(`events?node_slug=${node}&include_past=true&to=${now}&search=${q}&limit=${PER_TYPE}`).catch(() => null),
+      api(`nodes/${slug}/members?search=${q}&limit=${PER_TYPE}`).catch(() => null),
     ]);
 
     const items = [];
@@ -46,15 +83,8 @@ export function workspaceFinderProvider(slug) {
         href: `${base}/governance/${p.id}`,
       });
     }
-    for (const d of docs?.items || []) {
-      items.push({
-        type: 'Documents',
-        label: d.title,
-        sublabel: '',
-        href: `${base}/governance/docs/${d.id}`,
-      });
-    }
-    for (const e of events?.items || []) {
+    const events = [...(upcoming?.items || []), ...(past?.items || [])].slice(0, PER_TYPE);
+    for (const e of events) {
       items.push({
         type: 'Events',
         label: e.title,
@@ -67,16 +97,17 @@ export function workspaceFinderProvider(slug) {
 }
 
 /**
- * Everything searchable inside the admin panel.
- * Users land on their profile pages; suspend/role actions stay in the
- * Users tab.
+ * The paged half of the admin panel, asked per query: users, reports,
+ * patch submissions. Users land on their profile pages; suspend/role actions
+ * stay in the Users tab.
  */
-export function adminFinderProvider() {
-  return async () => {
+export function adminFinderSearch() {
+  return async (query) => {
+    const q = encodeURIComponent(query);
     const [reports, submissions, users] = await Promise.all([
-      api('admin/reports').catch(() => null),
-      api('admin/submissions').catch(() => null),
-      api('admin/users').catch(() => null),
+      api(`admin/reports?search=${q}&limit=${PER_TYPE}`).catch(() => null),
+      api(`admin/submissions?search=${q}&limit=${PER_TYPE}`).catch(() => null),
+      api(`admin/users?search=${q}&limit=${PER_TYPE}`).catch(() => null),
     ]);
 
     const items = [];
@@ -104,6 +135,16 @@ export function adminFinderProvider() {
         href: '/admin/submissions',
       });
     }
+    return items;
+  };
+}
+
+/**
+ * What is whole in the admin panel: its own sections.
+ */
+export function adminFinderProvider() {
+  return async () => {
+    const items = [];
     // The panel's sections (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md), a level down from the tab row,
     // so a typed name still lands on the page.
     const review = [
@@ -132,19 +173,16 @@ export function adminFinderProvider() {
   };
 }
 
+export const DISCOVERY_TYPE_ORDER = ['Patches', 'Events'];
+
 /**
- * The discovery corpus (docs/adr/033): every public patch plus upcoming
- * events. Deliberately not the deep past — the events page's date controls
- * are the tool for archaeology — and deliberately no people (no
- * instance-wide people search; people are discovered through patches).
+ * The discovery corpus (docs/adr/033): every public patch, from the tree,
+ * which is whole. Deliberately no people (no instance-wide people search;
+ * people are discovered through patches).
  */
 export function discoveryFinderProvider() {
   return async () => {
-    const today = new Date().toISOString().slice(0, 10);
-    const [treeResp, events] = await Promise.all([
-      api('nodes/tree').catch(() => null),
-      api(`events?from=${today}&limit=100`).catch(() => null),
-    ]);
+    const treeResp = await api('nodes/tree').catch(() => null);
 
     const items = [];
     const tree = treeResp?.tree || treeResp;
@@ -156,6 +194,22 @@ export function discoveryFinderProvider() {
         href: `/patches/${p.slug}`,
       });
     }
+    return items;
+  };
+}
+
+/**
+ * Upcoming events matching a query, quilt-wide. Deliberately not the deep
+ * past: the events page's date controls are the tool for archaeology. This
+ * used to read the first hundred upcoming events once and filter them, which
+ * on a busy quilt is a few weeks of calendar.
+ */
+export function discoveryFinderSearch() {
+  return async (query) => {
+    const today = new Date().toISOString().slice(0, 10);
+    const events = await api(`events?from=${today}&search=${encodeURIComponent(query)}&limit=${PER_TYPE}`).catch(() => null);
+
+    const items = [];
     for (const e of events?.items || []) {
       items.push({
         type: 'Events',

@@ -145,6 +145,11 @@ func ListReports(db *database.DB) http.HandlerFunc {
 			conditions = append(conditions, "status = ?")
 			args = append(args, status)
 		}
+		if search := searchParam(r); search != "" {
+			conditions = append(conditions, "(reason LIKE ?"+likeEscape+" OR details LIKE ?"+likeEscape+")")
+			p := containsPattern(search)
+			args = append(args, p, p)
+		}
 		if after != "" {
 			conditions = append(conditions, "id > ?")
 			args = append(args, after)

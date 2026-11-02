@@ -421,6 +421,19 @@ export function dateInputBounds(fromDate, toDate) {
 }
 
 /**
+ * Bounds for one whole local calendar month, `monthIndex` counted from 0 as
+ * Date counts it (and normalized the same way, so -1 is last December).
+ * For a calendar that shows a month and asks the server for exactly that:
+ * a patch's list read with no bounds is its oldest twenty events.
+ */
+export function monthRange(year, monthIndex) {
+  return {
+    from: dayStart(new Date(year, monthIndex, 1)),
+    to: dayEnd(new Date(year, monthIndex + 1, 0)),
+  };
+}
+
+/**
  * Bounds for one of the events list's date presets. `now` is injectable so
  * the presets can be tested against a fixed day.
  */

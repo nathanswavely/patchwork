@@ -492,6 +492,11 @@ func ListSubmissions(db *database.DB) http.HandlerFunc {
 			WHERE n.status = 'pending_review' AND n.removed_at IS NULL`
 		args := []interface{}{}
 
+		if search := searchParam(r); search != "" {
+			query += " AND n.name LIKE ?" + likeEscape
+			args = append(args, containsPattern(search))
+		}
+
 		if sortKey, id, ok := decodeCursor(after); after != "" && ok {
 			query += " AND " + keysetCondition("n.created_at", "n.id", true)
 			args = append(args, sortKey, sortKey, id)
