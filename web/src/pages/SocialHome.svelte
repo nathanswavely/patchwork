@@ -10,7 +10,7 @@
   import { motifComponentForPatch } from '../lib/patchIcons.js';
   import { quiltOrder } from '../lib/quiltLayout.js';
   import { isLoggedIn } from '../stores/auth.svelte.js';
-  import { getMembershipRoles, getPendingMembershipSlugs, loadMemberships } from '../stores/memberships.svelte.js';
+  import { loadMemberships } from '../stores/memberships.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
   import {
     getSelectedTags,
@@ -355,11 +355,31 @@
   // pending request → "Requested" chip; follower/none → follow heart that
   // actually follows.
   //
-  // The role map holds active rows only, so a pending request has no role
-  // and would otherwise fall through to the follow heart — a button the
-  // server refuses with a 409. It gets its own chip: the wait is the state.
-  let roles = $derived(getMembershipRoles());
-  let requested = $derived(getPendingMembershipSlugs());
+  // Each row of the tree states the viewer's own standing (viewer_standing),
+  // the way the patch payload states membership_role. The chips used to look
+  // it up in the membership store, built from the first page of me/nodes, so
+  // a person in more than twenty patches saw "Follow" on the patches they
+  // followed last. A pending request is its own standing, not membership:
+  // it gets its own chip, because the follow heart would 409.
+  //
+  // The canvas still takes a slug → role map, for active standing only.
+  const ROLE_STANDINGS = new Set(['admin', 'member', 'follower']);
+  let roles = $derived(new Map(
+    allPatches
+      .filter((p) => !p._source && ROLE_STANDINGS.has(p.viewer_standing))
+      .map((p) => [p.slug, p.viewer_standing]),
+  ));
+
+  // A follow or unfollow from a card flips that row's standing at once,
+  // rather than waiting on a refetch of the whole tree.
+  // The docked profile reports the same thing after a follow or a request
+  // made inside it.
+  function setStanding(slug, standing) {
+    const next = standing || undefined;
+    const row = allPatches.find((p) => !p._source && p.slug === slug);
+    if (!row || row.viewer_standing === next) return;
+    allPatches = allPatches.map((p) => (p === row ? { ...p, viewer_standing: next } : p));
+  }
   let busySlugs = $state(new Set());
 
   async function toggleFollow(e, patch) {
@@ -368,15 +388,19 @@
     const slug = patch.slug;
     if (busySlugs.has(slug)) return;
     busySlugs = new Set(busySlugs).add(slug);
-    const isFollowing = roles.get(slug) === 'follower';
+    const isFollowing = patch.viewer_standing === 'follower';
     try {
       if (isFollowing) {
         await api(`nodes/${slug}/leave`, { method: 'POST' });
+        setStanding(slug, undefined);
         showToast(`Unfollowed ${patch.name}`, 'success');
       } else {
         await api(`nodes/${slug}/join`, { method: 'POST', body: { role: 'follower' } });
+        setStanding(slug, 'follower');
         showToast(`Following ${patch.name}`, 'success');
       }
+      // The rest of the app (the patch shell, the event form) still reads
+      // the store.
       await loadMemberships();
     } catch (err) {
       showToast(err.message || 'Something went wrong', 'error');
@@ -514,23 +538,23 @@
       <Heart size={14} weight={remoteFollowing ? 'fill' : 'duotone'} />
       <span>{remoteFollowing ? 'Following' : 'Follow'}</span>
     </button>
-  {:else if roles.get(patch.slug) === 'admin'}
+  {:else if patch.viewer_standing === 'admin'}
     <button class="card-corner card-manage-chip" onclick={(e) => goManage(e, patch)} title="You manage this patch">
       <Wrench size={14} weight="duotone" />
       <span>Manage</span>
     </button>
-  {:else if roles.get(patch.slug) === 'member'}
+  {:else if patch.viewer_standing === 'member'}
     <span class="card-corner card-member-chip" title="You're a member of this patch">
       <UsersThree size={14} weight="duotone" />
       <span>Member</span>
     </span>
-  {:else if requested.has(patch.slug)}
+  {:else if patch.viewer_standing === 'pending'}
     <span class="card-corner card-requested-chip" title="Your membership request is waiting on this patch's admins">
       <UsersThree size={14} weight="duotone" />
       <span>Requested</span>
     </span>
   {:else}
-    {@const following = roles.get(patch.slug) === 'follower'}
+    {@const following = patch.viewer_standing === 'follower'}
     <button
       class="card-corner card-follow-btn"
       class:following
@@ -677,6 +701,7 @@
         form="panel"
         origin={dockOrigin}
         onClose={onDockClose}
+        onStanding={setStanding}
       />
     {:else}
     <!-- One glass card for the whole list: the header and the scrolling
@@ -835,6 +860,7 @@
       seed={dockedSeed}
       form={dockForm}
       onClose={onDockClose}
+      onStanding={setStanding}
     />
   {/if}
 </div>

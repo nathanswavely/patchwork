@@ -297,6 +297,11 @@ type Node struct {
 	MembershipPolicy string      `json:"membership_policy"`
 	Appearance       *Appearance `json:"appearance,omitempty"`
 	Tags             []string    `json:"tags,omitempty"`
+	// ViewerStanding is the caller's own relationship to the patch on a
+	// list read (GET /nodes): admin, member, follower, pending or invited,
+	// omitted for none. Set only by ListNodes; see
+	// internal/handler/viewer_standing.go.
+	ViewerStanding string `json:"viewer_standing,omitempty"`
 	// PendingTags are suggested tags this patch wears provisionally
 	// (docs/adr/114). Sent only to the patch's own admins: a pending word is
 	// not vocabulary, so "tags" above means the approved, public list to

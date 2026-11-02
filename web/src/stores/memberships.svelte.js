@@ -12,7 +12,7 @@ let loaded = $state(false);
  * Patches the person has been invited into and has not answered
  * (docs/adr/098). Held apart from `memberships` on purpose: every consumer
  * of getMemberships() — the zero-memberships onboarding redirect in
- * App.svelte, the event form's host picker, the unlock panel — counts what
+ * App.svelte, the unlock panel — counts what
  * it holds as "my patches", and an invitation is not one. The server keeps
  * them apart the same way (me/nodes never serves an invited row; they are
  * users/me/invitations), so a caller here cannot inherit the mistake.

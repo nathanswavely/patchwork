@@ -10,7 +10,7 @@
   import { aiField, aiAnswerMissing } from '../lib/aiUse.js';
   import { reachablePatchPickerProvider } from '../lib/finderProviders.js';
   import { isAdmin, isTrustedContributor } from '../stores/auth.svelte.js';
-  import { getMemberships } from '../stores/memberships.svelte.js';
+  import { allMyMemberships } from '../lib/pages.js';
   import { getSubmissionsEnabled, getInstanceTimezone, getAiDisclosure } from '../stores/quilt.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
 
@@ -194,18 +194,22 @@
     }
   }
 
-  // Active memberships only, matching the server's userHasNodeRole. me/nodes
-  // serves 'active' and 'pending' alike, so the raw role map calls someone
-  // with an outstanding join request a member — the picker would label the
-  // row "member", the button would say Create Event, and the server would
-  // make a submission. That is the same lying button this field exists to
-  // stop, arriving by a different route.
-  let activeRoles = $derived.by(() => {
-    const roles = new Map();
-    for (const m of getMemberships()) {
-      if (m.status === 'active') roles.set(m.node_slug, m.role);
-    }
-    return roles;
+  // The patches this person may post straight to: active admin and member
+  // rows, matching the server's userHasNodeRole, asked for by role rather
+  // than filtered out of the whole relationship list. A pending request
+  // carries role='member' and must never count here: the picker would label
+  // the row "member", the button would say Create Event, and the server
+  // would make a submission. The server's role filter is active rows only.
+  let activeRoles = $state(new Map());
+
+  $effect(() => {
+    allMyMemberships({ role: 'admin,member' })
+      .then((rows) => {
+        activeRoles = new Map(rows.filter((m) => m.status === 'active').map((m) => [m.node_slug, m.role]));
+      })
+      .catch(() => {
+        activeRoles = new Map();
+      });
   });
 
   // Who may post straight to a patch, mirroring CreateEvent (docs/adr/026):

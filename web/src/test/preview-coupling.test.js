@@ -198,10 +198,10 @@ describe('the docked profile', () => {
     expect(home).toMatch(/<span>Manage<\/span>/);
     expect(home).toMatch(/<span>Member<\/span>/);
     // A join request nobody has answered is its own standing, and not
-    // membership: me/nodes serves pending rows with role='member', so the
-    // card asks the store for them by name rather than reading a role.
+    // membership: the tree states it as viewer_standing 'pending', so the
+    // card never reads a pending row's role.
     expect(home).toMatch(/<span>Requested<\/span>/);
-    expect(home).toContain('getPendingMembershipSlugs');
+    expect(home).toContain("patch.viewer_standing === 'pending'");
     // The action row those two had a second, unpressable placement in is
     // gone with the docked home (docs/adr/094).
     expect(home).not.toContain('in-row');

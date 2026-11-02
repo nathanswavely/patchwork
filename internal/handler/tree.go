@@ -62,8 +62,12 @@ type TreeNode struct {
 	// a declared 1 is sent. The canvas draws no mark for it, since the
 	// quilt shows how people connect and this would make it a map of who
 	// to avoid.
-	AIWork   bool       `json:"ai_work,omitempty"`
-	Children []TreeNode `json:"children"`
+	AIWork bool `json:"ai_work,omitempty"`
+	// ViewerStanding is the caller's own relationship to this patch, for the
+	// card's chip; see viewer_standing.go. Omitted for none and for anonymous
+	// callers.
+	ViewerStanding string     `json:"viewer_standing,omitempty"`
+	Children       []TreeNode `json:"children"`
 }
 
 // AffinityLink represents a weighted connection between two patches.
@@ -101,13 +105,15 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role IN ('admin','member')), 0) AS member_count,
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role = 'follower'), 0) AS follower_count,
 					COALESCE((SELECT COUNT(*) FROM events e WHERE e.node_id = n.id AND e.status = 'active' AND ` + evCond + `), 0)
-					+ COALESCE((SELECT COUNT(*) FROM event_links el JOIN events e ON e.id = el.event_id WHERE el.node_id = n.id AND el.status = 'confirmed' AND e.status = 'active' AND ` + evCond + `), 0) AS event_count
-				FROM nodes n
+					+ COALESCE((SELECT COUNT(*) FROM event_links el JOIN events e ON e.id = el.event_id WHERE el.node_id = n.id AND el.status = 'confirmed' AND e.status = 'active' AND ` + evCond + `), 0) AS event_count,
+					` + viewerStandingColumn + `
+				FROM nodes n` + viewerStandingJoin + `
 				JOIN memberships mem ON mem.node_id = n.id AND mem.user_id = ? AND mem.status = 'active'
 				WHERE n.status IN ('active','unclaimed') AND n.removed_at IS NULL
 				ORDER BY n.name ASC`
 			args = append(args, evArgs...)
 			args = append(args, evArgs...)
+			args = append(args, viewerStandingArg(viewerOf(r)))
 			args = append(args, user.ID)
 		} else {
 			// All public patches (default).
@@ -117,12 +123,14 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role IN ('admin','member')), 0) AS member_count,
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role = 'follower'), 0) AS follower_count,
 					COALESCE((SELECT COUNT(*) FROM events e WHERE e.node_id = n.id AND e.status = 'active' AND ` + evCond + `), 0)
-					+ COALESCE((SELECT COUNT(*) FROM event_links el JOIN events e ON e.id = el.event_id WHERE el.node_id = n.id AND el.status = 'confirmed' AND e.status = 'active' AND ` + evCond + `), 0) AS event_count
-				FROM nodes n
+					+ COALESCE((SELECT COUNT(*) FROM event_links el JOIN events e ON e.id = el.event_id WHERE el.node_id = n.id AND el.status = 'confirmed' AND e.status = 'active' AND ` + evCond + `), 0) AS event_count,
+					` + viewerStandingColumn + `
+				FROM nodes n` + viewerStandingJoin + `
 				WHERE n.status IN ('active','unclaimed') AND n.removed_at IS NULL AND n.visibility = 'public'
 				ORDER BY n.name ASC`
 			args = append(args, evArgs...)
 			args = append(args, evArgs...)
+			args = append(args, viewerStandingArg(viewerOf(r)))
 		}
 
 		rows, err := db.Query(query, args...)
@@ -150,12 +158,13 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 			MemberCount      int
 			FollowerCount    int
 			EventCount       int
+			ViewerStanding   string
 		}
 
 		var flat []flatNode
 		for rows.Next() {
 			var fn flatNode
-			if err := rows.Scan(&fn.ID, &fn.Name, &fn.Slug, &fn.Description, &fn.Appearance, &fn.Status, &fn.Latitude, &fn.Longitude, &fn.ActivatedAt, &fn.CreatedAt, &fn.MovedTo, &fn.MembershipPolicy, &fn.Nonprofit, &fn.AIWork, &fn.MemberCount, &fn.FollowerCount, &fn.EventCount); err != nil {
+			if err := rows.Scan(&fn.ID, &fn.Name, &fn.Slug, &fn.Description, &fn.Appearance, &fn.Status, &fn.Latitude, &fn.Longitude, &fn.ActivatedAt, &fn.CreatedAt, &fn.MovedTo, &fn.MembershipPolicy, &fn.Nonprofit, &fn.AIWork, &fn.MemberCount, &fn.FollowerCount, &fn.EventCount, &fn.ViewerStanding); err != nil {
 				continue
 			}
 			flat = append(flat, fn)
@@ -456,6 +465,7 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 				AIWork:           fn.AIWork,
 				MembershipPolicy: fn.MembershipPolicy,
 				AmendedLining:    liningStates[fn.ID] == governance.LiningDiverged,
+				ViewerStanding:   fn.ViewerStanding,
 				Children:         []TreeNode{},
 			})
 		}
