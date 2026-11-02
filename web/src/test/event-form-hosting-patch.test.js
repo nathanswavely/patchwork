@@ -80,7 +80,10 @@ describe('a fixed patch is stated, not asked', () => {
 describe('the row and the button say what will happen', () => {
   it('counts only active memberships, the way userHasNodeRole does', () => {
     // me/nodes serves 'active' and 'pending'; a pending join grants nothing.
-    expect(form).toMatch(/if \(m\.status === 'active'\) roles\.set\(m\.node_slug, m\.role\)/);
+    // The form asks for active admin and member rows by role, and keeps the
+    // status check as the second line.
+    expect(form).toContain("allMyMemberships({ role: 'admin,member' })");
+    expect(form).toMatch(/rows\.filter\(\(m\) => m\.status === 'active'\)\.map\(\(m\) => \[m\.node_slug, m\.role\]\)/);
     expect(form).not.toContain('getMembershipRoles');
   });
 

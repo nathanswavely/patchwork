@@ -42,7 +42,7 @@
   // own edges, the text sits left, and the relationship row's controls fill
   // the width. Same cover, same name, same row — a patch has one face —
   // laid out for a box narrower than a page.
-  let { slug = '', seed = null, onLoaded = () => {}, layout = 'page' } = $props();
+  let { slug = '', seed = null, onLoaded = () => {}, onStanding = () => {}, layout = 'page' } = $props();
 
   // The payload half. Held in one object rather than eight flags so that
   // "has the truth arrived" is one question, which is what every derived
@@ -81,6 +81,16 @@
   // the viewer's own store and never in the node payload, which reports
   // standing only for an active row.
   let invited = $derived(getInvitedMembershipSlugs().has(slug));
+
+  // The same standing in the quilt tree's words (viewer_standing), reported
+  // once the payload has landed so a surface holding this patch's row can
+  // keep its chip in step with a follow or a request made here.
+  let viewerStanding = $derived(
+    !loaded || isBanned ? '' : (hasStanding ? membershipRole : requestPending ? 'pending' : invited ? 'invited' : ''),
+  );
+  $effect(() => {
+    if (loaded) onStanding(slug, viewerStanding);
+  });
 
   $effect(() => {
     if (slug) loadNode();

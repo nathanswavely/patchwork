@@ -37,12 +37,16 @@ export async function allPages(path, params = {}, { maxPages = 20, key = 'items'
 /**
  * The caller's own relationships, `GET /api/v1/me/nodes`, all of them.
  *
- * Read by the membership store, the dashboard and Settings → Patches, and
- * each used to read one page: a person in more than twenty patches lost
+ * Read by the membership store, the dashboard, Settings → Patches and the
+ * event form, and each used to read one page: a person in more than twenty patches lost
  * every row past the twentieth, so a patch they followed said "Follow" on
  * its My Quilt card. `status: 'archived'` asks for the archived patches
- * they administer instead.
+ * they administer instead; `role: 'admin,member'` asks for active standing
+ * in those roles only.
  */
-export function allMyMemberships({ status = '' } = {}) {
-  return allPages('me/nodes', status ? { status } : {});
+export function allMyMemberships({ status = '', role = '' } = {}) {
+  const params = {};
+  if (status) params.status = status;
+  if (role) params.role = role;
+  return allPages('me/nodes', params);
 }

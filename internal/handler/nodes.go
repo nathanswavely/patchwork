@@ -470,9 +470,10 @@ func ListNodes(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		query := "SELECT n.id, n.owner_id, n.name, n.slug, n.description, n.latitude, n.longitude, n.address, COALESCE(n.timezone,'') AS timezone, n.website, COALESCE(n.image_url,''), COALESCE(n.image_alt,''), COALESCE(n.links,'[]'), COALESCE(n.follower_permissions,'{}'), COALESCE(n.governance_config,'{}'), n.visibility, n.membership_policy, COALESCE(n.appearance,''), n.status, n.accept_event_suggestions, COALESCE(n.moved_to,''), n.founded_at, n.nonprofit, n.ai_use, n.image_ai, n.ai_work, n.created_at, n.updated_at FROM nodes n"
+		query := "SELECT n.id, n.owner_id, n.name, n.slug, n.description, n.latitude, n.longitude, n.address, COALESCE(n.timezone,'') AS timezone, n.website, COALESCE(n.image_url,''), COALESCE(n.image_alt,''), COALESCE(n.links,'[]'), COALESCE(n.follower_permissions,'{}'), COALESCE(n.governance_config,'{}'), n.visibility, n.membership_policy, COALESCE(n.appearance,''), n.status, n.accept_event_suggestions, COALESCE(n.moved_to,''), n.founded_at, n.nonprofit, n.ai_use, n.image_ai, n.ai_work, n.created_at, n.updated_at, " + viewerStandingColumn + " FROM nodes n" + viewerStandingJoin
 		var conditions []string
-		var args []interface{}
+		// The standing join's placeholder is the first in the text.
+		args := []interface{}{viewerStandingArg(viewerOf(r))}
 
 		conditions = append(conditions, "n.status IN ('active','unclaimed')")
 		conditions = append(conditions, "n.removed_at IS NULL")
@@ -581,7 +582,7 @@ func ListNodes(db *database.DB) http.HandlerFunc {
 			var n model.Node
 			var linksJSON, fpJSON, gcJSON, apJSON string
 			if err := rows.Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.Status, &n.AcceptEventSuggestions, &n.MovedTo,
-				&n.FoundedAt, &n.Nonprofit, &n.AIUse, &n.ImageAI, &n.AIWork, &n.CreatedAt, &n.UpdatedAt); err != nil {
+				&n.FoundedAt, &n.Nonprofit, &n.AIUse, &n.ImageAI, &n.AIWork, &n.CreatedAt, &n.UpdatedAt, &n.ViewerStanding); err != nil {
 				continue
 			}
 			scanNodeLinks(linksJSON, &n)

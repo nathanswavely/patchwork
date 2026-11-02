@@ -4177,21 +4177,21 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 919,
+          "line": 940,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 851,
+          "line": 852,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1109,
+          "line": 1110,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4846,21 +4846,21 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 893,
+          "line": 914,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1097,
+          "line": 1098,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1545,
+          "line": 1546,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -5307,7 +5307,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1441,
+          "line": 1442,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -5816,21 +5816,21 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 899,
+          "line": 920,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1103,
+          "line": 1104,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1551,
+          "line": 1552,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -6813,7 +6813,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 617,
+          "line": 618,
           "kind": "go-error-body",
           "raw": "slug required",
           "quote": null
@@ -13771,6 +13771,24 @@
       ]
     },
     {
+      "id": "b4e2a209c89c",
+      "text": "role must be admin, member or follower",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Written by Claude with the me/nodes role filter (viewer_standing PR); reviewed as an API error and a query value, not prose.",
+      "occurrences": [
+        {
+          "file": "internal/handler/memberships.go",
+          "line": 814,
+          "kind": "go-error-body",
+          "raw": "role must be admin, member or follower",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "bfa02eedaea8",
       "text": "failed to list memberships",
       "words": 4,
@@ -13781,7 +13799,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 813,
+          "line": 834,
           "kind": "go-error-body",
           "raw": "failed to list memberships",
           "quote": null
@@ -13799,7 +13817,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 910,
+          "line": 931,
           "kind": "go-error-body",
           "raw": "membership not found",
           "quote": null
@@ -13824,7 +13842,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 929,
+          "line": 950,
           "kind": "go-error-body",
           "raw": "can only approve pending members",
           "quote": null
@@ -13842,7 +13860,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 934,
+          "line": 955,
           "kind": "go-error-body",
           "raw": "failed to approve member",
           "quote": null
@@ -13860,7 +13878,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 957,
+          "line": 978,
           "kind": "go-error-body",
           "raw": "can only ban active members",
           "quote": null
@@ -13878,7 +13896,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 962,
+          "line": 983,
           "kind": "go-error-body",
           "raw": "cannot ban yourself",
           "quote": null
@@ -13896,7 +13914,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 970,
+          "line": 991,
           "kind": "go-error-body",
           "raw": "cannot ban the last admin",
           "quote": null
@@ -13914,7 +13932,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 976,
+          "line": 997,
           "kind": "go-error-body",
           "raw": "failed to ban member",
           "quote": null
@@ -13932,7 +13950,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1005,
+          "line": 1026,
           "kind": "go-error-body",
           "raw": "failed to reject member",
           "quote": null
@@ -13950,7 +13968,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1013,
+          "line": 1034,
           "kind": "go-error-body",
           "raw": "failed to reinstate member",
           "quote": null
@@ -13968,7 +13986,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1033,
+          "line": 1054,
           "kind": "go-error-body",
           "raw": "can only reject pending or reinstate banned members",
           "quote": null
@@ -13986,7 +14004,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1038,
+          "line": 1059,
           "kind": "go-error-body",
           "raw": "invalid status value",
           "quote": null
@@ -14004,7 +14022,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1047,
+          "line": 1068,
           "kind": "go-error-body",
           "raw": "invalid role value",
           "quote": null
@@ -14022,7 +14040,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1056,
+          "line": 1077,
           "kind": "go-error-body",
           "raw": "they have not accepted the invitation yet",
           "quote": null
@@ -14040,7 +14058,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1083,
+          "line": 1104,
           "kind": "go-error-body",
           "raw": "they follow this patch: invite them to join, or let them become a member themselves",
           "quote": null
@@ -14058,7 +14076,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1092,
+          "line": 1113,
           "kind": "go-error-body",
           "raw": "cannot demote the last admin",
           "quote": null
@@ -14076,7 +14094,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1124,
+          "line": 1145,
           "kind": "go-error-body",
           "raw": "this patch chooses its admins elsewhere: record that decision instead",
           "quote": null
@@ -14094,7 +14112,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1136,
+          "line": 1157,
           "kind": "go-error-body",
           "raw": "this patch ratifies admins by proposal: nominate them instead",
           "quote": null
@@ -14112,7 +14130,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1173,
+          "line": 1194,
           "kind": "go-error-body",
           "raw": "failed to update role",
           "quote": null
@@ -14148,7 +14166,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 531,
+          "line": 532,
           "kind": "go-error-body",
           "raw": "status must be active or unclaimed",
           "quote": null
@@ -14166,7 +14184,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 574,
+          "line": 575,
           "kind": "go-error-body",
           "raw": "failed to list nodes",
           "quote": null
@@ -14184,7 +14202,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 855,
+          "line": 856,
           "kind": "go-error-body",
           "raw": "name is required",
           "quote": null
@@ -14230,7 +14248,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 959,
+          "line": 960,
           "kind": "go-error-body",
           "raw": "failed to create node",
           "quote": null
@@ -14248,7 +14266,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1185,
+          "line": 1186,
           "kind": "go-error-body",
           "raw": "failed to read this patch's calendar",
           "quote": null
@@ -14266,7 +14284,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1243,
+          "line": 1244,
           "kind": "go-error-body",
           "raw": "notice_posting must be admins or members",
           "quote": null
@@ -14284,7 +14302,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1249,
+          "line": 1250,
           "kind": "go-error-body",
           "raw": "notice_replies_default must be true or false",
           "quote": null
@@ -14302,7 +14320,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1279,
+          "line": 1280,
           "kind": "go-error-body",
           "raw": "ai_work must be true, false or null",
           "quote": null
@@ -14320,7 +14338,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1284,
+          "line": 1285,
           "kind": "go-error-body",
           "raw": "failed to read node",
           "quote": null
@@ -14338,7 +14356,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1288,
+          "line": 1289,
           "kind": "go-error-body",
           "raw": "an unclaimed patch carries no AI work declaration; whoever claims it answers",
           "quote": null
@@ -14356,7 +14374,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1298,
+          "line": 1299,
           "kind": "go-error-body",
           "raw": "nonprofit must be true or false",
           "quote": null
@@ -14374,14 +14392,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1344,
+          "line": 1345,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1351,
+          "line": 1352,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
@@ -14399,7 +14417,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1365,
+          "line": 1366,
           "kind": "go-error-body",
           "raw": "failed to update tags",
           "quote": null
@@ -14417,14 +14435,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1374,
+          "line": 1375,
           "kind": "go-error-body",
           "raw": "suggest_tags must be an array of tag names",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1381,
+          "line": 1382,
           "kind": "go-error-body",
           "raw": "suggest_tags must be an array of tag names",
           "quote": null
@@ -14442,7 +14460,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1453,
+          "line": 1454,
           "kind": "go-error-body",
           "raw": "failed to update node",
           "quote": null
@@ -14467,7 +14485,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1462,
+          "line": 1463,
           "kind": "go-error-body",
           "raw": "the timezone saved, but this patch's events could not be moved",
           "quote": null
@@ -14485,7 +14503,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1559,
+          "line": 1560,
           "kind": "go-error-body",
           "raw": "failed to archive node",
           "quote": null
@@ -18243,7 +18261,7 @@
       "occurrences": [
         {
           "file": "internal/handler/tree.go",
-          "line": 130,
+          "line": 138,
           "kind": "go-error-body",
           "raw": "failed to query nodes",
           "quote": null
@@ -21684,7 +21702,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 392,
+          "line": 396,
           "kind": "js-string",
           "raw": "POST",
           "quote": "'",
@@ -21692,7 +21710,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 456,
+          "line": 460,
           "kind": "js-string",
           "raw": "POST",
           "quote": "'",
@@ -21980,7 +21998,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 374,
+          "line": 394,
           "kind": "js-string",
           "raw": "POST",
           "quote": "'",
@@ -21988,7 +22006,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 377,
+          "line": 398,
           "kind": "js-string",
           "raw": "POST",
           "quote": "'",
@@ -22754,7 +22772,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 445,
+          "line": 449,
           "kind": "js-string",
           "raw": "PATCH",
           "quote": "'",
@@ -23481,7 +23499,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 615,
+          "line": 619,
           "kind": "markup",
           "raw": "Loading…",
           "quote": null
@@ -25143,7 +25161,7 @@
       "occurrences": [
         {
           "file": "web/src/components/DockedProfile.svelte",
-          "line": 250,
+          "line": 253,
           "kind": "attr:aria-label",
           "raw": "Dismiss",
           "quote": "\""
@@ -26007,7 +26025,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 247,
+          "line": 251,
           "kind": "js-string",
           "raw": "Unclaimed patches",
           "quote": "'"
@@ -26412,7 +26430,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 629,
+          "line": 633,
           "kind": "attr:title",
           "raw": "Choose a different patch",
           "quote": "\""
@@ -26444,7 +26462,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 642,
+          "line": 646,
           "kind": "attr:placeholder",
           "raw": "Find a patch…",
           "quote": "\""
@@ -26504,7 +26522,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 522,
+          "line": 526,
           "kind": "markup",
           "raw": "Cancel",
           "quote": null
@@ -26568,7 +26586,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 313,
+          "line": 317,
           "kind": "js-string",
           "raw": "Members only",
           "quote": "'"
@@ -26857,7 +26875,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 573,
+          "line": 577,
           "kind": "markup",
           "raw": "New",
           "quote": null
@@ -28276,7 +28294,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 570,
+          "line": 574,
           "kind": "markup",
           "raw": "Edit",
           "quote": null
@@ -29829,7 +29847,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 156,
+          "line": 166,
           "kind": "markup",
           "raw": "Back to Quilt",
           "quote": null
@@ -29847,7 +29865,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 197,
+          "line": 207,
           "kind": "markup",
           "raw": "Settings",
           "quote": null
@@ -29912,7 +29930,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 230,
+          "line": 240,
           "kind": "markup",
           "raw": "Nonprofit",
           "quote": null
@@ -29937,7 +29955,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 242,
+          "line": 252,
           "kind": "attr:title",
           "raw": "This patch's admins say its work relies heavily on AI.",
           "quote": "\""
@@ -29958,7 +29976,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 597,
+          "line": 621,
           "kind": "attr:title",
           "raw": "This patch's admins say its work relies heavily on AI.",
           "quote": "\""
@@ -29976,7 +29994,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 243,
+          "line": 253,
           "kind": "markup",
           "raw": "AI work",
           "quote": null
@@ -29997,7 +30015,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 597,
+          "line": 621,
           "kind": "markup",
           "raw": "AI work",
           "quote": null
@@ -30015,7 +30033,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 258,
+          "line": 268,
           "kind": "markup",
           "raw": "No one runs this patch yet.",
           "quote": null
@@ -30033,7 +30051,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 259,
+          "line": 269,
           "kind": "markup",
           "raw": "The community added it",
           "quote": null
@@ -30051,7 +30069,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 261,
+          "line": 271,
           "kind": "markup",
           "raw": "Review claims",
           "quote": null
@@ -30069,7 +30087,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 263,
+          "line": 273,
           "kind": "markup",
           "raw": "Your claim is in progress",
           "quote": null
@@ -30087,7 +30105,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 265,
+          "line": 275,
           "kind": "markup",
           "raw": "If it's yours,",
           "quote": null
@@ -30105,7 +30123,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 265,
+          "line": 275,
           "kind": "markup",
           "raw": "claim it",
           "quote": null
@@ -30123,7 +30141,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 277,
+          "line": 287,
           "kind": "attr:title",
           "raw": "This patch changed the shared community standards every patch starts with. Read its version in Governance.",
           "quote": "\""
@@ -30141,7 +30159,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 279,
+          "line": 289,
           "kind": "markup",
           "raw": "Amended lining",
           "quote": null
@@ -30266,7 +30284,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 525,
+          "line": 549,
           "kind": "markup",
           "raw": "Member",
           "quote": null
@@ -30465,7 +30483,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 377,
+          "line": 398,
           "kind": "js-string",
           "raw": "follower",
           "quote": "'",
@@ -31669,7 +31687,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 767,
+          "line": 792,
           "kind": "markup",
           "raw": "Clear filter",
           "quote": null
@@ -32486,7 +32504,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 693,
+          "line": 718,
           "kind": "markup",
           "raw": "Patches",
           "quote": null
@@ -33779,7 +33797,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 671,
+          "line": 675,
           "kind": "markup",
           "raw": "Follower Permissions",
           "quote": null
@@ -34595,7 +34613,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 494,
+          "line": 498,
           "kind": "attr:label",
           "raw": "Where",
           "quote": "\""
@@ -42822,7 +42840,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 467,
+          "line": 471,
           "kind": "js-string",
           "raw": "Something went wrong. Please try again.",
           "quote": "'"
@@ -48871,7 +48889,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 598,
+          "line": 602,
           "kind": "markup",
           "raw": "Description",
           "quote": null
@@ -49158,7 +49176,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 747,
+          "line": 751,
           "kind": "markup",
           "raw": "Timezone",
           "quote": null
@@ -52183,7 +52201,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 404,
+          "line": 408,
           "kind": "js-string",
           "raw": "Title is required",
           "quote": "'"
@@ -54014,14 +54032,14 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 382,
+          "line": 406,
           "kind": "js-string",
           "raw": "Something went wrong",
           "quote": "'"
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 478,
+          "line": 502,
           "kind": "js-string",
           "raw": "Something went wrong",
           "quote": "'"
@@ -54655,6 +54673,25 @@
       ]
     },
     {
+      "id": "33af4886097a",
+      "text": "admin,member",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Written by Claude with the me/nodes role filter (viewer_standing PR); reviewed as an API error and a query value, not prose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 206,
+          "kind": "js-string",
+          "raw": "admin,member",
+          "quote": "'",
+          "at": "role"
+        }
+      ]
+    },
+    {
       "id": "92a137ff3785",
       "text": "Failed to send that request",
       "words": 5,
@@ -54665,7 +54702,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 397,
+          "line": 401,
           "kind": "js-string",
           "raw": "Failed to send that request",
           "quote": "'"
@@ -54683,7 +54720,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 405,
+          "line": 409,
           "kind": "js-string",
           "raw": "Please select a patch",
           "quote": "'"
@@ -54701,7 +54738,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 406,
+          "line": 410,
           "kind": "js-string",
           "raw": "Start date/time is required",
           "quote": "'"
@@ -54719,7 +54756,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 408,
+          "line": 412,
           "kind": "js-string",
           "raw": "Timezone must name a place, like America/New_York. A fixed-offset name like EST is an hour wrong for half the year.",
           "quote": "'"
@@ -54737,21 +54774,21 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 450,
+          "line": 454,
           "kind": "js-string",
           "raw": "Submitted for review",
           "quote": "'"
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 459,
+          "line": 463,
           "kind": "js-string",
           "raw": "Submitted for review",
           "quote": "'"
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 540,
+          "line": 544,
           "kind": "markup",
           "raw": "Submitted for review",
           "quote": null
@@ -54769,7 +54806,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 452,
+          "line": 456,
           "kind": "js-string",
           "raw": "Event updated",
           "quote": "'"
@@ -54787,7 +54824,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 461,
+          "line": 465,
           "kind": "js-string",
           "raw": "Event created",
           "quote": "'"
@@ -54805,7 +54842,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 466,
+          "line": 470,
           "kind": "js-string",
           "raw": "Failed to update event",
           "quote": "'"
@@ -54823,7 +54860,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 466,
+          "line": 470,
           "kind": "js-string",
           "raw": "Failed to create event",
           "quote": "'"
@@ -54841,7 +54878,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 485,
+          "line": 489,
           "kind": "markup",
           "raw": "Your request to be a trusted contributor is waiting for an admin.",
           "quote": null
@@ -54859,7 +54896,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 487,
+          "line": 491,
           "kind": "markup",
           "raw": "Your last request was declined. You can ask again on {formatDay(trustCanAskAgainAt)}.",
           "quote": null
@@ -54877,7 +54914,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 497,
+          "line": 501,
           "kind": "markup",
           "raw": "Why (optional)",
           "quote": null
@@ -54895,7 +54932,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 502,
+          "line": 506,
           "kind": "attr:placeholder",
           "raw": "I book shows at three venues here.",
           "quote": "\""
@@ -54913,7 +54950,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 527,
+          "line": 531,
           "kind": "markup",
           "raw": "An instance admin reviews events on unclaimed patches. Add them often?",
           "quote": null
@@ -54931,7 +54968,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 528,
+          "line": 532,
           "kind": "markup",
           "raw": "Ask to be a trusted contributor.",
           "quote": null
@@ -54949,7 +54986,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 542,
+          "line": 546,
           "kind": "markup",
           "raw": "The {pendingReviewers} will look at it. Your event will appear on\n            the calendar once it's approved.",
           "quote": null
@@ -54967,7 +55004,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 571,
+          "line": 575,
           "kind": "markup",
           "raw": "Update your event details.",
           "quote": null
@@ -54985,7 +55022,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 574,
+          "line": 578,
           "kind": "markup",
           "raw": "Loading patch...",
           "quote": null
@@ -55003,7 +55040,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 576,
+          "line": 580,
           "kind": "markup",
           "raw": "Suggest an",
           "quote": null
@@ -55021,7 +55058,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 578,
+          "line": 582,
           "kind": "markup",
           "raw": "Suggest an event{hostingPatch ? ` for ${hostingPatch.name}` : ''}. It will be reviewed before it appears.",
           "quote": null
@@ -55039,14 +55076,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 582,
+          "line": 586,
           "kind": "markup",
           "raw": "Create",
           "quote": null
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 587,
+          "line": 591,
           "kind": "markup",
           "raw": "Create",
           "quote": null
@@ -55064,7 +55101,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 584,
+          "line": 588,
           "kind": "markup",
           "raw": "Add an event for {hostingPatch?.name || 'this patch'}. It appears as soon as you save it.",
           "quote": null
@@ -55082,7 +55119,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 588,
+          "line": 592,
           "kind": "markup",
           "raw": "Schedule a new event for your community.",
           "quote": null
@@ -55100,7 +55137,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 593,
+          "line": 597,
           "kind": "markup",
           "raw": "Title",
           "quote": null
@@ -55153,7 +55190,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 609,
+          "line": 613,
           "kind": "markup",
           "raw": "Hosting Patch",
           "quote": null
@@ -55171,7 +55208,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 649,
+          "line": 653,
           "kind": "markup",
           "raw": "You aren't a member of this patch, so the {reviewers} will look\n              at your event before it appears.",
           "quote": null
@@ -55189,7 +55226,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 658,
+          "line": 662,
           "kind": "markup",
           "raw": "Who can see this",
           "quote": null
@@ -55207,7 +55244,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 666,
+          "line": 670,
           "kind": "markup",
           "raw": "Followers can't see this patch's non-public events. That is set\n                at the patch level, under",
           "quote": null
@@ -55225,7 +55262,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 678,
+          "line": 682,
           "kind": "markup",
           "raw": "Location",
           "quote": null
@@ -55257,7 +55294,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 679,
+          "line": 683,
           "kind": "attr:placeholder",
           "raw": "Where is this happening?",
           "quote": "\""
@@ -55275,7 +55312,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 686,
+          "line": 690,
           "kind": "markup",
           "raw": "Event page",
           "quote": null
@@ -55293,14 +55330,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 687,
+          "line": 691,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 696,
+          "line": 700,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
@@ -55381,7 +55418,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 689,
+          "line": 693,
           "kind": "markup",
           "raw": "Where to buy tickets or read more, if this event has a page\n            somewhere else.",
           "quote": null
@@ -55399,7 +55436,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 695,
+          "line": 699,
           "kind": "markup",
           "raw": "Image address",
           "quote": null
@@ -55431,7 +55468,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 698,
+          "line": 702,
           "kind": "markup",
           "raw": "Link a flyer or photo you already have online. Patchwork points at\n            it and never keeps a copy.",
           "quote": null
@@ -55456,7 +55493,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 708,
+          "line": 712,
           "kind": "markup",
           "raw": "Describe the image",
           "quote": null
@@ -55495,7 +55532,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 709,
+          "line": 713,
           "kind": "attr:placeholder",
           "raw": "Flyer for the March show",
           "quote": "\""
@@ -55513,7 +55550,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 711,
+          "line": 715,
           "kind": "markup",
           "raw": "Read aloud by screen readers, and shown if the image stops\n              loading.",
           "quote": null
@@ -55531,7 +55568,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 724,
+          "line": 728,
           "kind": "markup",
           "raw": "Starts At",
           "quote": null
@@ -55549,7 +55586,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 728,
+          "line": 732,
           "kind": "markup",
           "raw": "Ends At",
           "quote": null
@@ -55567,7 +55604,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 741,
+          "line": 745,
           "kind": "markup",
           "raw": "Times are in {timezone.replace(/_/g, ' ')}{zoneOverridden ? '' : \", this patch's timezone\"}.",
           "quote": null
@@ -55585,7 +55622,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 757,
+          "line": 761,
           "kind": "markup",
           "raw": "An IANA name. Clear it to go back to\n              {patchTimezone ? patchTimezone.replace(/_/g, ' ') : \"the patch's timezone\"}.",
           "quote": null
@@ -55603,7 +55640,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 760,
+          "line": 764,
           "kind": "markup",
           "raw": "Not a place this quilt keeps time in. Try America/New_York.",
           "quote": null
@@ -69033,7 +69070,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 518,
+          "line": 542,
           "kind": "attr:title",
           "raw": "You manage this patch",
           "quote": "\""
@@ -69051,7 +69088,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 520,
+          "line": 544,
           "kind": "markup",
           "raw": "Manage",
           "quote": null
@@ -69069,7 +69106,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 523,
+          "line": 547,
           "kind": "attr:title",
           "raw": "You're a member of this patch",
           "quote": "\""
@@ -69087,7 +69124,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 528,
+          "line": 552,
           "kind": "attr:title",
           "raw": "Your membership request is waiting on this patch's admins",
           "quote": "\""
@@ -69105,7 +69142,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 530,
+          "line": 554,
           "kind": "markup",
           "raw": "Requested",
           "quote": null
@@ -69130,7 +69167,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 565,
+          "line": 589,
           "kind": "attr:title",
           "raw": "Unclaimed",
           "quote": "\""
@@ -69148,7 +69185,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 588,
+          "line": 612,
           "kind": "markup",
           "raw": "{patch.is_unclaimed ? `${patch.follower_count || 0} Following` : `${patch.member_count || 0} member${patch.member_count === 1 ? '' : 's'}`}{' · '}{patch.event_count || 0} event{patch.event_count === 1 ? '' : 's'}",
           "quote": null
@@ -69166,7 +69203,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 695,
+          "line": 720,
           "kind": "markup",
           "raw": "{resultCount} of {ordered.length} in view",
           "quote": null
@@ -69184,7 +69221,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 695,
+          "line": 720,
           "kind": "markup",
           "raw": "{resultCount} results",
           "quote": null
@@ -69202,7 +69239,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 709,
+          "line": 734,
           "kind": "markup",
           "raw": "In view",
           "quote": null
@@ -69220,7 +69257,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 714,
+          "line": 739,
           "kind": "attr:aria-label",
           "raw": "Order patches",
           "quote": "\""
@@ -69238,7 +69275,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 718,
+          "line": 743,
           "kind": "markup",
           "raw": "Quilt order",
           "quote": null
@@ -69256,7 +69293,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 719,
+          "line": 744,
           "kind": "markup",
           "raw": "Recently added",
           "quote": null
@@ -69274,7 +69311,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 755,
+          "line": 780,
           "kind": "markup",
           "raw": "No patches in view. {ordered.length} elsewhere on the quilt.",
           "quote": null
@@ -69292,7 +69329,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 764,
+          "line": 789,
           "kind": "markup",
           "raw": "No patches match your filter{quiltScope === 'my' ? ' in My Quilt' : ''}.",
           "quote": null
@@ -69310,7 +69347,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 776,
+          "line": 801,
           "kind": "markup",
           "raw": "No patches here yet.",
           "quote": null

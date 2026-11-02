@@ -143,3 +143,53 @@ describe('no client reads one page of me/nodes', () => {
     expect(settings).toContain("archivedPatches = await allMyMemberships({ status: 'archived' })");
   });
 });
+
+// The quilt's card chips no longer consult the store at all: each tree row
+// states the viewer's standing (viewer_standing), the way the patch payload
+// states membership_role, so no page boundary of me/nodes can reach them.
+describe('the quilt cards read the standing on the row', () => {
+  const src = resolve(__dirname, '..');
+  const home = shipped(resolve(src, 'pages/SocialHome.svelte'));
+  const snippet = home.slice(home.indexOf('{#snippet relationship(patch)}'), home.indexOf('{/snippet}', home.indexOf('{#snippet relationship(patch)}')));
+
+  it('every local chip reads patch.viewer_standing', () => {
+    expect(snippet).toContain("patch.viewer_standing === 'admin'");
+    expect(snippet).toContain("patch.viewer_standing === 'member'");
+    expect(snippet).toContain("patch.viewer_standing === 'pending'");
+    expect(snippet).toContain("{@const following = patch.viewer_standing === 'follower'}");
+    expect(snippet).not.toMatch(/roles\.get|requested\.has/);
+  });
+
+  it('does not import the store lookups', () => {
+    expect(home).not.toContain('getMembershipRoles');
+    expect(home).not.toContain('getPendingMembershipSlugs');
+  });
+
+  it('flips the row at once after a follow or unfollow from a card', () => {
+    expect(home).toContain("const isFollowing = patch.viewer_standing === 'follower'");
+    expect(home).toMatch(/nodes\/\$\{slug\}\/leave`, \{ method: 'POST' \}\);\s*setStanding\(slug, undefined\)/);
+    expect(home).toMatch(/body: \{ role: 'follower' \} \}\);\s*setStanding\(slug, 'follower'\)/);
+  });
+
+  it('hears a follow or request made in the docked profile', () => {
+    expect(home.match(/onStanding=\{setStanding\}/g)).toHaveLength(2);
+    const docked = shipped(resolve(src, 'components/DockedProfile.svelte'));
+    expect(docked).toContain('{onStanding}');
+    const head = shipped(resolve(src, 'components/PatchProfileHead.svelte'));
+    expect(head).toMatch(/if \(loaded\) onStanding\(slug, viewerStanding\)/);
+  });
+
+  it('the canvas role map is built from the same rows', () => {
+    expect(home).toMatch(/let roles = \$derived\(new Map\(\s*allPatches/);
+  });
+});
+
+describe('the event form asks for the patches it can post to', () => {
+  const src = resolve(__dirname, '..');
+  const form = shipped(resolve(src, 'pages/EventForm.svelte'));
+
+  it('by role, from the server, every page', () => {
+    expect(form).toContain("allMyMemberships({ role: 'admin,member' })");
+    expect(form).not.toContain('getMemberships');
+  });
+});
