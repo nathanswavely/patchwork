@@ -3,6 +3,7 @@
  * Loads once on auth, provides lookup of user's relationship to patches.
  */
 import { api } from '../lib/api.js';
+import { allMyMemberships } from '../lib/pages.js';
 
 let memberships = $state([]);
 let loaded = $state(false);
@@ -23,10 +24,12 @@ let invitations = $state([]);
  */
 export async function loadMemberships() {
   const [mine, invited] = await Promise.all([
-    api('me/nodes').catch(() => null),
+    // Every page: one page is twenty rows, and a person in more than twenty
+    // patches lost the rest, so a patch they followed offered "Follow".
+    allMyMemberships().catch(() => null),
     api('users/me/invitations').catch(() => null),
   ]);
-  memberships = mine?.items || mine || [];
+  memberships = mine || [];
   // Filtered by status even though the endpoint serves nothing else, so a
   // stub that answers every path with the same rows cannot turn a
   // membership into an invitation.
