@@ -126,11 +126,14 @@ describe('surfaces that state where you stand', () => {
   });
 
   it('says "Requested" where it would otherwise offer a Follow that 409s', () => {
-    for (const p of ['pages/Discover.svelte', 'pages/SocialHome.svelte']) {
-      const src = read(p);
-      expect(src).toContain('getPendingMembershipSlugs');
-      expect(src).toMatch(/Requested/);
-    }
+    const discover = read('pages/Discover.svelte');
+    expect(discover).toContain('getPendingMembershipSlugs');
+    expect(discover).toMatch(/Requested/);
+    // The quilt's cards read the standing the tree states on each row,
+    // which names a pending request as 'pending', never as a role.
+    const home = read('pages/SocialHome.svelte');
+    expect(home).toMatch(/{:else if patch.viewer_standing === 'pending'}/);
+    expect(home).toMatch(/Requested/);
   });
 
   it('offers Follow on Discover only where Follow can succeed', () => {

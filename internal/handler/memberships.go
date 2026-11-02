@@ -601,6 +601,15 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 		if !insider {
 			query += " AND m.visible = 1 AND m.role IN ('member','admin')" + rosterClause
 		}
+		// Inside the roster gate above, so a search can only find somebody
+		// this viewer's listing would already hand over: a hidden member is
+		// not discoverable by typing their name (docs/adr/006). The counts
+		// below stay the patch's size and ignore it.
+		if search := searchParam(r); search != "" {
+			query += " AND (u.username LIKE ?" + likeEscape + " OR u.display_name LIKE ?" + likeEscape + ")"
+			p := containsPattern(search)
+			args = append(args, p, p)
+		}
 
 		if after != "" {
 			query += " AND m.id > ?"
@@ -790,6 +799,27 @@ func ListMyMemberships(db *database.DB) http.HandlerFunc {
 			query = strings.Replace(query,
 				"AND m.status IN ('active', 'pending') AND n.status IN ('active','unclaimed')",
 				"AND m.status = 'active' AND m.role = 'admin' AND n.status = 'archived' AND n.removed_at IS NULL", 1)
+		}
+
+		// ?role=admin,member asks for active standing in those roles only,
+		// for a caller that needs a subset (the event form's "patches I can
+		// post to") rather than every relationship filtered on the client.
+		// Active only, because a pending row's role is what it would become.
+		// An unknown role is a 400 rather than a silently empty list.
+		if roleParam := r.URL.Query().Get("role"); roleParam != "" {
+			var roles []string
+			for _, role := range strings.Split(roleParam, ",") {
+				role = strings.TrimSpace(role)
+				if role != "admin" && role != "member" && role != "follower" {
+					http.Error(w, `{"error":"role must be admin, member or follower"}`, http.StatusBadRequest)
+					return
+				}
+				roles = append(roles, role)
+			}
+			query += " AND m.status = 'active' AND m.role IN (?" + strings.Repeat(",?", len(roles)-1) + ")"
+			for _, role := range roles {
+				args = append(args, role)
+			}
 		}
 
 		if after != "" {

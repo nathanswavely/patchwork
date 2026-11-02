@@ -114,9 +114,9 @@ describe('discovery mode', () => {
     const src = source('pages/Discover.svelte');
     expect(src).toContain('byWhatIsHappening');
     expect(src).toContain('nextEventByNode');
-    // Omitting `from` means upcoming (CLAUDE.md); an unbounded list would be
-    // the quilt's oldest events.
-    expect(src).toContain("api('events?limit=200')");
+    // An explicit window from now, every page of it: an unbounded list would
+    // be the quilt's oldest events, and one page of it is a couple of weeks.
+    expect(src).toContain("allPages('events', { from: upcomingFrom(), to: dayEnd(until) })");
     expect(src).not.toContain('member_count + follower_count');
   });
 

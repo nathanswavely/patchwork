@@ -2,6 +2,7 @@
   import { CheckSquare, UsersThree } from 'phosphor-svelte';
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
+  import { allMembers } from '../lib/patchMembers.js';
   import { formatDay } from '../lib/datetime.js';
   import { navigate } from '../stores/router.svelte.js';
   import { isLoggedIn, getUser } from '../stores/auth.svelte.js';
@@ -325,8 +326,8 @@
 
   async function loadPatchMembers() {
     try {
-      const data = await api(`nodes/${slug}/members`);
-      patchMembers = data.items || data || [];
+      // Every member, since a successor can be any of them.
+      patchMembers = await allMembers(slug);
     } catch {
       patchMembers = [];
     }

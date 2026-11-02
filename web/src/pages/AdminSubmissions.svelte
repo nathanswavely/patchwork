@@ -1,5 +1,6 @@
 <script>
   import { api } from '../lib/api.js';
+  import { allPages } from '../lib/pages.js';
   import { showToast } from '../stores/toast.svelte.js';
   import { navigate } from '../stores/router.svelte.js';
   import Skeleton from '../components/Skeleton.svelte';
@@ -50,8 +51,9 @@
   async function loadSubmissions() {
     loading = true;
     try {
-      const data = await api('admin/submissions');
-      submissions = data.items || [];
+      // The whole queue: a review page that shows the first twenty leaves
+      // the rest unreviewed with nothing to say they exist.
+      submissions = await allPages('admin/submissions');
       const inputs = {};
       const tags = {};
       const trust = {};

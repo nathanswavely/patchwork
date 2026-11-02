@@ -1,5 +1,6 @@
 <script>
   import { api } from '../lib/api.js';
+  import { allPages } from '../lib/pages.js';
   import { showToast } from '../stores/toast.svelte.js';
   import Skeleton from '../components/Skeleton.svelte';
   import { formatDay as formatDate } from '../lib/datetime.js';
@@ -21,12 +22,14 @@
   // whole record. The second section is that missing trace.
   async function loadClaims() {
     loading = true;
+    // Both queues whole: a claim on page two of a review queue is a claim
+    // nobody is told is waiting.
     const [pending, approved] = await Promise.all([
-      api('admin/claims').catch(() => null),
-      api('admin/claims?status=approved').catch(() => null),
+      allPages('admin/claims').catch(() => []),
+      allPages('admin/claims', { status: 'approved' }).catch(() => []),
     ]);
-    claims = pending?.items || [];
-    awaitingSetup = approved?.items || [];
+    claims = pending;
+    awaitingSetup = approved;
     loading = false;
   }
 

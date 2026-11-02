@@ -21,13 +21,14 @@
    */
   import { Check, Heart, CalendarBlank } from 'phosphor-svelte';
   import { api } from '../lib/api.js';
+  import { allPages } from '../lib/pages.js';
   import { navigate } from '../stores/router.svelte.js';
   import { isLoggedIn } from '../stores/auth.svelte.js';
   import { getRankedTags, areTagsLoaded, getTagCounts } from '../stores/quilt.svelte.js';
   import { getMembershipRoles, getPendingMembershipSlugs, loadMemberships } from '../stores/memberships.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
   import { colorForTag, textOnColor } from '../lib/quiltTheme.js';
-  import { formatDay } from '../lib/datetime.js';
+  import { formatDay, upcomingFrom, dayEnd } from '../lib/datetime.js';
 
   // --- The question ---
   // The shortlist is the instance's most-worn tags (docs/adr/075). Never a
@@ -74,22 +75,30 @@
   // patch id -> the soonest upcoming event on it.
   let nextEventByNode = $state(new Map());
 
+  // How far ahead "something coming up" looks. The page asked for 200
+  // upcoming events, the server answers at most 100, and on a busy quilt a
+  // hundred is a couple of weeks: a patch whose next night was in week three
+  // read as having nothing on. It asks for a window instead, and every page
+  // of it.
+  const COMING_UP_DAYS = 30;
+
   async function loadAnswer() {
     try {
-      // Omitting `from` means upcoming (CLAUDE.md): the list sorts
-      // starts_at ascending, so the first row seen for a patch is its next
-      // event. This is the "what is happening on it" half of the engine —
-      // a fact about the world, self-refreshing as the calendar moves, and
-      // the same for every viewer.
-      const [treeResp, eventsResp] = await Promise.all([
+      // The list sorts starts_at ascending, so the first row seen for a
+      // patch is its next event. This is the "what is happening on it" half
+      // of the engine: a fact about the world, self-refreshing as the
+      // calendar moves, and the same for every viewer.
+      const now = new Date();
+      const until = new Date(now.getFullYear(), now.getMonth(), now.getDate() + COMING_UP_DAYS);
+      const [treeResp, events] = await Promise.all([
         api('nodes/tree'),
-        api('events?limit=200').catch(() => ({ items: [] })),
+        allPages('events', { from: upcomingFrom(), to: dayEnd(until) }).catch(() => []),
       ]);
       const tree = treeResp.tree || treeResp;
       allPatches = (tree.children || []).filter((p) => p.slug);
 
       const next = new Map();
-      for (const e of eventsResp.items || []) {
+      for (const e of events) {
         if (e.node_id && !next.has(e.node_id)) next.set(e.node_id, e);
       }
       nextEventByNode = next;

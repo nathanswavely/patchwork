@@ -137,7 +137,7 @@ describe('ProposalList — the filter label promises what the drawer holds', () 
   });
 
   it('sends the outcome to the server rather than filtering in the page', () => {
-    expect(src).toMatch(/\?status=\$\{encodeURIComponent\(statusFilter\)\}/);
+    expect(src).toMatch(/params\.set\('status', statusFilter\)/);
   });
 
   it('keeps the row wording it already had for a lapse and an unsettled contest', () => {

@@ -1,6 +1,7 @@
 <script>
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
+  import { allPages } from '../lib/pages.js';
   import { formatDay } from '../lib/datetime.js';
   import { showToast } from '../stores/toast.svelte.js';
   import ConfirmAction from '../components/ConfirmAction.svelte';
@@ -129,16 +130,21 @@
   // refuses that now; this is the same rule where a person can see it.
   let followers = $state([]);
 
+  // Every list on this page is every row, not the first page: the listing
+  // is paged, and an admin cannot manage, approve or reinstate somebody the
+  // page never loaded. `invited` rides beside the rows, so it is read off
+  // the payload as the pages arrive.
   async function loadMembers() {
     loadingMembers = true;
     try {
-      const [data, followerData] = await Promise.all([
-        api(`nodes/${slug}/members`),
-        api(`nodes/${slug}/members?role=follower`),
+      let invitedNow = [];
+      const [memberRows, followerRows] = await Promise.all([
+        allPages(`nodes/${slug}/members`, {}, { onPage: (d) => { invitedNow = d?.invited || invitedNow; } }),
+        allPages(`nodes/${slug}/members`, { role: 'follower' }),
       ]);
-      members = data.items || data || [];
-      invited = data.invited || [];
-      followers = followerData.items || [];
+      members = memberRows;
+      invited = invitedNow;
+      followers = followerRows;
       roleEdits = {};
     } catch {
       members = [];
@@ -179,8 +185,7 @@
   async function loadPendingMembers() {
     loadingPending = true;
     try {
-      const data = await api(`nodes/${slug}/members?status=pending`);
-      pendingMembers = data.items || data || [];
+      pendingMembers = await allPages(`nodes/${slug}/members`, { status: 'pending' });
     } catch {
       pendingMembers = [];
     } finally {
@@ -191,8 +196,7 @@
   async function loadBannedMembers() {
     loadingBanned = true;
     try {
-      const data = await api(`nodes/${slug}/members?status=banned`);
-      bannedMembers = data.items || data || [];
+      bannedMembers = await allPages(`nodes/${slug}/members`, { status: 'banned' });
     } catch {
       bannedMembers = [];
     } finally {

@@ -30,7 +30,8 @@ describe('PatchEvents.svelte drops the follower refusal for events', () => {
   });
 
   it('renders whatever the server already handed over', () => {
-    expect(src).toMatch(/events = data\.items \|\| data \|\| \[\]/);
+    expect(src).toMatch(/found = await allPages\('events'/);
+    expect(src).toMatch(/events = found;/);
   });
 });
 

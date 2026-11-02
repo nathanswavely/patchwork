@@ -1,10 +1,17 @@
 <script>
   import { getContext } from 'svelte';
+  import { CaretLeft, CaretRight } from 'phosphor-svelte';
   import { api } from '../lib/api.js';
+  import { allPages } from '../lib/pages.js';
   import { navigate } from '../stores/router.svelte.js';
   import { isLoggedIn, isAdmin as isInstanceAdmin } from '../stores/auth.svelte.js';
   import { parseCsv, rowsToEvents, TEMPLATE_CSV } from '../lib/eventCsv.js';
-  import { formatEventDate as formatDate, formatEventTime as formatTime } from '../lib/datetime.js';
+  import {
+    formatEventDate as formatDate,
+    formatEventTime as formatTime,
+    formatMonth,
+    monthRange,
+  } from '../lib/datetime.js';
   import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
   import { eventPostingRight } from '../lib/patchWorkspace.js';
   import { showToast } from '../stores/toast.svelte.js';
@@ -55,31 +62,60 @@
 
   let events = $state([]);
   let loading = $state(true);
+
+  // The calendar shows one month and asks the server for that month. It used
+  // to ask for the whole calendar with no bounds, which the server answers
+  // oldest first, twenty to a page: Tellus360 has 264 events and this tab
+  // showed the 20 from 2024. The month is the reader's own, matching the
+  // date filter on /events.
+  const today = new Date();
+  let viewYear = $state(today.getFullYear());
+  let viewMonth = $state(today.getMonth());
+  let range = $derived(monthRange(viewYear, viewMonth));
+  let monthLabel = $derived(formatMonth(range.from));
+  let isThisMonth = $derived(viewYear === today.getFullYear() && viewMonth === today.getMonth());
+
+  function shiftMonth(by) {
+    const d = new Date(viewYear, viewMonth + by, 1);
+    viewYear = d.getFullYear();
+    viewMonth = d.getMonth();
+  }
+
+  function goToThisMonth() {
+    viewYear = today.getFullYear();
+    viewMonth = today.getMonth();
+  }
   let submissions = $state([]);
   let decliningId = $state('');
   let declineNote = $state('');
   let reviewing = $state(false);
 
   $effect(() => {
-    if (slug) loadEvents();
+    if (slug) loadEvents(range);
   });
 
   $effect(() => {
     if (slug && canReview) loadSubmissions();
   });
 
-  async function loadEvents() {
+  // Which request is current, so a month someone clicked past cannot land
+  // on top of the one they stopped at.
+  let loadSeq = 0;
+
+  async function loadEvents(bounds = range) {
+    const seq = ++loadSeq;
     loading = true;
+    let found = [];
     try {
-      // The workspace calendar owns the whole calendar, past included —
-      // the public glimpse is the surface that means "upcoming".
-      const data = await api(`events?node_slug=${encodeURIComponent(slug)}&include_past=true`);
-      events = data.items || data || [];
+      // Every event in the month, past and future alike: a month is small,
+      // and a venue's busiest one still pages within it.
+      found = await allPages('events', { node_slug: slug, from: bounds.from, to: bounds.to });
     } catch {
-      events = [];
-    } finally {
-      loading = false;
+      found = [];
     }
+    if (seq !== loadSeq) return;
+    events = found;
+    loading = false;
   }
 
   async function loadSubmissions() {
@@ -207,7 +243,17 @@
 <div class="events-page">
   <div class="events-header">
     <span class="lt-muted">
-      {events.length} {events.length === 1 ? 'event' : 'events'}
+      <span class="month-nav">
+        <button class="month-step" onclick={() => shiftMonth(-1)} aria-label="Previous month"><CaretLeft size={14} /></button>
+        <span class="month-label">{monthLabel}</span>
+        <button class="month-step" onclick={() => shiftMonth(1)} aria-label="Next month"><CaretRight size={14} /></button>
+        {#if !isThisMonth}
+          <button class="subscribe-toggle" onclick={goToThisMonth}>This month</button>
+        {/if}
+      </span>
+      {#if !loading}
+        <span>{events.length} {events.length === 1 ? 'event' : 'events'}</span>
+      {/if}
       {#if isUnclaimed}
         <span class="lt-pill">Community-submitted</span>
       {/if}
@@ -361,7 +407,7 @@
     <p class="lt-muted">Loading events...</p>
   {:else if events.length === 0}
     <div class="lt-empty">
-      <p class="lt-empty-title">No events scheduled.</p>
+      <p class="lt-empty-title">No events in {monthLabel}.</p>
       <p class="lt-muted">Members can create events for meetups, shows, or gatherings.</p>
     </div>
   {:else}
@@ -399,6 +445,37 @@
     align-items: center;
     margin-bottom: 1rem;
     font-size: 0.85rem;
+  }
+
+  .month-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .month-label {
+    font-weight: 600;
+    color: var(--color-text);
+    min-width: 8.5rem;
+    text-align: center;
+  }
+
+  .month-step {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    color: var(--color-text);
+    cursor: pointer;
+  }
+
+  .month-step:hover {
+    background: var(--color-overlay);
   }
 
   .header-buttons {

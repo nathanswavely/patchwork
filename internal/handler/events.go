@@ -127,6 +127,7 @@ func ListEvents(db *database.DB) http.HandlerFunc {
 		nodeSlug := r.URL.Query().Get("node_slug")
 		from := dayBound(r.URL.Query().Get("from"), "T00:00:00Z")
 		to := dayBound(r.URL.Query().Get("to"), "T23:59:59Z")
+		search := searchParam(r)
 		viewer := middleware.UserFromContext(r.Context())
 
 		// "My Quilt" scope, matching GET /api/v1/nodes and /nodes/tree so the
@@ -308,6 +309,12 @@ func ListEvents(db *database.DB) http.HandlerFunc {
 		if to != "" {
 			conditions = append(conditions, "e.starts_at <= ?")
 			args = append(args, to)
+		}
+		// By title, inside every gate above: a search narrows what this
+		// viewer could already list and never reaches past it (search.go).
+		if search != "" {
+			conditions = append(conditions, "e.title LIKE ?"+likeEscape)
+			args = append(args, containsPattern(search))
 		}
 		if sortKey, id, ok := decodeCursor(after); after != "" && ok {
 			conditions = append(conditions, keysetCondition("e.starts_at", "e.id", false))

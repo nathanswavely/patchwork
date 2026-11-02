@@ -8,6 +8,7 @@
    */
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
+  import { allPages } from '../lib/pages.js';
   import { navigate } from '../stores/router.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
 
@@ -46,9 +47,11 @@
     }
   }
 
-  // Claim state: how many claims are open on this patch right now. Read from
-  // the instance-wide pending queue and narrowed to this node — review itself
-  // lives in the admin panel, linked below.
+  // Claim state: how many claims are open on this patch right now, asked of
+  // the pending queue narrowed to this node on the server. It used to read
+  // the instance's first page and count the rows that were this patch's, so
+  // a claim on page two read as none. Review itself lives in the admin
+  // panel, linked below.
   let openClaims = $state(0);
   let claimsLoaded = $state(false);
   $effect(() => {
@@ -57,9 +60,8 @@
 
   async function loadClaims(nodeID) {
     try {
-      const data = await api('admin/claims?status=pending');
-      const items = data.items || [];
-      openClaims = items.filter((c) => c.node_id === nodeID).length;
+      const items = await allPages('admin/claims', { status: 'pending', node_id: nodeID });
+      openClaims = items.length;
     } catch {
       openClaims = 0;
     } finally {

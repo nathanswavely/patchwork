@@ -23,7 +23,7 @@
   import { ltMenu } from '../lib/lt.js';
   import WorkspaceSearch from './WorkspaceSearch.svelte';
   import FilterChips from './FilterChips.svelte';
-  import { discoveryFinderProvider } from '../lib/finderProviders.js';
+  import { discoveryFinderProvider, discoveryFinderSearch, DISCOVERY_TYPE_ORDER } from '../lib/finderProviders.js';
   import { getUnread } from '../stores/notifications.svelte.js';
   import { ArrowSquareOut, Bell, CaretDown, Compass, FunnelSimple, Info, MagnifyingGlass, Minus, Plus, SquaresFour, CalendarBlank, Gauge, SidebarSimple, House } from 'phosphor-svelte';
   import { hasCanvasZoom, canZoomIn, canZoomOut, zoomCanvas } from '../stores/canvasZoom.svelte.js';
@@ -50,6 +50,7 @@
   // focus. The action row is the only path from typed text to standing
   // narrowing state.
   const discoveryProvider = discoveryFinderProvider();
+  const discoverySearch = discoveryFinderSearch();
 
   function showMatchesOnQuilt(q) {
     setSearchQuery(q);
@@ -313,6 +314,8 @@
       <WorkspaceSearch
         placeholder="Search patches and events…"
         provider={discoveryProvider}
+        search={discoverySearch}
+        typeOrder={DISCOVERY_TYPE_ORDER}
         actionLabel={(q) => `Show matches on the quilt for “${q}”`}
         onAction={showMatchesOnQuilt}
         suggestLabel={(q) => `Suggest “${q}” as a patch`}
@@ -337,6 +340,8 @@
         autofocus
         placeholder="Search patches and events…"
         provider={discoveryProvider}
+        search={discoverySearch}
+        typeOrder={DISCOVERY_TYPE_ORDER}
         actionLabel={(q) => `Show matches on the quilt for “${q}”`}
         onAction={showMatchesOnQuilt}
         suggestLabel={(q) => `Suggest “${q}” as a patch`}

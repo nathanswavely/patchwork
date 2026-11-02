@@ -20,6 +20,17 @@
    *  - variant="takeover": renders inside the mobile search takeover, where
    *    the default desktop-only media hide must not apply.
    *
+   * Server search, for anything that lives in a paged list:
+   *  - search: `async (query) => items`, asked (debounced) for each query and
+   *    merged with the provider's in-memory matches. The provider's corpus is
+   *    fetched once, so it can only hold what is small and whole: a patch's
+   *    charters, the admin panel's own sections, the quilt's tree. A paged
+   *    list fetched once is its first twenty rows, and filtering that in the
+   *    browser is how a search inside Tellus360 never found an event past
+   *    the twentieth. Those lists are asked instead.
+   *  - typeOrder: the order the result groups appear in, by `type`. Without
+   *    it the server's matches lead.
+   *
    * Picker extras, for callers choosing a thing rather than going to it:
    *  - onSelect: replaces navigation — the chosen item is handed back
    *    instead of being followed. An item may also carry disabled:true,
@@ -77,6 +88,8 @@
     matchField = false,
     browse = false,
     inputId = null,
+    search = null,
+    typeOrder = null,
   } = $props();
 
   let isPicker = $derived(variant === 'picker');
@@ -107,22 +120,68 @@
     loading = false;
   }
 
-  let results = $derived.by(() => {
-    if (!items) return [];
-    if (!query.trim()) return browse ? items.slice(0, 12) : [];
-    // Diacritic-folded match: "tornado" finds Tornādo Tornädo.
-    const q = fold(query);
-    return items.filter(i =>
-      fold(i.label).includes(q) || fold(i.sublabel).includes(q)
-    ).slice(0, 12);
+  // The server's answer to the query it was asked, kept with that query so a
+  // late answer to "jaz" is never shown under "jazz".
+  let remote = $state({ q: '', items: [] });
+  let searching = $state(false);
+  let searchSeq = 0;
+
+  $effect(() => {
+    if (!search) return;
+    const q = query.trim();
+    const seq = ++searchSeq;
+    if (!q) {
+      remote = { q: '', items: [] };
+      searching = false;
+      return;
+    }
+    searching = true;
+    const timer = setTimeout(async () => {
+      let found = [];
+      try {
+        found = await search(q);
+      } catch {
+        found = [];
+      }
+      if (seq !== searchSeq) return;
+      remote = { q, items: found || [] };
+      searching = false;
+    }, 200);
+    return () => clearTimeout(timer);
   });
+
+  let results = $derived.by(() => {
+    const trimmed = query.trim();
+    if (!trimmed) return browse && items ? items.slice(0, 12) : [];
+    // Diacritic-folded match: "tornado" finds Tornādo Tornädo. The server's
+    // matches are its own (search.go says what LIKE folds and what it does
+    // not), so they are not filtered a second time here.
+    const q = fold(trimmed);
+    const local = (items || []).filter(i =>
+      fold(i.label).includes(q) || fold(i.sublabel).includes(q)
+    );
+    const fromServer = search && remote.q === trimmed ? remote.items : [];
+    const merged = [...fromServer, ...local];
+    if (typeOrder) {
+      const rank = (t) => {
+        const i = typeOrder.indexOf(t);
+        return i < 0 ? typeOrder.length : i;
+      };
+      merged.sort((a, b) => rank(a.type) - rank(b.type));
+    }
+    return merged.slice(0, 12);
+  });
+
+  // Still waiting on an answer that could add rows: the local corpus, or the
+  // server's matches for exactly what is typed now.
+  let pending = $derived(loading || (!!search && (searching || remote.q !== query.trim())));
 
   // The bottom row navigates with the keyboard like any result, one slot
   // past the last. Exactly one can ever show: with results, the action row
   // narrows; with none, the suggest row offers the only useful move left.
   // Both gate on their own callback so workspace/admin callers are untouched.
   let hasSuggest = $derived(
-    !!onSuggest && !!query.trim() && !loading && (alwaysSuggest || results.length === 0),
+    !!onSuggest && !!query.trim() && !pending && (alwaysSuggest || results.length === 0),
   );
   let hasAction = $derived(!!onAction && !!query.trim() && results.length > 0);
   let navLength = $derived(results.length + (hasAction || hasSuggest ? 1 : 0));
@@ -257,7 +316,7 @@
 
   {#if open && (query.trim() || browse)}
     <div class="finder-results">
-      {#if loading}
+      {#if pending && results.length === 0}
         <div class="finder-empty">Searching…</div>
       {:else}
         {#if results.length === 0}

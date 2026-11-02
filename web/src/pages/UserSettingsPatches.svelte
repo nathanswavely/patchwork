@@ -1,5 +1,6 @@
 <script>
   import { api } from '../lib/api.js';
+  import { allMyMemberships } from '../lib/pages.js';
   import { navigate } from '../stores/router.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
   import { loadMemberships } from '../stores/memberships.svelte.js';
@@ -41,8 +42,7 @@
 
   async function loadArchived() {
     try {
-      const data = await api('me/nodes?status=archived');
-      archivedPatches = data.items || [];
+      archivedPatches = await allMyMemberships({ status: 'archived' });
     } catch {
       archivedPatches = [];
     }
@@ -61,8 +61,7 @@
     loading = true;
     error = '';
     try {
-      const data = await api('me/nodes');
-      patches = data.items || data || [];
+      patches = await allMyMemberships();
     } catch (e) {
       error = e.message || 'Failed to load patches';
       patches = [];
