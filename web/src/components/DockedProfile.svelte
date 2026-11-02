@@ -51,6 +51,9 @@
     // (a click on the canvas), and the panel simply arrives.
     origin = null,
     onClose = () => {},
+    // The viewer's standing as the head reports it, for the surface's own
+    // copy of this patch's row.
+    onStanding = () => {},
   } = $props();
 
   let isSheet = $derived(form === 'sheet');
@@ -264,6 +267,7 @@
           {seed}
           layout="docked"
           onLoaded={(state) => { loaded = state; }}
+          {onStanding}
         />
       </div>
       <!-- The gap between the row and the first glimpse's rule is the

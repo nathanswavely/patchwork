@@ -1,5 +1,6 @@
 <script>
   import { api } from '../lib/api.js';
+  import { allMyMemberships } from '../lib/pages.js';
   import { getUser } from '../stores/auth.svelte.js';
   import { navigate } from '../stores/router.svelte.js';
   import Skeleton from '../components/Skeleton.svelte';
@@ -44,8 +45,7 @@
   async function loadMemberships() {
     loading = true;
     try {
-      const data = await api('me/nodes');
-      memberships = data.items || data || [];
+      memberships = await allMyMemberships();
       // Load attention data in parallel
       loadAttentionData();
     } catch {

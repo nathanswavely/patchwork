@@ -3,6 +3,7 @@
  * Loads once on auth, provides lookup of user's relationship to patches.
  */
 import { api } from '../lib/api.js';
+import { allMyMemberships } from '../lib/pages.js';
 
 let memberships = $state([]);
 let loaded = $state(false);
@@ -11,7 +12,7 @@ let loaded = $state(false);
  * Patches the person has been invited into and has not answered
  * (docs/adr/098). Held apart from `memberships` on purpose: every consumer
  * of getMemberships() — the zero-memberships onboarding redirect in
- * App.svelte, the event form's host picker, the unlock panel — counts what
+ * App.svelte, the unlock panel — counts what
  * it holds as "my patches", and an invitation is not one. The server keeps
  * them apart the same way (me/nodes never serves an invited row; they are
  * users/me/invitations), so a caller here cannot inherit the mistake.
@@ -23,10 +24,12 @@ let invitations = $state([]);
  */
 export async function loadMemberships() {
   const [mine, invited] = await Promise.all([
-    api('me/nodes').catch(() => null),
+    // Every page: one page is twenty rows, and a person in more than twenty
+    // patches lost the rest, so a patch they followed offered "Follow".
+    allMyMemberships().catch(() => null),
     api('users/me/invitations').catch(() => null),
   ]);
-  memberships = mine?.items || mine || [];
+  memberships = mine || [];
   // Filtered by status even though the endpoint serves nothing else, so a
   // stub that answers every path with the same rows cannot turn a
   // membership into an invitation.

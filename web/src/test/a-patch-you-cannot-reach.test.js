@@ -73,7 +73,7 @@ describe('a patch its own admin cannot open (F-124)', () => {
   });
 
   it('lists the archived patches a person runs, asked for by name', () => {
-    expect(myPatches).toContain("api('me/nodes?status=archived')");
+    expect(myPatches).toContain("allMyMemberships({ status: 'archived' })");
     expect(myPatches).toContain('<h3 class="section-heading">Archived</h3>');
   });
 
