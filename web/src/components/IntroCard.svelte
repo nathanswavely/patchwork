@@ -16,6 +16,7 @@
   import { isLoggedIn, isAuthChecked } from '../stores/auth.svelte.js';
   import { getInstanceName } from '../stores/quilt.svelte.js';
   import { isIntroDismissed, dismissIntro } from '../lib/introCard.js';
+  import { getLabel, loadLabel } from '../stores/label.svelte.js';
 
   let { routeName = 'home' } = $props();
 
@@ -49,6 +50,11 @@
     isAuthChecked() && !isLoggedIn() && !dismissed &&
     !SUPPRESSED_ROUTES.has(routeName)
   );
+
+  // "Real human neighbors" links to the Label only once one is published:
+  // on a quilt that hasn't written it, the link would open "No Label yet".
+  let label = $derived(getLabel());
+  $effect(() => { if (visible) loadLabel(); });
 
   // The card floats over the foot of the screen on mobile, so the shell has
   // to leave room for it or it lands on whatever sits at the bottom of a
@@ -114,7 +120,7 @@
     {#if variant === 'full'}
       <h2 class="intro-heading">{instanceName} is a quilt of the communities around you.</h2>
       <p class="intro-body">
-        Like Wikipedia but for connecting your community. Built and managed by your <a href="/label" class="intro-label-link" onclick={goLabel}>real human neighbors</a> without ads, personalized algorithm, or AI training.
+        Like Wikipedia but for connecting your community. Built and managed by your {#if label?.published}<a href="/label" class="intro-label-link" onclick={goLabel}>real human neighbors</a>{:else}real human neighbors{/if} without ads, personalized algorithm, or AI training.
       </p>
       <div class="intro-actions">
         <a href="/about" class="intro-about" onclick={goAbout}>What is Patchwork?</a>

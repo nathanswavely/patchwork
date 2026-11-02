@@ -25154,7 +25154,7 @@
         },
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 131,
+          "line": 137,
           "kind": "attr:aria-label",
           "raw": "Dismiss",
           "quote": "\""
@@ -28395,14 +28395,14 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 115,
+          "line": 121,
           "kind": "markup",
           "raw": "{instanceName} is a quilt of the communities around you.",
           "quote": null
         },
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 129,
+          "line": 135,
           "kind": "markup",
           "raw": "{instanceName} is a quilt of the communities around you.",
           "quote": null
@@ -28420,12 +28420,15 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 117,
+          "line": 123,
           "kind": "markup",
           "raw": "Like Wikipedia but for connecting your community. Built and managed by your",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "5e049d9bb2c8",
@@ -28438,12 +28441,15 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 117,
+          "line": 123,
           "kind": "markup",
           "raw": "real human neighbors",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "21b9aef1386b",
@@ -28456,12 +28462,15 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 117,
+          "line": 123,
           "kind": "markup",
           "raw": "without ads, personalized algorithm, or AI training.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "e45beba922fb",
@@ -28474,14 +28483,14 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 120,
+          "line": 126,
           "kind": "markup",
           "raw": "What is Patchwork?",
           "quote": null
         },
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 130,
+          "line": 136,
           "kind": "markup",
           "raw": "What is Patchwork?",
           "quote": null
@@ -28513,7 +28522,7 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 121,
+          "line": 127,
           "kind": "markup",
           "raw": "Join",
           "quote": null
@@ -28531,7 +28540,7 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 127,
+          "line": 133,
           "kind": "markup",
           "raw": "I'll lurk for now",
           "quote": null
