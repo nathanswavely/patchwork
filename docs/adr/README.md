@@ -170,6 +170,7 @@ range, a date for everything after it.
 | [058](058-atproto-is-a-source-not-a-second-federation.md) | atproto is a source and an identity, not a second federation — no relay, no AppView, public slice only *(amended: A and B built as 064 and 062, D retired, C optional)* |
 | [059](059-the-handle-is-a-subscribe-option.md) | The handle is a subscribe option — the patch actor exists and no surface says so |
 | [060](060-a-fork-keeps-its-threads-and-loses-its-audience.md) | A fork keeps its threads and loses its audience — the reach gap in the seamrip boundary |
+| [2026-11-02](2026-11-02-an-event-says-what-it-costs-and-who-can-get-in.md) | An event says what it costs and who can get in: admission (`free`, `donation`, `notaflof`, `paid`), minimum age, setting and access are nullable columns stated by a person or a feed and never inferred; step-free access alone takes a no; a patch may keep usual answers that pre-fill the form and fill event sources at insert; filters match stated facts only *(applies 2026-10-20, 079 and 2026-09-19's insert-only default)* |
 
 ## Rejected after evaluation
 
