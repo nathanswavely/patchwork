@@ -185,7 +185,11 @@ func TestMyMembershipsFiltersByRole(t *testing.T) {
 				Role string `json:"role"`
 			} `json:"items"`
 		}
-		json.NewDecoder(w.Body).Decode(&out)
+		if w.Code == http.StatusOK {
+			if err := json.NewDecoder(w.Body).Decode(&out); err != nil {
+				t.Fatalf("decode %s: %v", path, err)
+			}
+		}
 		got := map[string]string{}
 		for _, it := range out.Items {
 			got[it.Slug] = it.Role
