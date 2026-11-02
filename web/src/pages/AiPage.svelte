@@ -37,7 +37,7 @@
 </script>
 
 <svelte:head>
-  <title>Where AI is | {instanceName}</title>
+  <title>Patchwork & AI | {instanceName}</title>
 </svelte:head>
 
 <div class="ai-page lt-fade-in">
@@ -47,8 +47,7 @@
     <ErrorState message={error} />
   {:else}
     <header class="ai-header">
-      <p class="ai-kicker">The fine print</p>
-      <h1>Where AI is</h1>
+      <h1>Patchwork & AI</h1>
     </header>
 
     <section class="ai-prose">
@@ -83,14 +82,6 @@
 
   .ai-header {
     margin-bottom: 20px;
-  }
-  .ai-kicker {
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--color-primary);
-    margin: 0 0 4px;
   }
   .ai-header h1 {
     margin: 0;
