@@ -6,6 +6,7 @@ import (
 	"go/parser"
 	"go/token"
 	"os"
+	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
@@ -31,30 +32,33 @@ const pagedEndpointsFile = "../../web/src/test/paged-endpoints.json"
 // parsePaginationParams.
 func pagedHandlers(t *testing.T) map[string]bool {
 	t.Helper()
-	fset := token.NewFileSet()
-	pkgs, err := parser.ParseDir(fset, "../../internal/handler", func(fi os.FileInfo) bool {
-		return !strings.HasSuffix(fi.Name(), "_test.go")
-	}, 0)
+	paths, err := filepath.Glob("../../internal/handler/*.go")
 	if err != nil {
-		t.Fatalf("parse internal/handler: %v", err)
+		t.Fatalf("list internal/handler: %v", err)
 	}
+	fset := token.NewFileSet()
 	found := map[string]bool{}
-	for _, pkg := range pkgs {
-		for _, file := range pkg.Files {
-			for _, decl := range file.Decls {
-				fn, ok := decl.(*ast.FuncDecl)
-				if !ok || fn.Body == nil || fn.Name.Name == "parsePaginationParams" {
-					continue
-				}
-				ast.Inspect(fn.Body, func(n ast.Node) bool {
-					if call, ok := n.(*ast.CallExpr); ok {
-						if id, ok := call.Fun.(*ast.Ident); ok && id.Name == "parsePaginationParams" {
-							found[fn.Name.Name] = true
-						}
-					}
-					return true
-				})
+	for _, path := range paths {
+		if strings.HasSuffix(path, "_test.go") {
+			continue
+		}
+		file, err := parser.ParseFile(fset, path, nil, 0)
+		if err != nil {
+			t.Fatalf("parse %s: %v", path, err)
+		}
+		for _, decl := range file.Decls {
+			fn, ok := decl.(*ast.FuncDecl)
+			if !ok || fn.Body == nil || fn.Name.Name == "parsePaginationParams" {
+				continue
 			}
+			ast.Inspect(fn.Body, func(n ast.Node) bool {
+				if call, ok := n.(*ast.CallExpr); ok {
+					if id, ok := call.Fun.(*ast.Ident); ok && id.Name == "parsePaginationParams" {
+						found[fn.Name.Name] = true
+					}
+				}
+				return true
+			})
 		}
 	}
 	return found
