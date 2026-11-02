@@ -502,7 +502,7 @@ func TestAIDisclosure_AIPageRendersTheSwitch(t *testing.T) {
 		t.Errorf("default page should render the optional paragraph: %s", md)
 	}
 	setAIDisclosure(t, db, "required")
-	if md := page(); !strings.Contains(md, "It needs an answer") {
+	if md := page(); !strings.Contains(md, "a form requires them to disclose") {
 		t.Errorf("required page should say an answer is needed: %s", md)
 	}
 	setAIDisclosure(t, db, "off")

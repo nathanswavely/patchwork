@@ -4121,14 +4121,14 @@
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 241,
+          "line": 274,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 450,
+          "line": 483,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4512,7 +4512,7 @@
       "occurrences": [
         {
           "file": "internal/handler/activity.go",
-          "line": 91,
+          "line": 113,
           "kind": "go-error-body",
           "raw": "failed to load activity",
           "quote": null
@@ -4776,21 +4776,21 @@
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 217,
+          "line": 250,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 311,
+          "line": 344,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 688,
+          "line": 721,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -6239,62 +6239,64 @@
       ]
     },
     {
-      "id": "8378765ce6af",
-      "text": "No. Nothing on {quilt_name} sends what you write, or anything about you, to an AI model. No model summarizes, ranks, rewrites, moderates or generates anything here. Accounts are for people, and nothing on this site posts by itself. We can't stop other users from taking public content from the site and giving it to AI, but the site itself will not do so.",
-      "words": 63,
+      "id": "6e4007c4d359",
+      "text": "Patchwork doesn't use AI to evaluate, train on, or compile any user behavior or attributes. I am trying to build something that is human-first. Humans have been successfully building community for millennia without AI, and while there may be AI tools that promise to help with things like moderation, aggregation, etc... I am trying to move slowly in this regard as our culture figures out how to build shared language around this divisive technology. Patchwork is open source, so if you truly believe there is a particular AI tool that aligns with the mission, you are free to suggest. However be warned that you will need to make a case that goes beyond just \"convenience.\"",
+      "words": 115,
       "tier": "prose",
       "status": "human",
       "replacement": null,
-      "note": null,
+      "note": "Nathan rewrote the AI page, 2026-11-02",
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
           "line": 36,
           "kind": "go-doc-block",
-          "raw": "No. Nothing on {quilt_name} sends what you write, or anything about you, to an AI model. No model summarizes, ranks, rewrites, moderates or generates anything here. Accounts are for people, and nothing on this site posts by itself. We can't stop other users from taking public content from the site and giving it to AI, but the site itself will not do so.",
+          "raw": "Patchwork doesn't use AI to evaluate, train on, or compile any user behavior or attributes. I am trying to build something that is human-first. Humans have been successfully building community for millennia without AI, and while there may be AI tools that promise to help with things like moderation, aggregation, etc... I am trying to move slowly in this regard as our culture figures out how to build shared language around this divisive technology. Patchwork is open source, so if you truly believe there is a particular AI tool that aligns with the mission, you are free to suggest. However be warned that you will need to make a case that goes beyond just \"convenience.\"",
           "quote": null
         }
       ],
-      "previous_ai_text": "No. Nothing on {quilt_name} sends what you write, or anything about you, to an AI model. No model summarizes, ranks, rewrites, moderates or generates anything here. Accounts are for people, and nothing on this site posts by itself.",
       "authorship": {
-        "kind": "edited"
+        "kind": "claimed"
       }
     },
     {
-      "id": "bba105368d68",
-      "text": "The server opens connections to other machines for these reasons and no others:",
-      "words": 13,
+      "id": "4f75d76555cb",
+      "text": "The {quilt_name} server opens connections to other machines for these reasons and no others:",
+      "words": 14,
       "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "AI-drafted wording kept, edited by Nathan 2026-11-02",
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
           "line": 38,
           "kind": "go-doc-block",
-          "raw": "The server opens connections to other machines for these reasons and no others:",
+          "raw": "The {quilt_name} server opens connections to other machines for these reasons and no others:",
           "quote": null
         }
       ]
     },
     {
-      "id": "c898828aeefb",
-      "text": "That list is checked against the code. A change that lets the server reach anything else fails the build until this page says what it is.",
-      "words": 26,
+      "id": "1e28142d3a96",
+      "text": "This list is built into the code, so a change that reaches out to anything else will cause the build to fail.",
+      "words": 22,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": null,
+      "note": "Nathan rewrote the AI page, 2026-11-02",
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
           "line": 42,
           "kind": "go-doc-block",
-          "raw": "That list is checked against the code. A change that lets the server reach anything else fails the build until this page says what it is.",
+          "raw": "This list is built into the code, so a change that reaches out to anything else will cause the build to fail.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "0dd147edfe76",
@@ -6315,44 +6317,46 @@
       ]
     },
     {
-      "id": "3208cd4b2724",
-      "text": "Not with permission. The site's robots.txt asks these crawlers to stay away, and the server refuses the ones that arrive under names that we know are AI including, but not limited to:",
-      "words": 32,
+      "id": "01e3696797b4",
+      "text": "Not as far as we can control. The site's robots.txt instructs these crawlers to stay away, and the server refuses these known crawlers:",
+      "words": 23,
       "tier": "prose",
       "status": "human",
       "replacement": null,
-      "note": null,
+      "note": "Nathan rewrote the AI page, 2026-11-02",
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
           "line": 48,
           "kind": "go-doc-block",
-          "raw": "Not with permission. The site's robots.txt asks these crawlers to stay away, and the server refuses the ones that arrive under names that we know are AI including, but not limited to:",
+          "raw": "Not as far as we can control. The site's robots.txt instructs these crawlers to stay away, and the server refuses these known crawlers:",
           "quote": null
         }
       ],
-      "previous_ai_text": "Not with permission. The site's robots.txt asks these crawlers to stay away, and the server refuses the ones that arrive under their own name anyway:",
       "authorship": {
-        "kind": "edited"
+        "kind": "claimed"
       }
     },
     {
-      "id": "f26633d5872d",
-      "text": "That has limits. A scraper that lies about its name looks like any other browser and gets in. And public posts that federate are copied to other servers, which keep them under their own rules.",
-      "words": 35,
+      "id": "cca017113456",
+      "text": "If you know of any others, or any more sophisticated ways of preventing this, please let me know.",
+      "words": 18,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": null,
+      "note": "Nathan rewrote the AI page, 2026-11-02",
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
           "line": 52,
           "kind": "go-doc-block",
-          "raw": "That has limits. A scraper that lies about its name looks like any other browser and gets in. And public posts that federate are copied to other servers, which keep them under their own rules.",
+          "raw": "If you know of any others, or any more sophisticated ways of preventing this, please let me know.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "ed8ff1d11522",
@@ -6373,19 +6377,19 @@
       ]
     },
     {
-      "id": "997a93384fe4",
-      "text": "Yes. Patchwork's codebase was developed with significant help from AI coding tools. People design it, make every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
-      "words": 44,
+      "id": "32cddb2b2e2d",
+      "text": "Yes. Patchwork's codebase was developed with help from AI coding tools. People design it, make every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
+      "words": 43,
       "tier": "prose",
       "status": "human",
       "replacement": null,
-      "note": null,
+      "note": "Nathan rewrote the AI page, 2026-11-02",
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
           "line": 56,
           "kind": "go-doc-block",
-          "raw": "Yes. Patchwork's codebase was developed with significant help from AI coding tools. People design it, make every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
+          "raw": "Yes. Patchwork's codebase was developed with help from AI coding tools. People design it, make every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
           "quote": null
         }
       ],
@@ -6394,19 +6398,19 @@
       }
     },
     {
-      "id": "42d7c0bcd5bc",
-      "text": "The core of what visitors and newcomers read is human written: the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please contribute to the project.",
-      "words": 100,
+      "id": "50d6c24268f8",
+      "text": "The core of what visitors and newcomers read is human written by me: the lining, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, and the buttons and messages around them, was drafted with AI and reviewed by me. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please reach out to me or better yet, contribute to the project.",
+      "words": 101,
       "tier": "prose",
       "status": "human",
       "replacement": null,
-      "note": null,
+      "note": "Nathan rewrote the AI page, 2026-11-02",
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
           "line": 58,
           "kind": "go-doc-block",
-          "raw": "The core of what visitors and newcomers read is human written: the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please contribute to the project.",
+          "raw": "The core of what visitors and newcomers read is human written by me: the lining, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, and the buttons and messages around them, was drafted with AI and reviewed by me. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please reach out to me or better yet, contribute to the project.",
           "quote": null
         }
       ],
@@ -6523,37 +6527,37 @@
       ]
     },
     {
-      "id": "80eed2851140",
-      "text": "**Labels.** When someone posts an event, a proposal, a notice, a charter change or a patch description here, the form asks whether AI made it, and, where there is an image, whether AI made the image. Answering is optional. Anything its author says AI made carries a \"Made with AI\" tag. A patch can also say that its work relies on AI, and you can hide those patches from your own browsing in your account settings.",
-      "words": 76,
+      "id": "d42e93311946",
+      "text": "**Labels.** When someone posts an event, a proposal, a notice, a charter change, a patch description, or an image link, they are provided a disclosure form asking whether AI made it. Answering is optional. Anything its author says AI made carries a \"Made with AI\" tag. A patch can also say that its work relies on AI, and any user can hide those patches from your own browsing in your account settings.",
+      "words": 72,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "AI-drafted wording kept, edited by Nathan 2026-11-02",
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
           "line": 93,
           "kind": "go-doc-block",
-          "raw": "**Labels.** When someone posts an event, a proposal, a notice, a charter change or a patch description here, the form asks whether AI made it, and, where there is an image, whether AI made the image. Answering is optional. Anything its author says AI made carries a \"Made with AI\" tag. A patch can also say that its work relies on AI, and you can hide those patches from your own browsing in your account settings.",
+          "raw": "**Labels.** When someone posts an event, a proposal, a notice, a charter change, a patch description, or an image link, they are provided a disclosure form asking whether AI made it. Answering is optional. Anything its author says AI made carries a \"Made with AI\" tag. A patch can also say that its work relies on AI, and any user can hide those patches from your own browsing in your account settings.",
           "quote": null
         }
       ]
     },
     {
-      "id": "282055765435",
-      "text": "**Labels.** When someone posts an event, a proposal, a notice, a charter change or a patch description here, the form asks whether AI made it, and, where there is an image, whether AI made the image. It needs an answer. Anything its author says AI made carries a \"Made with AI\" tag. A patch can also say that its work relies on AI, and you can hide those patches from your own browsing in your account settings.",
-      "words": 77,
+      "id": "2e62fa4dceaf",
+      "text": "**Labels.** When someone posts an event, a proposal, a notice, a charter change, a patch description, or an image link, a form requires them to disclose whether AI made it. Anything its author says AI made carries a \"Made with AI\" tag. A patch can also say that its work relies on AI, and users can hide those patches from your own browsing in your account settings.",
+      "words": 67,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "AI-drafted wording kept, edited by Nathan 2026-11-02",
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
           "line": 94,
           "kind": "go-doc-block",
-          "raw": "**Labels.** When someone posts an event, a proposal, a notice, a charter change or a patch description here, the form asks whether AI made it, and, where there is an image, whether AI made the image. It needs an answer. Anything its author says AI made carries a \"Made with AI\" tag. A patch can also say that its work relies on AI, and you can hide those patches from your own browsing in your account settings.",
+          "raw": "**Labels.** When someone posts an event, a proposal, a notice, a charter change, a patch description, or an image link, a form requires them to disclose whether AI made it. Anything its author says AI made carries a \"Made with AI\" tag. A patch can also say that its work relies on AI, and users can hide those patches from your own browsing in your account settings.",
           "quote": null
         }
       ]
@@ -7146,49 +7150,49 @@
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 382,
+          "line": 415,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 388,
+          "line": 421,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 427,
+          "line": 460,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 598,
+          "line": 631,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 603,
+          "line": 636,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 651,
+          "line": 684,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 655,
+          "line": 688,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
@@ -10774,14 +10778,14 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 231,
+          "line": 264,
           "kind": "go-error-body",
           "raw": "admin access required",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 434,
+          "line": 467,
           "kind": "go-error-body",
           "raw": "admin access required",
           "quote": null
@@ -10799,7 +10803,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 245,
+          "line": 278,
           "kind": "go-error-body",
           "raw": "title is required",
           "quote": null
@@ -10824,14 +10828,14 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 254,
+          "line": 287,
           "kind": "go-error-body",
           "raw": "visibility must be public or members",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 468,
+          "line": 501,
           "kind": "go-error-body",
           "raw": "visibility must be public or members",
           "quote": null
@@ -10849,14 +10853,14 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 262,
+          "line": 295,
           "kind": "go-error-body",
           "raw": "that title is reserved for the lining",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 493,
+          "line": 526,
           "kind": "go-error-body",
           "raw": "that title is reserved for the lining",
           "quote": null
@@ -10874,7 +10878,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 272,
+          "line": 305,
           "kind": "go-error-body",
           "raw": "failed to create governance doc",
           "quote": null
@@ -10892,7 +10896,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 328,
+          "line": 361,
           "kind": "go-error-body",
           "raw": "failed to list governance docs",
           "quote": null
@@ -10910,7 +10914,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 460,
+          "line": 493,
           "kind": "go-error-body",
           "raw": "title, body, or visibility is required",
           "quote": null
@@ -10928,7 +10932,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 464,
+          "line": 497,
           "kind": "go-error-body",
           "raw": "title cannot be empty",
           "quote": null
@@ -10946,7 +10950,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 477,
+          "line": 510,
           "kind": "go-error-body",
           "raw": "the lining's title cannot be changed",
           "quote": null
@@ -10964,7 +10968,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 481,
+          "line": 514,
           "kind": "go-error-body",
           "raw": "the lining is always public",
           "quote": null
@@ -10982,7 +10986,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 485,
+          "line": 518,
           "kind": "go-error-body",
           "raw": "the lining can only be changed by amendment proposal",
           "quote": null
@@ -11000,7 +11004,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 524,
+          "line": 557,
           "kind": "go-error-body",
           "raw": "failed to update governance doc",
           "quote": null
@@ -11018,7 +11022,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 644,
+          "line": 677,
           "kind": "go-error-body",
           "raw": "from and to query params are required",
           "quote": null
@@ -11036,7 +11040,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 661,
+          "line": 694,
           "kind": "go-error-body",
           "raw": "governance repos not configured",
           "quote": null
@@ -11054,7 +11058,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 667,
+          "line": 700,
           "kind": "go-error-body",
           "raw": "version not found",
           "quote": null
@@ -75431,6 +75435,200 @@
         "kind": "written"
       },
       "previous_ai_text": "Members elect the next admins. Until then the longest-standing members who have taken part recently step in, and if nobody has the seats stay empty until the election."
+    },
+    {
+      "id": "8378765ce6af",
+      "text": "No. Nothing on {quilt_name} sends what you write, or anything about you, to an AI model. No model summarizes, ranks, rewrites, moderates or generates anything here. Accounts are for people, and nothing on this site posts by itself. We can't stop other users from taking public content from the site and giving it to AI, but the site itself will not do so.",
+      "words": 63,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 36,
+          "kind": "go-doc-block",
+          "raw": "No. Nothing on {quilt_name} sends what you write, or anything about you, to an AI model. No model summarizes, ranks, rewrites, moderates or generates anything here. Accounts are for people, and nothing on this site posts by itself. We can't stop other users from taking public content from the site and giving it to AI, but the site itself will not do so.",
+          "quote": null
+        }
+      ],
+      "previous_ai_text": "No. Nothing on {quilt_name} sends what you write, or anything about you, to an AI model. No model summarizes, ranks, rewrites, moderates or generates anything here. Accounts are for people, and nothing on this site posts by itself.",
+      "authorship": {
+        "kind": "edited"
+      }
+    },
+    {
+      "id": "bba105368d68",
+      "text": "The server opens connections to other machines for these reasons and no others:",
+      "words": 13,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 38,
+          "kind": "go-doc-block",
+          "raw": "The server opens connections to other machines for these reasons and no others:",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "c898828aeefb",
+      "text": "That list is checked against the code. A change that lets the server reach anything else fails the build until this page says what it is.",
+      "words": 26,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 42,
+          "kind": "go-doc-block",
+          "raw": "That list is checked against the code. A change that lets the server reach anything else fails the build until this page says what it is.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "3208cd4b2724",
+      "text": "Not with permission. The site's robots.txt asks these crawlers to stay away, and the server refuses the ones that arrive under names that we know are AI including, but not limited to:",
+      "words": 32,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 48,
+          "kind": "go-doc-block",
+          "raw": "Not with permission. The site's robots.txt asks these crawlers to stay away, and the server refuses the ones that arrive under names that we know are AI including, but not limited to:",
+          "quote": null
+        }
+      ],
+      "previous_ai_text": "Not with permission. The site's robots.txt asks these crawlers to stay away, and the server refuses the ones that arrive under their own name anyway:",
+      "authorship": {
+        "kind": "edited"
+      }
+    },
+    {
+      "id": "f26633d5872d",
+      "text": "That has limits. A scraper that lies about its name looks like any other browser and gets in. And public posts that federate are copied to other servers, which keep them under their own rules.",
+      "words": 35,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 52,
+          "kind": "go-doc-block",
+          "raw": "That has limits. A scraper that lies about its name looks like any other browser and gets in. And public posts that federate are copied to other servers, which keep them under their own rules.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "997a93384fe4",
+      "text": "Yes. Patchwork's codebase was developed with significant help from AI coding tools. People design it, make every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
+      "words": 44,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 56,
+          "kind": "go-doc-block",
+          "raw": "Yes. Patchwork's codebase was developed with significant help from AI coding tools. People design it, make every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
+          "quote": null
+        }
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
+    },
+    {
+      "id": "42d7c0bcd5bc",
+      "text": "The core of what visitors and newcomers read is human written: the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please contribute to the project.",
+      "words": 100,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 58,
+          "kind": "go-doc-block",
+          "raw": "The core of what visitors and newcomers read is human written: the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please contribute to the project.",
+          "quote": null
+        }
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
+    },
+    {
+      "id": "80eed2851140",
+      "text": "**Labels.** When someone posts an event, a proposal, a notice, a charter change or a patch description here, the form asks whether AI made it, and, where there is an image, whether AI made the image. Answering is optional. Anything its author says AI made carries a \"Made with AI\" tag. A patch can also say that its work relies on AI, and you can hide those patches from your own browsing in your account settings.",
+      "words": 76,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 93,
+          "kind": "go-doc-block",
+          "raw": "**Labels.** When someone posts an event, a proposal, a notice, a charter change or a patch description here, the form asks whether AI made it, and, where there is an image, whether AI made the image. Answering is optional. Anything its author says AI made carries a \"Made with AI\" tag. A patch can also say that its work relies on AI, and you can hide those patches from your own browsing in your account settings.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "282055765435",
+      "text": "**Labels.** When someone posts an event, a proposal, a notice, a charter change or a patch description here, the form asks whether AI made it, and, where there is an image, whether AI made the image. It needs an answer. Anything its author says AI made carries a \"Made with AI\" tag. A patch can also say that its work relies on AI, and you can hide those patches from your own browsing in your account settings.",
+      "words": 77,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 94,
+          "kind": "go-doc-block",
+          "raw": "**Labels.** When someone posts an event, a proposal, a notice, a charter change or a patch description here, the form asks whether AI made it, and, where there is an image, whether AI made the image. It needs an answer. Anything its author says AI made carries a \"Made with AI\" tag. A patch can also say that its work relies on AI, and you can hide those patches from your own browsing in your account settings.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "22281ab53c2d",
+      "text": "Patchwork opens connections to other machines for these reasons and no others:",
+      "words": 12,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted wording kept, edited by Nathan 2026-11-02",
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 38,
+          "kind": "go-doc-block",
+          "raw": "Patchwork opens connections to other machines for these reasons and no others:",
+          "quote": null
+        }
+      ]
     }
   ],
   "baseline": [

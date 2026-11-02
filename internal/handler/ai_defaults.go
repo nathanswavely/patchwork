@@ -33,29 +33,29 @@ package handler
 
 const aiPageProject = `## Does AI touch what you post here?
 
-No. Nothing on {quilt_name} sends what you write, or anything about you, to an AI model. No model summarizes, ranks, rewrites, moderates or generates anything here. Accounts are for people, and nothing on this site posts by itself. We can't stop other users from taking public content from the site and giving it to AI, but the site itself will not do so.
+Patchwork doesn't use AI to evaluate, train on, or compile any user behavior or attributes. I am trying to build something that is human-first. Humans have been successfully building community for millennia without AI, and while there may be AI tools that promise to help with things like moderation, aggregation, etc... I am trying to move slowly in this regard as our culture figures out how to build shared language around this divisive technology. Patchwork is open source, so if you truly believe there is a particular AI tool that aligns with the mission, you are free to suggest. However be warned that you will need to make a case that goes beyond just "convenience."
 
-The server opens connections to other machines for these reasons and no others:
+The {quilt_name} server opens connections to other machines for these reasons and no others:
 
 {outbound}
 
-That list is checked against the code. A change that lets the server reach anything else fails the build until this page says what it is.
+This list is built into the code, so a change that reaches out to anything else will cause the build to fail.
 
 {ai_disclosure}
 
 ## Can AI companies take what is here?
 
-Not with permission. The site's robots.txt asks these crawlers to stay away, and the server refuses the ones that arrive under names that we know are AI including, but not limited to:
+Not as far as we can control. The site's robots.txt instructs these crawlers to stay away, and the server refuses these known crawlers:
 
 {ai_crawlers}
 
-That has limits. A scraper that lies about its name looks like any other browser and gets in. And public posts that federate are copied to other servers, which keep them under their own rules.
+If you know of any others, or any more sophisticated ways of preventing this, please let me know.
 
 ## Was this software built with AI?
 
-Yes. Patchwork's codebase was developed with significant help from AI coding tools. People design it, make every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.
+Yes. Patchwork's codebase was developed with help from AI coding tools. People design it, make every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.
 
-The core of what visitors and newcomers read is human written: the lining every patch agrees to, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, and the buttons and messages around them, was drafted with AI and reviewed by a person before it shipped. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please contribute to the project.
+The core of what visitors and newcomers read is human written by me: the lining, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, and the buttons and messages around them, was drafted with AI and reviewed by me. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please reach out to me or better yet, contribute to the project.
 
 The project's repository keeps [a public record of who wrote each string](https://github.com/nathanswavely/patchwork/blob/main/copy/REPORT.md) a visitor can read.`
 
@@ -90,6 +90,6 @@ var aiPageOutbound = []struct {
 // forms do under that setting; change the forms and change these.
 const (
 	aiDisclosureOffText      = `**Labels.** {quilt_name} does not ask people whether AI made what they post. The stewards have turned that question off.`
-	aiDisclosureOptionalText = `**Labels.** When someone posts an event, a proposal, a notice, a charter change or a patch description here, the form asks whether AI made it, and, where there is an image, whether AI made the image. Answering is optional. Anything its author says AI made carries a "Made with AI" tag. A patch can also say that its work relies on AI, and you can hide those patches from your own browsing in your account settings.`
-	aiDisclosureRequiredText = `**Labels.** When someone posts an event, a proposal, a notice, a charter change or a patch description here, the form asks whether AI made it, and, where there is an image, whether AI made the image. It needs an answer. Anything its author says AI made carries a "Made with AI" tag. A patch can also say that its work relies on AI, and you can hide those patches from your own browsing in your account settings.`
+	aiDisclosureOptionalText = `**Labels.** When someone posts an event, a proposal, a notice, a charter change, a patch description, or an image link, they are provided a disclosure form asking whether AI made it. Answering is optional. Anything its author says AI made carries a "Made with AI" tag. A patch can also say that its work relies on AI, and any user can hide those patches from your own browsing in your account settings.`
+	aiDisclosureRequiredText = `**Labels.** When someone posts an event, a proposal, a notice, a charter change, a patch description, or an image link, a form requires them to disclose whether AI made it. Anything its author says AI made carries a "Made with AI" tag. A patch can also say that its work relies on AI, and users can hide those patches from your own browsing in your account settings.`
 )
