@@ -52143,7 +52143,7 @@
         },
         {
           "file": "web/src/pages/LegalDoc.svelte",
-          "line": 74,
+          "line": 73,
           "kind": "markup",
           "raw": "Also see the",
           "quote": null
@@ -58855,24 +58855,6 @@
       }
     },
     {
-      "id": "dd07d4bd15b4",
-      "text": "The fine print",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/LegalDoc.svelte",
-          "line": 62,
-          "kind": "markup",
-          "raw": "The fine print",
-          "quote": null
-        }
-      ]
-    },
-    {
       "id": "712fdd6a2e26",
       "text": "Last updated {updatedDate}.",
       "words": 2,
@@ -58883,7 +58865,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/LegalDoc.svelte",
-          "line": 65,
+          "line": 64,
           "kind": "markup",
           "raw": "Last updated {updatedDate}.",
           "quote": null
@@ -58901,7 +58883,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/LegalDoc.svelte",
-          "line": 76,
+          "line": 75,
           "kind": "markup",
           "raw": "says\n      who runs {instanceName} and what it costs to keep up.",
           "quote": null
@@ -75929,6 +75911,24 @@
           "line": 35,
           "kind": "markup",
           "raw": "The Lining &mdash; {instanceName}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "dd07d4bd15b4",
+      "text": "The fine print",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/LegalDoc.svelte",
+          "line": 62,
+          "kind": "markup",
+          "raw": "The fine print",
           "quote": null
         }
       ]

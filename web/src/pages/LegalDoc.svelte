@@ -59,7 +59,6 @@
     <ErrorState message={error} />
   {:else}
     <header class="legal-header">
-      <p class="legal-kicker">The fine print</p>
       <h1>{data.title}</h1>
       {#if data.customized && updatedDate}
         <p class="legal-sub lt-muted">Last updated {updatedDate}.</p>
@@ -89,14 +88,6 @@
 
   .legal-header {
     margin-bottom: 20px;
-  }
-  .legal-kicker {
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--color-primary);
-    margin: 0 0 4px;
   }
   .legal-header h1 {
     margin: 0 0 4px;
