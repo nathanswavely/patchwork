@@ -41756,19 +41756,19 @@
       ]
     },
     {
-      "id": "17d28ffdf501",
-      "text": "About — {instanceName}",
+      "id": "0398cd4d7405",
+      "text": "About | {instanceName}",
       "words": 2,
       "tier": "label",
       "status": "human",
       "replacement": null,
-      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
+      "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
           "line": 65,
           "kind": "markup",
-          "raw": "About &mdash; {instanceName}",
+          "raw": "About | {instanceName}",
           "quote": null
         }
       ],
@@ -52143,7 +52143,7 @@
         },
         {
           "file": "web/src/pages/LegalDoc.svelte",
-          "line": 74,
+          "line": 73,
           "kind": "markup",
           "raw": "Also see the",
           "quote": null
@@ -56140,19 +56140,19 @@
       ]
     },
     {
-      "id": "0c4a7436cf57",
-      "text": "How governance works — {instanceName}",
+      "id": "4bd901e1f179",
+      "text": "How governance works | {instanceName}",
       "words": 4,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/Governance.svelte",
           "line": 38,
           "kind": "markup",
-          "raw": "How governance works &mdash; {instanceName}",
+          "raw": "How governance works | {instanceName}",
           "quote": null
         }
       ]
@@ -58519,8 +58519,8 @@
       ]
     },
     {
-      "id": "b9c9d0901c9b",
-      "text": "The Label — {instanceName}",
+      "id": "ce00d7c81b44",
+      "text": "The Label | {instanceName}",
       "words": 3,
       "tier": "label",
       "status": "ai-fine",
@@ -58531,7 +58531,7 @@
           "file": "web/src/pages/Label.svelte",
           "line": 36,
           "kind": "markup",
-          "raw": "The Label &mdash; {instanceName}",
+          "raw": "The Label | {instanceName}",
           "quote": null
         }
       ]
@@ -58855,24 +58855,6 @@
       }
     },
     {
-      "id": "dd07d4bd15b4",
-      "text": "The fine print",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/LegalDoc.svelte",
-          "line": 62,
-          "kind": "markup",
-          "raw": "The fine print",
-          "quote": null
-        }
-      ]
-    },
-    {
       "id": "712fdd6a2e26",
       "text": "Last updated {updatedDate}.",
       "words": 2,
@@ -58883,7 +58865,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/LegalDoc.svelte",
-          "line": 65,
+          "line": 64,
           "kind": "markup",
           "raw": "Last updated {updatedDate}.",
           "quote": null
@@ -58901,7 +58883,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/LegalDoc.svelte",
-          "line": 76,
+          "line": 75,
           "kind": "markup",
           "raw": "says\n      who runs {instanceName} and what it costs to keep up.",
           "quote": null
@@ -58909,8 +58891,8 @@
       ]
     },
     {
-      "id": "5d6a7413714b",
-      "text": "The Lining — {instanceName}",
+      "id": "d8caea0844cf",
+      "text": "The Lining | {instanceName}",
       "words": 3,
       "tier": "label",
       "status": "ai-fine",
@@ -58921,7 +58903,7 @@
           "file": "web/src/pages/Lining.svelte",
           "line": 35,
           "kind": "markup",
-          "raw": "The Lining &mdash; {instanceName}",
+          "raw": "The Lining | {instanceName}",
           "quote": null
         }
       ]
@@ -75857,6 +75839,99 @@
         "kind": "written"
       },
       "previous_ai_text": "Nobody runs {quilt_name} for profit. There are no ads or trackers here, no analytics scripts, and nothing about you gets sold or rented to anyone. The site keeps the minimum it needs to work: an email address to sign you in, the profile you choose to write, and a record of which patches you join and what you post there. Real people run this server. The [Label](/label) says who they are and how to reach them."
+    },
+    {
+      "id": "17d28ffdf501",
+      "text": "About — {instanceName}",
+      "words": 2,
+      "tier": "label",
+      "status": "human",
+      "replacement": null,
+      "note": "The author's rewrite of the page (03fc362), first recorded as drafted on purpose as an understatement; corrected 2026-10-28.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/About.svelte",
+          "line": 65,
+          "kind": "markup",
+          "raw": "About &mdash; {instanceName}",
+          "quote": null
+        }
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
+    },
+    {
+      "id": "0c4a7436cf57",
+      "text": "How governance works — {instanceName}",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 38,
+          "kind": "markup",
+          "raw": "How governance works &mdash; {instanceName}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b9c9d0901c9b",
+      "text": "The Label — {instanceName}",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/Label.svelte",
+          "line": 36,
+          "kind": "markup",
+          "raw": "The Label &mdash; {instanceName}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "5d6a7413714b",
+      "text": "The Lining — {instanceName}",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/Lining.svelte",
+          "line": 35,
+          "kind": "markup",
+          "raw": "The Lining &mdash; {instanceName}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "dd07d4bd15b4",
+      "text": "The fine print",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/LegalDoc.svelte",
+          "line": 62,
+          "kind": "markup",
+          "raw": "The fine print",
+          "quote": null
+        }
+      ]
     }
   ],
   "baseline": [

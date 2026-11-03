@@ -35,7 +35,7 @@
 </script>
 
 <svelte:head>
-  <title>How governance works &mdash; {instanceName}</title>
+  <title>How governance works | {instanceName}</title>
 </svelte:head>
 
 <div class="governance-page lt-fade-in">
