@@ -56,7 +56,7 @@ func SEO(db *database.DB, cfg *config.Config, spaHTML []byte) func(http.Handler)
 					slug,
 				).Scan(&name, &desc)
 				if err == nil && name != "" {
-					ogTitle = name + " — " + instanceName
+					ogTitle = name + " | " + instanceName
 					if desc != "" {
 						ogDesc = desc
 					}
@@ -84,7 +84,7 @@ func SEO(db *database.DB, cfg *config.Config, spaHTML []byte) func(http.Handler)
 					id,
 				).Scan(&title, &desc)
 				if err == nil && title != "" {
-					ogTitle = title + " — " + instanceName
+					ogTitle = title + " | " + instanceName
 					if desc != "" {
 						ogDesc = desc
 					}

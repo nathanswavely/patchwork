@@ -33,7 +33,7 @@
 </script>
 
 <svelte:head>
-  <title>The Label &mdash; {instanceName}</title>
+  <title>The Label | {instanceName}</title>
 </svelte:head>
 
 <div class="label-page lt-fade-in">

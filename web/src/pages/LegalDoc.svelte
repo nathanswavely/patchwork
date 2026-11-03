@@ -49,7 +49,7 @@
 </script>
 
 <svelte:head>
-  <title>{data?.title || 'Legal'} &mdash; {instanceName}</title>
+  <title>{data?.title || 'Legal'} | {instanceName}</title>
 </svelte:head>
 
 <div class="legal-page lt-fade-in">
