@@ -31,7 +31,7 @@ const defaultPrivacyPolicy = `*This is the default privacy policy that ships wit
 
 ## The short version
 
-Nobody runs {quilt_name} for profit. There are no ads or trackers here, no analytics scripts, and nothing about you gets sold or rented to anyone. The site keeps the minimum it needs to work: an email address to sign you in, the profile you choose to write, and a record of which patches you join and what you post there. Real people run this server. The [Label](/label) says who they are and how to reach them.
+This site, {quilt_name}, is not for profit and there is no monetization. There are no ads or trackers, no analytics scripts, and none of your data gets sold or rented to anyone (even in anonymized form). The site keeps the bare minimum it needs to function: an email address to sign you in, your submitted profile details, and a record of which patches you join and what you post there. Real people run this server. The [Label](/label) is where you can find their info.
 
 ## What this site collects
 

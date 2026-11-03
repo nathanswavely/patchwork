@@ -314,7 +314,7 @@
               disabled={busy}
               rows="3"
               maxlength={STATEMENT_MAX}
-              placeholder="A few lines the other members will see beside your name on the ballot."
+              placeholder="Write a few lines to sit by your name on the ballot."
             ></textarea>
             <div class="stand-actions">
               <button class="lt-btn lt-btn-sm" onclick={stand} disabled={busy}>
@@ -362,7 +362,7 @@
       {#if ballotIn}
         <p class="ballot-in small">Your ballot is in. You can change it until voting closes.</p>
       {:else}
-        <p class="lt-muted small">You can change this until voting closes.</p>
+        <p class="lt-muted small">Editing available until voting closes.</p>
       {/if}
 
       <!-- Turning up and approving nobody (F-092).

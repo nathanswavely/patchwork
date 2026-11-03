@@ -193,7 +193,7 @@ func stillOpenToFollowers(rules *governance.GovernanceRules, rowFP string) strin
 		open = append(open, "its member list")
 	}
 	if len(open) == 0 {
-		return "Followers here can now see only what any visitor can."
+		return "Followers view rights now match a normal visitor."
 	}
 	return "Followers here can still see " + joinWithAnd(open) + ", each of which is a separate switch in the same place."
 }

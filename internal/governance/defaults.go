@@ -268,9 +268,9 @@ This patch exists to serve our community through shared space, resources, and co
 
 We follow a meritocratic model inspired by open source communities. Authority is earned through sustained contribution, not elected or inherited.
 
-- **Followers** are community members who stay informed. They can attend events and observe governance.
-- **Members** have demonstrated commitment to the patch. They can vote on proposals and participate in governance.
-- **Admins** are experienced members who have been nominated by existing admins and ratified by the community. They manage day-to-day operations.
+- **Followers** stay informed. They can see events and observe public governance.
+- **Members** have joined and made some commitment to the patch. They can vote on proposals and participate in governance.
+- **Admins** are members who have been nominated by existing admins and ratified by the community, or creators of the communities themselves. They manage day-to-day operations.
 
 ### Becoming an Admin
 

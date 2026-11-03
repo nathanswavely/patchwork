@@ -7,7 +7,7 @@
       "text": "Contributing to Patchwork",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -65,7 +65,7 @@
       "text": "Requirements: Go 1.25+, Node 20+.",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -147,7 +147,7 @@
       "text": "Before opening a PR:",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -183,7 +183,7 @@
       "text": "Finding your way around",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -433,7 +433,7 @@
       "text": "Start a Quilt",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -472,7 +472,7 @@
       "text": "What Patchwork is",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -658,7 +658,7 @@
       "text": "What it costs",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -844,7 +844,7 @@
       "text": "Where to go next",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -913,7 +913,7 @@
       "text": "Bands, solo artists, pop-up projects",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1175,7 +1175,7 @@
       "text": "## Who We Are",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1215,7 +1215,7 @@
       "text": "## How We Make Decisions",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1338,7 +1338,7 @@
       "text": "## Changing This Agreement",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1417,7 +1417,7 @@
       "text": "## Leadership Model: Meritocratic",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1449,11 +1449,11 @@
       ]
     },
     {
-      "id": "a405c6fecf67",
-      "text": "- **Followers** are community members who stay informed. They can attend events and observe governance.\n- **Members** have demonstrated commitment to the patch. They can vote on proposals and participate in governance.\n- **Admins** are experienced members who have been nominated by existing admins and ratified by the community. They manage day-to-day operations.",
-      "words": 53,
+      "id": "b63b6251c3c9",
+      "text": "- **Followers** stay informed. They can see events and observe public governance.\n- **Members** have joined and made some commitment to the patch. They can vote on proposals and participate in governance.\n- **Admins** are members who have been nominated by existing admins and ratified by the community, or creators of the communities themselves. They manage day-to-day operations.",
+      "words": 58,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
       "note": "Charter template drafted with AI and kept; had been claimed as written by a person in error; corrected 2026-10-28.",
       "occurrences": [
@@ -1461,17 +1461,21 @@
           "file": "internal/governance/defaults.go",
           "line": 271,
           "kind": "go-doc-block",
-          "raw": "- **Followers** are community members who stay informed. They can attend events and observe governance.\n- **Members** have demonstrated commitment to the patch. They can vote on proposals and participate in governance.\n- **Admins** are experienced members who have been nominated by existing admins and ratified by the community. They manage day-to-day operations.",
+          "raw": "- **Followers** stay informed. They can see events and observe public governance.\n- **Members** have joined and made some commitment to the patch. They can vote on proposals and participate in governance.\n- **Admins** are members who have been nominated by existing admins and ratified by the community, or creators of the communities themselves. They manage day-to-day operations.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "- **Followers** are community members who stay informed. They can attend events and observe governance.\n- **Members** have demonstrated commitment to the patch. They can vote on proposals and participate in governance.\n- **Admins** are experienced members who have been nominated by existing admins and ratified by the community. They manage day-to-day operations.",
+      "authorship": {
+        "kind": "written"
+      }
     },
     {
       "id": "c935fffaa605",
       "text": "### Becoming an Admin",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1984,7 +1988,7 @@
       "text": "## Step 1: Direct Conversation",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2020,7 +2024,7 @@
       "text": "## Step 2: Mediation",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2063,7 +2067,7 @@
       "text": "## Step 3: Formal Complaint",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2117,7 +2121,7 @@
       "text": "## Step 4: Community Review",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2477,7 +2481,7 @@
       "text": "## Relationship to the Quilt",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2531,7 +2535,7 @@
       "text": "## Article 1: Elections",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2621,7 +2625,7 @@
       "text": "## Article 2: Council Operations",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2693,7 +2697,7 @@
       "text": "## Article 3: Membership",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2765,7 +2769,7 @@
       "text": "## Article 4: Amendments",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3179,7 +3183,7 @@
       "text": "## Step 1: Direct Resolution",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3251,7 +3255,7 @@
       "text": "## Step 3: Formal Grievance",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3305,7 +3309,7 @@
       "text": "## Step 4: Appeal",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3503,7 +3507,7 @@
       "text": "## Regular Succession: Elections",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4506,7 +4510,7 @@
       "text": "failed to load activity",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4524,7 +4528,7 @@
       "text": "only status=archived is supported",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4542,7 +4546,7 @@
       "text": "failed to list archived nodes",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4970,7 +4974,7 @@
       "text": "node is not archived",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4988,7 +4992,7 @@
       "text": "failed to restore node",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5244,7 +5248,7 @@
       "text": "failed to list users",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5280,7 +5284,7 @@
       "text": "no valid fields to update",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5326,7 +5330,7 @@
       "text": "failed to update user",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5344,7 +5348,7 @@
       "text": "failed to list audit log",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6653,7 +6657,7 @@
       "text": "failed to list records",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6750,7 +6754,7 @@
       "text": "failed to create the document",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6768,7 +6772,7 @@
       "text": "failed to update the document",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7119,7 +7123,7 @@
       "text": "governance doc id required",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7137,7 +7141,7 @@
       "text": "governance doc not found",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7340,7 +7344,7 @@
       "text": "failed to list attestations",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7448,7 +7452,7 @@
       "text": "failed to record the decision",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7584,7 +7588,7 @@
       "text": "failed to link the name",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8290,7 +8294,7 @@
       "text": "failed to create claim",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8315,7 +8319,7 @@
       "text": "failed to approve claim",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8412,7 +8416,7 @@
       "text": "failed to load claim",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8573,7 +8577,7 @@
       "text": "invalid or already-used verification link",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8620,7 +8624,7 @@
       "text": "failed to query claims",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8638,7 +8642,7 @@
       "text": "claim is not pending",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8706,7 +8710,7 @@
       "text": "patch is not unclaimed",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8724,7 +8728,7 @@
       "text": "failed to assign owner",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8807,7 +8811,7 @@
       "text": "failed to complete setup",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8825,7 +8829,7 @@
       "text": "failed to list comments",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8843,7 +8847,7 @@
       "text": "must be member of node",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8957,7 +8961,7 @@
       "text": "failed to create comment",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9032,7 +9036,7 @@
       "text": "failed to update comment",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9050,7 +9054,7 @@
       "text": "failed to delete comment",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9086,7 +9090,7 @@
       "text": "failed to add reaction",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9104,7 +9108,7 @@
       "text": "failed to remove reaction",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9562,7 +9566,7 @@
       "text": "failed to add the candidate",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9634,7 +9638,7 @@
       "text": "this election has closed",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9871,7 +9875,7 @@
       "text": "link is already confirmed",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9907,7 +9911,7 @@
       "text": "failed to confirm link",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9943,7 +9947,7 @@
       "text": "failed to remove link",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9997,7 +10001,7 @@
       "text": "failed to list event sources",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10058,7 +10062,7 @@
       "text": "failed to create event source",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10076,7 +10080,7 @@
       "text": "event source not found",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10122,7 +10126,7 @@
       "text": "failed to remove event source",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10198,7 +10202,7 @@
       "text": "failed to detach event",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10266,7 +10270,7 @@
       "text": "failed to query event submissions",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10291,7 +10295,7 @@
       "text": "event is not awaiting review",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10309,7 +10313,7 @@
       "text": "failed to approve event",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10327,7 +10331,7 @@
       "text": "failed to reject event",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10370,7 +10374,7 @@
       "text": "no events in upload",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10388,7 +10392,7 @@
       "text": "failed to upload events",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10441,7 +10445,7 @@
       "text": "failed to list events",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10542,7 +10546,7 @@
       "text": "failed to update event",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10560,7 +10564,7 @@
       "text": "failed to delete event",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10585,7 +10589,7 @@
       "text": "failed to generate feed secret",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10610,7 +10614,7 @@
       "text": "failed to disable feed",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10696,11 +10700,11 @@
       ]
     },
     {
-      "id": "4363de41fb95",
-      "text": "Followers here can now see only what any visitor can.",
-      "words": 10,
+      "id": "62ea21af7348",
+      "text": "Followers view rights now match a normal visitor.",
+      "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": "The case where a patch had granted followers nothing else. Worth saying rather than trailing off, so the reader learns the state of the shelf either way.",
       "occurrences": [
@@ -10708,17 +10712,21 @@
           "file": "internal/handler/follower_charters_default.go",
           "line": 196,
           "kind": "go-string",
-          "raw": "Followers here can now see only what any visitor can.",
+          "raw": "Followers view rights now match a normal visitor.",
           "quote": "\""
         }
-      ]
+      ],
+      "previous_ai_text": "Followers here can now see only what any visitor can.",
+      "authorship": {
+        "kind": "written"
+      }
     },
     {
       "id": "05447859f9db",
       "text": "Followers here can still see",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": "Opens the list of what followers keep. Assembled from the patch own rules rather than written as a fixed sentence, because the three keys differ per patch and a static claim would be wrong somewhere.",
       "occurrences": [
@@ -10872,7 +10880,7 @@
       "text": "failed to create governance doc",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10890,7 +10898,7 @@
       "text": "failed to list governance docs",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10926,7 +10934,7 @@
       "text": "title cannot be empty",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10962,7 +10970,7 @@
       "text": "the lining is always public",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10998,7 +11006,7 @@
       "text": "failed to update governance doc",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -11034,7 +11042,7 @@
       "text": "governance repos not configured",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -11212,7 +11220,7 @@
       "text": "cannot follow non-public node",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -11248,7 +11256,7 @@
       "text": "instance actor not initialized",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -11632,7 +11640,7 @@
       "text": "failed to save label",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -11801,7 +11809,7 @@
       "text": "too many cost items",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -11837,7 +11845,7 @@
       "text": "amounts cannot be negative",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -11891,7 +11899,7 @@
       "text": "failed to save costs",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -11966,7 +11974,7 @@
       "text": "failed to remove steward",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12038,7 +12046,7 @@
       "text": "failed to remove listing",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12077,7 +12085,7 @@
       "text": "## The short version",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12098,29 +12106,33 @@
       ]
     },
     {
-      "id": "d316d436381b",
-      "text": "Nobody runs {quilt_name} for profit. There are no ads or trackers here, no analytics scripts, and nothing about you gets sold or rented to anyone. The site keeps the minimum it needs to work: an email address to sign you in, the profile you choose to write, and a record of which patches you join and what you post there. Real people run this server. The [Label](/label) says who they are and how to reach them.",
-      "words": 76,
+      "id": "21b0f7722e20",
+      "text": "This site, {quilt_name}, is not for profit and there is no monetization. There are no ads or trackers, no analytics scripts, and none of your data gets sold or rented to anyone (even in anonymized form). The site keeps the bare minimum it needs to function: an email address to sign you in, your submitted profile details, and a record of which patches you join and what you post there. Real people run this server. The [Label](/label) is where you can find their info.",
+      "words": 84,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
-      "note": "Was your prose, marked human. Only the false clause moved: \"which patches you join and which events you RSVP to\" became \"which patches you join and what you post there\", since there is no RSVP feature (docs/adr/093). You reviewed and accepted the replacement.",
+      "note": null,
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
           "line": 34,
           "kind": "go-doc-block",
-          "raw": "Nobody runs {quilt_name} for profit. There are no ads or trackers here, no analytics scripts, and nothing about you gets sold or rented to anyone. The site keeps the minimum it needs to work: an email address to sign you in, the profile you choose to write, and a record of which patches you join and what you post there. Real people run this server. The [Label](/label) says who they are and how to reach them.",
+          "raw": "This site, {quilt_name}, is not for profit and there is no monetization. There are no ads or trackers, no analytics scripts, and none of your data gets sold or rented to anyone (even in anonymized form). The site keeps the bare minimum it needs to function: an email address to sign you in, your submitted profile details, and a record of which patches you join and what you post there. Real people run this server. The [Label](/label) is where you can find their info.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Nobody runs {quilt_name} for profit. There are no ads or trackers here, no analytics scripts, and nothing about you gets sold or rented to anyone. The site keeps the minimum it needs to work: an email address to sign you in, the profile you choose to write, and a record of which patches you join and what you post there. Real people run this server. The [Label](/label) says who they are and how to reach them.",
+      "authorship": {
+        "kind": "written"
+      }
     },
     {
       "id": "587d52e958d6",
       "text": "## What this site collects",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12499,7 +12511,7 @@
       "text": "## The seamrip: data portability",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12793,7 +12805,7 @@
       "text": "## Who to talk to",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12911,7 +12923,7 @@
       "text": "## What this is",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12951,7 +12963,7 @@
       "text": "## Who can join",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13261,7 +13273,7 @@
       "text": "## Changes and ending",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13351,7 +13363,7 @@
       "text": "document is too large",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13369,7 +13381,7 @@
       "text": "failed to save document",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13387,7 +13399,7 @@
       "text": "failed to reset document",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14182,7 +14194,7 @@
       "text": "failed to list nodes",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14246,7 +14258,7 @@
       "text": "failed to create node",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14415,7 +14427,7 @@
       "text": "failed to update tags",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14458,7 +14470,7 @@
       "text": "failed to update node",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14501,7 +14513,7 @@
       "text": "failed to archive node",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14519,7 +14531,7 @@
       "text": "failed to list reports",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14641,7 +14653,7 @@
       "text": "failed to update report",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14950,7 +14962,7 @@
       "text": "failed to list notifications",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14993,7 +15005,7 @@
       "text": "failed to mark notification read",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -15960,7 +15972,7 @@
       "text": "failed to list proposals",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16050,7 +16062,7 @@
       "text": "failed to create proposal",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16122,7 +16134,7 @@
       "text": "voting period has ended",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16158,7 +16170,7 @@
       "text": "failed to cast vote",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16176,7 +16188,7 @@
       "text": "can only withdraw open proposals",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16212,7 +16224,7 @@
       "text": "failed to withdraw proposal",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16266,7 +16278,7 @@
       "text": "failed to update proposal",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16345,7 +16357,7 @@
       "text": "failed to generate recovery codes",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16381,7 +16393,7 @@
       "text": "username and code are required",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16399,7 +16411,7 @@
       "text": "invalid username or recovery code",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16417,7 +16429,7 @@
       "text": "failed to load remote follows",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16471,7 +16483,7 @@
       "text": "node_ap_id host must match quilt_url",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16557,7 +16569,7 @@
       "text": "failed to save follow",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16575,7 +16587,7 @@
       "text": "failed to load follow",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16600,7 +16612,7 @@
       "text": "failed to update follow",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16643,7 +16655,7 @@
       "text": "failed to delete follow",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16661,7 +16673,7 @@
       "text": "failed to load quilts",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16704,7 +16716,7 @@
       "text": "failed to save quilt",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16722,7 +16734,7 @@
       "text": "failed to load quilt",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16740,7 +16752,7 @@
       "text": "failed to delete quilt",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16776,7 +16788,7 @@
       "text": "failed to load neighbor quilts",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16794,7 +16806,7 @@
       "text": "failed to save neighbor quilt",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16812,7 +16824,7 @@
       "text": "failed to load neighbor quilt",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16830,7 +16842,7 @@
       "text": "neighbor quilt not found",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16848,7 +16860,7 @@
       "text": "failed to delete neighbor quilt",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16902,7 +16914,7 @@
       "text": "target entity not found",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16920,7 +16932,7 @@
       "text": "failed to create report",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16956,7 +16968,7 @@
       "text": "failed to list revisions",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16992,7 +17004,7 @@
       "text": "can only revise open proposals",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17028,7 +17040,7 @@
       "text": "failed to create revision",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17251,7 +17263,7 @@
       "text": "failed to list sessions",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17287,7 +17299,7 @@
       "text": "failed to revoke session",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17395,7 +17407,7 @@
       "text": "name cannot be empty",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17431,7 +17443,7 @@
       "text": "failed to save name",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17503,7 +17515,7 @@
       "text": "failed to save description",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17611,7 +17623,7 @@
       "text": "failed to clear the icon",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17629,7 +17641,7 @@
       "text": "failed to save the icon",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17647,7 +17659,7 @@
       "text": "failed to save policy",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17813,7 +17825,7 @@
       "text": "failed to name a successor",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17849,7 +17861,7 @@
       "text": "failed to clear the successor",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17867,7 +17879,7 @@
       "text": "failed to list tags",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17982,7 +17994,7 @@
       "text": "failed to update tag",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18025,7 +18037,7 @@
       "text": "failed to delete tag",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18259,7 +18271,7 @@
       "text": "failed to query nodes",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18582,7 +18594,7 @@
       "text": "failed to create submission",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18600,7 +18612,7 @@
       "text": "failed to create unclaimed patch",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18618,7 +18630,7 @@
       "text": "failed to query submissions",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18672,7 +18684,7 @@
       "text": "failed to load profile",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18690,7 +18702,7 @@
       "text": "body must include visible: true|false",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18708,7 +18720,7 @@
       "text": "failed to update visibility",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18762,7 +18774,7 @@
       "text": "invalid acct URI format",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18948,7 +18960,7 @@
       "text": "Your admin seat in",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19285,7 +19297,7 @@
       "text": "Your approved claim on",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -20485,7 +20497,7 @@
       "text": "What it does",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -20525,7 +20537,7 @@
       "text": "Why it exists",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -20762,7 +20774,7 @@
       "text": "Seamrip: export & import",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -20918,7 +20930,7 @@
       "text": "How it's built",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -21222,7 +21234,7 @@
       "text": "Say when it was adopted",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -22189,7 +22201,7 @@
       "text": "{' · '}recorded by {r.recorder_name}",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -22225,7 +22237,7 @@
       "text": "Record an adopted text",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -22250,7 +22262,7 @@
       "text": "Recording an adoption of",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -22322,7 +22334,7 @@
       "text": "When it was adopted",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -22365,7 +22377,7 @@
       "text": "Amended at the annual meeting",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -22383,7 +22395,7 @@
       "text": "The text as adopted",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -22458,7 +22470,7 @@
       "text": "PATCH",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23540,7 +23552,7 @@
       "text": "{' · '}recorded by {current.recorder_name}",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23662,7 +23674,7 @@
       "text": "Decided {formatDay(r.decided_at)} · corrected",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23698,7 +23710,7 @@
       "text": "When it was decided",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23716,7 +23728,7 @@
       "text": "When this council's term ends",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23734,7 +23746,7 @@
       "text": "Annual meeting elected the council",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23752,7 +23764,7 @@
       "text": "Who it put in place",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23770,7 +23782,7 @@
       "text": "Someone not here yet",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23845,7 +23857,7 @@
       "text": "at quilt size",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23900,7 +23912,7 @@
       "text": "Drafting tool",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23918,7 +23930,7 @@
       "text": "{draft.seams.length} of {SEAM_BUDGET} seams",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24048,7 +24060,7 @@
       "text": "Remove the last fabric",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24066,7 +24078,7 @@
       "text": "Failed to load comments",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24102,7 +24114,7 @@
       "text": "Failed to post comment",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24138,7 +24150,7 @@
       "text": "Failed to post reply",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24174,7 +24186,7 @@
       "text": "Failed to update comment",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24533,7 +24545,7 @@
       "text": "Failed to delete comment",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24551,7 +24563,7 @@
       "text": "Failed to update reaction",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24704,7 +24716,7 @@
       "text": "Current",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24723,7 +24735,7 @@
       "text": "Proposed",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24742,7 +24754,7 @@
       "text": "added",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24819,7 +24831,7 @@
       "text": "unchanged",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24854,7 +24866,7 @@
       "text": "empty",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24915,7 +24927,7 @@
       "text": "Diff view",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24933,7 +24945,7 @@
       "text": "light",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24952,7 +24964,7 @@
       "text": "Light",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24971,7 +24983,7 @@
       "text": "dark",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24990,7 +25002,7 @@
       "text": "Dark",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25009,7 +25021,7 @@
       "text": "system",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25028,7 +25040,7 @@
       "text": "System",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25047,7 +25059,7 @@
       "text": "default",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25066,7 +25078,7 @@
       "text": "Default",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25085,7 +25097,7 @@
       "text": "muted",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25104,7 +25116,7 @@
       "text": "Muted",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25409,7 +25421,7 @@
       "text": "Failed to save your ballot",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25614,7 +25626,7 @@
       "text": "No quorum required. {turnout.voted} of {turnout.eligible} voted.",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": "Turnout where the patch asks for no quorum: still worth stating, because a reader who has just been told the contest settled nothing will ask how many turned up.",
       "occurrences": [
@@ -25632,7 +25644,7 @@
       "text": "Quorum met: {turnout.voted} of {turnout.eligible} voted, {turnout.needed} needed.",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": "The sentence the ordinary proposal already uses, in the count rather than the percentage. A contest that failed six times in a row reported only \"Settled nothing\", while the number that decided it sat on a settings form two clicks away.",
       "occurrences": [
@@ -25650,7 +25662,7 @@
       "text": "{phase === 'closed' ? 'Quorum not met' : 'Quorum not yet met'}: {turnout.voted} of {turnout.eligible} voted, {turnout.needed} needed.",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": "Same sentence, and the tense follows the phase: not yet met while the ballot is open, not met once it has closed. One reads as a thing you can still fix.",
       "occurrences": [
@@ -25704,7 +25716,7 @@
       "text": "not seated",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": "The losing row said nothing at all, and a reader took the blank for still-pending. Quiet, because losing is an outcome and not a warning.",
       "occurrences": [
@@ -25740,7 +25752,7 @@
       "text": "Why you are standing",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": "The field the first person to stand in a real contest asked for: \"Ask me for a few lines when I press the button.\" Marked optional, because a patch where everybody knows everybody should not be made to write an essay.",
       "occurrences": [
@@ -25814,11 +25826,11 @@
       ]
     },
     {
-      "id": "7985ed247ad5",
-      "text": "A few lines the other members will see beside your name on the ballot.",
-      "words": 14,
+      "id": "e944e11a11cf",
+      "text": "Write a few lines to sit by your name on the ballot.",
+      "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": "Says where the words will appear, which is the point of them: four voters decided on the strength of a comment behind a Discussion tab because the ballot was a list of bare names.",
       "occurrences": [
@@ -25826,17 +25838,21 @@
           "file": "web/src/components/ElectionPanel.svelte",
           "line": 317,
           "kind": "attr:placeholder",
-          "raw": "A few lines the other members will see beside your name on the ballot.",
+          "raw": "Write a few lines to sit by your name on the ballot.",
           "quote": "\""
         }
-      ]
+      ],
+      "previous_ai_text": "A few lines the other members will see beside your name on the ballot.",
+      "authorship": {
+        "kind": "written"
+      }
     },
     {
       "id": "02e2cd140c67",
       "text": "{STATEMENT_MAX - statement.length} characters left",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": "A plain remaining count. The cap keeps the ballot a list; an argument belongs in the discussion.",
       "occurrences": [
@@ -25904,11 +25920,11 @@
       ]
     },
     {
-      "id": "7e1558368bcd",
-      "text": "You can change this until voting closes.",
-      "words": 7,
-      "tier": "helper",
-      "status": "unreviewed",
+      "id": "a94f91677205",
+      "text": "Editing available until voting closes.",
+      "words": 5,
+      "tier": "label",
+      "status": "human",
       "replacement": null,
       "note": "Shortened. It used to carry \"Approving nobody is the same as not voting\", which was true and is no longer, now that approving nobody is an act you can take.",
       "occurrences": [
@@ -25916,10 +25932,14 @@
           "file": "web/src/components/ElectionPanel.svelte",
           "line": 365,
           "kind": "markup",
-          "raw": "You can change this until voting closes.",
+          "raw": "Editing available until voting closes.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "You can change this until voting closes.",
+      "authorship": {
+        "kind": "written"
+      }
     },
     {
       "id": "18cd9a1e074f",
@@ -26041,7 +26061,7 @@
       "text": "That is this event’s own patch",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -26059,7 +26079,7 @@
       "text": "Only this patch’s admins can add a mention",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -26113,7 +26133,7 @@
       "text": "Failed to request link",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -26131,7 +26151,7 @@
       "text": "Failed to confirm link",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -26167,7 +26187,7 @@
       "text": "Failed to remove link",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -26192,7 +26212,7 @@
       "text": "Failed to remove mention",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -26289,7 +26309,7 @@
       "text": "to confirm this link",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -26325,7 +26345,7 @@
       "text": "Keep all my events",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -27476,7 +27496,7 @@
       "text": "Failed to load governance overview.",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -27551,7 +27571,7 @@
       "text": "How decisions are made",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -27699,7 +27719,7 @@
       "text": "Vacant",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": "The chair nobody is in. Unchanged wording, moved out of a ternary into a branch so a withheld holder is a third state rather than an inferred vacancy.",
       "occurrences": [
@@ -27717,7 +27737,7 @@
       "text": "Held",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": "A chair that is held by somebody this reader is not shown. Deliberately not a name and not Vacant: the sentence above already says the patch does not list its admins publicly, and this row only has to not claim the seat is empty.",
       "occurrences": [
@@ -27843,7 +27863,7 @@
       "text": "Next seat comes up {formatDay(nextTermEnd)}.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28259,7 +28279,7 @@
       "text": "text",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28573,7 +28593,7 @@
       "text": "Become a member of {patchName}",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28663,7 +28683,7 @@
       "text": "Starts from the quilt's",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28735,7 +28755,7 @@
       "text": "A line or two about why you'd like to join…",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28817,7 +28837,7 @@
       "text": "{instanceName} is stewarded by {stewardLine}",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28903,7 +28923,7 @@
       "text": "Read the Label →",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28985,7 +29005,7 @@
       "text": "No marker placed yet.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -29039,7 +29059,7 @@
       "text": "Dialog",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -29340,7 +29360,7 @@
       "text": "You're all caught up",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -29394,7 +29414,7 @@
       "text": "this action",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -29485,7 +29505,7 @@
       "text": "View the public profile",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -30072,7 +30092,7 @@
       "text": "No one runs this patch yet.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -30126,7 +30146,7 @@
       "text": "Your claim is in progress",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -30216,7 +30236,7 @@
       "text": "md",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -30275,7 +30295,7 @@
       "text": "Unfollow",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -30341,7 +30361,7 @@
       "text": "Leave",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -30498,7 +30518,7 @@
       "text": "follower",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -30946,7 +30966,7 @@
       "text": "governance",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -31092,7 +31112,7 @@
       "text": "Cast your vote below.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -31232,7 +31252,7 @@
       "text": "Change is now in effect",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -31322,7 +31342,7 @@
       "text": "Withdraw this proposal",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -31605,7 +31625,7 @@
       "text": "Withdrawn by the author.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -31641,7 +31661,7 @@
       "text": "'Space Grotesk Variable', system-ui, sans-serif",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -31776,7 +31796,7 @@
       "text": "This quilt is empty.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -31830,7 +31850,7 @@
       "text": "Hate speech or discrimination",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -31957,7 +31977,7 @@
       "text": "Could not submit report",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -32118,7 +32138,7 @@
       "text": "by {rev.author_name} · {timeAgo(rev.created_at)}",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -32154,7 +32174,7 @@
       "text": "tile",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -32191,7 +32211,7 @@
       "text": "tags",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -32244,7 +32264,7 @@
       "text": "whereabouts",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -32263,7 +32283,7 @@
       "text": "Say where you are",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -32281,7 +32301,7 @@
       "text": "not every patch is a place",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -32300,7 +32320,7 @@
       "text": "event",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -32319,7 +32339,7 @@
       "text": "Post your first event",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -32337,7 +32357,7 @@
       "text": "share",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -32382,7 +32402,7 @@
       "text": "Decide how you govern",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -32400,7 +32420,7 @@
       "text": "a band never needs this",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -32494,7 +32514,7 @@
       "text": "patches",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -32561,7 +32581,7 @@
       "text": "events",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -32596,7 +32616,7 @@
       "text": "discover",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -32615,7 +32635,7 @@
       "text": "Discover",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -32634,7 +32654,7 @@
       "text": "dashboard",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -32697,7 +32717,7 @@
       "text": "Search patches and events…",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -33071,7 +33091,7 @@
       "text": "Confirm this action",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -33333,7 +33353,7 @@
       "text": "No changes to governance rules.",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -33580,7 +33600,7 @@
       "text": "Where admins are chosen",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -33644,7 +33664,7 @@
       "text": "Somewhere else, recorded here",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -33697,7 +33717,7 @@
       "text": "Where proposals are decided",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -34042,7 +34062,7 @@
       "text": "Selected tags, in priority order",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -34418,7 +34438,7 @@
       "text": "Quorum",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -34535,7 +34555,7 @@
       "text": "Leadership",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -34572,7 +34592,7 @@
       "text": "{data?.template?.name || 'Template'} Template",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -34590,7 +34610,7 @@
       "text": "Failed to load template.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -34644,7 +34664,7 @@
       "text": "Where",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -34817,7 +34837,7 @@
       "text": "You're a member of {node.name}.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -34951,7 +34971,7 @@
       "text": "Security",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35006,7 +35026,7 @@
       "text": "span",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35115,7 +35135,7 @@
       "text": "This vote's terms, fixed when voting opened",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35367,7 +35387,7 @@
       "text": "No matches in this context",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35385,7 +35405,7 @@
       "text": "overview",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35412,7 +35432,7 @@
       "text": "review",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35431,7 +35451,7 @@
       "text": "Review",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35458,7 +35478,7 @@
       "text": "reports",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35565,7 +35585,7 @@
       "text": "submissions",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35609,7 +35629,7 @@
       "text": "claims",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35628,7 +35648,7 @@
       "text": "Claims",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35687,7 +35707,7 @@
       "text": "users",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35740,7 +35760,7 @@
       "text": "settings",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35775,7 +35795,7 @@
       "text": "quilt",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35794,7 +35814,7 @@
       "text": "Quilt",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35813,7 +35833,7 @@
       "text": "label",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35887,7 +35907,7 @@
       "text": "legal",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35906,7 +35926,7 @@
       "text": "Legal",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35995,7 +36015,7 @@
       "text": "neighbors",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36014,7 +36034,7 @@
       "text": "Neighbors",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36041,7 +36061,7 @@
       "text": "aggregators",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36094,7 +36114,7 @@
       "text": "outreach",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36154,7 +36174,7 @@
       "text": "usage",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36283,7 +36303,7 @@
       "text": "attestation",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36302,7 +36322,7 @@
       "text": "apps",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36321,7 +36341,7 @@
       "text": "Apps",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36373,7 +36393,7 @@
       "text": "audit",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36603,7 +36623,7 @@
       "text": "Handle",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36630,7 +36650,7 @@
       "text": "the file needs a header row and at least one event",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36649,7 +36669,7 @@
       "text": "no title column found (try \"title\", \"name\", or \"event\")",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36668,7 +36688,7 @@
       "text": "no date column found (try \"date\" or \"start\")",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36687,7 +36707,7 @@
       "text": "missing title",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36706,7 +36726,7 @@
       "text": "end is before start",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36725,7 +36745,7 @@
       "text": "Opening Night,2026-09-12,7:00 PM,10:00 PM,Main Stage,First show of the season,https://example.org/tickets/opening-night",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36743,7 +36763,7 @@
       "text": "Artist Talk,9/19/2026,6:30 PM,,Gallery,Free and open to all,",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36779,7 +36799,7 @@
       "text": "Parchment",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36798,7 +36818,7 @@
       "text": "Oatmeal",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36817,7 +36837,7 @@
       "text": "Flax",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36854,7 +36874,7 @@
       "text": "Dove",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36873,7 +36893,7 @@
       "text": "Stone",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36892,7 +36912,7 @@
       "text": "Taupe",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36911,7 +36931,7 @@
       "text": "Charcoal",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36948,7 +36968,7 @@
       "text": "Espresso",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36967,7 +36987,7 @@
       "text": "Chestnut",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36986,7 +37006,7 @@
       "text": "Saddle",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37005,7 +37025,7 @@
       "text": "Rust",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37024,7 +37044,7 @@
       "text": "Caramel",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37043,7 +37063,7 @@
       "text": "Camel",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37062,7 +37082,7 @@
       "text": "Oxblood",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37081,7 +37101,7 @@
       "text": "Brick",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37100,7 +37120,7 @@
       "text": "Scarlet",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37119,7 +37139,7 @@
       "text": "Tomato",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37138,7 +37158,7 @@
       "text": "Coral",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37157,7 +37177,7 @@
       "text": "Merlot",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37176,7 +37196,7 @@
       "text": "Punch",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37195,7 +37215,7 @@
       "text": "Bubblegum",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37214,7 +37234,7 @@
       "text": "Rose",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37233,7 +37253,7 @@
       "text": "Magenta",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37252,7 +37272,7 @@
       "text": "Mulberry",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37271,7 +37291,7 @@
       "text": "Peach",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37290,7 +37310,7 @@
       "text": "Violet",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37309,7 +37329,7 @@
       "text": "Plum",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37328,7 +37348,7 @@
       "text": "Aubergine",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37347,7 +37367,7 @@
       "text": "Lilac",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37366,7 +37386,7 @@
       "text": "Navy",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37403,7 +37423,7 @@
       "text": "Workwear",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37422,7 +37442,7 @@
       "text": "Sky",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37441,7 +37461,7 @@
       "text": "Periwinkle",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37478,7 +37498,7 @@
       "text": "Chambray",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37497,7 +37517,7 @@
       "text": "Petrol",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37516,7 +37536,7 @@
       "text": "Spruce",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37553,7 +37573,7 @@
       "text": "Seafoam",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37572,7 +37592,7 @@
       "text": "Sage",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37591,7 +37611,7 @@
       "text": "Fern",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37610,7 +37630,7 @@
       "text": "Olive",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37629,7 +37649,7 @@
       "text": "Moss",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37648,7 +37668,7 @@
       "text": "Slime",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37667,7 +37687,7 @@
       "text": "Pistachio",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37686,7 +37706,7 @@
       "text": "Lemon",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37705,7 +37725,7 @@
       "text": "Goldenrod",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37724,7 +37744,7 @@
       "text": "Mustard",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37743,7 +37763,7 @@
       "text": "Butterscotch",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37762,7 +37782,7 @@
       "text": "Amber",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37799,7 +37819,7 @@
       "text": "People",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37826,7 +37846,7 @@
       "text": "Submissions",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37845,7 +37865,7 @@
       "text": "the report queue",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37864,7 +37884,7 @@
       "text": "names proposed for the quilt",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37883,7 +37903,7 @@
       "text": "events proposed on unclaimed patches",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37902,7 +37922,7 @@
       "text": "people claiming an unclaimed patch",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37921,7 +37941,7 @@
       "text": "words patch admins asked for",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37965,7 +37985,7 @@
       "text": "rename, icon, export, danger zone",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37984,7 +38004,7 @@
       "text": "who runs this quilt and what it costs",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -38003,7 +38023,7 @@
       "text": "privacy policy and terms",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -38022,7 +38042,7 @@
       "text": "the tag vocabulary and per-tag motifs",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -38041,7 +38061,7 @@
       "text": "quilts listed beside this one",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -38060,7 +38080,7 @@
       "text": "calendar feeds routed onto patches",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -38079,7 +38099,7 @@
       "text": "intro emails to unclaimed patches’ owners",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -38098,7 +38118,7 @@
       "text": "daily page views and visitors, counted on the server",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -38117,7 +38137,7 @@
       "text": "restore a patch that was archived",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -38136,7 +38156,7 @@
       "text": "sign an outside party’s nonce as this quilt",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -38155,7 +38175,7 @@
       "text": "native apps this quilt vouches for",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -38272,7 +38292,7 @@
       "text": "majority",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -38331,7 +38351,7 @@
       "text": "supermajority",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -38390,7 +38410,7 @@
       "text": "consensus",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -38591,7 +38611,7 @@
       "text": "nomination",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -38610,7 +38630,7 @@
       "text": "Nomination",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -38650,7 +38670,7 @@
       "text": "election",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -38669,7 +38689,7 @@
       "text": "Election",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -38777,7 +38797,7 @@
       "text": "freeze",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -38814,7 +38834,7 @@
       "text": "Immediate",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -38833,7 +38853,7 @@
       "text": "7 days",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -38852,7 +38872,7 @@
       "text": "30 days",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -38871,7 +38891,7 @@
       "text": "90 days",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -38962,7 +38982,7 @@
       "text": "open",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -39691,7 +39711,7 @@
       "text": "Gallery",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -39710,7 +39730,7 @@
       "text": "Camera",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -39765,7 +39785,7 @@
       "text": "Guitar",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -39784,7 +39804,7 @@
       "text": "Microphone",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -39803,7 +39823,7 @@
       "text": "Vinyl",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -39822,7 +39842,7 @@
       "text": "Radio",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -39859,7 +39879,7 @@
       "text": "Dance",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -39896,7 +39916,7 @@
       "text": "Stamp",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -39915,7 +39935,7 @@
       "text": "Scissors",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -39934,7 +39954,7 @@
       "text": "Hammer",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -39953,7 +39973,7 @@
       "text": "Venue",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -39972,7 +39992,7 @@
       "text": "Storefront",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40009,7 +40029,7 @@
       "text": "Coffee",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40028,7 +40048,7 @@
       "text": "Megaphone",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40065,7 +40085,7 @@
       "text": "Code",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40084,7 +40104,7 @@
       "text": "Ball",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40103,7 +40123,7 @@
       "text": "Bicycle",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40122,7 +40142,7 @@
       "text": "Heartbeat",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40141,7 +40161,7 @@
       "text": "Flower",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40160,7 +40180,7 @@
       "text": "Butterfly",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40179,7 +40199,7 @@
       "text": "Globe",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40198,7 +40218,7 @@
       "text": "Star",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40217,7 +40237,7 @@
       "text": "Skull",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40236,7 +40256,7 @@
       "text": "Lightning",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40255,7 +40275,7 @@
       "text": "members",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40282,7 +40302,7 @@
       "text": "noticeboard",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40376,7 +40396,7 @@
       "text": "info",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40411,7 +40431,7 @@
       "text": "appearance",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40438,7 +40458,7 @@
       "text": "Appearance",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40504,7 +40524,7 @@
       "text": "sources",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40539,7 +40559,7 @@
       "text": "verification",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40558,7 +40578,7 @@
       "text": "Verification",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40577,7 +40597,7 @@
       "text": "intro",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40691,7 +40711,7 @@
       "text": "danger",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40718,7 +40738,7 @@
       "text": "notifications",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40737,7 +40757,7 @@
       "text": "Pinwheel",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40846,7 +40866,7 @@
       "text": "Hourglass",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40919,7 +40939,7 @@
       "text": "Bear's Paw",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40937,7 +40957,7 @@
       "text": "Windmill",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40956,7 +40976,7 @@
       "text": "Adolescents",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -41101,7 +41121,7 @@
       "text": "Anthem",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -41120,7 +41140,7 @@
       "text": "Less Than Jake, 2003",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -41174,7 +41194,7 @@
       "text": "Bottles to the Ground",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -41282,7 +41302,7 @@
       "text": "Recuse a proposal’s subject",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -41390,7 +41410,7 @@
       "text": "A community, collective, or group",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -41462,7 +41482,7 @@
       "text": "A community platform instance",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -41480,7 +41500,7 @@
       "text": "The community rules and guidelines",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -41516,7 +41536,7 @@
       "text": "login",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42437,7 +42457,7 @@
       "text": "Removed from the stewards list",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42494,7 +42514,7 @@
       "text": "phone",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42532,7 +42552,7 @@
       "text": "email",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42559,7 +42579,7 @@
       "text": "handle",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42578,7 +42598,7 @@
       "text": "note",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42623,7 +42643,7 @@
       "text": "@you on Signal",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42775,7 +42795,7 @@
       "text": "Failed to create feed",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42811,7 +42831,7 @@
       "text": "Failed to disable feed",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -43025,7 +43045,7 @@
       "text": "Username cannot be changed.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -43534,7 +43554,7 @@
       "text": "When you open Patchwork",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -43574,7 +43594,7 @@
       "text": "Start on My Quilt",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -43955,7 +43975,7 @@
       "text": "You're named on this quilt's",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -45314,7 +45334,7 @@
       "text": "Failed to restore patch",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -45404,7 +45424,7 @@
       "text": "· restores as unclaimed",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -45422,7 +45442,7 @@
       "text": "Restore",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -46005,7 +46025,7 @@
       "text": "Search by user ID...",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -46048,7 +46068,7 @@
       "text": "No audit entries found.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -46285,7 +46305,7 @@
       "text": "Reject",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -46781,7 +46801,7 @@
       "text": "Note to the submitter (optional)",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -46860,7 +46880,7 @@
       "text": "Failed to save costs",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -46896,7 +46916,7 @@
       "text": "Failed to add steward",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -46914,7 +46934,7 @@
       "text": "Failed to remove steward",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -47131,7 +47151,7 @@
       "text": "In your own words",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -47171,7 +47191,7 @@
       "text": "Hi, I run this quilt. Here's why…",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -47304,7 +47324,7 @@
       "text": "What this runs on",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -47387,7 +47407,7 @@
       "text": "Service (e.g. Hetzner CX22)",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -47405,7 +47425,7 @@
       "text": "What for (e.g. the server)",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -47829,7 +47849,7 @@
       "text": "Failed to add neighbor quilt.",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -47965,7 +47985,7 @@
       "text": "No neighbor quilts yet.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -47983,7 +48003,7 @@
       "text": "Add another Patchwork's URL to publicly connect your communities.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -48590,7 +48610,7 @@
       "text": "That is not a place this quilt can keep time in. Try America/New_York.",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -48759,7 +48779,7 @@
       "text": "Failed to save the icon",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -48795,7 +48815,7 @@
       "text": "Failed to reset the icon",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -48849,7 +48869,7 @@
       "text": "How this quilt presents itself, here and on other quilts.",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -48903,7 +48923,7 @@
       "text": "Set here in the admin panel. Overrides the name in patchwork.yaml.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -49082,7 +49102,7 @@
       "text": "Drafted for this quilt.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -49100,7 +49120,7 @@
       "text": "Assigned from the quilt's name. Draft your own below.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -49136,7 +49156,7 @@
       "text": "Start from a block",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -49154,7 +49174,7 @@
       "text": "Starting over replaces what's on the canvas. Nothing is saved until you save.",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -49625,7 +49645,7 @@
       "text": "Type the quilt name to confirm:",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -49643,7 +49663,7 @@
       "text": "Really erase everything? You will be signed out.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -49661,7 +49681,7 @@
       "text": "Pending",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -49680,7 +49700,7 @@
       "text": "Reviewed",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -49699,7 +49719,7 @@
       "text": "Resolved",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -49718,7 +49738,7 @@
       "text": "Dismissed",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -49737,7 +49757,7 @@
       "text": "dismiss",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -50012,7 +50032,7 @@
       "text": "This will suspend the reported user's account.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -50156,7 +50176,7 @@
       "text": "Patches people have suggested.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -50228,7 +50248,7 @@
       "text": "Verified domain for claims",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -50246,7 +50266,7 @@
       "text": "none (admin review only)",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -50354,7 +50374,7 @@
       "text": "Why this one isn't joining the quilt",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -50408,7 +50428,7 @@
       "text": "Failed to create tag",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -50462,7 +50482,7 @@
       "text": "Failed to update tag",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -50498,7 +50518,7 @@
       "text": "Failed to delete tag",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -50534,7 +50554,7 @@
       "text": "New tag name (e.g. music)",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -50552,7 +50572,7 @@
       "text": "No tags yet. Add the first one above.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -50588,7 +50608,7 @@
       "text": "Delete",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -51261,7 +51281,7 @@
       "text": "approve",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -51298,7 +51318,7 @@
       "text": "decline",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -51389,7 +51409,7 @@
       "text": "Marked as trusted contributor",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -51443,7 +51463,7 @@
       "text": "Could not copy. Select the link and copy it manually.",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -51519,7 +51539,7 @@
       "text": "Expires in (hours, 0 = never)",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -51573,7 +51593,7 @@
       "text": "Change role",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -51648,7 +51668,7 @@
       "text": "Grant",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -51727,7 +51747,7 @@
       "text": "Unsuspend",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -51745,7 +51765,7 @@
       "text": "Suspend",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -51799,7 +51819,7 @@
       "text": "Asked for",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -51853,7 +51873,7 @@
       "text": "Search by name or email...",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -52178,7 +52198,7 @@
       "text": "Failed to load document",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -52338,7 +52358,7 @@
       "text": "Only members can propose a change to this charter.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -52424,7 +52444,7 @@
       "text": "Restored unsaved changes from {formatRelative(draftTimestamp)}",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -52510,7 +52530,7 @@
       "text": "e.g. Update conflict resolution process",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -52625,7 +52645,7 @@
       "text": "Add a TXT record to your domain",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -52643,7 +52663,7 @@
       "text": "dns",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -52680,7 +52700,7 @@
       "text": "Add a meta tag to your homepage",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -52716,7 +52736,7 @@
       "text": "did",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -52735,7 +52755,7 @@
       "text": "atproto Handle",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -52772,7 +52792,7 @@
       "text": "Get a link at your organization email",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -52808,7 +52828,7 @@
       "text": "Submit evidence for manual review",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -52826,7 +52846,7 @@
       "text": "Requires a verified domain on this listing",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -52844,7 +52864,7 @@
       "text": "This quilt can't send email",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -52862,7 +52882,7 @@
       "text": "Unavailable on this listing",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -52880,7 +52900,7 @@
       "text": "Failed to load claim status",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -52898,7 +52918,7 @@
       "text": "Claim submitted for review",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -52916,7 +52936,7 @@
       "text": "Failed to submit claim",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -52934,7 +52954,7 @@
       "text": "Claim verified. Finish setup to activate this patch.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -52959,7 +52979,7 @@
       "text": "Verification failed. Please try again.",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -53020,7 +53040,7 @@
       "text": "Failed to withdraw claim",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -53056,7 +53076,7 @@
       "text": "Failed to resend email",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -53074,7 +53094,7 @@
       "text": "Claim {node?.name || 'this patch'}",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -53092,7 +53112,7 @@
       "text": "Prove you represent this organization to take ownership.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -53200,7 +53220,7 @@
       "text": "Your claim is open",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -53261,7 +53281,7 @@
       "text": "DNS changes can take a few minutes to propagate.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -53279,7 +53299,7 @@
       "text": "Add this tag to the",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -53495,7 +53515,7 @@
       "text": "We sent a verification link to",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -53513,7 +53533,7 @@
       "text": ". Open it to finish claiming. The link expires 24 hours after it's sent.",
       "words": 14,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -53531,7 +53551,7 @@
       "text": "Your claim is with the quilt admins for review. You'll be notified when it's resolved.",
       "words": 15,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -53549,7 +53569,7 @@
       "text": "Withdrawing lets you start over with a different method.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -53567,7 +53587,7 @@
       "text": "Tell us why you should own this patch",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -53585,7 +53605,7 @@
       "text": "I'm the owner of this venue / I run this organization / etc.",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -53603,7 +53623,7 @@
       "text": "Your email at @{verificationDomain}",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -53621,7 +53641,7 @@
       "text": "The address must be at the organization's verified domain.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -53639,7 +53659,7 @@
       "text": "This verification link is not valid.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -53675,7 +53695,7 @@
       "text": "The link may have been used already, or the claim was withdrawn or resolved.",
       "words": 14,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -53693,7 +53713,7 @@
       "text": "This verification link has expired.",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -53711,7 +53731,7 @@
       "text": "Request a new email from the claim page for",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -53729,7 +53749,7 @@
       "text": "You're confirming the claim of",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -53765,7 +53785,7 @@
       "text": "Welcome back, {user.display_name || user.username}.",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -53801,7 +53821,7 @@
       "text": "pending member {totalPending === 1 ? 'request' : 'requests'}",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -54009,7 +54029,7 @@
       "text": "The groups near you are on the quilt.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -54357,7 +54377,7 @@
       "text": "Detached. This is an ordinary event now.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -54375,7 +54395,7 @@
       "text": "Failed to detach event",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -54429,7 +54449,7 @@
       "text": "Failed to delete event",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -54555,7 +54575,7 @@
       "text": "Detach",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -54573,7 +54593,7 @@
       "text": "This event comes from one of",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -54591,7 +54611,7 @@
       "text": "this patch's event sources",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -54663,7 +54683,7 @@
       "text": "Failed to load event",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -54681,7 +54701,7 @@
       "text": "Failed to load patch",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -54736,7 +54756,7 @@
       "text": "Please select a patch",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -54754,7 +54774,7 @@
       "text": "Start date/time is required",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -54858,7 +54878,7 @@
       "text": "Failed to update event",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -54876,7 +54896,7 @@
       "text": "Failed to create event",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -55020,7 +55040,7 @@
       "text": "Update your event details.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -55135,7 +55155,7 @@
       "text": "Schedule a new event for your community.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -55310,7 +55330,7 @@
       "text": "Where is this happening?",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -55548,7 +55568,7 @@
       "text": "Flyer for the March show",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -55566,7 +55586,7 @@
       "text": "Read aloud by screen readers, and shown if the image stops loading.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -55831,7 +55851,7 @@
       "text": "any",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -55850,7 +55870,7 @@
       "text": "today",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -55869,7 +55889,7 @@
       "text": "Today",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -55888,7 +55908,7 @@
       "text": "tomorrow",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -55907,7 +55927,7 @@
       "text": "Tomorrow",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -55926,7 +55946,7 @@
       "text": "weekend",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -55945,7 +55965,7 @@
       "text": "week",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -55964,7 +55984,7 @@
       "text": "nextweek",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -55983,7 +56003,7 @@
       "text": "month",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -56070,7 +56090,7 @@
       "text": "No events match your filter{datePreset !== 'any' ? ' for this date range' : ''}.",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -56088,7 +56108,7 @@
       "text": "No upcoming events{datePreset !== 'any' ? ' for this date range' : ''}.",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -56672,7 +56692,7 @@
       "text": "Last updated {formatDay(doc.updated_at)}",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": "Unchanged words. The date behind them moved from a bare toLocaleDateString, which rendered 8/25/2025, to the app format, Aug 25, 2025. Slashes-and-numbers is the format that gets read wrong, and it was the only place the app still used it.",
       "occurrences": [
@@ -56690,7 +56710,7 @@
       "text": "Blank",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -56820,7 +56840,7 @@
       "text": "Start from a template",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -56856,7 +56876,7 @@
       "text": "Editor view",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -56924,7 +56944,7 @@
       "text": "Who can read this",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -56960,7 +56980,7 @@
       "text": "Failed to load governance documents",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -56996,7 +57016,7 @@
       "text": "Failed to change visibility",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -57014,7 +57034,7 @@
       "text": "New documents start members only. Publish one to let visitors and other quilts read it.",
       "words": 15,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -57068,7 +57088,7 @@
       "text": "These documents define how this community makes decisions.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -57086,7 +57106,7 @@
       "text": "Updated {formatDay(doc.updated_at)}",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": "Unchanged words. The date behind them moved from a bare toLocaleDateString, which rendered 8/25/2025, to the app format, Aug 25, 2025. Slashes-and-numbers is the format that gets read wrong, and it was the only place the app still used it.",
       "occurrences": [
@@ -57104,7 +57124,7 @@
       "text": "The shared baseline every patch starts with. Always public; changed only by amendment.",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -57147,7 +57167,7 @@
       "text": "Could not load the record",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -57183,7 +57203,7 @@
       "text": "Carried by a vote.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -57219,7 +57239,7 @@
       "text": "Put to a vote and did not carry.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -57255,7 +57275,7 @@
       "text": "Applied without a vote.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -57291,7 +57311,7 @@
       "text": "The members seated a council.",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": "For contests that resolved before the outcome was recorded, so they cannot be named. \"The members\" rather than \"the electorate\", which is not a word the co-op that read it has ever said out loud.",
       "occurrences": [
@@ -57309,7 +57329,7 @@
       "text": "A meeting chose the council.",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -57345,7 +57365,7 @@
       "text": "Their seat was vacated.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": "The same event where the sweep recorded no reason. Says what is known and does not invent the rest.",
       "occurrences": [
@@ -57363,7 +57383,7 @@
       "text": "Stepped in as an interim admin, under this patch’s succession policy.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": "An interim promotion. Names the policy because the reader is often finding out for the first time that their patch has one.",
       "occurrences": [
@@ -57381,7 +57401,7 @@
       "text": "Made an admin.",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": "A person made an admin by another person, where the record has lost who did it. The actor is named in the branch above where it is known.",
       "occurrences": [
@@ -57399,7 +57419,7 @@
       "text": "Stopped being an admin.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": "Somebody off the council by a decision rather than by the clock. Deliberately not \"removed\": the same act covers stepping down and being stood down, and the record should not assert which.",
       "occurrences": [
@@ -57417,7 +57437,7 @@
       "text": "A meeting adopted this text.",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -57435,7 +57455,7 @@
       "text": "Every decision this patch has reached, and every one it failed to, newest first.",
       "words": 14,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": "The old heading promised everything the patch had settled over a list that was nine-tenths things it did not settle.",
       "occurrences": [
@@ -57453,7 +57473,7 @@
       "text": "Nothing settled yet. Proposals show up here once they close.",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -57561,7 +57581,7 @@
       "text": "History",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -57588,7 +57608,7 @@
       "text": "Version history · {versions.length} version{versions.length !== 1 ? 's' : ''}",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -57642,7 +57662,7 @@
       "text": "This is the initial version.",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -57750,7 +57770,7 @@
       "text": "No version history available.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -58314,7 +58334,7 @@
       "text": "How you'd like to be known (optional)",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -58503,7 +58523,7 @@
       "text": "The Label — {instanceName}",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -58561,7 +58581,7 @@
       "text": "How {instanceName} is run",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -58597,7 +58617,7 @@
       "text": "These figures haven't been reviewed since {label.stated_on}. They may be out of date.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -58615,7 +58635,7 @@
       "text": "The stewards typed these numbers in themselves. Nobody audits this.",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -58759,7 +58779,7 @@
       "text": ". This quilt started as a fork of it.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -58777,7 +58797,7 @@
       "text": "If you don't like how this is run",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -58875,7 +58895,7 @@
       "text": "says who runs {instanceName} and what it costs to keep up.",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -58893,7 +58913,7 @@
       "text": "The Lining — {instanceName}",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -58911,7 +58931,7 @@
       "text": "Couldn't load the lining: {error}",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -59580,7 +59600,7 @@
       "text": "Take down",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -59634,7 +59654,7 @@
       "text": "Failed to load preferences",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -59652,7 +59672,7 @@
       "text": "Failed to save preferences",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -59688,7 +59708,7 @@
       "text": "Choose how you want to be notified about activity in your patches.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -59742,7 +59762,7 @@
       "text": "Clear all",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -59832,7 +59852,7 @@
       "text": "Become a member to create events.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -59850,7 +59870,7 @@
       "text": "Join this patch to create events.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -59922,7 +59942,7 @@
       "text": "…and {uploadEvents.length - 8} more",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -59940,7 +59960,7 @@
       "text": "Fix the rows above and re-pick the file.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -59958,7 +59978,7 @@
       "text": "No events found in {uploadFileName}.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60012,7 +60032,7 @@
       "text": "Suggested by {sub.submitter_display_name || sub.submitter_username || 'unknown'}",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60048,7 +60068,7 @@
       "text": "Members can create events for meetups, shows, or gatherings.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60120,7 +60140,7 @@
       "text": "minimal",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60139,7 +60159,7 @@
       "text": "Minimal",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60158,7 +60178,7 @@
       "text": "Maintainer",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60185,7 +60205,7 @@
       "text": "casual",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60204,7 +60224,7 @@
       "text": "Casual",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60223,7 +60243,7 @@
       "text": "Venues, co-ops, makerspaces (20–100 people)",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60241,7 +60261,7 @@
       "text": "collaborative",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60260,7 +60280,7 @@
       "text": "Collaborative",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60279,7 +60299,7 @@
       "text": "Arts districts, coalitions (100+ people)",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60297,7 +60317,7 @@
       "text": "formal",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60316,7 +60336,7 @@
       "text": "Formal",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60378,7 +60398,7 @@
       "text": "Your setup window has expired. The patch is claimable again.",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60396,7 +60416,7 @@
       "text": "This patch is no longer claimable.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60414,7 +60434,7 @@
       "text": "Failed to complete setup",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60432,7 +60452,7 @@
       "text": "This patch is yours",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60450,7 +60470,7 @@
       "text": "Patch set up. Finish edits in Patch Settings.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60486,7 +60506,7 @@
       "text": "Failed to create patch",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60594,7 +60614,7 @@
       "text": "Set up your patch",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60612,7 +60632,7 @@
       "text": "Complete this patch's details to activate it.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60666,7 +60686,7 @@
       "text": "Start a new community, collective, venue, or group.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60741,7 +60761,7 @@
       "text": "This is the patch's existing address.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60791,7 +60811,7 @@
       "text": "e.g. Gallery Row, Lancaster Beats Lab",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60863,7 +60883,7 @@
       "text": "What is this patch about?",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -60881,7 +60901,7 @@
       "text": "Where is this based?",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -61315,7 +61335,7 @@
       "text": "How should this patch be organized? You can change this later.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -61333,7 +61353,7 @@
       "text": "This content is only visible to members.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -61358,7 +61378,7 @@
       "text": "Become a member to access the member list.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -61412,7 +61432,7 @@
       "text": "Share your patch's invite link to grow your community.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -61955,7 +61975,7 @@
       "text": "You do not have permission to view settings.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -62027,7 +62047,7 @@
       "text": "Failed to save appearance",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -62063,7 +62083,7 @@
       "text": "Failed to reset appearance",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -62117,7 +62137,7 @@
       "text": "This appearance is chosen by patch admins.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -62135,7 +62155,7 @@
       "text": "This appearance was assigned automatically. Pick and save to make it yours.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -62243,7 +62263,7 @@
       "text": "The mark beside this patch's name on the quilt and on cards.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -62279,7 +62299,7 @@
       "text": "Failed to archive patch",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -62315,7 +62335,7 @@
       "text": "Archive Patch",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -62405,7 +62425,7 @@
       "text": "Failed to save map location",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -62441,7 +62461,7 @@
       "text": "Failed to remove from map",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -62495,7 +62515,7 @@
       "text": "Failed to save tags",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -62513,7 +62533,7 @@
       "text": "That is not a place this quilt keeps time in. Try America/New_York.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -62556,7 +62576,7 @@
       "text": "Could not save the image",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -62574,7 +62594,7 @@
       "text": "public",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -62593,7 +62613,7 @@
       "text": "Public",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -62630,7 +62650,7 @@
       "text": "private",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -62649,7 +62669,7 @@
       "text": "Private",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -62686,7 +62706,7 @@
       "text": "Failed to save visibility",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -62758,7 +62778,7 @@
       "text": "Failed to add link",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -62902,7 +62922,7 @@
       "text": "On the map at",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -62920,7 +62940,7 @@
       "text": "Not on the map.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -62956,7 +62976,7 @@
       "text": "Remove from map",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -63233,7 +63253,7 @@
       "text": "Let non-members suggest events to this patch",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -63251,7 +63271,7 @@
       "text": "Suggestions wait in your events queue until an admin approves them.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -64288,7 +64308,7 @@
       "text": "Who appears in the public member list",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -64342,7 +64362,7 @@
       "text": "Who can read the governance record",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -64414,7 +64434,7 @@
       "text": "Approve",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -64540,7 +64560,7 @@
       "text": "Rescind",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -64742,7 +64762,7 @@
       "text": "Reinstate",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -65105,7 +65125,7 @@
       "text": "Failed to load notification config",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -65141,7 +65161,7 @@
       "text": "Choose which notifications this patch sends its members.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -65904,7 +65924,7 @@
       "text": "Stop",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -65976,7 +65996,7 @@
       "text": "Failed to save verification domain",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -66048,7 +66068,7 @@
       "text": "No verification domain set. Claims can only be approved by admin review.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -66102,7 +66122,7 @@
       "text": "{openClaims} open {openClaims === 1 ? 'claim' : 'claims'} awaiting review.",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -66120,7 +66140,7 @@
       "text": "Failed to load setup",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -66170,7 +66190,7 @@
       "text": "changes",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -66215,7 +66235,7 @@
       "text": "discussion",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -66234,7 +66254,7 @@
       "text": "Discussion",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -66253,7 +66273,7 @@
       "text": "history",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -66272,7 +66292,7 @@
       "text": "Failed to load proposal",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -66344,7 +66364,7 @@
       "text": "This {isDirectChange ? 'change' : 'proposal'} modifies",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -66362,7 +66382,7 @@
       "text": "This proposal modifies a members-only document. The text of the change is visible to members.",
       "words": 15,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -67091,7 +67111,7 @@
       "text": "Become a member to access proposals.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -67109,7 +67129,7 @@
       "text": "Become a member to create proposals and vote.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -67127,7 +67147,7 @@
       "text": "Follow or join this patch to get started.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -67253,7 +67273,7 @@
       "text": "That doesn't look like a patch link. Expected https://their-quilt/patches/patch-name.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -67289,7 +67309,7 @@
       "text": "(this quilt doesn't allow browsing from other quilts, so it will open on their site)",
       "words": 15,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -67307,7 +67327,7 @@
       "text": "Failed to remove quilt.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -67361,7 +67381,7 @@
       "text": "Follow a patch from another quilt",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -67451,7 +67471,7 @@
       "text": "· {testResults[quilt.url].stats.node_count || 0} patches",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -67487,7 +67507,7 @@
       "text": "No quilts followed yet.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -67505,7 +67525,7 @@
       "text": "Add a Patchwork instance URL above to start exploring.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -67559,7 +67579,7 @@
       "text": "On {quiltInfo?.name || host}, another quilt",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -67577,7 +67597,7 @@
       "text": "{node.member_count || 0} members",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -67595,7 +67615,7 @@
       "text": "{node.event_count || events.length || 0} events",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -67613,7 +67633,7 @@
       "text": "Visit on {quiltInfo?.name || host}",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -68275,7 +68295,7 @@
       "text": "Added {formatDay(cred.created_at)}",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": "Unchanged words. The date behind them moved from a bare toLocaleDateString, which rendered 8/25/2025, to the app format, Aug 25, 2025. Slashes-and-numbers is the format that gets read wrong, and it was the only place the app still used it.",
       "occurrences": [
@@ -68405,7 +68425,7 @@
       "text": "· Signed in {formatDay(s.created_at)}",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": "Unchanged words. The date behind them moved from a bare toLocaleDateString, which rendered 8/25/2025, to the app format, Aug 25, 2025. Slashes-and-numbers is the format that gets read wrong, and it was the only place the app still used it.",
       "occurrences": [
@@ -68423,7 +68443,7 @@
       "text": "Sign out",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -68848,7 +68868,7 @@
       "text": "Invalid or expired signup link",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -68956,7 +68976,7 @@
       "text": "You're signing up as",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -69014,7 +69034,7 @@
       "text": "3-30 characters: lowercase letters, numbers, hyphens.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -69104,7 +69124,7 @@
       "text": "You manage this patch",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -69140,7 +69160,7 @@
       "text": "You're a member of this patch",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -69158,7 +69178,7 @@
       "text": "Your membership request is waiting on this patch's admins",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -69363,7 +69383,7 @@
       "text": "No patches match your filter{quiltScope === 'my' ? ' in My Quilt' : ''}.",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -69381,7 +69401,7 @@
       "text": "No patches here yet.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -69399,7 +69419,7 @@
       "text": "Patch added to the quilt!",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -69435,7 +69455,7 @@
       "text": "A patch with a similar name already exists.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -69493,7 +69513,7 @@
       "text": "What is this place/group about?",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -69565,7 +69585,7 @@
       "text": "123 Main St, Lancaster, PA",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -69619,7 +69639,7 @@
       "text": "Failed to load profile",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -69655,7 +69675,7 @@
       "text": "@{profile.username} · here since {formatDate(profile.created_at)}",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -69727,7 +69747,7 @@
       "text": "Memberships you've hidden don't appear on your profile. Manage them in",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -69817,7 +69837,7 @@
       "text": "unclaimed",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -69858,7 +69878,7 @@
       "text": "invite only",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -70291,7 +70311,7 @@
       "text": "This patch's admins have not answered your request yet.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -70381,7 +70401,7 @@
       "text": "What is Patchwork? →",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -70399,7 +70419,7 @@
       "text": "This quilt is stewarded by",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -70489,7 +70509,7 @@
       "text": "The heart of the",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -70525,7 +70545,7 @@
       "text": "you accepted when you created your account:",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -70543,7 +70563,7 @@
       "text": "Treat every person with dignity and respect",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -70561,7 +70581,7 @@
       "text": "Participate in good faith",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -70579,7 +70599,7 @@
       "text": "Support the communities you join",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -70597,7 +70617,7 @@
       "text": "Report harmful behavior instead of ignoring it",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -70615,7 +70635,7 @@
       "text": "Every patch starts from",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -70633,7 +70653,7 @@
       "text": ", the shared baseline behind these.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -70705,7 +70725,7 @@
       "text": "I'll explore on my own",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -75815,6 +75835,28 @@
           "quote": null
         }
       ]
+    },
+    {
+      "id": "5d7b788c4e83",
+      "text": "{quilt_name} is not for profit and there is no monetization. There are no ads or trackers, no analytics scripts, and none of your data gets sold or rented to anyone (even in anonymized form). The site keeps the bare minimum it needs to function: an email address to sign you in, your submitted profile details, and a record of which patches you join and what you post there. Real people run this server. The [Label](/label) is where you can find their info.",
+      "words": 82,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": "Was your prose, marked human. Only the false clause moved: \"which patches you join and which events you RSVP to\" became \"which patches you join and what you post there\", since there is no RSVP feature (docs/adr/093). You reviewed and accepted the replacement.",
+      "occurrences": [
+        {
+          "file": "internal/handler/legal_defaults.go",
+          "line": 34,
+          "kind": "go-doc-block",
+          "raw": "{quilt_name} is not for profit and there is no monetization. There are no ads or trackers, no analytics scripts, and none of your data gets sold or rented to anyone (even in anonymized form). The site keeps the bare minimum it needs to function: an email address to sign you in, your submitted profile details, and a record of which patches you join and what you post there. Real people run this server. The [Label](/label) is where you can find their info.",
+          "quote": null
+        }
+      ],
+      "authorship": {
+        "kind": "written"
+      },
+      "previous_ai_text": "Nobody runs {quilt_name} for profit. There are no ads or trackers here, no analytics scripts, and nothing about you gets sold or rented to anyone. The site keeps the minimum it needs to work: an email address to sign you in, the profile you choose to write, and a record of which patches you join and what you post there. Real people run this server. The [Label](/label) says who they are and how to reach them."
     }
   ],
   "baseline": [

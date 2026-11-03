@@ -5,16 +5,16 @@ visitor-readable string in this repository and records who wrote it.
 
 | | strings | words |
 |---|---:|---:|
-| Written by a person | 31 | 759 |
+| Written by a person | 36 | 926 |
 | A person's words from the start | 98 | 2,791 |
 | Drafted by a model, edited by a person | 53 | 2,018 |
-| Left as drafted, deliberately | 2429 | 19,133 |
-| Not yet reviewed | 758 | 2,938 |
-| **Total** | **3369** | **27,639** |
+| Left as drafted, deliberately | 3182 | 21,911 |
+| Not yet reviewed | 0 | 0 |
+| **Total** | **3369** | **27,646** |
 
 Not counted above: **3** strings (3 words) marked as not copy. Every one is listed under [Marked as not copy](#marked-as-not-copy-3).
 
-Human-authored or deliberately accepted: **78%** of strings.
+Human-authored or deliberately accepted: **100%** of strings.
 A person's words: **4%** of strings, **13%** of words.
 Edited from a model's draft: **2%** of strings, counted apart, because an edit leaves most of the model's words in place.
 
@@ -25,8 +25,8 @@ Whether a replacement was a rewrite or small edits is what the person said when 
 | Tier | Decided | Total |
 |---|---:|---:|
 | Paragraphs (16+ words) | 441 | 441 |
-| Helper text (6–15 words) | 652 | 768 |
-| Labels (1–5 words) | 1518 | 2160 |
+| Helper text (6–15 words) | 767 | 767 |
+| Labels (1–5 words) | 2161 | 2161 |
 
 ## Scope
 
@@ -52,7 +52,7 @@ Out of scope, on purpose:
 - `internal/**/*.go`: Only the files listed in include ship prose, and every handler is read for its {"error":"..."} bodies alone, so log lines and SQL stay out.
 - Frozen constants (`legacyLiningOriginal`, `legacyLiningHumanized`): matched byte-for-byte by the program and never offered for rewriting.
 
-## Replaced drafts (82)
+## Replaced drafts (87)
 
 Where a model's draft was replaced, both are kept. A replacement a model wrote and a person accepted unedited is marked as such.
 
@@ -132,6 +132,9 @@ Where a model's draft was replaced, both are kept. A replacement a model wrote a
   - draft: "- You can leave at any time. No hard feelings.\n- If you want to take the pattern and start something new, seamrip it."
   - now (edited): "- You can leave at any time.\n- If you want to take the pattern and start something new, seamrip it."
 - `internal/governance/defaults.go`
+  - draft: "- **Followers** are community members who stay informed. They can attend events and observe governance.\n- **Members** have demonstrated commitment to the patch. They can vote on proposals and participate in governance.\n- **Admins** are experienced members who have been nominated by existing admins and ratified by the community. They manage day-to-day operations."
+  - now: "- **Followers** stay informed. They can see events and observe public governance.\n- **Members** have joined and made some commitment to the patch. They can vote on proposals and participate in governance.\n- **Admins** are members who have been nominated by existing admins and ratified by the community, or creators of the communities themselves. They manage day-to-day operations."
+- `internal/governance/defaults.go`
   - draft: "Conflict is normal. How we handle it is what matters. This process exists so that disagreements don't fester into fractures."
   - now: "Conflict is not desired, but it is expected. This process exists so that disagreements don't become schisms."
 - `internal/governance/defaults.go`
@@ -158,6 +161,12 @@ Where a model's draft was replaced, both are kept. A replacement a model wrote a
 - `internal/handler/events.go`
   - draft: "this event comes from an event source — edit it in the source calendar, or detach it first"
   - now (edited): "this event comes from an event source. Edit it in the source calendar, or detach it first"
+- `internal/handler/follower_charters_default.go`
+  - draft: "Followers here can now see only what any visitor can."
+  - now: "Followers view rights now match a normal visitor."
+- `internal/handler/legal_defaults.go`
+  - draft: "Nobody runs {quilt_name} for profit. There are no ads or trackers here, no analytics scripts, and nothing about you gets sold or rented to anyone. The site keeps the minimum it needs to work: an email address to sign you in, the profile you choose to write, and a record of which patches you join and what you post there. Real people run this server. The [Label](/label) says who they are and how to reach them."
+  - now: "This site, {quilt_name}, is not for profit and there is no monetization. There are no ads or trackers, no analytics scripts, and none of your data gets sold or rented to anyone (even in anonymized form). The site keeps the bare minimum it needs to function: an email address to sign you in, your submitted profile details, and a record of which patches you join and what you post there. Real people run this server. The [Label](/label) is where you can find their info."
 - `internal/handler/legal_defaults.go`
   - draft: "**Account information.** Your email address, which is used to send sign-in links and any notifications you turn on, plus your chosen username. A display name, bio, and avatar are stored only if you add them. Passkeys are stored as public keys. The private key never leaves your device, and there are no passwords anywhere in the system."
   - now (edited): "**Account information.** Your email address, if provided, which is used to send sign-in links and any notifications you turn on, plus your chosen username. A display name, bio, and avatar are stored only if you add them. Passkeys are stored as public keys. The private key never leaves your device, and there are no passwords anywhere in the system."
@@ -206,6 +215,12 @@ Where a model's draft was replaced, both are kept. A replacement a model wrote a
 - `web/src/components/BlockDrafter.svelte`
   - draft: "Click an anchor, then a second anchor, to sew a seam. Seams split every piece they cross."
   - now: "Click two anchors to sew a seam. Seams split every piece they cross."
+- `web/src/components/ElectionPanel.svelte`
+  - draft: "A few lines the other members will see beside your name on the ballot."
+  - now: "Write a few lines to sit by your name on the ballot."
+- `web/src/components/ElectionPanel.svelte`
+  - draft: "You can change this until voting closes."
+  - now: "Editing available until voting closes."
 - `web/src/components/ElectionPanel.svelte`
   - draft: "Counts toward the turnout this election needs, the way an abstention counts on an ordinary proposal."
   - now: "This election may need a certain turnout, so abstention does impact the result."
