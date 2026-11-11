@@ -512,11 +512,18 @@ func Tables() []Table {
 			// account of how its leadership was chosen.
 			File: "attestations.json",
 			Name: "attestations",
+			//
+			// A record struck as entered in error travels struck: crossing a
+			// line out is part of the book, and a fork that received the
+			// struck record as live would hand the admin role back to the
+			// duplicate or the mistake (F-078). struck_by is remapped like
+			// recorded_by and is NULL from archives older than the column.
 			Query: `SELECT id, node_id, kind, decided_at, term_ends_at, summary,
-				recorded_by, created_at, supersedes_id FROM attestations`,
+				recorded_by, created_at, supersedes_id, struck_at, struck_by FROM attestations`,
 			Columns: cols(id("id"), id("node_id"), c("kind"), c("decided_at"),
 				c("term_ends_at"), c("summary"), id("recorded_by"), c("created_at"),
-				id("supersedes_id")),
+				id("supersedes_id"), def("struck_at", nil),
+				Column{Name: "struck_by", Remap: true, Default: nil}),
 		},
 		{
 			// What a meeting adopted, and the text it adopted (docs/adr/053).
@@ -538,13 +545,14 @@ func Tables() []Table {
 		{
 			File: "attestation_names.json",
 			Name: "attestation_names",
-			Query: `SELECT id, attestation_id, user_id, display_name, position
+			Query: `SELECT id, attestation_id, user_id, display_name, position, effect
 				FROM attestation_names`,
 			// user_id is nullable and remapped: an unrealized name has none,
 			// and a realized one must point at the imported person rather than
-			// a stranger with the old instance's id.
+			// a stranger with the old instance's id. `effect` defaults to
+			// 'seated', which is what every name meant before the column.
 			Columns: cols(id("id"), id("attestation_id"), id("user_id"),
-				c("display_name"), c("position")),
+				c("display_name"), c("position"), def("effect", "seated")),
 		},
 		{
 			File:  "votes.json",
