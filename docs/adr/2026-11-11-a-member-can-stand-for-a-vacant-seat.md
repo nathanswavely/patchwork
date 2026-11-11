@@ -51,6 +51,11 @@ grants nothing by itself.
   proposal with the member's own id. The chair's sentence reads "a member
   stands, or an admin puts one forward", and the hub's what-you-can-do line
   tells a member they can stand rather than to ask an admin.
+- **The proposal says who it is about.** A membership proposal's page now
+  opens with "Priya Natarajan is standing for admin" (or "Sam Pryor
+  nominated Priya Natarajan for admin") and what passing it does. Before,
+  a nomination was a title and an Approve button, the shape that put a
+  Reject button under a volunteer's name.
 
 ## Consequences
 

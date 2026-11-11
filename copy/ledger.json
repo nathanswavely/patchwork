@@ -3978,7 +3978,7 @@
         },
         {
           "file": "internal/handler/attestations.go",
-          "line": 235,
+          "line": 234,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4668,21 +4668,21 @@
         },
         {
           "file": "internal/handler/attestations.go",
-          "line": 212,
+          "line": 211,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/attestations.go",
-          "line": 410,
+          "line": 409,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/attestations.go",
-          "line": 553,
+          "line": 552,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -6731,7 +6731,7 @@
         },
         {
           "file": "internal/handler/attestations.go",
-          "line": 239,
+          "line": 238,
           "kind": "go-error-body",
           "raw": "decided_at is required: a record of what happened has to say when",
           "quote": null
@@ -7357,7 +7357,7 @@
       "occurrences": [
         {
           "file": "internal/handler/attestations.go",
-          "line": 152,
+          "line": 151,
           "kind": "go-error-body",
           "raw": "failed to list attestations",
           "quote": null
@@ -7375,7 +7375,7 @@
       "occurrences": [
         {
           "file": "internal/handler/attestations.go",
-          "line": 216,
+          "line": 215,
           "kind": "go-error-body",
           "raw": "only an admin of this patch can record a decision",
           "quote": null
@@ -7393,7 +7393,7 @@
       "occurrences": [
         {
           "file": "internal/handler/attestations.go",
-          "line": 220,
+          "line": 219,
           "kind": "go-error-body",
           "raw": "this patch chooses its admins in Patchwork; there is nothing to record",
           "quote": null
@@ -7411,7 +7411,7 @@
       "occurrences": [
         {
           "file": "internal/handler/attestations.go",
-          "line": 249,
+          "line": 248,
           "kind": "go-error-body",
           "raw": "only a patch with elected leadership has terms; this one fills admin seats another way",
           "quote": null
@@ -7429,7 +7429,7 @@
       "occurrences": [
         {
           "file": "internal/handler/attestations.go",
-          "line": 259,
+          "line": 258,
           "kind": "go-error-body",
           "raw": "the record being corrected does not belong to this patch",
           "quote": null
@@ -7447,7 +7447,7 @@
       "occurrences": [
         {
           "file": "internal/handler/attestations.go",
-          "line": 265,
+          "line": 264,
           "kind": "go-error-body",
           "raw": "that record was entered in error and counts for nothing; record the decision instead of correcting it",
           "quote": null
@@ -7465,7 +7465,7 @@
       "occurrences": [
         {
           "file": "internal/handler/attestations.go",
-          "line": 273,
+          "line": 272,
           "kind": "go-error-body",
           "raw": "that record has already been corrected; correct the correction instead",
           "quote": null
@@ -7483,7 +7483,7 @@
       "occurrences": [
         {
           "file": "internal/handler/attestations.go",
-          "line": 289,
+          "line": 288,
           "kind": "go-error-body",
           "raw": "the same person cannot be both put in place and stood down by one decision",
           "quote": null
@@ -7501,7 +7501,7 @@
       "occurrences": [
         {
           "file": "internal/handler/attestations.go",
-          "line": 301,
+          "line": 300,
           "kind": "go-error-body",
           "raw": "failed to record the decision",
           "quote": null
@@ -7533,7 +7533,7 @@
       "occurrences": [
         {
           "file": "internal/handler/attestations.go",
-          "line": 414,
+          "line": 413,
           "kind": "go-error-body",
           "raw": "only an admin of this patch can strike a record",
           "quote": null
@@ -7551,7 +7551,7 @@
       "occurrences": [
         {
           "file": "internal/handler/attestations.go",
-          "line": 418,
+          "line": 417,
           "kind": "go-error-body",
           "raw": "this patch chooses its admins in Patchwork; its recorded decisions no longer move anybody",
           "quote": null
@@ -7569,7 +7569,7 @@
       "occurrences": [
         {
           "file": "internal/handler/attestations.go",
-          "line": 426,
+          "line": 425,
           "kind": "go-error-body",
           "raw": "record not found on this patch",
           "quote": null
@@ -7587,7 +7587,7 @@
       "occurrences": [
         {
           "file": "internal/handler/attestations.go",
-          "line": 430,
+          "line": 429,
           "kind": "go-error-body",
           "raw": "that record is already marked entered in error",
           "quote": null
@@ -7605,7 +7605,7 @@
       "occurrences": [
         {
           "file": "internal/handler/attestations.go",
-          "line": 439,
+          "line": 438,
           "kind": "go-error-body",
           "raw": "failed to strike the record",
           "quote": null
@@ -7623,7 +7623,7 @@
       "occurrences": [
         {
           "file": "internal/handler/attestations.go",
-          "line": 557,
+          "line": 556,
           "kind": "go-error-body",
           "raw": "only an admin of this patch can link a name",
           "quote": null
@@ -7641,7 +7641,7 @@
       "occurrences": [
         {
           "file": "internal/handler/attestations.go",
-          "line": 568,
+          "line": 567,
           "kind": "go-error-body",
           "raw": "name not found on this patch",
           "quote": null
@@ -7659,7 +7659,7 @@
       "occurrences": [
         {
           "file": "internal/handler/attestations.go",
-          "line": 572,
+          "line": 571,
           "kind": "go-error-body",
           "raw": "that name is already linked to a person",
           "quote": null
@@ -7677,7 +7677,7 @@
       "occurrences": [
         {
           "file": "internal/handler/attestations.go",
-          "line": 580,
+          "line": 579,
           "kind": "go-error-body",
           "raw": "user_id is required",
           "quote": null
@@ -7709,7 +7709,7 @@
       "occurrences": [
         {
           "file": "internal/handler/attestations.go",
-          "line": 584,
+          "line": 583,
           "kind": "go-error-body",
           "raw": "a recorded name can only be linked to an active member of this patch",
           "quote": null
@@ -7727,7 +7727,7 @@
       "occurrences": [
         {
           "file": "internal/handler/attestations.go",
-          "line": 589,
+          "line": 588,
           "kind": "go-error-body",
           "raw": "failed to link the name",
           "quote": null
@@ -22517,7 +22517,7 @@
         },
         {
           "file": "web/src/components/AttestationRecords.svelte",
-          "line": 344,
+          "line": 346,
           "kind": "markup",
           "raw": "What happened",
           "quote": null
@@ -24012,7 +24012,7 @@
       "occurrences": [
         {
           "file": "web/src/components/AttestationRecords.svelte",
-          "line": 331,
+          "line": 333,
           "kind": "markup",
           "raw": "This records who a meeting put in place as admins. Minutes and other\n          decisions go in a document under",
           "quote": null
@@ -24030,7 +24030,7 @@
       "occurrences": [
         {
           "file": "web/src/components/AttestationRecords.svelte",
-          "line": 336,
+          "line": 338,
           "kind": "markup",
           "raw": "When it was decided",
           "quote": null
@@ -24048,7 +24048,7 @@
       "occurrences": [
         {
           "file": "web/src/components/AttestationRecords.svelte",
-          "line": 340,
+          "line": 342,
           "kind": "markup",
           "raw": "When this council's term ends",
           "quote": null
@@ -24066,7 +24066,7 @@
       "occurrences": [
         {
           "file": "web/src/components/AttestationRecords.svelte",
-          "line": 346,
+          "line": 348,
           "kind": "attr:placeholder",
           "raw": "Annual meeting elected the council",
           "quote": "\""
@@ -24084,7 +24084,7 @@
       "occurrences": [
         {
           "file": "web/src/components/AttestationRecords.svelte",
-          "line": 348,
+          "line": 350,
           "kind": "markup",
           "raw": "Who it put in place",
           "quote": null
@@ -24102,7 +24102,7 @@
       "occurrences": [
         {
           "file": "web/src/components/AttestationRecords.svelte",
-          "line": 352,
+          "line": 354,
           "kind": "markup",
           "raw": "Someone not here yet",
           "quote": null
@@ -24120,14 +24120,14 @@
       "occurrences": [
         {
           "file": "web/src/components/AttestationRecords.svelte",
-          "line": 358,
+          "line": 360,
           "kind": "attr:placeholder",
           "raw": "Their name",
           "quote": "\""
         },
         {
           "file": "web/src/components/AttestationRecords.svelte",
-          "line": 382,
+          "line": 384,
           "kind": "attr:placeholder",
           "raw": "Their name",
           "quote": "\""
@@ -24145,7 +24145,7 @@
       "occurrences": [
         {
           "file": "web/src/components/AttestationRecords.svelte",
-          "line": 363,
+          "line": 365,
           "kind": "markup",
           "raw": "Add another",
           "quote": null
@@ -24163,7 +24163,7 @@
       "occurrences": [
         {
           "file": "web/src/components/AttestationRecords.svelte",
-          "line": 366,
+          "line": 368,
           "kind": "markup",
           "raw": "Anyone already here takes up the role. Anyone not here yet is recorded\n          by name and holds nothing until they join.",
           "quote": null
@@ -24184,7 +24184,7 @@
       "occurrences": [
         {
           "file": "web/src/components/AttestationRecords.svelte",
-          "line": 372,
+          "line": 374,
           "kind": "markup",
           "raw": "Who stood down",
           "quote": null
@@ -24202,7 +24202,7 @@
       "occurrences": [
         {
           "file": "web/src/components/AttestationRecords.svelte",
-          "line": 376,
+          "line": 378,
           "kind": "markup",
           "raw": "Someone not here",
           "quote": null
@@ -24220,7 +24220,7 @@
       "occurrences": [
         {
           "file": "web/src/components/AttestationRecords.svelte",
-          "line": 391,
+          "line": 393,
           "kind": "markup",
           "raw": "Optional. An admin not put in place above stops holding the role either way. This puts their name on the record.",
           "quote": null
@@ -66868,6 +66868,60 @@
       ]
     },
     {
+      "id": "6ae9f33baa6e",
+      "text": "{proposal.target_user_name} is standing for admin.",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/ProposalDetail.svelte",
+          "line": 328,
+          "kind": "markup",
+          "raw": "{proposal.target_user_name} is standing for admin.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "53ef7da68b27",
+      "text": "{proposal.author_name || 'An admin'} nominated {proposal.target_user_name} for admin.",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/ProposalDetail.svelte",
+          "line": 330,
+          "kind": "markup",
+          "raw": "{proposal.author_name || 'An admin'} nominated {proposal.target_user_name} for admin.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "585d557ea613",
+      "text": "If this passes, they become an admin.",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/ProposalDetail.svelte",
+          "line": 332,
+          "kind": "markup",
+          "raw": "If this passes, they become an admin.",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "c41a3fe1665f",
       "text": "Why this change",
       "words": 3,
@@ -66878,7 +66932,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 325,
+          "line": 338,
           "kind": "markup",
           "raw": "Why this change",
           "quote": null
@@ -66896,7 +66950,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 340,
+          "line": 353,
           "kind": "markup",
           "raw": "This document was adopted at a meeting{proposal.ground_moved_at ? ` on ${formatDay(proposal.ground_moved_at)}` : ''},\n              after this was drafted. The changes below compare against the older text.",
           "quote": null
@@ -66914,7 +66968,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 350,
+          "line": 363,
           "kind": "markup",
           "raw": "This {isDirectChange ? 'change' : 'proposal'} modifies",
           "quote": null
@@ -66932,7 +66986,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 361,
+          "line": 374,
           "kind": "markup",
           "raw": "This proposal modifies a members-only document. The text of the\n                change is visible to members.",
           "quote": null
@@ -66950,7 +67004,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 386,
+          "line": 399,
           "kind": "markup",
           "raw": "You're the only eligible voter, so your vote decides this immediately.",
           "quote": null
@@ -66972,7 +67026,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 415,
+          "line": 428,
           "kind": "markup",
           "raw": "The text from before this proposal is not in this patch's history, so its changes cannot be shown.",
           "quote": null

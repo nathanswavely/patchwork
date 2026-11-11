@@ -312,7 +312,9 @@
               <p class="stood-down">Stood down: {r.stood_down.map((n) => n.display_name).join(', ')}</p>
             {/if}
           </div>
-          {#if isAdmin && !r.entered_in_error}
+          <!-- Not on a corrected record: it already counts for nothing, and
+               the correction is the one to strike if it was the mistake. -->
+          {#if isAdmin && !r.entered_in_error && !r.superseded_by}
             {@render strikeControl(r)}
           {/if}
         </div>
