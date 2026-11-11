@@ -86,7 +86,9 @@ func TestAnsweringARequestTakesItsLineDown(t *testing.T) {
 			askToJoin(t, db, slug, beaToken, omar.ID, lou.ID)
 			_, clydeToken := createTestUser(t, db, slug+"-clyde", "member")
 			r := authedRequest("POST", "/api/v1/nodes/"+slug+"/join", map[string]string{"role": "member"}, clydeToken)
-			serveMux(t, db, "POST", "/api/v1/nodes/{slug}/join", handler.JoinNode(db), r)
+			if w := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/join", handler.JoinNode(db), r); w.Code != http.StatusCreated {
+				t.Fatalf("second request: %d %s", w.Code, w.Body.String())
+			}
 			waitFor(t, "both lines", func() bool { return requestLines(t, db, omar.ID) == 2 && requestLines(t, db, lou.ID) == 2 })
 
 			tc.answer(t, db, slug, bea.ID, beaToken, omarToken)
@@ -99,7 +101,7 @@ func TestAnsweringARequestTakesItsLineDown(t *testing.T) {
 				}
 			}
 			var body string
-			db.QueryRow(`SELECT body FROM notifications WHERE user_id = ? AND type = 'membership.request'`, omar.ID).Scan(&body)
+			requestLineScan(t, db.QueryRow(`SELECT body FROM notifications WHERE user_id = ? AND type = 'membership.request'`, omar.ID), &body)
 			if strings.Contains(body, bea.DisplayName) {
 				t.Errorf("the line left standing is Bea's, whose request was answered: %q", body)
 			}
@@ -121,7 +123,7 @@ func TestAFollowersRequestIsARequest(t *testing.T) {
 	askToJoin(t, db, "follow-room", teoToken, admin.ID)
 	time.Sleep(200 * time.Millisecond)
 	var joined int
-	db.QueryRow(`SELECT COUNT(*) FROM notifications WHERE user_id = ? AND type = 'membership.joined'`, admin.ID).Scan(&joined)
+	requestLineScan(t, db.QueryRow(`SELECT COUNT(*) FROM notifications WHERE user_id = ? AND type = 'membership.joined'`, admin.ID), &joined)
 	if joined != 0 {
 		t.Errorf("a request was announced as a join (%d joined lines)", joined)
 	}
@@ -141,11 +143,11 @@ func TestMigration_AnsweredRequestLinesGo(t *testing.T) {
 	busy := createTestNode(t, db, admin.ID, "Busy", "busy", "approval_required")
 	asker, _ := createTestUser(t, db, "mig-asker", "member")
 	pending := createTestMembership(t, db, asker.ID, busy, "member", "pending")
-	db.Exec(`UPDATE memberships SET joined_at = '2026-10-10T12:00:00.000Z' WHERE id = ?`, pending)
+	mustExec(t, db, `UPDATE memberships SET joined_at = '2026-10-10T12:00:00.000Z' WHERE id = ?`, pending)
 
 	seed := func(nodeID, created string) string {
 		id := seedNotification(t, db, admin.ID, "membership.request", "/patches/x/settings/members")
-		db.Exec(`UPDATE notifications SET node_id = ?, created_at = ? WHERE id = ?`, nodeID, created, id)
+		mustExec(t, db, `UPDATE notifications SET node_id = ?, created_at = ? WHERE id = ?`, nodeID, created, id)
 		return id
 	}
 	onQuiet := seed(quiet, "2026-10-11T12:00:00.000Z")   // no request open there at all
@@ -179,7 +181,7 @@ func TestMigration_AnsweredRequestLinesGo(t *testing.T) {
 
 	exists := func(id string) bool {
 		var n int
-		db.QueryRow(`SELECT COUNT(*) FROM notifications WHERE id = ?`, id).Scan(&n)
+		requestLineScan(t, db.QueryRow(`SELECT COUNT(*) FROM notifications WHERE id = ?`, id), &n)
 		return n == 1
 	}
 	if exists(onQuiet) {
@@ -215,7 +217,9 @@ func TestAnInvitationNamesWhoMadeIt(t *testing.T) {
 			} `json:"invited_by"`
 		} `json:"items"`
 	}
-	json.Unmarshal(w.Body.Bytes(), &mine)
+	if err := json.Unmarshal(w.Body.Bytes(), &mine); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
 	if len(mine.Items) != 1 || mine.Items[0].InvitedBy.ID != f.admin || mine.Items[0].InvitedBy.Username != f.slug+"-admin" {
 		t.Fatalf("the invitee's invitation should name the admin who made it, got %s", w.Body.String())
 	}
@@ -240,7 +244,7 @@ func TestAnInvitationNamesWhoMadeIt(t *testing.T) {
 		t.Fatalf("accept: %d %s", w.Code, w.Body.String())
 	}
 	var after *string
-	db.QueryRow(`SELECT invited_by FROM memberships WHERE user_id = ? AND node_id = ?`, f.invitee, f.nodeID).Scan(&after)
+	requestLineScan(t, db.QueryRow(`SELECT invited_by FROM memberships WHERE user_id = ? AND node_id = ?`, f.invitee, f.nodeID), &after)
 	if after != nil {
 		t.Errorf("an accepted membership still carries invited_by = %q", *after)
 	}
@@ -258,7 +262,7 @@ func TestAReinvitationNamesTheAdminAskingNow(t *testing.T) {
 		t.Fatalf("invite: %d %s", w.Code, w.Body.String())
 	}
 	var by string
-	db.QueryRow(`SELECT COALESCE(invited_by, '') FROM memberships WHERE user_id = ? AND node_id = ?`, f.invitee, f.nodeID).Scan(&by)
+	requestLineScan(t, db.QueryRow(`SELECT COALESCE(invited_by, '') FROM memberships WHERE user_id = ? AND node_id = ?`, f.invitee, f.nodeID), &by)
 	if by != second.ID {
 		t.Errorf("invited_by = %q, want the second admin", by)
 	}
@@ -267,14 +271,18 @@ func TestAReinvitationNamesTheAdminAskingNow(t *testing.T) {
 func TestPersonalExport_AnInvitationCarriesItsInviter(t *testing.T) {
 	db := setupTestDB(t)
 	f := newInviteFixture(t, db, "inv-export")
-	invite(t, db, f.slug, f.inviteeName, f.adminToken)
+	if w := invite(t, db, f.slug, f.inviteeName, f.adminToken); w.Code != http.StatusCreated {
+		t.Fatalf("invite: %d %s", w.Code, w.Body.String())
+	}
 
 	w := requestExport(t, db, f.inviteeToken)
 	if w.Code != http.StatusOK {
 		t.Fatalf("export: %d %s", w.Code, w.Body.String())
 	}
 	var doc map[string]interface{}
-	json.Unmarshal(w.Body.Bytes(), &doc)
+	if err := json.Unmarshal(w.Body.Bytes(), &doc); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
 	var found bool
 	for _, m := range exportSection(t, doc, "memberships") {
 		row := m.(map[string]interface{})
@@ -288,5 +296,14 @@ func TestPersonalExport_AnInvitationCarriesItsInviter(t *testing.T) {
 	}
 	if !found {
 		t.Fatal("the export carries no invited row")
+	}
+}
+
+// requestLineScan is QueryRow.Scan that fails the test on an error rather
+// than reading a zero value as an answer.
+func requestLineScan(t *testing.T, row interface{ Scan(...any) error }, dest ...any) {
+	t.Helper()
+	if err := row.Scan(dest...); err != nil {
+		t.Fatalf("scan: %v", err)
 	}
 }
