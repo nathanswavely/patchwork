@@ -1509,6 +1509,7 @@ func SetupClaim(db *database.DB) http.HandlerFunc {
 			}
 		}
 		CreateDefaultLining(db, nodeID, user.ID)
+		CreateTemplateDocs(db, nodeID, req.Template, user.ID)
 
 		// The claim row stays 'approved' — a second setup attempt is refused
 		// because the node is no longer unclaimed, not because the claim

@@ -847,6 +847,12 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 			// answer to take here.
 			AIUse  *string `json:"ai_use"`
 			AIWork *bool   `json:"ai_work"`
+			// The clock this patch keeps (docs/adr/2026-11-11-a-patch-is-asked-its-timezone-when-it-is-made.md).
+			// Asked at creation because a patch born without one keeps the
+			// quilt's, which on a fresh instance is UTC, and its first event
+			// lands at the hour nobody lives in. Empty still means "follow
+			// the quilt", exactly as it does in Patch Settings.
+			Timezone string `json:"timezone"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -859,6 +865,17 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 		if msg := checkAIAnswer(db, "ai_use", req.AIUse); msg != "" {
 			writeJSONError(w, http.StatusBadRequest, msg)
 			return
+		}
+		// The same check, and the same correction, Patch Settings gives:
+		// a place name, never a fixed offset like EST (F-074).
+		req.Timezone = strings.TrimSpace(req.Timezone)
+		if req.Timezone != "" && !settings.ValidTimezone(req.Timezone) {
+			writeJSONError(w, http.StatusBadRequest, settings.BadTimezoneMessage)
+			return
+		}
+		var timezone interface{}
+		if req.Timezone != "" {
+			timezone = req.Timezone
 		}
 		if req.Visibility == "" {
 			req.Visibility = "public"
@@ -952,9 +969,9 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 		// different path and stay NULL until a claim completes.
 		activatedAt := clock.Now()
 		_, err := db.Exec(
-			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, follower_permissions, visibility, membership_policy, appearance, ap_id, activated_at, public_member_list, public_governance_record, nonprofit, ai_use, ai_work)
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-			id, user.ID, req.Name, slug, req.Description, req.Latitude, req.Longitude, req.Address, req.Website, linksStr, fpStr, req.Visibility, req.MembershipPolicy, appearanceStr, apID, activatedAt, publicMemberList, publicGovernanceRecord, req.Nonprofit, aiAnswerValue(req.AIUse), req.AIWork,
+			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, timezone, website, links, follower_permissions, visibility, membership_policy, appearance, ap_id, activated_at, public_member_list, public_governance_record, nonprofit, ai_use, ai_work)
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			id, user.ID, req.Name, slug, req.Description, req.Latitude, req.Longitude, req.Address, timezone, req.Website, linksStr, fpStr, req.Visibility, req.MembershipPolicy, appearanceStr, apID, activatedAt, publicMemberList, publicGovernanceRecord, req.Nonprofit, aiAnswerValue(req.AIUse), req.AIWork,
 		)
 		if err != nil {
 			http.Error(w, `{"error":"failed to create node"}`, http.StatusInternalServerError)
@@ -1026,8 +1043,10 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 		}
 
 		// Auto-create default governance doc (lining). After the fork, so
-		// the repo it mirrors into exists.
+		// the repo it mirrors into exists. Then the template's own
+		// documents, which the fork has already written into the repo.
 		CreateDefaultLining(db, id, user.ID)
+		CreateTemplateDocs(db, id, req.Template, user.ID)
 
 		// A patch born under an elected template adopts elected leadership
 		// at birth. It does not hold an election at birth (docs/adr/098):

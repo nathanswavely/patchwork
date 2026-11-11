@@ -135,23 +135,19 @@ func ForkForNode(dataDir, nodeID, template string) error {
 		return nil // already exists
 	}
 
-	if template == "" {
-		template = "casual"
-	}
+	// Empty and unknown names fall back to casual, through the same helper
+	// the creation handlers use to write the documents' rows, so the repo
+	// and the database are made from one template.
+	template = ResolveTemplate(template)
 
-	// Build the node's files: community-standards.md (lining) + template files.
+	// Build the node's files: community-standards.md (lining) + template
+	// files: the rules, and each document at Filename(title) holding exactly
+	// the body its governance_docs row gets (CreateTemplateDocs).
 	files := map[string]string{
-		"community-standards.md": defaultInstanceFiles()["community-standards.md"],
+		Filename(DefaultLiningTitle): DefaultLiningBody,
 	}
 	for filename, content := range templateFiles(template) {
 		files[filename] = content
-	}
-
-	// If no template files found (invalid template name), fall back to casual.
-	if len(files) == 1 {
-		for filename, content := range templateFiles("casual") {
-			files[filename] = content
-		}
 	}
 
 	msg := fmt.Sprintf("Initialize governance (%s template)", template)

@@ -1,6 +1,6 @@
 # 104. A rule says what it costs this patch
 
-**Status:** accepted, 2026-09-15
+**Status:** accepted, 2026-09-15. Amended by docs/adr/2026-11-11-a-template-card-says-who-decides.md, which rewrites the template cards.
 
 ## Context
 
@@ -84,4 +84,5 @@ unable to change their rules because a hint would not load.
 - The template picker at patch creation still describes its options in the
   abstract, and has no patch to do arithmetic about. The simulation's
   finding that the blurbs route real organisations to the wrong template
-  (F-032) stands untouched.
+  (F-032) stands untouched. (Since answered by
+  docs/adr/2026-11-11-a-template-card-says-who-decides.md.)
