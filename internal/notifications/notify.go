@@ -19,6 +19,10 @@ type Event struct {
 	Title    string // Notification title
 	Body     string // Notification body text
 	Link     string // In-app link path
+	// MembershipID ties the notification to the membership it asks about,
+	// so answering that membership can take the line down (F-045). Set on
+	// membership.request only; see ClearMembershipRequest.
+	MembershipID string
 }
 
 // Notifier is the main entry point for sending notifications.

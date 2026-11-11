@@ -37,7 +37,7 @@ func PatchMembers(slug string) string {
 }
 
 // PatchJoinRequests is where a patch's pending join requests are answered:
-// Settings → Members, /patches/:slug/settings/members.
+// Settings → Roles and requests, /patches/:slug/settings/members.
 //
 // It used to be the members tab with ?status=pending, which that page never
 // read, so the bell's "Membership request" line opened the ordinary roster

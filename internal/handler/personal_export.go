@@ -73,10 +73,17 @@ func personalExportSections() []personalExportSection {
 			// profile and member list (docs/adr/006). The visibility switch
 			// is the person's own, so the hidden ones are theirs to carry —
 			// ADR 012 says so in as many words.
+			//
+			// An open invitation carries who made it (F-044), by id and by
+			// the name the invitee was shown. It is a fact about this
+			// person's own row: the admin's act of asking them, which they
+			// have already read on the patch page. Blank on every other row.
 			Key: "memberships", Args: 1,
 			Query: `SELECT m.id, m.node_id, n.slug AS node_slug, n.name AS node_name,
-				m.role, m.status, m.visible, m.share_contact, m.join_message, m.joined_at
+				m.role, m.status, m.visible, m.share_contact, m.join_message, m.joined_at,
+				m.invited_by, CASE WHEN m.invited_by IS NULL THEN NULL ELSE ` + displayNameExpr("iu") + ` END AS invited_by_name
 				FROM memberships m JOIN nodes n ON n.id = m.node_id
+				LEFT JOIN users iu ON iu.id = m.invited_by
 				WHERE m.user_id = ? ORDER BY m.joined_at`,
 		},
 		{

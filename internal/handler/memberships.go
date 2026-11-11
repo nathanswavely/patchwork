@@ -152,16 +152,25 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 
 					var nodeSlugN, nodeNameN string
 					db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", nodeID).Scan(&nodeSlugN, &nodeNameN)
-					notify(notifications.Event{
-						Type:     notifications.MembershipJoined,
-						NodeID:   nodeID,
-						NodeSlug: nodeSlugN,
-						NodeName: nodeNameN,
-						ActorID:  user.ID,
-						Title:    "New member joined " + nodeNameN,
-						Body:     personName(user) + " joined.",
-						Link:     weblink.PatchMembers(nodeSlugN),
-					})
+					// A follower asking on an approval-required patch has
+					// asked, not joined. This path used to announce "New
+					// member joined" for both, so the admin heard of a member
+					// who was not one and got no line to answer the request
+					// from.
+					if newStatus == "pending" {
+						notify(membershipRequestEvent(nodeID, nodeSlugN, nodeNameN, user, existingID))
+					} else {
+						notify(notifications.Event{
+							Type:     notifications.MembershipJoined,
+							NodeID:   nodeID,
+							NodeSlug: nodeSlugN,
+							NodeName: nodeNameN,
+							ActorID:  user.ID,
+							Title:    "New member joined " + nodeNameN,
+							Body:     personName(user) + " joined.",
+							Link:     weblink.PatchMembers(nodeSlugN),
+						})
+					}
 
 					w.Header().Set("Content-Type", "application/json")
 					w.WriteHeader(http.StatusCreated)
@@ -218,16 +227,7 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 						Link:     weblink.PatchMembers(nodeSlugN),
 					})
 				} else if newStatus == "pending" {
-					notify(notifications.Event{
-						Type:     notifications.MembershipRequest,
-						NodeID:   nodeID,
-						NodeSlug: nodeSlugN,
-						NodeName: nodeNameN,
-						ActorID:  user.ID,
-						Title:    "Membership request for " + nodeNameN,
-						Body:     personName(user) + " asked to join.",
-						Link:     weblink.PatchJoinRequests(nodeSlugN),
-					})
+					notify(membershipRequestEvent(nodeID, nodeSlugN, nodeNameN, user, existingID))
 				}
 			}
 
@@ -284,16 +284,7 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 					Link:     weblink.PatchMembers(nodeSlugN),
 				})
 			} else if newStatus == "pending" {
-				notify(notifications.Event{
-					Type:     notifications.MembershipRequest,
-					NodeID:   nodeID,
-					NodeSlug: nodeSlugN,
-					NodeName: nodeNameN,
-					ActorID:  user.ID,
-					Title:    "Membership request for " + nodeNameN,
-					Body:     personName(user) + " asked to join.",
-					Link:     weblink.PatchJoinRequests(nodeSlugN),
-				})
+				notify(membershipRequestEvent(nodeID, nodeSlugN, nodeNameN, user, id))
 			}
 		}
 
@@ -355,6 +346,8 @@ func WithdrawMembershipRequest(db *database.DB) http.HandlerFunc {
 		}
 
 		auth.LogAuditEvent(db, user.ID, "membership.withdraw", "membership", memID, "{}", clientIP(r))
+		// The admins' line about this request goes with it (F-045).
+		notifications.ClearMembershipRequest(db, memID)
 
 		// Nobody is notified, matching WithdrawClaim and matching rejection:
 		// the request simply leaves the pending queue. An admin who never
@@ -957,6 +950,8 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 				}
 				auth.LogAuditEventJSON(db, user.ID, "membership.approve", "membership", memID,
 					map[string]any{"target_user_id": targetUserID}, clientIP(r))
+				// Answered, so no admin's bell should go on asking (F-045).
+				notifications.ClearMembershipRequest(db, memID)
 
 				// Notify the approved user.
 				var nodeSlugN, nodeNameN string
@@ -1028,6 +1023,7 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 					}
 					auth.LogAuditEventJSON(db, user.ID, "membership.reject", "membership", memID,
 						map[string]any{"target_user_id": targetUserID}, clientIP(r))
+					notifications.ClearMembershipRequest(db, memID)
 				} else if currentStatus == "banned" {
 					_, err = db.Exec("UPDATE memberships SET status = 'left' WHERE id = ?", memID)
 					if err != nil {
@@ -1239,6 +1235,23 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 // personName is how a notification names the person who did something: their
 // display name, or their username where they have none. The text is stored on
 // the row, as "Kofi Mensah voted approve" already is.
+// membershipRequestEvent is the admins' line about one pending request,
+// tied to the membership it asks about so that answering the request takes
+// the line down (notifications.ClearMembershipRequest, F-045).
+func membershipRequestEvent(nodeID, slug, name string, requester *model.User, membershipID string) notifications.Event {
+	return notifications.Event{
+		Type:         notifications.MembershipRequest,
+		NodeID:       nodeID,
+		NodeSlug:     slug,
+		NodeName:     name,
+		ActorID:      requester.ID,
+		Title:        "Membership request for " + name,
+		Body:         personName(requester) + " asked to join.",
+		Link:         weblink.PatchJoinRequests(slug),
+		MembershipID: membershipID,
+	}
+}
+
 func personName(u *model.User) string {
 	if u.DisplayName != "" {
 		return u.DisplayName

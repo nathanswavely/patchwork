@@ -1478,9 +1478,17 @@
     // Same word as the mark on the tile (CONTEXT.md "Unclaimed mark") — the
     // chip names the patch's state, not the provenance of what's on it.
     const unclaimedTag = data.is_unclaimed ? '<span class="tip-unclaimed">Unclaimed</span>' : '';
+    // The role mark's name, beside the same glyph in the same color (F-030):
+    // the star in the corner was read as a guess, and the tip is where a
+    // hovering reader is already looking.
+    const role = roleMarkRole(data.slug);
+    const roleTag = role
+      ? `<div class="tip-role"><span class="tip-role-mark" style="color:${role === 'follower' ? '#C02624' : '#D4A843'}" aria-hidden="true">${role === 'follower' ? '♥' : '★'}</span> ${escapeHtml(roleMarkName(role))}</div>`
+      : '';
     tooltip.innerHTML = `
       <strong>${escapeHtml(data.name)}</strong>
       ${unclaimedTag}
+      ${roleTag}
       ${desc ? `<div class="tip-desc">${desc}${(data.description?.length || 0) > 140 ? '\u2026' : ''}</div>` : ''}
       <div class="tip-meta">
         ${tags ? `<span class="tip-tags">${tags}</span>` : ''}
@@ -2419,8 +2427,25 @@
    * without a relayout — the role mark used to live on the name badge, where
    * updateLabels' __role comparison was the only thing rebuilding it.
    */
+  /** The relationship a tile's role mark stands for, or undefined for none. */
+  function roleMarkRole(slug) {
+    return quiltScope === 'local' ? myPatchRoles.get(slug) : undefined;
+  }
+
+  /**
+   * What the role mark means, in words (F-030). The star is shared by admin
+   * and member, so its name says which; the heart says follow. Used for the
+   * mark's own accessible name and the tile's hover tip, so the two agree.
+   */
+  function roleMarkName(role) {
+    if (role === 'admin') return "You're an admin here";
+    if (role === 'member') return "You're a member here";
+    if (role === 'follower') return 'You follow this patch';
+    return '';
+  }
+
   function syncRoleMark(entry) {
-    const role = quiltScope === 'local' ? myPatchRoles.get(entry.tile.data.slug) : undefined;
+    const role = roleMarkRole(entry.tile.data.slug);
     if (entry.role === role && entry.slots.has('role') === !!role) return;
     entry.role = role;
     const existing = entry.slots.get('role');
@@ -2432,6 +2457,14 @@
       drawCornerMark(entry, 'role', 'br', createMyPatchStarGroup(MARK_GLYPH_PX));
     } else if (role === 'follower') {
       drawCornerMark(entry, 'role', 'br', createFollowedHeartGroup(MARK_GLYPH_PX));
+    }
+    // The mark is an image with a name, not decoration: it is the only place
+    // on the tile that states the viewer's relationship.
+    const drawn = entry.slots.get('role');
+    if (drawn) {
+      const name = roleMarkName(role);
+      drawn.g.attr('role', 'img').attr('aria-label', name);
+      drawn.g.append('title').text(name);
     }
   }
 
@@ -2952,6 +2985,16 @@
     display: block;
     font-style: italic;
     margin-bottom: 0.15rem;
+  }
+
+  :global(.canvas-tooltip .tip-role) {
+    font-size: 0.72rem;
+    color: var(--color-text-muted);
+    margin-top: 2px;
+  }
+
+  :global(.canvas-tooltip .tip-role-mark) {
+    font-size: 0.8rem;
   }
 
   :global(.canvas-tooltip .tip-unclaimed) {
