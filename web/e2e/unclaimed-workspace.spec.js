@@ -71,7 +71,7 @@ test.describe('Unclaimed patch workspace', () => {
     await expect(sidebar.getByRole('link', { name: 'Appearance' })).toBeVisible();
     await expect(sidebar.getByRole('link', { name: 'Verification' })).toBeVisible();
     await expect(sidebar.getByRole('link', { name: 'Danger Zone' })).toBeVisible();
-    await expect(sidebar.getByRole('link', { name: 'Members' })).toHaveCount(0);
+    await expect(sidebar.getByRole('link', { name: 'Roles and requests' })).toHaveCount(0);
     await expect(sidebar.getByRole('link', { name: 'Notifications' })).toHaveCount(0);
   });
 

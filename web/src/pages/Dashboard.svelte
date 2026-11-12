@@ -5,7 +5,8 @@
   import { navigate } from '../stores/router.svelte.js';
   import Skeleton from '../components/Skeleton.svelte';
   import EventTierChip from '../components/EventTierChip.svelte';
-  import { formatEventDate as formatDate, upcomingFrom } from '../lib/datetime.js';
+  import { formatEventDate as formatDate, formatDay, upcomingFrom } from '../lib/datetime.js';
+  import { getInvitations } from '../stores/memberships.svelte.js';
 
   let user = $derived(getUser());
   let memberships = $state([]);
@@ -34,9 +35,32 @@
   let memberPatches = $derived(memberships.filter(m => m.role === 'member'));
   let followingPatches = $derived(memberships.filter(m => m.role === 'follower'));
 
-  // Total attention items
-  let totalPending = $derived(Object.values(pendingCounts).reduce((s, n) => s + n, 0));
-  let totalProposals = $derived(Object.values(proposalCounts).reduce((s, c) => s + c.count, 0));
+  // Patch names by slug and by id, so no line on this page shows a slug
+  // where a name belongs (F-054): the old block's only links were
+  // "bobbin-hall-co-op (1)", the address with the dashes in it.
+  let nameBySlug = $derived(new Map(memberships.map((m) => [m.node_slug, m.node_name])));
+  let nameById = $derived(new Map(memberships.map((m) => [m.node_id, m.node_name])));
+  let slugById = $derived(new Map(memberships.map((m) => [m.node_id, m.node_slug])));
+
+  // What this person owes an answer to (F-054): invitations waiting on
+  // them, join requests waiting on them as an admin, and votes they have
+  // not cast. Events are not here. An event on your patch asks nothing of
+  // you, and filing it beside your own unanswered requests made the box
+  // read as if it did.
+  let invitations = $derived(getInvitations());
+  let pendingLines = $derived(
+    Object.entries(pendingCounts).map(([slug, count]) => ({ slug, name: nameBySlug.get(slug) || slug, count }))
+  );
+  let proposalLines = $derived(
+    Object.entries(proposalCounts).map(([slug, c]) => ({ slug, name: nameBySlug.get(slug) || slug, count: c.count }))
+  );
+  let needsYou = $derived(invitations.length > 0 || pendingLines.length > 0 || proposalLines.length > 0);
+
+  // The person's own requests, waiting on somebody else (F-055). Not owed,
+  // so not under "Needs you"; said here because the page used to say
+  // nothing at all to a requester, and "is my request stuck?" was the
+  // question it left.
+  let ownRequests = $derived(memberships.filter((m) => m.status === 'pending'));
 
   function countLabel(count, more) {
     return `${count}${more ? '+' : ''}`;
@@ -92,8 +116,8 @@
     });
 
     // Upcoming events on this person's own patches (scope=my, docs/adr/035),
-    // not the whole quilt's calendar: a dashboard headed "attention needed"
-    // that lists strangers' shows is asking for attention it has no claim on.
+    // not the whole quilt's calendar: "Coming up" that lists strangers' shows
+    // is a calendar of somewhere else.
     const eventFetch = api(`events?scope=my&from=${encodeURIComponent(upcomingFrom())}&limit=${PAGE}`).then(data => {
       upcomingEvents = data.items || [];
       upcomingMore = !!data.next_cursor;
@@ -119,51 +143,85 @@
     <Skeleton lines={4} height="1rem" />
   {:else}
 
-    <!-- Attention Needed -->
-    {#if totalPending > 0 || totalProposals > 0 || upcomingEvents.length > 0}
+    <!-- Needs you (F-054): only what waits on this reader. Each line is one
+         patch, named by its name, and the words themselves are the link to
+         where it is answered. The old block linked only a slug and left the
+         label as plain text, so a reader clicked "open proposal" twice and
+         nothing happened. -->
+    {#if needsYou}
       <section class="attention-section">
-        <h2 class="section-title">Attention Needed</h2>
-        <div class="attention-items">
-          {#if totalPending > 0}
-            <div class="attention-item">
-              <span class="attention-count">{totalPending}</span>
-              <span>pending member {totalPending === 1 ? 'request' : 'requests'}</span>
-              {#each Object.entries(pendingCounts) as [slug, count]}
-                <a href="/patches/{slug}/settings/members" class="attention-link" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/settings/members`); }}>
-                  {slug} ({count})
-                </a>
-              {/each}
-            </div>
-          {/if}
-          {#if totalProposals > 0}
-            <div class="attention-item">
-              <!-- What the number now means. It counted every open
-                   proposal on the patch and said "open proposals", which
-                   was at least true of itself; it counts what this reader
-                   still owes, so it says that, in the words the Governance
-                   hub uses for the same count. -->
-              <span class="attention-count">{totalProposals}</span>
-              <span>{totalProposals === 1 ? 'proposal needs' : 'proposals need'} your vote</span>
-              {#each Object.entries(proposalCounts) as [slug, c]}
-                <a href="/patches/{slug}/governance/proposals" class="attention-link" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/proposals`); }}>
-                  {slug} ({c.count})
-                </a>
-              {/each}
-            </div>
-          {/if}
-          {#if upcomingEvents.length > 0}
-            <div class="attention-item">
-              <span class="attention-count">{countLabel(upcomingEvents.length, upcomingMore)}</span>
-              <span>upcoming {upcomingEvents.length === 1 && !upcomingMore ? 'event' : 'events'} on your patches</span>
-              {#each upcomingEvents.slice(0, 3) as event}
-                <a href="/events/{event.id}" class="attention-link" onclick={(e) => { e.preventDefault(); navigate(`/events/${event.id}`); }}>
-                  {formatDate(event.starts_at, event.timezone)} &middot; {event.title}
-                  <EventTierChip visibility={event.visibility} />
-                </a>
-              {/each}
-            </div>
-          {/if}
-        </div>
+        <h2 class="section-title">Needs you</h2>
+        <ul class="line-list">
+          {#each invitations as inv (inv.id)}
+            <li>
+              <a href="/patches/{inv.node_slug}" class="line-link" onclick={(e) => { e.preventDefault(); navigate(`/patches/${inv.node_slug}`); }}>
+                {#if inv.invited_by?.display_name || inv.invited_by?.username}
+                  {inv.invited_by.display_name || inv.invited_by.username} invited you to join <strong>{inv.node_name}</strong>
+                {:else}
+                  Invitation to join <strong>{inv.node_name}</strong>
+                {/if}
+              </a>
+            </li>
+          {/each}
+          {#each pendingLines as line (line.slug)}
+            <li>
+              <a href="/patches/{line.slug}/settings/members" class="line-link" onclick={(e) => { e.preventDefault(); navigate(`/patches/${line.slug}/settings/members`); }}>
+                {line.count} join {line.count === 1 ? 'request' : 'requests'} to answer in <strong>{line.name}</strong>
+              </a>
+            </li>
+          {/each}
+          {#each proposalLines as line (line.slug)}
+            <li>
+              <!-- Counts what this reader still owes, in the words the
+                   Governance hub uses for the same count. -->
+              <a href="/patches/{line.slug}/governance/proposals" class="line-link" onclick={(e) => { e.preventDefault(); navigate(`/patches/${line.slug}/governance/proposals`); }}>
+                {line.count} {line.count === 1 ? 'proposal needs' : 'proposals need'} your vote in <strong>{line.name}</strong>
+              </a>
+            </li>
+          {/each}
+        </ul>
+      </section>
+    {/if}
+
+    {#if ownRequests.length > 0}
+      <section class="patch-section">
+        <h2 class="section-title">Waiting on an answer</h2>
+        <ul class="line-list">
+          {#each ownRequests as m (m.id)}
+            <li>
+              <a href="/patches/{m.node_slug}" class="line-link" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}`); }}>
+                Your request to join <strong>{m.node_name}</strong> is waiting on an admin.
+              </a>
+              {#if m.joined_at}<span class="lt-muted line-meta">Sent {formatDay(m.joined_at)}</span>{/if}
+            </li>
+          {/each}
+        </ul>
+      </section>
+    {/if}
+
+    <!-- Coming up: events on this person's own patches. Happening, not
+         owed, so it sits apart from "Needs you". -->
+    {#if upcomingEvents.length > 0}
+      <section class="patch-section">
+        <h2 class="section-title">Coming up</h2>
+        <ul class="line-list">
+          {#each upcomingEvents.slice(0, 5) as event (event.id)}
+            <li class="event-line">
+              <a href="/events/{event.id}" class="line-link" onclick={(e) => { e.preventDefault(); navigate(`/events/${event.id}`); }}>
+                <strong>{event.title}</strong>
+              </a>
+              <span class="lt-muted line-meta">
+                {formatDate(event.starts_at, event.timezone)}{#if nameById.get(event.node_id)}{' · '}<a href="/patches/{slugById.get(event.node_id)}" class="patch-ref" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slugById.get(event.node_id)}`); }}>{nameById.get(event.node_id)}</a>{/if}
+              </span>
+              <EventTierChip visibility={event.visibility} />
+            </li>
+          {/each}
+        </ul>
+        {#if upcomingEvents.length > 5 || upcomingMore}
+          <a href="/events/my" class="quick-link more-link" onclick={(e) => { e.preventDefault(); navigate('/events/my'); }}>
+            {countLabel(upcomingEvents.length, upcomingMore)} upcoming on your patches
+          </a>
+        {/if}
       </section>
     {/if}
 
@@ -296,37 +354,48 @@
     background: color-mix(in srgb, var(--color-accent) 5%, var(--color-surface));
   }
 
-  .attention-items {
+  /* One line per thing, the words themselves the link. */
+  .line-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
+    gap: 0.5rem;
   }
 
-  .attention-item {
+  .line-list li {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
+    align-items: baseline;
     gap: 0.4rem;
     font-size: 0.88rem;
   }
 
-  .attention-count {
-    font-weight: 700;
-    color: var(--color-accent);
-    min-width: 1.5rem;
-  }
-
-  .attention-link {
-    font-size: 0.8rem;
+  .line-link {
     color: var(--color-primary);
     text-decoration: none;
-    padding: 0.1rem 0.4rem;
-    border-radius: 3px;
-    transition: background 100ms ease;
   }
 
-  .attention-link:hover {
-    background: var(--color-overlay);
+  .line-link:hover {
+    text-decoration: underline;
+  }
+
+  .line-link strong {
+    font-weight: 600;
+  }
+
+  .line-meta {
+    font-size: 0.8rem;
+  }
+
+  .patch-ref {
+    color: inherit;
+  }
+
+  .more-link {
+    display: inline-block;
+    margin-top: 0.5rem;
   }
 
   /* Quick actions */
