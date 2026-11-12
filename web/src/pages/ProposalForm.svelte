@@ -9,6 +9,7 @@
   import AIUseQuestion from '../components/AIUseQuestion.svelte';
   import { aiField, aiAnswerMissing } from '../lib/aiUse.js';
   import { getAiDisclosure } from '../stores/quilt.svelte.js';
+  import { getUser } from '../stores/auth.svelte.js';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -70,7 +71,9 @@
   // asked for. The $effect below still drops it if this patch cannot
   // nominate, so a stale or hand-typed link cannot select an option the
   // server would refuse.
-  let proposalType = $state(getQuery().get('type') === 'membership' ? 'membership' : 'action');
+  // ?type=stand comes from a vacant chair's "Stand for this seat" (F-042).
+  const askedType = getQuery().get('type');
+  let proposalType = $state(askedType === 'membership' || askedType === 'stand' ? askedType : 'action');
   // The patch's own default window, which is also what the server uses
   // when none is sent. 72 hours stands in only where the patch names none.
   let durationHours = $state(72);
@@ -117,6 +120,9 @@
   let nomineeId = $state('');
   let leadershipModel = $state('');
   let vacantSeats = $state(0);
+  // Chairs a member could stand for today: the ones the server routes to
+  // nomination (vacant, not in a contest, on a council with an admin).
+  let standableSeats = $state(0);
   // Whether the governance overview has answered yet, either way.
   let govLoaded = $state(false);
   let nextContestOpens = $state('');
@@ -124,6 +130,10 @@
   let isMeritocratic = $derived(leadershipModel === 'meritocratic');
   let isElected = $derived(leadershipModel === 'elected');
   let canNominate = $derived(isPatchAdmin && (isMeritocratic || (isElected && vacantSeats > 0)));
+  // Standing for a seat yourself (F-042): an elected patch, a plain member,
+  // and a chair to stand for. An admin already holds the role, and a
+  // follower is not on the ladder.
+  let canStand = $derived(membershipRole === 'member' && isElected && standableSeats > 0);
 
   // A membership proposal is a nomination and nothing else (docs/adr/100):
   // it has to name the person it is about, and only someone who may nominate
@@ -133,6 +143,9 @@
     { value: 'action', label: 'Action', description: 'Propose a concrete action for the community to take' },
     ...(canNominate
       ? [{ value: 'membership', label: 'Membership', description: 'Nominate an active member for admin' }]
+      : []),
+    ...(canStand
+      ? [{ value: 'stand', label: 'Stand for a seat', description: 'Put yourself forward for a vacant seat on the council. The members ratify it.' }]
       : []),
     { value: 'other', label: 'Other', description: 'Any other proposal that needs community input' },
   ]);
@@ -149,6 +162,19 @@
   // sent and drop the reader back on Action.
   $effect(() => {
     if (govLoaded && proposalType === 'membership' && !canNominate) proposalType = 'action';
+    if (govLoaded && proposalType === 'stand' && !canStand) proposalType = 'action';
+  });
+
+  // A candidacy is about one person, so it opens with their name on it
+  // rather than an empty title to invent. Once: a title the member cleared
+  // stays cleared.
+  let standTitled = false;
+  $effect(() => {
+    if (proposalType === 'stand' && !standTitled && !title.trim()) {
+      standTitled = true;
+      const me = getUser();
+      title = `${me?.display_name || me?.username || 'Me'} for the council`;
+    }
   });
 
   async function loadGovernanceContext() {
@@ -160,6 +186,7 @@
       // roster rule reaching the council), and counting those as vacancies
       // would offer a nomination into an occupied seat.
       vacantSeats = (ov?.seats || []).filter((s) => s.vacant).length;
+      standableSeats = (ov?.seats || []).filter((s) => s.vacant && s.fill === 'nomination').length;
       nextContestOpens = ov?.next_contest_opens || '';
       if (!canNominate) return;
       // Only plain members can be nominated: an admin already holds the role,
@@ -207,6 +234,12 @@
       // community ratifies admins.
       if (proposalType === 'membership' && nomineeId) {
         payload.target_user_id = nomineeId;
+      }
+      // Standing is a membership proposal about its own author: the same
+      // ratification a nomination runs, with the member's own name on it.
+      if (proposalType === 'stand') {
+        payload.proposal_type = 'membership';
+        payload.target_user_id = getUser()?.id;
       }
       const result = await api(`nodes/${slug}/proposals`, {
         method: 'POST',
@@ -325,10 +358,17 @@
           <!-- An elected patch with no vacancy: say where the way onto the
                council actually is, rather than leaving someone to invent
                one (docs/adr/100). -->
-          {#if isElected && !canNominate}
+          {#if proposalType === 'stand' && canStand}
+            <p class="nominee-hint lt-muted">
+              If this passes, you take the vacant seat and serve out its term. Nobody has to approve it afterwards.
+            </p>
+          {/if}
+
+          {#if isElected && !canNominate && !canStand}
             <p class="nominee-hint lt-muted">
               {#if !isPatchAdmin}
-                Admins here hold seats on the council. A vacant seat is filled by nomination, which an admin raises; otherwise a seat comes up at an election any member may stand in.
+                Admins here hold seats on the council, and none is vacant to stand for now.
+                {#if nextContestOpens}The next election opens {formatDay(nextContestOpens)}, and any member may stand in it.{:else}A seat comes up at an election any member may stand in.{/if}
               {:else if nextContestOpens}
                 Every seat on the council is held, so there is nobody to nominate. The next election opens {formatDay(nextContestOpens)}. You can add a seat on the Governance page.
               {:else}

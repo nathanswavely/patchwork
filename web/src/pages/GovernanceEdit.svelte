@@ -8,6 +8,10 @@
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
+  // A member filing a document on a patch that meets elsewhere (F-057).
+  // Theirs starts members only and publishing it is an admin's decision,
+  // so the choice is not offered rather than offered and refused.
+  let canPublish = $derived(patch.value.isAdmin);
 
   let title = $state('');
   let body = $state('');
@@ -169,18 +173,24 @@ Violations may result in a warning, temporary suspension, or removal from the co
             </div>
           </div>
 
-          <div class="field">
-            <label class="lt-label" for="doc-visibility">Who can read this</label>
-            <select class="lt-field" id="doc-visibility" bind:value={visibility} disabled={submitting}>
-              <option value="members">Members only</option>
-              <option value="public">Anyone</option>
-            </select>
+          {#if canPublish}
+            <div class="field">
+              <label class="lt-label" for="doc-visibility">Who can read this</label>
+              <select class="lt-field" id="doc-visibility" bind:value={visibility} disabled={submitting}>
+                <option value="members">Members only</option>
+                <option value="public">Anyone</option>
+              </select>
+              <p class="lt-hint field-hint">
+                {visibility === 'public'
+                  ? 'Visitors, search engines, and other quilts can read this charter.'
+                  : 'Only this patch’s members and admins can read this charter. You can publish it later.'}
+              </p>
+            </div>
+          {:else}
             <p class="lt-hint field-hint">
-              {visibility === 'public'
-                ? 'Visitors, search engines, and other quilts can read this charter.'
-                : 'Only this patch’s members and admins can read this charter. You can publish it later.'}
+              Only this patch’s members and admins can read this. An admin can publish it later.
             </p>
-          </div>
+          {/if}
 
           {#if error}
             <p class="lt-error-text">{error}</p>

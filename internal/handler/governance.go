@@ -260,7 +260,20 @@ func CreateGovernanceDoc(db *database.DB) http.HandlerFunc {
 		// changes with them, in #286, and not on its own. Distinct from the
 		// proposal verbs (apply, decide), whose bypass docs/adr/092 removed
 		// because a patch's *decision* was never the steward's to make.
-		if user.Role != "admin" && !userHasNodeRole(db, user.ID, nodeID, "admin") {
+		//
+		// And, on a patch that decides outside Patchwork, any active member
+		// (docs/adr/2026-11-11-a-member-can-file-the-minutes.md). Its minutes
+		// are taken by whoever keeps them, and that is often not an admin: a
+		// coalition's secretary looked everywhere for the "here" its page said
+		// the minutes were posted to, and was the one person in the room who
+		// could not write them (F-057). Filing a document changes nobody's
+		// role and no rule, so it is not the kind of act docs/adr/017 gates.
+		// Publishing is: a member's document is born members-only and an
+		// admin decides whether the whole internet reads it.
+		adminReach := user.Role == "admin" || userHasNodeRole(db, user.ID, nodeID, "admin")
+		memberFiling := !adminReach &&
+			userHasNodeRole(db, user.ID, nodeID, "member") && meetsElsewhere(db, nodeID)
+		if !adminReach && !memberFiling {
 			http.Error(w, `{"error":"admin access required"}`, http.StatusForbidden)
 			return
 		}
@@ -285,6 +298,10 @@ func CreateGovernanceDoc(db *database.DB) http.HandlerFunc {
 		}
 		if !validDocVisibility(req.Visibility) {
 			http.Error(w, `{"error":"visibility must be public or members"}`, http.StatusBadRequest)
+			return
+		}
+		if memberFiling && req.Visibility != "members" {
+			http.Error(w, `{"error":"a member's document starts members only: publishing it is an admin's decision"}`, http.StatusForbidden)
 			return
 		}
 		// A new charter can't take the lining's identity: title→filename is
@@ -757,6 +774,7 @@ func GetGovernanceRules(db *database.DB) http.HandlerFunc {
 			LeadershipModel:     gc.LeadershipModel,
 			LeadershipVenue:     gc.LeadershipVenue,
 			ProposalVenue:       gc.ProposalVenue,
+			VenueNote:           gc.VenueNote,
 			NominationDays:      gc.NominationDays,
 			SuccessionMethod:    gc.SuccessionMethod,
 			SuccessionPolicy:    gc.SuccessionPolicy,

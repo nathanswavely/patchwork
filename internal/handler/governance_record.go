@@ -42,6 +42,17 @@ type recordEntry struct {
 	Actor   string `json:"actor,omitempty"`
 	// Names, on a council attestation: who the meeting seated.
 	Names []string `json:"names,omitempty"`
+	// StoodDown, on a council attestation: who the meeting removed
+	// (docs/adr/2026-11-11-a-record-can-be-struck-through-and-names-who-stood-down.md).
+	StoodDown []string `json:"stood_down,omitempty"`
+	// EnteredInError marks an attestation an admin struck through. It stays
+	// on the record, because a minutes book crosses a thing out rather than
+	// tearing out the page, and it counts for nothing.
+	EnteredInError bool `json:"entered_in_error,omitempty"`
+	// Seats, on a seat added or removed: how many the council had after it.
+	// A pointer, because a council can be taken down to none and that is a
+	// number worth printing. Absent on rows written before it was recorded.
+	Seats *int `json:"seats,omitempty"`
 
 	// Deliberately no tally. `status` is written when a vote resolves and never
 	// moves; a tally is recomputed on every read and drops ballots from people
@@ -87,6 +98,7 @@ func GovernanceRecord(db *database.DB) http.HandlerFunc {
 		entries = append(entries, settledProposals(db, nodeID, slug)...)
 		entries = append(entries, recordedDecisions(db, nodeID)...)
 		entries = append(entries, councilChanges(db, nodeID, namesWithheld)...)
+		entries = append(entries, councilFurniture(db, nodeID, namesWithheld)...)
 
 		// Newest first. Sorted here rather than in SQL because the entries come
 		// from three queries with different date columns, and an attestation's
@@ -205,28 +217,40 @@ func recordedDecisions(db *database.DB, nodeID string) []recordEntry {
 	// Councils. Superseded records stay readable on the governance hub, where
 	// the correction sits beside what it corrects; here they would read as two
 	// councils seated on one day.
+	//
+	// A record entered in error stays, struck through. It is not superseded,
+	// since nothing replaced it, and hiding it would make the Record a book
+	// with a page torn out: the duplicate somebody saw yesterday would be
+	// gone today with no line saying why.
 	rows, err := db.Query(`
-		SELECT a.id, a.decided_at, a.summary, `+displayNameExpr("u")+`
+		SELECT a.id, a.decided_at, a.summary, `+displayNameExpr("u")+`,
+		       a.struck_at IS NOT NULL
 		FROM attestations a
 		LEFT JOIN users u ON u.id = a.recorded_by
 		WHERE a.node_id = ? AND a.kind = 'leadership'
-		  AND NOT EXISTS (SELECT 1 FROM attestations s WHERE s.supersedes_id = a.id)`, nodeID)
+		  AND NOT EXISTS (`+liveCorrectionSQL+`)`, nodeID)
 	if err == nil {
 		for rows.Next() {
 			var id, decidedAt, summary, recorder string
-			if rows.Scan(&id, &decidedAt, &summary, &recorder) != nil {
+			var struck bool
+			if rows.Scan(&id, &decidedAt, &summary, &recorder, &struck) != nil {
 				continue
 			}
 			e := recordEntry{
 				Kind: "council", At: decidedAt, Title: "The council changed",
-				Summary: summary, Actor: recorder,
+				Summary: summary, Actor: recorder, EnteredInError: struck,
 			}
 			nameRows, nerr := db.Query(
-				`SELECT display_name FROM attestation_names WHERE attestation_id = ? ORDER BY position ASC`, id)
+				`SELECT display_name, effect FROM attestation_names WHERE attestation_id = ? ORDER BY position ASC`, id)
 			if nerr == nil {
 				for nameRows.Next() {
-					var n string
-					if nameRows.Scan(&n) == nil {
+					var n, effect string
+					if nameRows.Scan(&n, &effect) != nil {
+						continue
+					}
+					if effect == nameStoodDown {
+						e.StoodDown = append(e.StoodDown, n)
+					} else {
 						e.Names = append(e.Names, n)
 					}
 				}
@@ -388,6 +412,61 @@ func councilChanges(db *database.DB, nodeID string, namesWithheld bool) []record
 		default:
 			e.Outcome = "stood_down"
 			e.Actor = actor
+		}
+		out = append(out, e)
+	}
+	return out
+}
+
+// councilFurniture is the council changing size: a chair added, or a vacant
+// one removed (docs/adr/100).
+//
+// These used to ring every member's bell and reach no record, which is
+// backwards for an act that carries no obligation. A founder pressed Add
+// twice and sent fourteen notifications; a member who went looking for when
+// the council grew found it only in her own bell, "which is mine alone and
+// will scroll away" (F-066). So the act is recorded here and announces
+// nothing (docs/adr/2026-11-11-a-council-changing-size-is-recorded-not-announced.md).
+//
+// Drawn from the audit rows AddSeat and RemoveSeat already write, for the
+// reason councilChanges gives: the rows exist and are the authority, and
+// what changes is who may read them about their own patch.
+func councilFurniture(db *database.DB, nodeID string, namesWithheld bool) []recordEntry {
+	out := []recordEntry{}
+	rows, err := db.Query(`
+		SELECT a.action, a.created_at,
+		       COALESCE(json_extract(a.metadata, '$.seats'), -1),
+		       COALESCE(`+displayNameExpr("au")+`, '')
+		FROM audit_log a
+		LEFT JOIN users au ON au.id = a.user_id
+		WHERE a.entity_type = 'seat'
+		  AND a.action IN ('seat.add','seat.remove')
+		  AND json_extract(a.metadata, '$.node_id') = ?
+		ORDER BY a.created_at DESC`, nodeID)
+	if err != nil {
+		return out
+	}
+	defer func() { _ = rows.Close() }()
+	for rows.Next() {
+		var action, at, actor string
+		var seats int
+		if rows.Scan(&action, &at, &seats, &actor) != nil {
+			continue
+		}
+		e := recordEntry{Kind: "seat", At: at, Actor: actor}
+		if namesWithheld {
+			e.Actor = ""
+		}
+		if seats >= 0 {
+			n := seats
+			e.Seats = &n
+		}
+		if action == "seat.add" {
+			e.Title = "A seat was added"
+			e.Outcome = "seat_added"
+		} else {
+			e.Title = "A vacant seat was removed"
+			e.Outcome = "seat_removed"
 		}
 		out = append(out, e)
 	}

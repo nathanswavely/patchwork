@@ -358,13 +358,14 @@ func AddSeat(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		auth.LogAuditEvent(db, user.ID, "seat.add", "seat", id,
-			`{"node_id":"`+nodeID+`","term_ends_at":`+jsonStringOrNull(termEnds)+`}`, clientIP(r))
-
+		// The Record reads this row (councilFurniture), and that is where the
+		// change is told: nobody's bell rings for it (F-066). `seats` is the
+		// council's size after the act, so the entry can say what it became
+		// without recounting a table that has moved on since.
 		total := seatCount(db, nodeID)
-		announceCouncil(db, nodeID, user.ID,
-			"A seat was added to the council",
-			"The council now has "+strconv.Itoa(total)+" seat"+plural(total)+". The new seat is vacant until somebody is elected or nominated into it.")
+		auth.LogAuditEvent(db, user.ID, "seat.add", "seat", id,
+			`{"node_id":"`+nodeID+`","term_ends_at":`+jsonStringOrNull(termEnds)+
+				`,"seats":`+strconv.Itoa(total)+`}`, clientIP(r))
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
@@ -419,13 +420,10 @@ func RemoveSeat(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		auth.LogAuditEvent(db, user.ID, "seat.remove", "seat", seatID,
-			`{"node_id":"`+nodeID+`"}`, clientIP(r))
-
+		// Recorded, not announced (F-066), the same as AddSeat.
 		total := seatCount(db, nodeID)
-		announceCouncil(db, nodeID, user.ID,
-			"A vacant seat was removed from the council",
-			"The council now has "+strconv.Itoa(total)+" seat"+plural(total)+".")
+		auth.LogAuditEvent(db, user.ID, "seat.remove", "seat", seatID,
+			`{"node_id":"`+nodeID+`","seats":`+strconv.Itoa(total)+`}`, clientIP(r))
 
 		w.WriteHeader(http.StatusNoContent)
 	}
@@ -541,13 +539,21 @@ func SetSeatTerm(db *database.DB) http.HandlerFunc {
 	}
 }
 
-// announceCouncil tells the members the council's furniture changed — a chair
-// added or dissolved, or an election date moved.
+// announceCouncil tells the members an election date moved.
 //
-// governance.rules_changed, not a type of its own: how many chairs a council
-// has is part of how the patch governs, it reaches every member in the
-// governance category, and it is muted and mailed with the rest of that
-// category rather than being one more switch to find.
+// It used to say a chair had been added or dissolved as well, and that rang
+// every member's bell per press for furniture that carries no obligation:
+// one founder sent fourteen notifications adding two seats, and another sent
+// six adding a seat and removing it ten seconds later. None of it reached
+// the Record, which is where a member went looking for the council changing
+// size (F-066). Adding and removing a chair are now on the Record and notify
+// nobody (docs/adr/2026-11-11-a-council-changing-size-is-recorded-not-announced.md).
+// A term end moving stays here, because it changes when a member can stand.
+//
+// governance.rules_changed, not a type of its own: the calendar is part of
+// how the patch governs, it reaches every member in the governance category,
+// and it is muted and mailed with the rest of that category rather than
+// being one more switch to find.
 func announceCouncil(db *database.DB, nodeID, actorID, title, body string) {
 	var slug, nodeName string
 	db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", nodeID).Scan(&slug, &nodeName)
