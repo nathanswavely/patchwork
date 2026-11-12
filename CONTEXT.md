@@ -1344,6 +1344,95 @@ reads as a closed deliberation.
 _Avoid_: comment (proposals), thread (the inferred connection between
 patches), discussion (the proposal's tab), conversation (as a UI noun)
 
+## Help requests
+
+Designed, not built
+(docs/adr/2026-11-11-a-patch-takes-requests-for-help-and-tells-each-side-what-is-known.md).
+The words are fixed here first so the code is written in them.
+
+**Ask for a hand**, **Lend a hand**:
+The two doors, and the only brand the feature has. "Ask for a hand" is what
+a recipient does, on a patch's public help page, headed "Ask {patch} for a
+hand". "Lend a hand" is what a volunteer does, and is the label of the
+workspace tab, where coordinators work too. The room itself has no name:
+the patch is who a person is asking. Plain speech and not coinages, so
+nobody learns a metaphor first; an idiom, so a translation re-says them.
+_Avoid_: request help, get help, volunteer (as the button), Requests (as
+the tab: membership requests are one tab over), Handwork (on
+record as the name only if this becomes a product of its own), Many Hands,
+bee (an event, docs/adr/081)
+
+**Help request**:
+Something a person asks a patch to do for them: a ride, yard work, a meal.
+Two words in code and in prose; the UI says "request" where the surface
+already says which kind. Read by the coordinators of its kind, the patch's admins
+and the volunteer who accepted it, and by nobody else; it never federates
+and never appears on a public surface. It moves from received to open to
+accepted to given to confirmed, or ends declined or withdrawn, and it is
+never left with nobody responsible for it.
+_Avoid_: request (alone: there are trust requests and membership requests),
+ticket, task, job, order, errand, case
+
+**Kind of help**:
+A named thing a patch offers, defined by that patch: Rides, Yard work,
+Meals. Each kind carries three settings its patch chooses: the clearances a
+volunteer must hold, whether a coordinator reviews a request before
+volunteers see it, and how a request reaches a volunteer. A kind also names
+its coordinators, which is how a help request reaches the right people
+inside one patch without patches inside patches.
+_Avoid_: request type, category (that is a tag), service, program (that is
+an event source's), committee (a kind may be handled by one; it is not one)
+
+**Recipient**:
+The person a help request is for. May have no account: the patch then holds
+a record of their name and one way to reach them, entered by themselves on
+the patch's help page or by a coordinator for somebody who phoned. Follows
+their request on a private link. Their address is shown only to coordinators
+and to the volunteer who accepted, and is erased after the request closes.
+_Avoid_: requester (a person who asked to join a patch), client, customer,
+user, beneficiary, neighbor (as a term; fine in prose)
+
+**Coordinator**:
+A member or admin of a patch who handles the help requests of one kind of
+help: reads them, assigns or sends them, declines them, and reads the notes
+left on them. A grant on a kind, given by the patch's admins, and not a
+role: it is not a rung between member and admin, carries no power over the
+patch's settings, and is held kind by kind.
+_Avoid_: dispatcher, moderator, manager, admin, organizer, lead
+
+**Volunteer**:
+A member or admin of a patch who signed up for a kind of help. Signing up is
+what makes an alert something they asked for; nobody is alerted about a kind
+they did not put their name to. Not a role and not a rung. A follower who
+wants to help becomes a member.
+_Avoid_: helper, driver (one kind's volunteer), responder, provider, worker
+
+**Clearance**:
+A statement a patch stands behind about one of its members: that it verified
+something, and until when. A patch defines its own (a background check, a
+license and insurance check, an orientation) and an admin records who holds
+which, with an expiry. Patchwork runs no check and stores no document. A
+clearance always carries its patch's name, and where a volunteer holds none
+the recipient is told so in the same place.
+_Avoid_: vetted or verified (bare, with no patch named), background check
+(one kind of clearance), certification, badge, attestation (governance's
+word, docs/adr/052), trusted (that is the trusted contributor grant)
+
+**On call**:
+A window of time a volunteer has said they are free to answer help requests
+at once. A kind of help may send its requests only to volunteers on call.
+The public help page says whether anybody is on call now, and never how
+many when the number is small.
+_Avoid_: available (too loose), online, active, shift (the stored row; the
+UI says on call)
+
+**Alert**:
+What a volunteer receives when a help request is sent to them rather than
+assigned by a coordinator. Goes to every eligible volunteer, or only to
+those on call, and the first to accept takes it.
+_Avoid_: broadcast (Patchwork does not broadcast, docs/adr/093), offer (an
+event source's word), ping, page, blast
+
 ## Event sources
 
 **Event source**:
