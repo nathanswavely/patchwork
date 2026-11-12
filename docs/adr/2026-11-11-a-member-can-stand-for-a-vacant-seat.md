@@ -64,6 +64,7 @@ grants nothing by itself.
 - An admin-decides elected patch sends a member's candidacy to the
   maintainer, like any member's proposal (docs/adr/092), and the
   maintainer's approval seats them (docs/adr/2026-10-18-a-nomination-takes-effect-where-the-decision-lands.md).
-- The hub still counts a candidate's own proposal in "needs your vote".
-  That is a separate finding and is not changed here.
+- The hub does not count a candidate's own proposal in "needs your vote",
+  with recusal on or off. That landed separately (F-042): the subject may
+  still vote where recusal is off, but the count does not ask them to.
 - No schema change: `proposals.target_user_id` already carries the subject.
