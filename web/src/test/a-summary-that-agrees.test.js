@@ -54,7 +54,7 @@ describe('a front door that subtracts the vote you cast (F-108)', () => {
   // The label has to mean the number. "Open proposals" over a count of
   // ballots owed is the same disagreement one layer down.
   it('says what the number counts', () => {
-    expect(dashboard).toContain("{totalProposals === 1 ? 'proposal needs' : 'proposals need'} your vote");
+    expect(dashboard).toContain("{line.count === 1 ? 'proposal needs' : 'proposals need'} your vote");
     expect(dashboard).toContain('to vote on');
   });
 

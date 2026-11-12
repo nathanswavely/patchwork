@@ -191,7 +191,7 @@ export function patchSettingsSections({ isUnclaimed = false } = {}) {
   return [
     { id: 'info', label: 'Patch Info' },
     { id: 'appearance', label: 'Appearance' },
-    { id: 'members', label: 'Members' },
+    { id: 'members', label: 'Roles and requests' },
     { id: 'sources', label: 'Event Sources' },
     { id: 'noticeboard', label: 'Noticeboard' },
     { id: 'notifications', label: 'Notifications' },
