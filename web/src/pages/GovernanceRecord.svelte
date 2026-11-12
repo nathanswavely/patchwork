@@ -113,9 +113,18 @@
         : 'The members seated a council.';
     }
     if (e.kind === 'council') {
-      return e.names?.length
-        ? `Seated ${listOf(e.names)}.`
-        : 'A meeting chose the council.';
+      // Both sides of the decision when the record says both (F-078). Who a
+      // meeting took off the council used to survive only as a clause in
+      // the summary.
+      const seated = e.names?.length ? `Seated ${listOf(e.names)}.` : 'A meeting chose the council.';
+      return e.stood_down?.length ? `${seated} ${listOf(e.stood_down)} stood down.` : seated;
+    }
+    // The council changing size (F-066). These used to ring every member's
+    // bell and reach no record; now they are recorded here and nowhere else.
+    if (e.kind === 'seat' && (e.outcome === 'seat_added' || e.outcome === 'seat_removed')) {
+      const by = e.actor ? ` By ${e.actor}.` : '';
+      if (e.seats == null) return by.trim();
+      return `The council went to ${e.seats} seat${e.seats === 1 ? '' : 's'}.${by}`;
     }
     // Who came off the council and who went on (F-100). These are the
     // events a founder came back for twice and could not find: a seat
@@ -164,6 +173,7 @@
           {#each entries as e}
             <li
               class="entry"
+              class:struck={e.entered_in_error}
               class:unsettled={e.outcome === 'unsettled' || e.outcome === 'failed' || e.outcome === 'lapsed' || e.outcome === 'vacated' || e.outcome === 'vacated_inactivity' || e.outcome === 'stood_down'}
             >
               <div class="entry-head">
@@ -177,8 +187,11 @@
               {:else}
                 <span class="entry-title plain">{e.title}</span>
               {/if}
+              <!-- Struck through, not removed (F-078): a minutes book crosses a
+                   line out and initials it, and the line stays readable. -->
               <p class="outcome">{outcomeLine(e)}</p>
               {#if e.summary}<p class="summary lt-muted">{e.summary}</p>{/if}
+              {#if e.entered_in_error}<p class="struck-note">Entered in error. This record counts for nothing.</p>{/if}
             </li>
           {/each}
         </ol>
@@ -246,6 +259,19 @@
 
   .when {
     font-size: 0.78rem;
+  }
+
+  .entry.struck .entry-title,
+  .entry.struck .outcome,
+  .entry.struck .summary {
+    text-decoration: line-through;
+    color: var(--color-text-muted);
+  }
+
+  .struck-note {
+    font-size: 0.8rem;
+    margin: 0.2rem 0 0;
+    color: var(--color-text-muted);
   }
 
   .entry-title {

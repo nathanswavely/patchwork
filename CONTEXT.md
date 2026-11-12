@@ -692,7 +692,7 @@ visibility (it is per-membership, not per-profile)
 **Public member list**:
 Who a visitor sees listed on a patch: **everyone**, **admins only**, or
 **nobody** (docs/adr/095). A patch-level setting owned by its admins,
-edited at Patch Settings → Members, and the answer to a different question
+edited at Patch Settings → Roles and requests, and the answer to a different question
 from membership visibility — "may this patch be enumerated" rather than
 "is this person listed". It only subtracts: the listing's gate is this
 setting *and* the member's own switch. It withholds identities, never the
@@ -833,7 +833,10 @@ answered (docs/adr/098). The requester's mirror image: the ask runs the
 other way and the answer is theirs. Not a member and not a requester — no
 role, no thread, absent from every count, listing, audience and electorate
 until they accept; declining leaves no row. The membership status is
-`invited`; a request stays `pending`.
+`invited`; a request stays `pending`. An invitation names the admin who
+made it (`memberships.invited_by`), on the invited person's patch page and
+Dashboard and on the patch admins' Members tab and Roles and requests,
+and the name goes when the invitation is answered.
 _Avoid_: pending (that is a request nobody answered), requested, pending
 invite, invitee (in UI copy — say "invited")
 

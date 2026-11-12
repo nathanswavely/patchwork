@@ -44,14 +44,19 @@ type invitedPerson struct {
 	// Accepting resets it, so joined_at means what its name says once the
 	// row is active.
 	InvitedAt string `json:"invited_at"`
+	// InvitedBy names the admin who made the invitation (F-044): who asked
+	// is the first thing the invitee wants to know, and an admin reading the
+	// list wants to know whether a colleague already did. Blank on an
+	// invitation made before the column existed.
+	InvitedBy invitationInviter `json:"invited_by"`
 }
 
 // invitedPeople lists the outstanding invitations on a patch, oldest first.
 // Callers have already established the viewer is an active admin of it.
 func invitedPeople(db *database.DB, nodeID string) []invitedPerson {
 	rows, err := db.Query(`SELECT m.id, m.user_id, `+usernameExpr("u")+`, `+displayNameExpr("u")+`,
-			COALESCE(u.avatar_url, ''), m.joined_at
-		FROM memberships m JOIN users u ON u.id = m.user_id
+			COALESCE(u.avatar_url, ''), m.joined_at, COALESCE(m.invited_by, ''), `+usernameExpr("iu")+`, `+displayNameExpr("iu")+`
+		FROM memberships m JOIN users u ON u.id = m.user_id LEFT JOIN users iu ON iu.id = m.invited_by
 		WHERE m.node_id = ? AND m.status = 'invited'
 		ORDER BY m.id ASC`, nodeID)
 	if err != nil {
@@ -61,7 +66,7 @@ func invitedPeople(db *database.DB, nodeID string) []invitedPerson {
 	out := []invitedPerson{}
 	for rows.Next() {
 		var p invitedPerson
-		if err := rows.Scan(&p.ID, &p.UserID, &p.Username, &p.DisplayName, &p.AvatarURL, &p.InvitedAt); err != nil {
+		if err := rows.Scan(&p.ID, &p.UserID, &p.Username, &p.DisplayName, &p.AvatarURL, &p.InvitedAt, &p.InvitedBy.ID, &p.InvitedBy.Username, &p.InvitedBy.DisplayName); err != nil {
 			continue
 		}
 		out = append(out, p)
@@ -154,14 +159,14 @@ func InviteMember(db *database.DB) http.HandlerFunc {
 			// does everywhere a request ends — whatever they wrote was for a
 			// request this invitation is not.
 			_, err = db.Exec(
-				"UPDATE memberships SET role = 'member', status = 'invited', join_message = NULL, joined_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?",
-				memID,
+				"UPDATE memberships SET role = 'member', status = 'invited', invited_by = ?, join_message = NULL, joined_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?",
+				user.ID, memID,
 			)
 		default:
 			memID = auth.NewUUIDv7()
 			_, err = db.Exec(
-				"INSERT INTO memberships (id, user_id, node_id, role, status) VALUES (?, ?, ?, 'member', 'invited')",
-				memID, targetID, nodeID,
+				"INSERT INTO memberships (id, user_id, node_id, role, status, invited_by) VALUES (?, ?, ?, 'member', 'invited', ?)",
+				memID, targetID, nodeID, user.ID,
 			)
 		}
 		if err != nil {
@@ -197,7 +202,7 @@ func InviteMember(db *database.DB) http.HandlerFunc {
 // established that memID is the caller's row and that it is 'invited'.
 func acceptInvitedRow(db *database.DB, r *http.Request, user *model.User, memID, nodeID string) error {
 	_, err := db.Exec(
-		"UPDATE memberships SET status = 'active', role = 'member', join_message = NULL, joined_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ? AND status = 'invited'",
+		"UPDATE memberships SET status = 'active', role = 'member', join_message = NULL, invited_by = NULL, joined_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ? AND status = 'invited'",
 		memID,
 	)
 	if err != nil {
@@ -332,8 +337,9 @@ func RescindInvitation(db *database.DB) http.HandlerFunc {
 func ListMyInvitations(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := middleware.UserFromContext(r.Context())
-		rows, err := db.Query(`SELECT m.id, m.node_id, n.slug, n.name, m.joined_at
-			FROM memberships m JOIN nodes n ON n.id = m.node_id
+		rows, err := db.Query(`SELECT m.id, m.node_id, n.slug, n.name, m.joined_at,
+				COALESCE(m.invited_by, ''), `+usernameExpr("iu")+`, `+displayNameExpr("iu")+`
+			FROM memberships m JOIN nodes n ON n.id = m.node_id LEFT JOIN users iu ON iu.id = m.invited_by
 			WHERE m.user_id = ? AND m.status = 'invited'
 			  AND n.status = 'active' AND n.removed_at IS NULL
 			ORDER BY m.id ASC`, user.ID)
@@ -351,13 +357,14 @@ func ListMyInvitations(db *database.DB) http.HandlerFunc {
 			// Status is always 'invited'; sent so a client reading this
 			// beside me/nodes can tell the two kinds of row apart by the
 			// same field.
-			Status    string `json:"status"`
-			InvitedAt string `json:"invited_at"`
+			Status    string            `json:"status"`
+			InvitedAt string            `json:"invited_at"`
+			InvitedBy invitationInviter `json:"invited_by"`
 		}
 		items := []invitation{}
 		for rows.Next() {
 			var it invitation
-			if err := rows.Scan(&it.ID, &it.NodeID, &it.NodeSlug, &it.NodeName, &it.InvitedAt); err != nil {
+			if err := rows.Scan(&it.ID, &it.NodeID, &it.NodeSlug, &it.NodeName, &it.InvitedAt, &it.InvitedBy.ID, &it.InvitedBy.Username, &it.InvitedBy.DisplayName); err != nil {
 				continue
 			}
 			it.Status = "invited"
@@ -366,4 +373,14 @@ func ListMyInvitations(db *database.DB) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{"items": items})
 	}
+}
+
+// invitationInviter is the admin who made an invitation, as both of its
+// readers show it: a name, and a handle to link when there is one. All three
+// fields are blank for an invitation older than memberships.invited_by, and
+// the username is blank for a tombstone (usernameExpr).
+type invitationInviter struct {
+	ID          string `json:"id"`
+	Username    string `json:"username"`
+	DisplayName string `json:"display_name"`
 }

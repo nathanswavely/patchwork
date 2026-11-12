@@ -3,6 +3,7 @@
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
   import PersonCard from '../components/PersonCard.svelte';
+  import { invitationNote } from '../lib/invitations.js';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -53,6 +54,12 @@
   let inRoom = $derived(membershipRole === 'member' || membershipRole === 'admin');
   let viewerSharesContact = $state(false);
   let anyContact = $state(false);
+
+  // Outstanding invitations (docs/adr/098, F-048). The server sends them to
+  // the patch's own admins and nobody else, under their own key, so an admin
+  // who invited somebody can see on this page that she did. Listed below the
+  // members and never counted with them: an invited person has not said yes.
+  let invited = $state([]);
   let offerSharing = $derived(inRoom && !viewerSharesContact);
 
   $effect(() => {
@@ -76,6 +83,8 @@
       viewerSharesContact = !!data.viewer_shares_contact;
       anyContact = !!data.any_contact_shared;
       publicList = data.public_member_list || 'everyone';
+      // The whole list on every page, so the first answer is the answer.
+      if (!after) invited = data.invited || [];
     } catch {
       if (!after) {
         members = [];
@@ -85,6 +94,7 @@
         viewerSharesContact = false;
         anyContact = false;
         publicList = 'everyone';
+        invited = [];
       }
     } finally {
       loading = false;
@@ -122,6 +132,12 @@
         <!-- Said once, above the list, because a list of three under a
              count of forty otherwise reads as a bug. -->
         <span class="lt-muted roster-note">Only this patch's admins are listed publicly.</span>
+      {/if}
+      {#if isAdmin}
+        <!-- This page is the roster; roles, requests and invitations are
+             changed one link away (F-056). Two tabs both called Members
+             left admins thinking the controls did not exist. -->
+        <a class="manage-link" href="/patches/{slug}/settings/members" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/settings/members`); }}>Roles and requests</a>
       {/if}
     </div>
     <!-- "Share yours with this patch in My Patches" had no noun and nothing
@@ -177,6 +193,21 @@
         onclick={() => loadMembers(nextCursor)}
       >{loadingMore ? 'Loading...' : 'Load more'}</button>
     {/if}
+    {#if invited.length > 0}
+      <section class="invited-section">
+        <h3 class="invited-heading">Invited</h3>
+        <ul class="member-list">
+          {#each invited as person (person.user_id)}
+            <li class="member-row">
+              <div class="member-main">
+                <span class="member-name">{person.display_name || person.username}</span>
+                <span class="lt-muted invited-note">{invitationNote(person)}</span>
+              </div>
+            </li>
+          {/each}
+        </ul>
+      </section>
+    {/if}
   {/if}
 </div>
 {/if}
@@ -192,6 +223,28 @@
   }
 
   .roster-note {
+    font-size: 0.8rem;
+  }
+
+  .manage-link {
+    font-size: 0.85rem;
+    align-self: flex-start;
+  }
+
+  .invited-section {
+    margin-top: 1.5rem;
+  }
+
+  .invited-heading {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    margin-bottom: 0.25rem;
+  }
+
+  .invited-note {
     font-size: 0.8rem;
   }
 

@@ -38,11 +38,13 @@ describe('AttestationRecords — the record', () => {
   });
 
   it('shows the record in force as the one nothing has superseded', () => {
-    expect(src).toMatch(/current = \$derived\(records\.find\(\(r\) => !r\.superseded_by\)/);
+    // Nor struck as entered in error (F-078).
+    expect(src).toMatch(/current = \$derived\(records\.find\(\(r\) => !r\.superseded_by && !r\.entered_in_error\)/);
   });
 
   it('keeps corrected records readable rather than erasing them', () => {
-    expect(src).toMatch(/earlier = \$derived\(records\.filter\(\(r\) => r\.superseded_by\)\)/);
+    // Every record that is not in force stays listed, struck ones included.
+    expect(src).toMatch(/earlier = \$derived\(records\.filter\(\(r\) => r !== current\)\)/);
   });
 
   it('marks a name nobody has claimed instead of rendering it as an admin', () => {

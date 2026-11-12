@@ -703,6 +703,17 @@ func TestSetupClaimWithTemplate(t *testing.T) {
 	if _, err := governance.GetDocument(tmp, nodeID, "charter.md"); err != nil {
 		t.Errorf("formal template file missing from forked repo: %v", err)
 	}
+
+	// Setup is the creation moment, so it keeps the preview's promise too:
+	// the lining and Formal's five, as rows
+	// (docs/adr/2026-11-11-a-template-gives-the-patch-what-its-preview-lists.md).
+	var docs int
+	if err := db.QueryRow(`SELECT COUNT(*) FROM governance_docs WHERE node_id = ?`, nodeID).Scan(&docs); err != nil {
+		t.Fatal(err)
+	}
+	if docs != 6 {
+		t.Errorf("setup from Formal left %d documents, want the 6 its preview lists", docs)
+	}
 }
 
 func TestSetupClaimUnknownTemplateRejected(t *testing.T) {

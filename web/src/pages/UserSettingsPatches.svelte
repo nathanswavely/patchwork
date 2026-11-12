@@ -250,9 +250,9 @@
     onclick={() => (sharingFor === m.node_slug ? (sharingFor = null) : openSharing(m))}
   >
     {#if m.contact_items_shared > 0}
-      Reachable by {m.contact_items_shared}
+      Contact: {m.contact_items_shared} shared
     {:else}
-      Not reachable
+      Contact: not shared
     {/if}
   </button>
 {/snippet}

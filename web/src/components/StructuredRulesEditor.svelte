@@ -38,6 +38,11 @@
   // removes the ballot and keeps the discussion; what the meeting adopts comes
   // back as a record on the charter.
   let proposalVenue = $state('patchwork');
+  // Where and when the patch meets, in its own words (F-034). Only kept
+  // while a venue is elsewhere: a patch that decides everything here has no
+  // other place to name, and the server refuses one.
+  let venueNote = $state('');
+  let meetsElsewhere = $derived(leadershipVenue === 'elsewhere' || proposalVenue === 'elsewhere');
   // Whether a proposal's subject may vote on it (docs/adr/051).
   let subjectRecusal = $state(false);
   let membershipPolicy = $state('open');
@@ -154,6 +159,7 @@
     subjectRecusal = incoming.subject_recusal === true;
     leadershipVenue = incoming.leadership_venue === 'elsewhere' ? 'elsewhere' : 'patchwork';
     proposalVenue = incoming.proposal_venue === 'elsewhere' ? 'elsewhere' : 'patchwork';
+    venueNote = incoming.venue_note || '';
     membershipPolicy = incoming.membership_policy || 'open';
     const fp = incoming.follower_permissions || {};
     followerEvents = fp.events !== false;
@@ -180,6 +186,7 @@
       decision_method: decisionMethod,
       leadership_venue: leadershipVenue,
       proposal_venue: proposalVenue,
+      venue_note: meetsElsewhere ? venueNote.trim() : '',
       succession_policy: successionPolicy,
       membership_policy: membershipPolicy,
       follower_permissions: {
@@ -216,7 +223,7 @@
     // Touch all reactive values to track them
     decisionMethod; quorumPercent; votingPeriodHours; amendmentThreshold;
     autoApply; successionPolicy; minVotingTenureDays; membershipPolicy;
-    subjectRecusal; leadershipVenue; proposalVenue;
+    subjectRecusal; leadershipVenue; proposalVenue; venueNote;
     followerEvents; followerProposals; followerCharters; followerMembers;
     notify();
   });
@@ -319,6 +326,23 @@
       </p>
     {/if}
   </div>
+
+  {#if meetsElsewhere}
+    <div class="field">
+      <label class="lt-label" for="re-venue-note">Where and when this patch meets</label>
+      <input
+        class="lt-field"
+        id="re-venue-note"
+        type="text"
+        maxlength="200"
+        bind:value={venueNote}
+        placeholder="First Tuesday of the month, 7pm, the church hall"
+      />
+      <p class="venue-hint lt-muted">
+        Shown on the Governance tab in place of "outside Patchwork".
+      </p>
+    </div>
+  {/if}
 
   <div class="field">
     <label class="lt-label" for="re-succession">Succession Policy</label>

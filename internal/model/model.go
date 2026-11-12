@@ -224,6 +224,13 @@ type GovernanceConfig struct {
 	// the discussion — a proposal can still be raised and argued over, and
 	// the decision comes back as an amendment attestation.
 	ProposalVenue string `json:"proposal_venue,omitempty"`
+	// VenueNote is where and when a patch that decides elsewhere actually
+	// meets, in its own words: "First Tuesday of the month, 7pm, the church
+	// hall" (docs/adr/2026-11-11-a-patch-that-meets-elsewhere-says-where.md).
+	// Without it the Governance tab said only "outside Patchwork", and the
+	// meeting existed only in the patch's description (F-034). Empty unless
+	// one of the two venues is elsewhere.
+	VenueNote string `json:"venue_note,omitempty"`
 	// NominationDays is how long an election takes nominations before voting
 	// opens (docs/adr/051). This field is why a pre-voting phase is defensible
 	// at all: docs/adr/048 retired `draft` and `discussion` because nothing

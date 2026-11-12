@@ -15,6 +15,7 @@
   import { navigate } from '../stores/router.svelte.js';
   import { isLoggedIn } from '../stores/auth.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
+  import { getInvitations } from '../stores/memberships.svelte.js';
   import JoinSheet from './JoinSheet.svelte';
   import { ltMenu } from '../lib/lt.js';
   import { CaretDown, Heart, UsersThree, Wrench } from 'phosphor-svelte';
@@ -48,6 +49,26 @@
     admin: { label: 'Admin', icon: Wrench, exit: 'Leave' },
   };
   let standing = $derived(STANDING[membershipRole] || null);
+
+  /**
+   * What the standing menu offers above the exit (F-026). An admin's
+   * Settings and Notifications are the patch's own, because that is what
+   * the role runs. A member's or follower's are their own: My Patches holds
+   * the switches they keep on this membership (whether it is listed, what
+   * contact they share here), and notification preferences are per person
+   * rather than per patch, so there is no page narrower than that one.
+   */
+  let standingLinks = $derived(
+    membershipRole === 'admin'
+      ? [
+          { label: 'Settings', href: `/patches/${slug}/settings` },
+          { label: 'Notifications', href: `/patches/${slug}/settings/notifications` },
+        ]
+      : [
+          { label: 'Settings', href: '/settings/patches' },
+          { label: 'Notifications', href: '/settings/notifications' },
+        ]
+  );
 
   /**
    * A membership request nobody has answered yet. It is not standing —
@@ -85,6 +106,15 @@
    * is a join, and the server declines those there.
    */
   let invitedHere = $derived(invited && !standing && !isBanned && !hasMoved);
+
+  // Who made the invitation, from the invitee's own list
+  // (users/me/invitations). Blank for an invitation older than the record
+  // of its inviter, which keeps the sentence that names nobody.
+  let inviterName = $derived.by(() => {
+    if (!invitedHere) return '';
+    const by = getInvitations().find((i) => i.node_slug === slug)?.invited_by;
+    return by?.display_name || by?.username || '';
+  });
 
   let canBecomeMember = $derived(
     !hasMoved &&
@@ -229,7 +259,15 @@
           <span>{standing.label}</span>
           <span class="standing-mark" aria-hidden="true"><CaretDown size={11} weight="bold" /></span>
         </button>
+        <!-- The chip names what you are, so its menu holds what that lets
+             you change, with the way out last (F-026). It held only Leave,
+             and seven of eight people who opened it went looking for
+             their settings there and found the exit. -->
         <div class="lt-popover lt-menu standing-menu" bind:this={menuEl}>
+          {#each standingLinks as link (link.href)}
+            <a class="lt-menu-item" href={link.href} onclick={(e) => { e.preventDefault(); navigate(link.href); }}>{link.label}</a>
+          {/each}
+          <div class="lt-menu-divider"></div>
           <button class="lt-menu-item" onclick={handleLeave} disabled={joining}>{standing.exit}</button>
         </div>
       </div>
@@ -256,7 +294,9 @@
       <!-- Waiting on this person, not on an admin: both answers in the
            open, where Follow would otherwise be. -->
       <div class="invited-row">
-        <span class="invited-label">You've been invited to join</span>
+        <!-- Says who asked (F-044): "invited" with nobody behind it left
+             the person guessing which admin, or whether anyone had. -->
+        <span class="invited-label">{inviterName ? `${inviterName} invited you to join` : "You've been invited to join"}</span>
         <button class="lt-btn lt-btn-primary {btnSize}" onclick={handleAccept} disabled={joining}>Accept</button>
         <button class="lt-btn lt-btn-secondary {btnSize}" onclick={handleDecline} disabled={joining}>Decline</button>
       </div>

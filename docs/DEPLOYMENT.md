@@ -965,6 +965,7 @@ release carries a `release.json` asset for exactly that (docs/adr/085):
   "image": "ghcr.io/patchwork-toolkit/patchwork:0.26.0",
   "breaking": false,
   "irreversible_migrations": false,
+  "client_breaking": false,
   "summary": "the noticeboard, and events keep their own link"
 }
 ```
@@ -978,9 +979,16 @@ release carries a `release.json` asset for exactly that (docs/adr/085):
   release can be perfectly compatible and still be one you cannot walk back, so
   this is a separate flag from `breaking`. Take a backup you have actually
   restored from before applying one.
+- **`client_breaking`** — true when an API client built against the previous
+  release (a phone app, a script) can be refused or misread by this one,
+  including behind a setting an admin can turn on. It does not hold an
+  instance update back; it tells you to check that the apps your members use
+  have caught up, and points client developers at the release page's "For
+  client developers" section. Releases before v0.36.0 carry `false`, because
+  they were written before the field existed and were not asked.
 - **`summary`** — the one line that is also the release title.
 
-Both flags are asserted by the person cutting the tag, in
+The flags are asserted by the person cutting the tag, in
 `release-notes/vX.Y.Z.md` in the repo. They are a judgement, not a heuristic
 over the diff — which is the whole reason they are trustworthy.
 

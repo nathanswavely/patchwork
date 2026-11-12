@@ -89,7 +89,10 @@ describe('PatchRelationship — the invited state offers Accept and Decline inst
     const followBranch = src.indexOf('{:else if !hasMoved}');
     expect(invitedBranch).toBeGreaterThan(-1);
     expect(invitedBranch).toBeLessThan(followBranch);
-    expect(src).toMatch(/>You've been invited to join</);
+    // Names the inviter when the invitation carries one (F-044), and keeps
+    // the sentence that names nobody for one made before it was recorded.
+    expect(src).toContain('`${inviterName} invited you to join`');
+    expect(src).toContain(`"You've been invited to join"`);
     expect(src).toMatch(/onclick=\{handleAccept\}[^>]*>Accept</);
     expect(src).toMatch(/onclick=\{handleDecline\}[^>]*>Decline</);
   });

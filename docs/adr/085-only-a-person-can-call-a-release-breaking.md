@@ -3,6 +3,10 @@
 Date: 2026-09-07. Status: **accepted**; implemented. Closes the gap that
 docs/DEPLOYMENT.md has been papering over in prose since 2026-07-19.
 
+> Amended by docs/adr/2026-11-11-a-release-says-what-it-means-for-clients.md:
+> from v0.36.0 the front matter adds `client_breaking` and the body a
+> "For client developers" section, both checked by the same tool.
+
 ## Context
 
 CI publishes images. A push to main moves `:latest`; a `v*` tag publishes

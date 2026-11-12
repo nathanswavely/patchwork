@@ -77,6 +77,13 @@
   // file is machine configuration, not a text a meeting adopts — so a member
   // gets told that rather than a link the server refuses.
   let proposalsElsewhere = $derived(overview?.rules?.proposal_venue === 'elsewhere');
+  // Where and when the patch meets instead, in its own words (F-034). "Outside
+  // Patchwork" on its own told a visitor that the meeting existed and not
+  // where it was, so the sentence names it whenever the patch has.
+  let venueNote = $derived((overview?.rules?.venue_note || '').trim());
+  // Closed with a full stop when the patch's own words leave it open, since the
+  // sentence carries on after it.
+  let venuePlace = $derived(venueNote && !/[.!?]$/.test(venueNote) ? venueNote + '.' : venueNote);
 
   // The contest this patch is running, and when its council next faces the
   // electorate (docs/adr/051). Both come from the server rather than being
@@ -116,7 +123,10 @@
         : `Held until ${formatDay(seat.term_ends_at)}, and in the election running now.`;
     }
     if (seat.fill === 'nomination') {
-      const how = 'Filled by nomination: an admin puts a member forward and the members ratify it. That can happen today.';
+      // A member may put themselves forward as well as be put forward
+      // (F-042). Between contests the only door used to be an admin
+      // remembering you.
+      const how = 'Filled by nomination: a member stands, or an admin puts one forward, and the members ratify it. That can happen today.';
       // And the chair's own term, because whoever is nominated inherits it
       // rather than starting a fresh one (docs/adr/051), and because it is
       // the date an admin just set on this row.
@@ -175,11 +185,11 @@
       if (isPatchAdmin) {
         return 'You can nominate someone for a vacant seat. Members ratify it, and the appointee will serve out that seat’s term.';
       }
-      // A follower is not eligible to be nominated \u2014 a nominee must be an
-      // active member \u2014 so "ask one to nominate you" would send them at a
-      // door the server closes.
+      // A follower is not eligible to stand or be nominated \u2014 either way
+      // the candidate must be an active member \u2014 so offering them the
+      // door would send them at one the server closes.
       return canPropose
-        ? 'Only an admin can put a name forward for a vacant seat. Ask one to nominate you.'
+        ? 'You can stand for a vacant seat. The members ratify it, and you serve out that seat\u2019s term.'
         : 'A vacant seat is filled by nomination, and only this patch\u2019s members can be nominated for one.';
     }
     if (!nextContestOpens) {
@@ -507,8 +517,14 @@
         <p class="overview-narrative">{describeDecisionMethod(rules)}</p>
       {/if}
       {#if proposalsElsewhere}
+        <!-- Whole sentences in each branch, so the one a patch with no note
+             reads is the same words it always was. -->
         <p class="overview-narrative">
-          Proposals are decided outside Patchwork. They stay open here for discussion, and adoption is recorded on the charter.
+          {#if venueNote}
+            Proposals are decided where this patch meets: {venuePlace} They stay open here for discussion, and adoption is recorded on the charter.
+          {:else}
+            Proposals are decided outside Patchwork. They stay open here for discussion, and adoption is recorded on the charter.
+          {/if}
         </p>
         {#if membershipRole === 'admin'}
           <a class="section-action" href="/patches/{slug}/governance/rules/propose" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/rules/propose`); }}>
@@ -634,6 +650,17 @@
                       >
                         See the election
                       </a>
+                    {:else if seat.fill === 'nomination' && canPropose && !isPatchAdmin}
+                      <!-- The door a member had no way to find (F-042).
+                           Standing opens the same ratification a
+                           nomination does, with their own name on it. -->
+                      <a
+                        class="seat-contest"
+                        href="/patches/{slug}/governance/new?type=stand"
+                        onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/new?type=stand`); }}
+                      >
+                        Stand for this seat
+                      </a>
                     {/if}
                   </div>
                   {#if isPatchAdmin}
@@ -740,10 +767,22 @@
            changes here, so they sit with the admin list rather than on a
            page of their own. -->
       {#if leadershipElsewhere}
+        <!-- Said once on the page: where proposals are decided elsewhere
+             too, the place is already named above. -->
         <p class="venue-line lt-muted">
-          Admins are chosen outside Patchwork. Who the community put in place
-          is recorded below. Minutes and other decisions go in
+          {#if venueNote && !proposalsElsewhere}
+            Admins are chosen where this patch meets: {venuePlace} Who the community put in place
+            is recorded below. Minutes and other decisions go in
           <a href="/patches/{slug}/governance/docs" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/docs`); }}>Documents</a>.
+          {:else if venueNote}
+            Admins are chosen at the same meetings. Who the community put in place
+            is recorded below. Minutes and other decisions go in
+          <a href="/patches/{slug}/governance/docs" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/docs`); }}>Documents</a>.
+          {:else}
+            Admins are chosen outside Patchwork. Who the community put in place
+            is recorded below. Minutes and other decisions go in
+          <a href="/patches/{slug}/governance/docs" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/docs`); }}>Documents</a>.
+          {/if}
         </p>
         <AttestationRecords {slug} isAdmin={isAdmin} hasTerms={overview?.rules?.leadership_model === 'elected'} />
       {/if}

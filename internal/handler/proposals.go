@@ -393,6 +393,12 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"this patch decides at meetings, and the governance rules are not something a meeting adopts. Ask an admin to apply the change directly (docs/adr/053)."}`, http.StatusConflict)
 			return
 		}
+		if isRulesDoc {
+			if msg := venueNoteProblem(req.ProposedBody); msg != "" {
+				writeJSONError(w, http.StatusBadRequest, msg)
+				return
+			}
+		}
 
 		id := auth.NewUUIDv7()
 		now := time.Now().UTC()
