@@ -155,12 +155,21 @@ func countProposalsAwaitingVote(db *database.DB, nodeID, userID, nodeGCJSON stri
 				continue
 			}
 		}
-		// A proposal you are recused from is not awaiting your vote
-		// (docs/adr/051). ADR 044's rule is that the nudge names the same set
-		// the gate does; telling someone two proposals need their vote and
-		// then refusing one of them is the contradiction it was written about.
-		if recusedSubject(db, nodeID, gc, targetUserID) == userID {
-			continue
+		// A proposal about you is not awaiting your vote. Where the patch
+		// recuses its subject (docs/adr/051) the gate refuses the ballot, and
+		// ADR 044's rule is that the nudge names the same set the gate does.
+		// Where it does not, the subject may vote, but a candidate told that
+		// their own candidacy "needs" them is being asked to vote themselves
+		// onto the council (F-042). The proposal stays in every list and its
+		// page keeps its buttons; only the nudge is quiet.
+		//
+		// The one exception is recusedSubject's: when nobody else could vote
+		// on it, the subject's ballot is the only one there will be, and the
+		// proposal really does need it.
+		if targetUserID == userID {
+			if others, _ := eligibleVotersExcept(db, nodeID, gc, userID); others > 0 {
+				continue
+			}
 		}
 		count++
 	}

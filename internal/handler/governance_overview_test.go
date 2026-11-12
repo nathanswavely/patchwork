@@ -2,6 +2,7 @@ package handler_test
 
 import (
 	"net/http"
+	"strings"
 	"testing"
 	"time"
 
@@ -118,6 +119,78 @@ func TestGovernanceOverview_NeedsVoteFollowsElectorate(t *testing.T) {
 
 		if got := overviewNeedsVote(t, db, "overview-v", memberToken); got != 0 {
 			t.Errorf("voted member needs_vote = %d, want 0", got)
+		}
+	})
+}
+
+// A proposal about you is never one the hub says needs your vote (F-042).
+// A member who stood for a seat was told "2 proposals need your vote" with
+// one of them their own candidacy. Where the patch recuses its subject the
+// gate refuses that ballot, so the nudge must not name it; where it does not,
+// the subject may vote, but the hub still does not chase them onto the
+// council. Either way the proposal stays in the list, and the exception is
+// the one recusal already makes: if nobody else could vote, it needs them.
+func TestGovernanceOverview_NeedsVoteSkipsYourOwnCandidacy(t *testing.T) {
+	setup := func(t *testing.T, slug string, recusal bool) (db *database.DB, nodeID, candidateID, candidateToken string) {
+		t.Helper()
+		db = setupTestDB(t)
+		admin, _ := createTestUser(t, db, slug+"_admin", "member")
+		candidate, candidateToken := createTestUser(t, db, slug+"_cand", "member")
+		nodeID = createTestNode(t, db, admin.ID, "Overview "+slug, slug, "open")
+		createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+		createTestMembership(t, db, candidate.ID, nodeID, "member", "active")
+		gc := `{"decision_method":"majority","quorum_percent":0,"min_voting_tenure_days":0,"subject_recusal":false}`
+		if recusal {
+			gc = `{"decision_method":"majority","quorum_percent":0,"min_voting_tenure_days":0,"subject_recusal":true}`
+		}
+		if _, err := db.Exec(`UPDATE nodes SET governance_config = ? WHERE id = ?`, gc, nodeID); err != nil {
+			t.Fatalf("set governance config: %v", err)
+		}
+		openProposal(t, db, nodeID, admin.ID, "An ordinary question")
+		candidacy := openProposal(t, db, nodeID, candidate.ID, "Standing for admin")
+		if _, err := db.Exec(`UPDATE proposals SET proposal_type = 'membership', target_user_id = ? WHERE id = ?`,
+			candidate.ID, candidacy); err != nil {
+			t.Fatalf("make the candidacy: %v", err)
+		}
+		return db, nodeID, candidate.ID, candidateToken
+	}
+
+	for _, recusal := range []bool{true, false} {
+		name := "recusal off"
+		slug := "own-cand-off"
+		if recusal {
+			name, slug = "recusal on", "own-cand-on"
+		}
+		t.Run(name, func(t *testing.T) {
+			db, _, _, tok := setup(t, slug, recusal)
+			if got := overviewNeedsVote(t, db, slug, tok); got != 1 {
+				t.Errorf("needs_vote = %d, want 1: the ordinary question, not the candidate's own candidacy", got)
+			}
+			if got, _ := awaitingOnList(t, db, slug, tok); got != 1 {
+				t.Errorf("awaiting_your_vote = %v, want 1: the dashboard reads the same count", got)
+			}
+			// The candidacy is still there to read.
+			r := authedRequest("GET", "/api/v1/nodes/"+slug+"/proposals?status=open", nil, tok)
+			w := serveMux(t, db, "GET", "/api/v1/nodes/{slug}/proposals", handler.ListProposals(db), r)
+			if w.Code != http.StatusOK {
+				t.Fatalf("proposals: got %d: %s", w.Code, w.Body.String())
+			}
+			if !strings.Contains(w.Body.String(), "Standing for admin") {
+				t.Errorf("the candidacy dropped out of the proposals list: %s", w.Body.String())
+			}
+		})
+	}
+
+	t.Run("the subject is the only one who could vote", func(t *testing.T) {
+		db, nodeID, candidateID, tok := setup(t, "own-cand-sole", false)
+		// Take the admin's ballot away: demoted to follower, the candidate is
+		// the whole electorate, and the candidacy cannot pass without them.
+		if _, err := db.Exec(`UPDATE memberships SET role = 'follower' WHERE node_id = ? AND user_id != ?`,
+			nodeID, candidateID); err != nil {
+			t.Fatalf("demote: %v", err)
+		}
+		if got := overviewNeedsVote(t, db, "own-cand-sole", tok); got != 2 {
+			t.Errorf("needs_vote = %d, want 2: nobody else can vote on the candidacy", got)
 		}
 	})
 }
