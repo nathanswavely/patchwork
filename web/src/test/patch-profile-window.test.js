@@ -146,7 +146,9 @@ describe('PatchRelationship', () => {
   const src = source('components/PatchRelationship.svelte');
 
   it('puts the exit inside the standing control, never beside it', () => {
-    expect(src).toMatch(/standing-menu[\s\S]{0,200}handleLeave/);
+    // The menu holds Settings and Notifications too now (F-026), with the
+    // exit last, so the window reaches past them to the closing tag.
+    expect(src).toMatch(/standing-menu" bind:this=\{menuEl\}>[\s\S]{0,500}onclick=\{handleLeave\}[^>]*>\{standing\.exit\}<\/button>\s*<\/div>/);
     expect(src).not.toMatch(/class="lt-btn[^"]*"[^>]*onclick={handleLeave}/);
   });
 

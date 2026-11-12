@@ -224,7 +224,8 @@ func Tables() []Table {
 		{
 			File: "memberships.json",
 			Name: "memberships",
-			Query: `SELECT id, user_id, node_id, role, status, visible, share_contact, joined_at, role_since
+			Query: `SELECT id, user_id, node_id, role, status, visible, share_contact, joined_at, role_since,
+				invited_by
 				FROM memberships`,
 			// `visible` is the member's own switch (docs/adr/006), and it
 			// defaults to 1. Leaving it behind meant a fork re-exposed every
@@ -243,9 +244,15 @@ func Tables() []Table {
 			// promoted admin vacatable on sight. NULL on archives older than
 			// the column, which reads as "measure from joining" — the same
 			// answer those archives already carried.
+			// `invited_by` travels with the invitation it describes (F-044):
+			// an invited row travels, and arriving without its inviter would
+			// leave the person asking "invited by whom" on the fork. Remapped
+			// like any person, and the member view's closure over user
+			// references carries the inviter as a stub. It is set only while
+			// a row is 'invited', so it names nothing on any other row.
 			Columns: cols(id("id"), id("user_id"), id("node_id"), c("role"),
 				c("status"), def("visible", 1), def("share_contact", 0), c("joined_at"),
-				def("role_since", nil)),
+				def("role_since", nil), Column{Name: "invited_by", Remap: true, Default: nil}),
 		},
 		{
 			// The contact card in the shape docs/adr/083 gives it: an ordered

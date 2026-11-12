@@ -75,7 +75,7 @@ test.describe('Patch Settings — Navigation', () => {
     const slug = 'lancaster-arts-district';
     const links = [
       { label: 'Patch Info', url: '/settings/info' },
-      { label: 'Members', url: '/settings/members' },
+      { label: 'Roles and requests', url: '/settings/members' },
       { label: 'Notifications', url: '/settings/notifications' },
       { label: 'Danger Zone', url: '/settings/danger' },
     ];
