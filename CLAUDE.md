@@ -448,13 +448,19 @@ The seamrip mechanism is a governance safety valve: if a community's leadership 
 ## Cutting a release
 
 A `v*` tag publishes an image only if `release-notes/vX.Y.Z.md` is already on
-main (docs/adr/085). Front matter carries `breaking`, `irreversible_migrations`
-and a one-line `summary`; the body becomes the GitHub release notes and CI
+main (docs/adr/085). Front matter carries `breaking`, `irreversible_migrations`,
+`client_breaking` and a one-line `summary`; the body becomes the GitHub release notes and CI
 attaches a `release.json` an unattended updater gates on. Write the file, run
 `make release-notes-check TAG=vX.Y.Z`, *then* push the tag — the CI gate is on
 the `image` job, so forgetting means no image at all, and the repair is a
 commit plus moving the tag. Only a person can say a release is breaking; when
-it is arguable, say `true`.
+it is arguable, say `true`. From v0.36.0 the body also needs a `## For client
+developers` section listing every change to what `/api/v1` accepts or
+returns, or saying there is none, and `client_breaking` says whether a client
+built against the previous release can be refused or misread — including
+behind a new setting an admin can turn on
+(docs/adr/2026-11-11-a-release-says-what-it-means-for-clients.md). Write the
+section from the merged PRs as you go, not from memory at tag time.
 
 ## Key Principles
 
