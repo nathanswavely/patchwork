@@ -32,8 +32,9 @@ describe('GovernanceOverview — one sentence per chair', () => {
   });
 
   it('says of a vacant chair how it is filled and that it can be filled today', () => {
+    // A member may stand as well as be put forward (F-042).
     expect(src).toMatch(
-      /Filled by nomination: an admin puts a member forward and the members ratify it\. That can happen today\./
+      /Filled by nomination: a member stands, or an admin puts one forward, and the members ratify it\. That can happen today\./
     );
   });
 
@@ -89,7 +90,10 @@ describe('GovernanceOverview — what you can do about it today', () => {
   it('answers the reader in the second person, by role', () => {
     expect(src).toMatch(/let councilAction = \$derived\.by\(\(\) => \{/);
     expect(src).toMatch(/You can nominate someone for a vacant seat\./);
-    expect(src).toMatch(/Only an admin can put a name forward for a vacant seat\. Ask one to nominate you\./);
+    // A member is told they can stand themselves now, not sent to ask an
+    // admin to remember them (F-042).
+    expect(src).toMatch(/You can stand for a vacant seat\. The members ratify it/);
+    expect(src).not.toMatch(/Ask one to nominate you/);
   });
 
   it('says "nothing until <date>" when that is the honest answer', () => {

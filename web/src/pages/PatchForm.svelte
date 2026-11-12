@@ -4,7 +4,8 @@
   import { navigate } from '../stores/router.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
   import { loadMemberships } from '../stores/memberships.svelte.js';
-  import { getSubmissionsEnabled, getAiDisclosure } from '../stores/quilt.svelte.js';
+  import { getSubmissionsEnabled, getAiDisclosure, getInstanceTimezone } from '../stores/quilt.svelte.js';
+  import { isPlaceZone } from '../lib/datetime.js';
   import AIUseQuestion from '../components/AIUseQuestion.svelte';
   import AIWorkQuestion from '../components/AIWorkQuestion.svelte';
   import { aiField, aiAnswerMissing } from '../lib/aiUse.js';
@@ -165,6 +166,51 @@
     suggestion = null;
     showPicker = false;
   }
+  // The clock this patch keeps, asked at creation
+  // (docs/adr/2026-11-11-a-patch-is-asked-its-timezone-when-it-is-made.md).
+  // A patch born without one keeps the quilt's, which on a fresh instance is
+  // UTC, so its first event landed at the hour nobody there lives in (F-024).
+  // Preselected to this device's zone, since the person making a patch is
+  // usually standing in it, with the quilt's own zone offered beside it and
+  // any other place one choice away. Creation only: setup leaves the
+  // listing's zone to Patch Settings, which asks what should happen to the
+  // events a listing may already carry.
+  const deviceZone = (() => {
+    try {
+      const z = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+      return isPlaceZone(z) ? z : '';
+    } catch {
+      return '';
+    }
+  })();
+  let quiltZone = $derived(getInstanceTimezone());
+  let zoneChoice = $state('');
+  let otherZone = $state('');
+  let zoneOptions = $derived.by(() => {
+    const opts = [];
+    if (deviceZone) {
+      opts.push({ value: deviceZone, label: `${zoneName(deviceZone)} (${deviceZone === quiltZone ? 'this device and this quilt' : 'this device'})` });
+    }
+    if (quiltZone && quiltZone !== deviceZone) {
+      opts.push({ value: quiltZone, label: `${zoneName(quiltZone)} (this quilt)` });
+    }
+    opts.push({ value: 'other', label: 'Another timezone' });
+    return opts;
+  });
+  // Seeded once there is something to seed from; the instance store can
+  // arrive after the form mounts, and a choice the person made is theirs.
+  $effect(() => {
+    if (!zoneChoice) zoneChoice = deviceZone || quiltZone || 'other';
+  });
+  let chosenZone = $derived(zoneChoice === 'other' ? otherZone.trim() : zoneChoice);
+  // Said under the field it is about, once the person has left it or tried
+  // to submit, as well as in the form's error line at the bottom: the
+  // settings page's refusal used to land a screen below where it was typed.
+  let otherZoneLeft = $state(false);
+  let otherZoneBad = $derived(otherZoneLeft && !!chosenZone && !isPlaceZone(chosenZone));
+  function zoneName(tz) {
+    return tz.replace(/_/g, ' ');
+  }
   let visibility = $state(initial?.visibility || 'public');
   // The membership policy, preselected to the closed option.
   //
@@ -303,16 +349,29 @@
   let error = $state('');
   let previewTemplate = $state('');
 
+  // Each card says who decides and how, then who it tends to suit, with no
+  // head count: a size routed a forty-member venue board away from the one
+  // template that elects a council, and nearly put a four-person press off
+  // the one that fit (F-032). Every card also says a patch can decide at a
+  // meeting, because where decisions happen is a setting each of the four
+  // has. The words are the server's TemplateInfo, verbatim
+  // (internal/governance/defaults.go); TestTemplateCardsMatchTheServer
+  // holds the two together. docs/adr/2026-11-11-a-template-card-says-who-decides.md
+  const elsewhereLine = 'Decisions can be made at a meeting instead, and recorded here.';
   const templates = [
-    { id: 'minimal', name: 'Minimal', desc: 'No overhead. You\'re the only one running it.', leadership: 'Maintainer', bestFor: 'Bands, solo artists, pop-up projects' },
-    { id: 'casual', name: 'Casual', desc: 'Small group. Majority rules.', leadership: 'Maintainer', bestFor: 'Small collectives, meetups, studios (5\u201320 people)' },
-    { id: 'collaborative', name: 'Collaborative', desc: 'Open community, structured process. Trust builds through contribution.', leadership: 'Meritocratic', bestFor: 'Venues, co-ops, makerspaces (20\u2013100 people)' },
-    { id: 'formal', name: 'Formal', desc: 'Coalition-scale governance. Elected council, term limits, full accountability.', leadership: 'Elected Council', bestFor: 'Arts districts, coalitions (100+ people)' },
+    { id: 'minimal', name: 'Minimal', desc: 'You decide. Members can propose, and you approve or decline, or ask them to vote first.', leadership: 'Maintainer', bestFor: 'Bands, solo artists, pop-up projects' },
+    { id: 'casual', name: 'Casual', desc: 'Members vote for three days, and a proposal passes with more approvals than rejections. The admins run things day to day.', leadership: 'Maintainer', bestFor: 'Small collectives, meetups, studios' },
+    { id: 'collaborative', name: 'Collaborative', desc: 'Members vote for a week, and a quarter of them must take part. Admins nominate new admins, and members confirm them.', leadership: 'Meritocratic', bestFor: 'Venues, co-ops, makerspaces, community radio' },
+    { id: 'formal', name: 'Formal', desc: 'Members elect a council for one-year terms. A proposal needs half the members to vote, and fails if anyone rejects it.', leadership: 'Elected council', bestFor: 'Boards, coalitions, arts districts, mutual aid networks' },
   ];
 
   function validate() {
     if (!name.trim()) return 'Name is required';
     if (!membershipPolicy) return 'Choose a membership policy';
+    if (mode !== 'setup' && chosenZone && !isPlaceZone(chosenZone)) {
+      otherZoneLeft = true;
+      return 'That is not a place this quilt keeps time in. Try America/New_York.';
+    }
     const aiMissing = aiAnswerMissing(getAiDisclosure(), aiUse);
     if (aiMissing) return aiMissing;
     return '';
@@ -414,6 +473,7 @@
         visibility,
         membership_policy: membershipPolicy,
         template,
+        timezone: chosenZone || undefined,
         appearance,
         tags: tags.length > 0 ? tags : undefined,
         suggest_tags: suggestTags.length > 0 ? suggestTags : undefined,
@@ -545,6 +605,38 @@
             />
           {/if}
         </div>
+
+        {#if mode !== 'setup'}
+          <div class="field">
+            <label class="lt-label" for="patch-timezone">Timezone</label>
+            <p class="lt-hint field-hint">The clock this patch's events are listed in.</p>
+            <select class="lt-field" id="patch-timezone" bind:value={zoneChoice} disabled={submitting}>
+              {#each zoneOptions as opt (opt.value)}
+                <option value={opt.value}>{opt.label}</option>
+              {/each}
+            </select>
+            {#if zoneChoice === 'other'}
+              <input
+                class="lt-field other-zone"
+                id="patch-timezone-other"
+                type="text"
+                aria-label="Other timezone"
+                bind:value={otherZone}
+                disabled={submitting}
+                placeholder="America/New_York"
+                aria-invalid={otherZoneBad}
+                onblur={() => { otherZoneLeft = true; }}
+              />
+              {#if otherZoneBad}
+                <p class="lt-error-text">That is not a place this quilt keeps time in. Try America/New_York.</p>
+              {/if}
+              <p class="lt-hint field-hint">
+                A place name like Europe/Berlin. Leave it empty to follow the
+                quilt's clock, {zoneName(quiltZone || 'UTC')}.
+              </p>
+            {/if}
+          </div>
+        {/if}
 
         <div class="field">
           <label class="lt-label" for="website">Website</label>
@@ -760,6 +852,7 @@
                   </div>
                   <span class="template-desc">{t.desc}</span>
                   <span class="template-meta">{t.leadership} · {t.bestFor}</span>
+                  <span class="template-meta">{elsewhereLine}</span>
                 </div>
               </label>
             {/each}
@@ -1156,6 +1249,10 @@
 
   .field-actions {
     padding-top: 0.5rem;
+  }
+
+  .other-zone {
+    margin-top: 0.5rem;
   }
 
   .suggest-link {

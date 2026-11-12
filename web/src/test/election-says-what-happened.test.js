@@ -162,9 +162,10 @@ describe('The council page tells the truth about its own calendar', () => {
     // stands down rather than saying it twice.
     expect(overview).toMatch(/Vacant, and this patch has no admins to put a name forward\./);
     expect(overview).toContain("if (vacantSeats.every((s) => s.fill === 'contest_fills')) return '';");
-    // And the sentence that sends somebody to an admin who does not exist
-    // is still reachable only where one does.
-    const askAn = overview.indexOf('Ask one to nominate you');
+    // And the sentence telling a member they can stand is reachable only
+    // where a chair routes to nomination, which is only on a council that
+    // still has an admin (F-042 replaced "ask one to nominate you" with it).
+    const askAn = overview.indexOf('You can stand for a vacant seat');
     const adminless = overview.indexOf("s.fill === 'contest_fills'");
     expect(askAn).toBeGreaterThan(adminless);
   });

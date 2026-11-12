@@ -132,6 +132,11 @@ export function readableRules(rules, followerPermissions = null) {
     label: 'Where proposals are decided',
     value: VENUE_LABELS[rules.proposal_venue || 'patchwork'],
   });
+  // Where the meeting is, when the patch has said (F-034). Only beside a
+  // venue that is elsewhere, which is the only place it means anything.
+  if ((decidesElsewhere || leadsElsewhere) && (rules.venue_note || '').trim()) {
+    out.push({ label: 'Where this patch meets', value: rules.venue_note.trim() });
+  }
   if (!decidesElsewhere) {
     out.push({
       label: 'How a proposal carries',

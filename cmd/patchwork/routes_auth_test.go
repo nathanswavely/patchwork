@@ -503,7 +503,7 @@ func (f *routeFixture) seed(t *testing.T) {
 	seat := id("seats")
 	f.exec(t, `INSERT INTO seats (id, node_id, term_ends_at) VALUES (?, ?, ?)`, seat, node, soon)
 
-	attestation := auth.NewUUIDv7()
+	attestation := id("attestations")
 	f.exec(t, `INSERT INTO attestations (id, node_id, kind, decided_at, recorded_by) VALUES (?, ?, 'leadership', ?, ?)`,
 		attestation, node, soon, owner)
 	attName := id("attestation-names")

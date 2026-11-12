@@ -3,6 +3,8 @@
   import { api } from '../lib/api.js';
   import { allPages } from '../lib/pages.js';
   import { formatDay } from '../lib/datetime.js';
+  import { invitationNote } from '../lib/invitations.js';
+  import { refreshUnread } from '../stores/notifications.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
   import ConfirmAction from '../components/ConfirmAction.svelte';
   import Skeleton from '../components/Skeleton.svelte';
@@ -237,7 +239,9 @@
         body: { status: 'active' },
       });
       showToast('Member approved', 'success');
-      await Promise.all([loadMembers(), loadPendingMembers()]);
+      // The server took the request's line out of every admin's bell
+      // (F-045), so the badge is reconciled now rather than on the poll.
+      await Promise.all([loadMembers(), loadPendingMembers(), refreshUnread()]);
     } catch (e) {
       showToast(e.message || 'Failed to approve member', 'error');
     }
@@ -250,7 +254,7 @@
         body: { status: 'left' },
       });
       showToast('Request rejected', 'success');
-      await Promise.all([loadMembers(), loadPendingMembers()]);
+      await Promise.all([loadMembers(), loadPendingMembers(), refreshUnread()]);
     } catch (e) {
       showToast(e.message || 'Failed to reject member', 'error');
     }
@@ -401,6 +405,7 @@
             <div class="lt-item-main member-info">
               <span class="member-name">{person.display_name || person.username}</span>
               <span class="lt-pill lt-tone-muted">invited</span>
+              <span class="lt-muted invited-note">{invitationNote(person)}</span>
             </div>
             <div class="lt-item-actions member-actions">
               <ConfirmAction
@@ -612,8 +617,13 @@
   .member-info {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 0.5rem;
     min-width: 0;
+  }
+
+  .invited-note {
+    font-size: 0.8rem;
   }
 
   .member-name {

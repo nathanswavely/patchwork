@@ -73,10 +73,17 @@ func personalExportSections() []personalExportSection {
 			// profile and member list (docs/adr/006). The visibility switch
 			// is the person's own, so the hidden ones are theirs to carry —
 			// ADR 012 says so in as many words.
+			//
+			// An open invitation carries who made it (F-044), by id and by
+			// the name the invitee was shown. It is a fact about this
+			// person's own row: the admin's act of asking them, which they
+			// have already read on the patch page. Blank on every other row.
 			Key: "memberships", Args: 1,
 			Query: `SELECT m.id, m.node_id, n.slug AS node_slug, n.name AS node_name,
-				m.role, m.status, m.visible, m.share_contact, m.join_message, m.joined_at
+				m.role, m.status, m.visible, m.share_contact, m.join_message, m.joined_at,
+				m.invited_by, CASE WHEN m.invited_by IS NULL THEN NULL ELSE ` + displayNameExpr("iu") + ` END AS invited_by_name
 				FROM memberships m JOIN nodes n ON n.id = m.node_id
+				LEFT JOIN users iu ON iu.id = m.invited_by
 				WHERE m.user_id = ? ORDER BY m.joined_at`,
 		},
 		{
@@ -199,8 +206,15 @@ func personalExportSections() []personalExportSection {
 			// What they recorded about a decision taken somewhere Patchwork
 			// was not (docs/adr/052, docs/adr/053).
 			Key: "attestations_recorded", Args: 1,
-			Query: `SELECT id, node_id, kind, decided_at, term_ends_at, summary, created_at
+			Query: `SELECT id, node_id, kind, decided_at, term_ends_at, summary, created_at, struck_at
 				FROM attestations WHERE recorded_by = ? ORDER BY created_at`,
+		},
+		{
+			// Records they struck through as entered in error (F-078): the
+			// initials beside a crossed-out line are an act of theirs.
+			Key: "attestations_struck", Args: 1,
+			Query: `SELECT id, node_id, decided_at, struck_at
+				FROM attestations WHERE struck_by = ? ORDER BY struck_at`,
 		},
 		{
 			Key: "amendment_attestations_recorded", Args: 1,
@@ -210,10 +224,11 @@ func personalExportSections() []personalExportSection {
 		},
 		{
 			// Where an attestation names them as one of the people a meeting
-			// seated. Somebody else wrote the record; being in it is a fact
-			// about this person, and the row is only the name and its place.
+			// seated, or one it stood down. Somebody else wrote the record;
+			// being in it is a fact about this person, and the row is only
+			// the name, its side and its place.
 			Key: "attestation_names", Args: 1,
-			Query: `SELECT an.id, an.attestation_id, a.node_id, an.display_name, an.position
+			Query: `SELECT an.id, an.attestation_id, a.node_id, an.display_name, an.effect, an.position
 				FROM attestation_names an JOIN attestations a ON a.id = an.attestation_id
 				WHERE an.user_id = ? ORDER BY an.position`,
 		},
