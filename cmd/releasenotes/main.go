@@ -308,11 +308,15 @@ func Parse(filename string, src []byte) (*Notes, error) {
 }
 
 // versionBefore reports whether version's major.minor.patch sorts before
-// floor. The version has already matched versionRE.
+// floor. The version has already matched versionRE, so a failed parse cannot
+// happen; if it somehow did, the file is treated as owing the client half,
+// the stricter answer.
 func versionBefore(version string, floor [3]int) bool {
 	core := strings.SplitN(strings.TrimPrefix(version, "v"), "-", 2)[0]
 	var v [3]int
-	fmt.Sscanf(core, "%d.%d.%d", &v[0], &v[1], &v[2])
+	if n, err := fmt.Sscanf(core, "%d.%d.%d", &v[0], &v[1], &v[2]); err != nil || n != 3 {
+		return false
+	}
 	for i := range v {
 		if v[i] != floor[i] {
 			return v[i] < floor[i]
