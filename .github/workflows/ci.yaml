@@ -71,6 +71,10 @@ jobs:
         with:
           go-version-file: go.mod
           check-latest: true
+          # A key only this job writes; the e2e job's setup-go step says why.
+          cache-dependency-path: |
+            go.sum
+            scripts/errcheck-check.sh
 
       - name: Go build
         run: go build ./...
@@ -204,6 +208,10 @@ jobs:
         with:
           go-version-file: go.mod
           check-latest: true
+          # A key only this job writes; the e2e job's setup-go step says why.
+          cache-dependency-path: |
+            go.sum
+            .github/workflows/race-nightly.yaml
 
       - name: go test -race (mutex-guarded packages)
         run: go test -race ./internal/eventsource/... ./internal/middleware/... ./internal/ap/... ./internal/notifications/...
