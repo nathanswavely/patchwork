@@ -77,3 +77,6 @@ once you hold the keys that pressure applies to you too.
 Browse a living quilt first if you can. The reference instance serves Lancaster, Pennsylvania. When you're ready to try the
 software on a server, read [DEPLOYMENT.md](DEPLOYMENT.md). The
 [README](../README.md) covers the technical shape of the project.
+
+For how a patch chooses its admins and makes its decisions, read
+[GOVERNANCE.md](GOVERNANCE.md).

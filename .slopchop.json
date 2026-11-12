@@ -13,6 +13,7 @@
     "internal/notifications/inactivity.go",
     "README.md",
     "docs/START-A-QUILT.md",
+    "docs/GOVERNANCE.md",
     "CONTRIBUTING.md"
   ],
   "exclude": [
