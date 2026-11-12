@@ -44,7 +44,7 @@ func TestParseValidFile(t *testing.T) {
 }
 
 func TestParseAcceptsPrereleaseAndRestatedVersion(t *testing.T) {
-	src := "---\nversion: v1.0.0-rc.1\nbreaking: true\nirreversible_migrations: true\nsummary: the flat rewrite\n---\n\nprose\n"
+	src := "---\nversion: v1.0.0-rc.1\nbreaking: true\nirreversible_migrations: true\nclient_breaking: false\nsummary: the flat rewrite\n---\n\nprose\n\n## For client developers\n\nNothing changes for clients.\n"
 	n, err := Parse("v1.0.0-rc.1.md", []byte(src))
 	if err != nil {
 		t.Fatalf("prerelease rejected: %v", err)
@@ -182,6 +182,71 @@ func TestParseRejects(t *testing.T) {
 	}
 }
 
+// From v0.36.0 a release owes API clients a word: a real boolean saying
+// whether it can break one, and a section saying what changed for them.
+const clientNotes = `---
+breaking: false
+irreversible_migrations: false
+client_breaking: true
+summary: a post says whether AI made it
+---
+
+Forms ask whether AI made a post.
+
+## For client developers
+
+A quilt set to require an answer refuses a create without ` + "`ai_use`" + `.
+
+## Upgrading
+
+Nothing to do.
+`
+
+func TestParseReadsTheClientHalf(t *testing.T) {
+	n, err := Parse("v0.36.0.md", []byte(clientNotes))
+	if err != nil {
+		t.Fatalf("valid file rejected: %v", err)
+	}
+	if !n.ClientBreaking {
+		t.Error("client_breaking = false, want true")
+	}
+	// A prerelease of the first release that owes it owes it too.
+	if _, err := Parse("v0.36.0-rc.1.md", []byte(goodNotes)); err == nil {
+		t.Error("v0.36.0-rc.1 without the client half was accepted")
+	}
+	// Files written before the rule stay valid as they are.
+	if _, err := Parse("v0.35.2.md", []byte(goodNotes)); err != nil {
+		t.Errorf("v0.35.2 without the client half rejected: %v", err)
+	}
+}
+
+func TestParseRejectsAMissingClientHalf(t *testing.T) {
+	without := func(old, new string) string { return strings.Replace(clientNotes, old, new, 1) }
+	cases := []struct {
+		name     string
+		filename string
+		src      string
+		want     string
+	}{
+		{"no client_breaking", "v0.36.0.md", without("client_breaking: true\n", ""), `missing required key "client_breaking"`},
+		{"client_breaking quoted", "v0.36.0.md", without("client_breaking: true", `client_breaking: "true"`), "client_breaking must be true or false"},
+		{"client_breaking quoted before the rule", "v0.35.0.md", without("client_breaking: true", `client_breaking: "true"`), "client_breaking must be true or false"},
+		{"no section", "v1.0.0.md", without("## For client developers", "## For clients"), `missing "## For client developers" section`},
+		{"empty section", "v0.36.0.md", without("A quilt set to require an answer refuses a create without `ai_use`.\n", ""), `"## For client developers" section is empty`},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			_, err := Parse(tc.filename, []byte(tc.src))
+			if err == nil {
+				t.Fatalf("accepted; want an error naming %q", tc.want)
+			}
+			if !strings.Contains(err.Error(), tc.want) {
+				t.Errorf("error = %q, want it to contain %q", err, tc.want)
+			}
+		})
+	}
+}
+
 func TestParseHandlesCRLF(t *testing.T) {
 	if _, err := Parse("v0.9.0.md", []byte(strings.ReplaceAll(goodNotes, "\n", "\r\n"))); err != nil {
 		t.Fatalf("CRLF file rejected: %v", err)
@@ -227,7 +292,11 @@ func TestRunEmitsReleaseJSON(t *testing.T) {
 		"image":                   "ghcr.io/patchwork-toolkit/patchwork:0.25.1",
 		"breaking":                true,
 		"irreversible_migrations": true,
-		"summary":                 "the working directory moved",
+		// Present on every release.json, false where the notes predate
+		// the field, so a client's updater never has to ask whether it is
+		// there.
+		"client_breaking": false,
+		"summary":         "the working directory moved",
 	}
 	if len(got) != len(want) {
 		t.Errorf("release.json has keys %v, want exactly %v", keys(got), keys(want))

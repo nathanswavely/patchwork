@@ -27,17 +27,18 @@ make release-notes-check TAG=v0.9.0   # and: v0.9.0 has one
 ## The fields
 
 Front matter is YAML between two `---` fences at the very top of the file.
-Three keys are required, one is optional, and anything else is an error — an
-unrecognised key is nearly always a typo.
+Four keys are required (three before v0.36.0), one is optional, and anything
+else is an error — an unrecognised key is nearly always a typo.
 
 | Key | Type | Meaning |
 |---|---|---|
 | `breaking` | boolean, required | Does rolling this out unattended risk breaking a running instance? |
 | `irreversible_migrations` | boolean, required | Does any migration in this release refuse to go backwards? |
+| `client_breaking` | boolean, required from v0.36.0 | Can this release break an API client built against the one before? |
 | `summary` | string, required | One line, under 120 characters. It becomes the release title. |
 | `version` | string, optional | The version again, if you want it stated twice. Must match the filename. |
 
-`breaking` and `irreversible_migrations` must be real YAML booleans — `true` or
+`breaking`, `irreversible_migrations` and `client_breaking` must be real YAML booleans — `true` or
 `false`, unquoted. `"true"` is a string and is rejected, because a quoted
 `"false"` is truthy to most things that would read this.
 
@@ -66,6 +67,29 @@ a new index: `false`. This is a separate question from `breaking` — a release
 can be perfectly compatible and still leave a database an older binary cannot
 read, which is exactly the case where an updater wants to take a backup first.
 
+### What counts as `client_breaking: true`
+
+A client is anything that talks to `/api/v1` and is not this repository's
+web app: the iOS app, another native app, somebody's script. Those ship on
+their own schedule, so they meet a new server before they have been
+updated. `client_breaking` is true when a client that worked against the
+previous release can be refused, or can misread something, on an instance
+running this one. That includes behind a setting this release adds, if an
+admin can turn it on — a client cannot tell in advance which quilts will.
+Some examples:
+
+- A request the server took before is now refused: a field newly required,
+  or required under some setting. (The `ai_disclosure` switch in v0.34.0 is
+  the case that started this: on `required`, every create without `ai_use`
+  became a 400.)
+- A field is renamed, removed, or changes type or meaning.
+- An endpoint moves or goes, or a link the server hands out changes shape.
+- An enum gains a value a client must act on rather than ignore.
+
+An added optional field, a new endpoint, or a new value a client can safely
+ignore is not client-breaking, but still goes in the section below. This is a
+separate question from `breaking`, which is about the operator.
+
 ### The body
 
 Everything below the closing fence, in Markdown, is published verbatim as the
@@ -73,6 +97,14 @@ GitHub release notes. Write for the self-hoster reading the release page at
 eight in the morning: what changed, and what — if anything — they have to do.
 When `breaking` is `true`, the body must say what breaks and what to do about
 it; that is the sentence the flag exists to point at.
+
+From v0.36.0 the body must also have a `## For client developers` section,
+spelled exactly that way so someone following the API can find it in every
+release. List every change to what the API accepts or returns, and say first
+whether any of it is breaking and what a client must do. A release with
+nothing for clients says so in a line. The section is required even then:
+writing "nothing" is a decision, and a missing section was how v0.34.0
+shipped a breaking change with no word to clients.
 
 ## Example
 
@@ -82,11 +114,16 @@ Copy this block into a new file and edit it.
 ---
 breaking: false
 irreversible_migrations: false
+client_breaking: false
 summary: noticeboard replies, and the map stops guessing
 ---
 
 The noticeboard grew replies, and a patch's map marker is now only ever placed
 by a person confirming it.
+
+## For client developers
+
+Nothing changes for clients.
 
 ## Upgrading
 
@@ -105,6 +142,7 @@ worth reading:
 ---
 breaking: true
 irreversible_migrations: true
+client_breaking: false
 summary: the container's working directory moved into the data volume
 ---
 
@@ -121,6 +159,10 @@ Check where your database actually is:
 
 If the volume is empty, copy the database out of the container layer with
 `docker cp` before recreating.
+
+## For client developers
+
+Nothing changes for clients.
 ```
 
 ## What CI does with it
@@ -140,6 +182,7 @@ On a `v*` tag:
   "image": "ghcr.io/patchwork-toolkit/patchwork:0.9.0",
   "breaking": false,
   "irreversible_migrations": false,
+  "client_breaking": false,
   "summary": "noticeboard replies, and the map stops guessing"
 }
 ```

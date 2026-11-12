@@ -6,6 +6,9 @@
 // person cutting the tag. YAML front matter carries the facts an unattended
 // updater needs — is this breaking, can its migrations be rolled back, what
 // happened in one line — and the body below the fence is prose for a human.
+// From v0.36.0 every file also says whether the release can break an API
+// client, and carries a section telling client developers what changed
+// (docs/adr/2026-11-11-a-release-says-what-it-means-for-clients.md).
 //
 // With no flags it validates every notes file in the directory, which is what
 // `make release-notes-check` and every CI run do:
@@ -53,6 +56,17 @@ var versionRE = regexp.MustCompile(`^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$`
 // is what makes "one line" mean anything.
 const summaryMax = 120
 
+// clientNotesFrom is the first release that owes clients a word. Earlier
+// files were written before the rule and stay valid as they are; a release
+// at or after it needs `client_breaking` and a "For client developers"
+// section. Compared on major.minor.patch alone, so v0.36.0-rc.1 owes it too.
+var clientNotesFrom = [3]int{0, 36, 0}
+
+// clientHeading is the section a client developer looks for. It is a fixed
+// string so someone following the API can find it in every release without
+// reading the rest.
+const clientHeading = "## For client developers"
+
 // knownKeys is closed on purpose. An unrecognised key is far more often a
 // typo in an optional field than a deliberate extension, and the tool and the
 // files it reads always ship in the same commit, so nothing gains from being
@@ -62,6 +76,7 @@ var knownKeys = map[string]bool{
 	"breaking":                true,
 	"irreversible_migrations": true,
 	"summary":                 true,
+	"client_breaking":         true,
 }
 
 // Notes is one parsed release-notes file.
@@ -69,6 +84,7 @@ type Notes struct {
 	Version                string
 	Breaking               bool
 	IrreversibleMigrations bool
+	ClientBreaking         bool
 	Summary                string
 	Body                   string
 }
@@ -80,6 +96,7 @@ type Release struct {
 	Image                  string `json:"image"`
 	Breaking               bool   `json:"breaking"`
 	IrreversibleMigrations bool   `json:"irreversible_migrations"`
+	ClientBreaking         bool   `json:"client_breaking"`
 	Summary                string `json:"summary"`
 }
 
@@ -135,6 +152,7 @@ func run(dir, tag, image, jsonPath, bodyPath string) error {
 			Image:                  image,
 			Breaking:               n.Breaking,
 			IrreversibleMigrations: n.IrreversibleMigrations,
+			ClientBreaking:         n.ClientBreaking,
 			Summary:                n.Summary,
 		}, "", "  ")
 		if err != nil {
@@ -153,8 +171,8 @@ func run(dir, tag, image, jsonPath, bodyPath string) error {
 		fmt.Printf("wrote %s\n", bodyPath)
 	}
 
-	fmt.Printf("%s: breaking=%v irreversible_migrations=%v — %s\n",
-		n.Version, n.Breaking, n.IrreversibleMigrations, n.Summary)
+	fmt.Printf("%s: breaking=%v irreversible_migrations=%v client_breaking=%v — %s\n",
+		n.Version, n.Breaking, n.IrreversibleMigrations, n.ClientBreaking, n.Summary)
 	return nil
 }
 
@@ -268,7 +286,63 @@ func Parse(filename string, src []byte) (*Notes, error) {
 	if n.Body == "" {
 		return nil, errors.New("body is empty: the release page needs prose a person can read")
 	}
+
+	// The client half. Before the cutoff the key is optional but still has
+	// to be a real boolean when it is there.
+	owed := !versionBefore(version, clientNotesFrom)
+	if _, present := raw["client_breaking"]; present || owed {
+		if n.ClientBreaking, err = requireBool(raw, "client_breaking"); err != nil {
+			return nil, err
+		}
+	}
+	if owed {
+		section, found := sectionAfter(n.Body, clientHeading)
+		switch {
+		case !found:
+			return nil, fmt.Errorf("missing %q section: say what changed for API clients, or that nothing did", clientHeading)
+		case section == "":
+			return nil, fmt.Errorf("%q section is empty: say what changed for API clients, or that nothing did", clientHeading)
+		}
+	}
 	return n, nil
+}
+
+// versionBefore reports whether version's major.minor.patch sorts before
+// floor. The version has already matched versionRE, so a failed parse cannot
+// happen; if it somehow did, the file is treated as owing the client half,
+// the stricter answer.
+func versionBefore(version string, floor [3]int) bool {
+	core := strings.SplitN(strings.TrimPrefix(version, "v"), "-", 2)[0]
+	var v [3]int
+	if n, err := fmt.Sscanf(core, "%d.%d.%d", &v[0], &v[1], &v[2]); err != nil || n != 3 {
+		return false
+	}
+	for i := range v {
+		if v[i] != floor[i] {
+			return v[i] < floor[i]
+		}
+	}
+	return false
+}
+
+// sectionAfter returns the text under heading, up to the next heading of the
+// same or higher level, trimmed, and whether the heading was there at all.
+func sectionAfter(body, heading string) (string, bool) {
+	lines := strings.Split(body, "\n")
+	for i, line := range lines {
+		if strings.TrimSpace(line) != heading {
+			continue
+		}
+		var out []string
+		for _, rest := range lines[i+1:] {
+			if strings.HasPrefix(rest, "# ") || strings.HasPrefix(rest, "## ") {
+				break
+			}
+			out = append(out, rest)
+		}
+		return strings.TrimSpace(strings.Join(out, "\n")), true
+	}
+	return "", false
 }
 
 func requireBool(raw map[string]any, key string) (bool, error) {
