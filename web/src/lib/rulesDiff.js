@@ -38,6 +38,7 @@ export const RULE_LABELS = {
   subject_recusal: 'Recuse a proposal’s subject',
   leadership_venue: 'Where admins are chosen',
   proposal_venue: 'Where proposals are decided',
+  venue_note: 'Where this patch meets',
   leadership_model: 'Leadership',
   membership_policy: 'Membership Policy',
   follower_permissions: 'Follower Permissions',
@@ -74,6 +75,9 @@ export function ruleLabel(key) {
 /** The words for one rule's value. */
 export function formatRuleValue(key, val) {
   if (val === undefined || val === null) return '—';
+  // Free text, so never a value label: a meeting place of "open" must not
+  // read back as the membership policy.
+  if (key === 'venue_note') return val.trim() ? val : 'None';
   if (key === 'quorum_percent') return `${val}%`;
   if (key === 'default_vote_duration_hours') return DURATION_LABELS[val] || `${val}h`;
   if (key === 'amendment_auto_apply') return val ? 'Yes' : 'No';

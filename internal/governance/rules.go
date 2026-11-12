@@ -29,6 +29,9 @@ type GovernanceRules struct {
 	// (docs/adr/053). Elsewhere removes the ballot and gates amendment
 	// attestation.
 	ProposalVenue string `json:"proposal_venue"`
+	// VenueNote: where and when the patch meets to decide, when either venue
+	// is elsewhere (docs/adr/2026-11-11-a-patch-that-meets-elsewhere-says-where.md).
+	VenueNote string `json:"venue_note"`
 	// NominationDays: how long an election takes nominations (docs/adr/051).
 	NominationDays   int    `json:"nomination_days"`
 	SuccessionMethod string `json:"succession_method"`
@@ -148,6 +151,7 @@ func MarshalConfig(rules *GovernanceRules) (string, error) {
 		LeadershipModel:     rules.LeadershipModel,
 		LeadershipVenue:     rules.LeadershipVenue,
 		ProposalVenue:       rules.ProposalVenue,
+		VenueNote:           rules.VenueNote,
 		NominationDays:      rules.NominationDays,
 		SuccessionMethod:    rules.SuccessionMethod,
 		AdminTermMonths:     rules.AdminTermMonths,

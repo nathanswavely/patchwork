@@ -39,6 +39,11 @@
   // Only used to signpost: a patch that meets in a room has two doors here
   // and no label saying which is which.
   let decidesElsewhere = $state(false);
+  // Whether it decides anything elsewhere, admins included. Such a patch
+  // keeps minutes, and a member may file them here (F-057): the person who
+  // takes the minutes is often not an admin.
+  let meetsElsewhere = $state(false);
+  let memberFiles = $derived(!isAdmin && membershipRole === 'member' && meetsElsewhere);
   let loading = $state(true);
   let error = $state('');
 
@@ -72,8 +77,10 @@
     try {
       const rules = await api(`nodes/${slug}/governance/rules`);
       decidesElsewhere = (rules?.proposal_venue || 'patchwork') === 'elsewhere';
+      meetsElsewhere = decidesElsewhere || rules?.leadership_venue === 'elsewhere';
     } catch {
       decidesElsewhere = false;
+      meetsElsewhere = false;
     }
   }
 
@@ -121,6 +128,12 @@
                 adopted.
               </p>
             {/if}
+          {:else if memberFiles}
+            <p class="lt-muted section-hint">
+              Members can add documents here, such as the minutes of a meeting.
+              A new document starts members only, and an admin decides whether
+              to publish it.
+            </p>
           {:else if publishedOnly}
             <!-- What this listing is, said once, so the empty state below
                  only has to say which kind of empty it is. -->
@@ -130,7 +143,7 @@
           {/if}
         </div>
         <div class="header-actions">
-          {#if isLoggedIn() && isAdmin}
+          {#if isLoggedIn() && (isAdmin || memberFiles)}
             <a
               href="/patches/{slug}/governance/docs/new"
               class="lt-btn lt-btn-primary"

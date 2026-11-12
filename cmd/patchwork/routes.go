@@ -284,6 +284,9 @@ func buildRoutes(d serverDeps) (*http.ServeMux, []route) {
 	t.handleFunc("GET /api/v1/nodes/{slug}/attestations", middleware.AuthOptional(d.db, handler.ListAttestations(d.db)))
 	t.handleFunc("POST /api/v1/nodes/{slug}/attestations", middleware.AuthRequired(d.db, middleware.SudoRequired(d.db, handler.CreateAttestation(d.db))))
 	t.handleFunc("PATCH /api/v1/nodes/{slug}/attestation-names/{id}", middleware.AuthRequired(d.db, middleware.SudoRequired(d.db, handler.LinkAttestationName(d.db))))
+	// Entered in error (F-078): crossed out, kept, counting for nothing.
+	// Step-up gated because striking the record in force can move the role.
+	t.handleFunc("POST /api/v1/nodes/{slug}/attestations/{id}/strike", middleware.AuthRequired(d.db, middleware.SudoRequired(d.db, handler.StrikeAttestation(d.db))))
 	t.handleFunc("GET /api/v1/nodes/{slug}/amendment-attestations", middleware.AuthOptional(d.db, handler.ListAmendmentAttestations(d.db)))
 	t.handleFunc("POST /api/v1/nodes/{slug}/amendment-attestations", middleware.AuthRequired(d.db, middleware.SudoRequired(d.db, handler.CreateAmendmentAttestation(d.db))))
 	t.handleFunc("PATCH /api/v1/users/me/memberships/{nodeId}", middleware.AuthRequired(d.db, handler.UpdateMyMembership(d.db)))
