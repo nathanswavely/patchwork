@@ -46,7 +46,7 @@ func TestThresholdMet_TwoThirdsIsTwoThirds(t *testing.T) {
 // and the clock settles it as approved.
 func TestSweepProposals_TwoOfThreeCarriesASupermajority(t *testing.T) {
 	rig := newSweepRig(t, "swp-two-thirds", 0)
-	rig.db.Exec(`UPDATE nodes SET governance_config = ? WHERE id = ?`,
+	mustExec(t, rig.db, `UPDATE nodes SET governance_config = ? WHERE id = ?`,
 		`{"decision_method":"supermajority","quorum_percent":0,"default_vote_duration_hours":72,"amendment_threshold":"supermajority","min_voting_tenure_days":0}`,
 		rig.nodeID)
 	for i, v := range []string{"approve", "approve", "reject"} {
