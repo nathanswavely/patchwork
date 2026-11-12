@@ -371,7 +371,11 @@ func ListGovernanceDocs(db *database.DB) http.HandlerFunc {
 		if !readsAll {
 			query += ` AND visibility = 'public'`
 		}
-		query += ` ORDER BY created_at ASC`
+		// rowid breaks ties: a new patch's lining and its template's
+		// documents are written in one burst, often inside one millisecond,
+		// and the order they were written in is the order a template lists
+		// them in.
+		query += ` ORDER BY created_at ASC, rowid ASC`
 
 		rows, err := db.Query(query, nodeID)
 		if err != nil {

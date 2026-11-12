@@ -4,84 +4,152 @@ package governance
 var ValidTemplates = []string{"minimal", "casual", "collaborative", "formal"}
 
 // TemplateInfo describes a governance template for API/UI consumption.
+//
+// The card says who decides and how, in that order, because that is the
+// question a founder is answering when they pick one; how big a group it
+// suits was the previous lead, and a size routed a forty-member venue board
+// away from the one template that elects a council (docs/adr/104, amended by
+// docs/adr/2026-11-11-a-template-card-says-who-decides.md). Elsewhere is the
+// line every card carries: a community that decides at a meeting can pick
+// any of the four and record its decisions here.
 type TemplateInfo struct {
-	ID          string   `json:"id"`
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	Leadership  string   `json:"leadership"`
-	BestFor     string   `json:"best_for"`
-	Documents   []string `json:"documents"`
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Leadership  string `json:"leadership"`
+	BestFor     string `json:"best_for"`
+	Elsewhere   string `json:"elsewhere"`
+	// Documents are the filenames a patch made from this template holds,
+	// the lining first. Each one is a governance_docs row from the moment
+	// the patch exists, so this is a promise the Documents page keeps.
+	Documents []string `json:"documents"`
 }
 
-// TemplateList returns metadata for all available templates.
+// elsewhereLine is the same on every card: where decisions happen is a
+// setting every patch has, whichever template it starts from.
+const elsewhereLine = "Decisions can be made at a meeting instead, and recorded here."
+
+// TemplateList returns metadata for all available templates. The create
+// form carries the same words (web/src/pages/PatchForm.svelte), and
+// TestTemplateCardsMatchTheServer fails when the two drift apart.
 func TemplateList() []TemplateInfo {
-	return []TemplateInfo{
+	list := []TemplateInfo{
 		{
 			ID:          "minimal",
 			Name:        "Minimal",
-			Description: "No overhead. You're the only one running it.",
+			Description: "You decide. Members can propose, and you approve or decline, or ask them to vote first.",
 			Leadership:  "Maintainer",
 			BestFor:     "Bands, solo artists, pop-up projects",
-			Documents:   []string{"community-standards.md"},
 		},
 		{
 			ID:          "casual",
 			Name:        "Casual",
-			Description: "Small group. Majority rules.",
-			Leadership:  "Maintainer → Meritocratic",
-			BestFor:     "Small collectives, meetups, studios (5–20 people)",
-			Documents:   []string{"community-standards.md", "operating-agreement.md"},
+			Description: "Members vote for three days, and a proposal passes with more approvals than rejections. The admins run things day to day.",
+			Leadership:  "Maintainer",
+			BestFor:     "Small collectives, meetups, studios",
 		},
 		{
 			ID:          "collaborative",
 			Name:        "Collaborative",
-			Description: "Open community, structured process. Trust builds through contribution.",
+			Description: "Members vote for a week, and a quarter of them must take part. Admins nominate new admins, and members confirm them.",
 			Leadership:  "Meritocratic",
-			BestFor:     "Venues, co-ops, makerspaces, community radio (20–100 people)",
-			Documents:   []string{"community-standards.md", "operating-agreement.md", "financial-transparency.md", "conflict-resolution.md"},
+			BestFor:     "Venues, co-ops, makerspaces, community radio",
 		},
 		{
 			ID:          "formal",
 			Name:        "Formal",
-			Description: "Coalition-scale governance. Elected council, term limits, full accountability.",
-			Leadership:  "Elected Council",
-			BestFor:     "Arts districts, mutual aid networks, coalitions (100+ people)",
-			Documents:   []string{"community-standards.md", "charter.md", "bylaws.md", "financial-transparency.md", "conflict-resolution.md", "succession-plan.md"},
+			Description: "Members elect a council for one-year terms. A proposal needs half the members to vote, and fails if anyone rejects it.",
+			Leadership:  "Elected council",
+			BestFor:     "Boards, coalitions, arts districts, mutual aid networks",
 		},
 	}
+	for i := range list {
+		list[i].Elsewhere = elsewhereLine
+		list[i].Documents = []string{Filename(DefaultLiningTitle)}
+		for _, d := range templateDocs(list[i].ID) {
+			list[i].Documents = append(list[i].Documents, Filename(d.Title))
+		}
+	}
+	return list
+}
+
+// TemplateDoc is one document a template gives a new patch, beside the
+// lining. The title is the governance_docs row's title and the body is its
+// body, verbatim; the git file is Filename(Title) holding the same body, so
+// the two stores are diffably equal from the first commit (docs/adr/011).
+// Bodies carry no top-level heading for the same reason the lining's does
+// not: the title lives on the row.
+type TemplateDoc struct {
+	Title string
+	Body  string
+}
+
+// templateDocs is each template's documents, in the order a founder reads
+// them. Minimal has none of its own; it is the lining alone.
+func templateDocs(template string) []TemplateDoc {
+	switch template {
+	case "casual":
+		return []TemplateDoc{
+			{"Operating Agreement", operatingAgreementCasual},
+		}
+	case "collaborative":
+		return []TemplateDoc{
+			{"Operating Agreement", operatingAgreementCollaborative},
+			{"Financial Transparency", financialTransparency},
+			{"Conflict Resolution", conflictResolution},
+		}
+	case "formal":
+		return []TemplateDoc{
+			{"Charter", charter},
+			{"Bylaws", bylaws},
+			{"Financial Transparency", financialTransparencyFormal},
+			{"Conflict Resolution", conflictResolutionFormal},
+			{"Succession Plan", successionPlan},
+		}
+	}
+	return nil
+}
+
+// ResolveTemplate names the template a creation request actually gets.
+// Empty and unknown names both fall back to casual, as ForkForNode always
+// has; the rules file and the documents must come from the same template,
+// so every caller asks here rather than repeating the fallback.
+func ResolveTemplate(template string) string {
+	for _, t := range ValidTemplates {
+		if t == template {
+			return t
+		}
+	}
+	return "casual"
+}
+
+// TemplateDocuments returns the documents a patch created from template
+// holds beside the lining, after ResolveTemplate's fallback.
+func TemplateDocuments(template string) []TemplateDoc {
+	return templateDocs(ResolveTemplate(template))
 }
 
 // defaultInstanceFiles returns all files for the instance-level governance repo,
 // including the lining (community-standards.md) and all template subdirectories.
 func defaultInstanceFiles() map[string]string {
-	return map[string]string{
+	files := map[string]string{
 		// The lining — shared baseline for all patches. Same content as the
 		// canonical governance_docs row every new node gets (docs/adr/011).
-		"community-standards.md": DefaultLiningBody,
+		Filename(DefaultLiningTitle): DefaultLiningBody,
 		// Root-level default rules (backward compat)
 		"governance-rules.json": rulesMinimal,
 
-		// Minimal template
-		"templates/minimal/governance-rules.json": rulesMinimal,
-
-		// Casual template
-		"templates/casual/governance-rules.json":  rulesCasual,
-		"templates/casual/operating-agreement.md": operatingAgreementCasual,
-
-		// Collaborative template
-		"templates/collaborative/governance-rules.json":      rulesCollaborative,
-		"templates/collaborative/operating-agreement.md":     operatingAgreementCollaborative,
-		"templates/collaborative/financial-transparency.md":  financialTransparency,
-		"templates/collaborative/conflict-resolution.md":     conflictResolution,
-
-		// Formal template
-		"templates/formal/governance-rules.json":     rulesFormal,
-		"templates/formal/charter.md":                charter,
-		"templates/formal/bylaws.md":                 bylaws,
-		"templates/formal/financial-transparency.md": financialTransparencyFormal,
-		"templates/formal/conflict-resolution.md":    conflictResolutionFormal,
-		"templates/formal/succession-plan.md":        successionPlan,
+		"templates/minimal/governance-rules.json":       rulesMinimal,
+		"templates/casual/governance-rules.json":        rulesCasual,
+		"templates/collaborative/governance-rules.json": rulesCollaborative,
+		"templates/formal/governance-rules.json":        rulesFormal,
 	}
+	for _, t := range ValidTemplates {
+		for _, d := range templateDocs(t) {
+			files["templates/"+t+"/"+Filename(d.Title)] = d.Body
+		}
+	}
+	return files
 }
 
 // ExportDefaultFiles returns all default instance files (exported for API use).
@@ -223,44 +291,45 @@ const rulesFormal = `{
 // TEMPLATE DOCUMENTS — Casual
 // ============================================================
 
-const operatingAgreementCasual = `# Operating Agreement
-
-## Who We Are
+const operatingAgreementCasual = `## Who We Are
 
 This patch is a group of people who share a common interest and want to coordinate without a lot of overhead.
 
 ## How We Make Decisions
 
 - Any member can propose something by submitting a proposal.
-- Proposals are open for 3 days. Majority vote wins.
-- No quorum requirement. 
-- The admins (maintainers) handle day-to-day decisions that don't need a vote.
+- Proposals are open for 3 days. A proposal passes when it has more approvals than rejections.
+- There is no quorum. Every vote cast counts, however few there are.
+- The admins handle day-to-day decisions that don't need a vote, and carry out the proposals that pass.
 
 ## Membership
 
-- Anyone can join. This patch is open.
-- Members can vote on proposals and participate fully.
-- Followers can see what we're up to without participating in governance.
-- Admins manage the patch, approve changes, and keep things running.
+- Who can join is set in this patch's governance rules.
+- Members can vote on proposals and take part fully.
+- Followers can follow along. They cannot vote.
+- Admins manage the patch and keep things running. An admin can make another member an admin.
+
+## Admins Who Go Quiet
+
+- An admin who has not voted on, made or commented on a proposal here for 90 days is reminded. At 180 days their admin role ends, and they stay on as a member.
+- If that leaves the patch with no admin, the successor an admin named takes over. With nobody named, up to three members who are still active here are asked, longest-standing first, whether they will step in. Each who says yes becomes an admin.
 
 ## Leaving
 
-- You can leave at any time.
+- You can leave at any time. The last admin names a successor before leaving.
 - If you want to take the pattern and start something new, seamrip it.
 
 ## Changing This Agreement
 
 - Any member can propose changes to this document through a proposal.
-- Changes pass by majority vote.
+- A change passes with more approvals than rejections, and takes effect when it passes.
 `
 
 // ============================================================
 // TEMPLATE DOCUMENTS — Collaborative
 // ============================================================
 
-const operatingAgreementCollaborative = `# Operating Agreement
-
-## Mission
+const operatingAgreementCollaborative = `## Mission
 
 This patch exists to serve our community through shared space, resources, and collective decision-making. We believe that the people who do the work should have a voice in how things run.
 
@@ -268,40 +337,39 @@ This patch exists to serve our community through shared space, resources, and co
 
 We follow a meritocratic model inspired by open source communities. Authority is earned through sustained contribution, not elected or inherited.
 
-- **Followers** stay informed. They can see events and observe public governance.
-- **Members** have joined and made some commitment to the patch. They can vote on proposals and participate in governance.
-- **Admins** are members who have been nominated by existing admins and ratified by the community, or creators of the communities themselves. They manage day-to-day operations.
+- **Followers** stay informed. They can see events and follow along, and cannot vote.
+- **Members** have joined and made some commitment to the patch. They can vote on proposals and take part in governance.
+- **Admins** are the people who started the patch, and members who have been nominated by an admin and confirmed by the community. They manage day-to-day operations.
 
 ### Becoming an Admin
 
-Existing admins may nominate any active member for an admin role. The nomination is posted as a proposal. The community has 7 days to discuss and vote. A majority of active members must approve.
+An admin may nominate any active member for an admin role. The nomination is posted as a proposal, and members have 7 days to discuss and vote. It passes with more approvals than rejections, provided at least a quarter of the members who can vote take part. The nominee becomes an admin when it passes.
 
 ### Stepping Down
 
-Admins can step down at any time. When an admin steps down, remaining admins nominate a successor from active members.
+Admins can step down at any time, except the last one: the patch keeps at least one admin, so the last admin stays until another has been confirmed. Remaining admins nominate a successor from active members.
 
 ## Decision Making
 
 - **Day-to-day decisions**: Admins handle routine operations.
 - **Proposals**: Any member can submit a proposal for community decisions.
-- **Voting period**: 7 days for most proposals.
-- **Quorum**: 25% of active members must participate for a vote to be valid.
-- **Passing threshold**: Simple majority for most decisions. Supermajority (2/3) for amendments to governance documents.
+- **Who can vote**: Members and admins who have been here for 7 days. In the patch's own first week there is no wait.
+- **Voting period**: 7 days.
+- **Quorum**: At least 25% of the members who can vote must take part, abstentions included. A proposal that closes short of that decides nothing.
+- **Passing threshold**: More approvals than rejections for most decisions. For changes to governance documents, at least two thirds of the votes for or against must be for.
 
 ## Membership
 
-- Membership requires approval. Apply and an admin will review your request.
-- Members who haven't participated in 60 days may be contacted about their status.
-- Admins inactive for 60 days will be asked to step down or re-engage.
+- Who can join is set in this patch's governance rules.
+- Members who haven't taken part in 60 days may be contacted about their status.
+- An admin who has not voted on, made or commented on a proposal here for 60 days is reminded. At 120 days their admin role ends, and they stay on as a member.
 
 ## Amendments
 
-Any member can propose changes to this operating agreement. Amendments require a supermajority (2/3) vote with 25% quorum.
+Any member can propose changes to this operating agreement. An amendment passes when at least two thirds of the votes for or against are for, with 25% quorum, and takes effect when it passes.
 `
 
-const financialTransparency = `# Financial Transparency
-
-## Principle
+const financialTransparency = `## Principle
 
 Money is where trust dies in community. Every dollar in and every dollar out should be visible to every member, in real records anyone can open at any time. Nobody should have to wait for a treasurer's report at a meeting.
 
@@ -336,12 +404,10 @@ A financial summary is posted monthly and is always accessible to members. Anyon
 
 ## Amendments
 
-Changes to financial policies require a supermajority vote.
+Changes to financial policies need at least two thirds of the votes for or against to be for.
 `
 
-const conflictResolution = `# Conflict Resolution
-
-## Principle
+const conflictResolution = `## Principle
 
 Conflict is not desired, but it is expected. This process exists so that disagreements don't become schisms.
 
@@ -368,7 +434,7 @@ If you disagree with the admin's resolution, you can escalate to a community rev
 
 ## Consequences
 
-Depending on severity: warning, temporary suspension, permanent removal. Violations of the community standards (the lining) may result in immediate action.
+Depending on severity: a warning, or removal from the patch. An admin can reverse a removal, so a removal meant to be temporary is reversed when its time is up. Violations of the community standards (the lining) may result in immediate action.
 
 ## Confidentiality
 
@@ -379,9 +445,7 @@ Details of conflicts are shared only with the people directly involved and those
 // TEMPLATE DOCUMENTS — Formal
 // ============================================================
 
-const charter = `# Charter
-
-## Preamble
+const charter = `## Preamble
 
 This charter establishes the governance framework for this patch. It is the foundational document that defines our mission, structure, and principles. All other governance documents build on this charter.
 
@@ -401,58 +465,56 @@ We exist to serve our community through collective organizing, shared resources,
 
 ### The Council
 
-This patch is governed by an elected council of up to 7 admins. The council handles day-to-day decisions, facilitates community governance, and is accountable to the membership.
+This patch is governed by an elected council. The council has as many seats as it has set up, and each seat is held for a 12-month term. The council handles day-to-day decisions, facilitates community governance, and is accountable to the membership.
 
 ### Members
 
-Members are the foundation. They vote on proposals, elect the council, and can propose amendments to any governance document. Membership requires approval and a 30-day tenure before voting rights activate.
+Members are the foundation. They vote on proposals, elect the council, and can propose amendments to any governance document. Voting rights begin after 30 days of membership. In the patch's own first 30 days there is no wait, so the people who start it can vote from the start.
 
 ### Followers
 
-Followers stay informed about events and activities. They can participate in discussions but cannot vote.
+Followers stay informed about events and activities. They cannot vote.
 
 ## Relationship to the Quilt
 
 This patch is part of a larger patchwork. We agree to uphold the community standards (the lining) and to participate in good faith with other patches on the quilt.
 `
 
-const bylaws = `# Bylaws
-
-## Article 1: Elections
+const bylaws = `## Article 1: Elections
 
 ### 1.1 Council Elections
-Elections are held annually. All members who have been active for at least 30 days are eligible to vote.
+Each council seat is elected for a 12-month term. The election for a seat opens four weeks before its term ends. Members who have been here for at least 30 days can vote.
 
 ### 1.2 Nominations
-Any member may nominate themselves or another member for a council seat. Nominations open 14 days before the election and close 7 days before.
+Any member may nominate themselves or another member for a council seat. Nominations are open for 14 days, and voting opens when they close.
 
 ### 1.3 Voting
-Elections use ranked-choice voting. Each member ranks candidates in order of preference. Voting is open for 14 days.
+Elections use approval voting. Each member approves as many candidates as they like, and the candidates with the most approvals take the seats. A candidate needs at least one approval, and at least half of the members who can vote must take part. Voting is open for 14 days.
 
-### 1.4 Term Limits
-Council members serve 12-month terms. There is no limit on the number of terms, but consecutive terms require re-election.
+### 1.4 Terms
+Council members serve 12-month terms. There is no limit on the number of terms, but each term requires re-election. If an election settles nothing (no candidates, too few voters, or nobody approved), the sitting council stays until one does.
 
 ## Article 2: Council Operations
 
-### 2.1 Quorum
-A majority of council members must be present (or voting) for council decisions.
+### 2.1 Council Decisions
+Proposals on Patchwork go to every member who can vote, not to the council alone. When the council decides something among itself, a majority of council members must take part.
 
 ### 2.2 Decision Making
-The council operates by consensus when possible. If consensus cannot be reached within a reasonable timeframe, decisions fall back to a supermajority (2/3) vote of council members.
+The council works by consensus when possible. If consensus cannot be reached within a reasonable time, a council decision needs two thirds of council members.
 
 ### 2.3 Removal
-A council member can be removed by a supermajority vote of the full membership. A removal proposal requires signatures from at least 10% of active members to be considered.
+Any member can propose that a council member be removed. If the proposal passes, the council removes that member's admin role.
 
 ## Article 3: Membership
 
 ### 3.1 Joining
-New members must be approved by a council member. Approval should be granted to anyone who commits to the community standards and participates in good faith.
+Who can join is set in this patch's governance rules. Where joining needs approval, a council member approves each request, and approval should be granted to anyone who commits to the community standards and participates in good faith.
 
 ### 3.2 Voting Rights
-Voting rights activate after 30 days of active membership. This ensures voters have context for the decisions they're making.
+Voting rights begin after 30 days of membership. This ensures voters have context for the decisions they're making. In the patch's own first 30 days there is no wait.
 
 ### 3.3 Leaving
-Members may leave at any time. Membership data is retained for 30 days in case of return.
+Members may leave at any time. A member who leaves and comes back rejoins as a new member, and their 30 days start again.
 
 ## Article 4: Amendments
 
@@ -465,15 +527,15 @@ that same window: comment on the proposal, and change your vote, at any
 point before it closes.
 
 ### 4.3 Approval
-Amendments to the bylaws require consensus. If consensus cannot be reached, a supermajority (2/3) with 50% quorum is required.
+An amendment passes only if nobody votes to reject it, at least one member approves it, and at least half of the members who can vote take part.
 
 ### 4.4 Implementation
-Approved amendments are not auto-applied. A council member must review and merge the change to ensure consistency with other governance documents.
+Approved amendments are not applied automatically. A council member reviews the change and applies it, to ensure consistency with other governance documents.
 
 ## Article 5: Dissolution and Seamrip
 
 ### 5.1 Dissolution
-This patch may be dissolved by a consensus vote of the membership with at least 50% quorum.
+This patch may be dissolved by a proposal that passes under the rules in 4.3.
 
 ### 5.2 Seamrip
 Any group of members may seamrip (take the governance documents, tools, and their data) and start a new patch. This is a right the parent patch must facilitate in good faith.
@@ -482,9 +544,7 @@ Any group of members may seamrip (take the governance documents, tools, and thei
 Upon dissolution, remaining assets are distributed as determined by the final membership vote. If no consensus is reached, assets are donated to a community organization chosen by the council.
 `
 
-const financialTransparencyFormal = `# Financial Transparency
-
-## Principle
+const financialTransparencyFormal = `## Principle
 
 Every dollar in and every dollar out is recorded and visible to every member. Transparency here is structural, written into the rules rather than left to whoever happens to hold the books. This document establishes the rules for how money moves through this patch.
 
@@ -518,7 +578,7 @@ All spending is recorded with:
 
 ## Budgeting
 
-The council proposes an annual budget as a proposal. The budget must be approved by a majority vote with 50% quorum. Mid-year budget amendments follow the same process.
+The council proposes an annual budget as a proposal. Like any proposal here, it passes only if nobody votes to reject it, at least one member approves it, and at least half of the members who can vote take part. Mid-year budget amendments follow the same process.
 
 ## Audit
 
@@ -532,12 +592,10 @@ An annual financial review is conducted by a member who is not on the council. T
 
 ## Amendments
 
-Changes to financial policies require a supermajority vote with 50% quorum.
+Changes to financial policies pass only if nobody votes to reject them, at least one member approves, and at least half of the members who can vote take part.
 `
 
-const conflictResolutionFormal = `# Conflict Resolution
-
-## Principle
+const conflictResolutionFormal = `## Principle
 
 This patch is committed to resolving conflicts fairly, transparently, and with respect for all involved. This process exists to protect people, not to punish them.
 
@@ -575,13 +633,13 @@ If either party disagrees with the council's resolution, they may appeal to the 
 
 ## Emergency Actions
 
-In cases of immediate safety concern, any admin may take emergency action (temporary suspension) without waiting for the full process. Emergency actions must be reviewed by the council within 48 hours.
+In cases of immediate safety concern, any admin may remove someone from the patch without waiting for the full process. Emergency actions must be reviewed by the council within 48 hours, and the council reverses a removal it does not uphold.
 
 ## Consequences
 
 - Verbal or written warning
 - Required mediation or training
-- Temporary suspension (with defined end date)
+- Removal for a defined period, which the council reverses when the period ends
 - Permanent removal (requires council vote, appealable to membership)
 
 ## Confidentiality
@@ -593,44 +651,43 @@ All conflict resolution proceedings are confidential. Public communications use 
 Records of formal grievances are maintained by the council for 2 years. They are accessible only to current council members and the involved parties.
 `
 
-const successionPlan = `# Succession Plan
-
-## Purpose
+const successionPlan = `## Purpose
 
 Power must rotate. This document ensures that leadership transitions are planned, transparent, and don't depend on any single person.
 
 ## Regular Succession: Elections
 
 ### Schedule
-Council elections are held annually. The election timeline:
-- **Day 1–14**: Nomination period. Any member can nominate themselves or another member.
-- **Day 15–28**: Campaign/discussion period. Candidates share their vision.
-- **Day 29–42**: Voting period (14 days). Ranked-choice voting.
-- **Day 43**: Results announced. New council seated.
+Each council seat is elected for a 12-month term, and its election opens four weeks before the term ends:
+- **Days 1 to 14**: Nominations. Any member can nominate themselves or another member, and candidates can post a short statement.
+- **Days 15 to 28**: Voting (14 days), by approval voting.
+- **When voting closes**: Results are announced and the new council is seated.
+
+If an election settles nothing, the sitting council stays until one does. No clock removes anybody.
 
 ### Transition
 Outgoing council members have 7 days to transfer responsibilities, access, and context to incoming members. A transition document is published to governance docs.
 
-## Emergency Succession
+## Vacancies
 
-### Single Vacancy
-If one council seat becomes vacant mid-term, the council may appoint a replacement from active members. The appointment must be ratified by the community within 14 days.
+### A Seat Falls Empty Mid-Term
+An admin nominates a member for the empty seat. If members confirm the nomination by proposal, the nominee takes the seat for the rest of its term.
 
-### Multiple Vacancies
-If more than half the council seats are vacant, an emergency election is triggered immediately using the regular election process with compressed timelines (7 days each phase instead of 14).
+### Several Seats Fall Empty
+Each empty seat is filled the same way, by nomination, or at the next election.
 
-### Total Vacancy
-If all council seats are vacant (the "bus factor" scenario), the three longest-tenured active members become interim admins. They must initiate an emergency election within 7 days.
+### Every Seat Falls Empty
+If every seat is vacated for inactivity, an election opens shortly, and any member may stand.
 
 ## Inactivity
 
 ### Detection
-Council members who have not participated in governance (votes, proposals, discussions) for 30 consecutive days are contacted.
+A council member who has not voted on, made or commented on a proposal for 30 consecutive days is contacted.
 
 ### Process
-- Day 30: Notification sent to inactive council member.
+- Day 30: Notification sent to the inactive council member.
 - Day 45: If no response, the council discusses the situation.
-- Day 60: If still inactive, the seat is declared vacant and succession procedures begin.
+- Day 60: If still inactive, the seat is declared vacant and the steps above apply.
 
 ## Seamrip Succession
 
@@ -638,5 +695,5 @@ If a group of members seamrips to create a new patch, they carry their governanc
 
 ## Amendments
 
-Changes to the succession plan require consensus. If consensus cannot be reached, a supermajority (2/3) with 50% quorum is required.
+Changes to the succession plan pass only if nobody votes to reject them, at least one member approves, and at least half of the members who can vote take part.
 `

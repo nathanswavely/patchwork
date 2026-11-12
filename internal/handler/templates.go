@@ -31,35 +31,28 @@ func GetTemplate() http.HandlerFunc {
 			return
 		}
 
-		// Build document contents from the template defaults.
+		// The documents a patch made from this template holds, in the order
+		// its Documents page lists them: the lining, then the template's own.
+		// Each is exactly the row the patch is born with (CreateTemplateDocs),
+		// title and body, so the preview cannot promise a document the patch
+		// will not have. It walked a map before, which also shuffled them.
 		type docContent struct {
 			Filename string `json:"filename"`
+			Title    string `json:"title"`
 			Content  string `json:"content"`
 		}
-
-		// Get the lining (community-standards.md) + template files.
-		allFiles := governance.ExportDefaultFiles()
-		var docs []docContent
-
-		// Always include the lining first.
-		if content, ok := allFiles["community-standards.md"]; ok {
-			docs = append(docs, docContent{Filename: "community-standards.md", Content: content})
-		}
-
-		// Add template-specific files.
-		prefix := "templates/" + templateID + "/"
-		for path, content := range allFiles {
-			if len(path) > len(prefix) && path[:len(prefix)] == prefix {
-				filename := path[len(prefix):]
-				if filename != "governance-rules.json" {
-					docs = append(docs, docContent{Filename: filename, Content: content})
-				}
-			}
+		docs := []docContent{{
+			Filename: governance.Filename(governance.DefaultLiningTitle),
+			Title:    governance.DefaultLiningTitle,
+			Content:  governance.DefaultLiningBody,
+		}}
+		for _, d := range governance.TemplateDocuments(templateID) {
+			docs = append(docs, docContent{Filename: governance.Filename(d.Title), Title: d.Title, Content: d.Body})
 		}
 
 		// Parse the rules for this template.
 		var rules json.RawMessage
-		if rulesContent, ok := allFiles[prefix+"governance-rules.json"]; ok {
+		if rulesContent, ok := governance.ExportDefaultFiles()["templates/"+templateID+"/governance-rules.json"]; ok {
 			rules = json.RawMessage(rulesContent)
 		}
 
