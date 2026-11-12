@@ -211,6 +211,16 @@ describe('docs/adr/2026-09-17-an-admin-tab-answers-one-question.md: inbound link
   });
 });
 
+// The global bar is fixed, 56px tall and above the tab row. A row sticky at
+// top: 0 slid under it the moment the page scrolled, and the tabs vanished.
+describe('a workspace tab row sticks under the global bar', () => {
+  for (const file of ['components/AdminShell.svelte', 'components/PatchShell.svelte']) {
+    it(file, () => {
+      expect(source(file)).toMatch(/\.workspace-nav \{\s*position: sticky;[^}]*top: 56px;/);
+    });
+  }
+});
+
 describe('the narrow screen drills down, one level on screen at a time', () => {
   const shell = source('components/AdminShell.svelte');
   const settingsShell = source('components/SettingsShell.svelte');
