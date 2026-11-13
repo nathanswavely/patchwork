@@ -31,11 +31,11 @@ package handler
 // Formatting: one line per paragraph and per list item. The frontend renders
 // markdown with breaks:true, so a wrapped paragraph would render ragged.
 
-const aiPageProject = `## Does AI touch what you post here?
+const aiPageProject = `## Does AI touch anything users add, write, or share?
 
-Patchwork doesn't use AI to evaluate, train on, or compile any user behavior or attributes. I am trying to build something that is human-first. Humans have been successfully building community for millennia without AI, and while there may be AI tools that promise to help with things like moderation, aggregation, etc... I am trying to move slowly in this regard as our culture figures out how to build shared language around this divisive technology. Patchwork is open source, so if you truly believe there is a particular AI tool that aligns with the mission, you are free to suggest. However be warned that you will need to make a case that goes beyond just "convenience."
+Patchwork doesn't use AI to evaluate, train on, or compile any user behavior or attributes. Patchwork is designed to be a human-first product. People have been successfully building community for millennia without AI, and while there may be AI tools that promise to help with things like moderation, aggregation, etc., extra caution is applied in this regard because society has not effectively negotiated equitable use of the technology. Patchwork is open source, so if you truly believe there is a particular AI tool that aligns with the mission, you are free to suggest. However be warned that you will need to make a case that goes beyond just "convenience" and consider the ethical and community-impact externalities.
 
-The {quilt_name} server opens connections to other machines for these reasons and no others:
+The {quilt_name} server connects to other IPs for these reasons and no others:
 
 {outbound}
 
@@ -45,19 +45,19 @@ This list is built into the code, so a change that reaches out to anything else 
 
 ## Can AI companies take what is here?
 
-Not as far as we can control. The site's robots.txt instructs these crawlers to stay away, and the server refuses these known crawlers:
+Not as far as Patchwork can control. The site's robots.txt instructs these crawlers to stay away, and the server refuses these known crawlers:
 
 {ai_crawlers}
 
-If you know of any others, or any more sophisticated ways of preventing this, please let me know.
+If you know of any others, or any more sophisticated ways of preventing this, please reach out or suggest on the GitHub repo.
 
 ## Was this software built with AI?
 
-Yes. Patchwork's codebase was developed with help from AI coding tools. People design it, make every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.
+Yes. Patchwork's codebase was developed with help from AI coding tools. Mission, design, governance decisions, and features are human owned and human originated. All code (human or AI) is available in the open source repository for public evaluation. There are no "agentic loops" or simulated AI product managers designing or suggesting features or improvements.
 
-The core of what visitors and newcomers read is human written by me: the lining, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, and the buttons and messages around them, was drafted with AI and reviewed by me. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please reach out to me or better yet, contribute to the project.
+The core of what visitors and newcomers read is written by a human: this page, the lining, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, and the buttons and messages around them, was drafted with AI and reviewed by a human. If possible, these should be more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please reach out or better yet, contribute to the project yourself.
 
-The project's repository keeps [a public record of who wrote each string](https://github.com/nathanswavely/patchwork/blob/main/copy/REPORT.md) a visitor can read.`
+The project's repository has [a public record of who wrote each string](https://github.com/nathanswavely/patchwork/blob/main/copy/REPORT.md) a visitor can read.`
 
 // aiPageOutbound is every way the running server reaches another machine,
 // and what the page says about each. Files are repository paths; the test
@@ -70,7 +70,7 @@ var aiPageOutbound = []struct {
 }{
 	{
 		[]string{"internal/ap/delivery.go", "internal/ap/remote.go"},
-		"Other servers in the fediverse, when the stewards have turned federation on, to deliver public posts to their followers and to read their public keys.",
+		"If federation is enabled, other fediverse servers to send public posts to followers and read public keys.",
 	},
 	{
 		[]string{"internal/eventsource/fetch.go", "internal/handler/event_sources.go"},
@@ -78,7 +78,7 @@ var aiPageOutbound = []struct {
 	},
 	{
 		[]string{"internal/handler/claims.go"},
-		"A patch's own website and domain records, when someone claims the patch and the site checks that they run it.",
+		"A patch's own website and domain records when someone claims the patch for confirmation of ownership.",
 	},
 	{
 		[]string{"internal/mail/mail.go"},
