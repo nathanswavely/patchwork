@@ -6247,11 +6247,11 @@
       ]
     },
     {
-      "id": "207f5871db73",
-      "text": "## Does AI touch what you post here?",
-      "words": 8,
+      "id": "d8b8a13ea79f",
+      "text": "## Does AI touch anything users add, write, or share?",
+      "words": 10,
       "tier": "helper",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6259,25 +6259,29 @@
           "file": "internal/handler/ai_defaults.go",
           "line": 34,
           "kind": "go-doc-block",
-          "raw": "## Does AI touch what you post here?",
+          "raw": "## Does AI touch anything users add, write, or share?",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "## Does AI touch what you post here?",
+      "authorship": {
+        "kind": "written"
+      }
     },
     {
-      "id": "6e4007c4d359",
-      "text": "Patchwork doesn't use AI to evaluate, train on, or compile any user behavior or attributes. I am trying to build something that is human-first. Humans have been successfully building community for millennia without AI, and while there may be AI tools that promise to help with things like moderation, aggregation, etc... I am trying to move slowly in this regard as our culture figures out how to build shared language around this divisive technology. Patchwork is open source, so if you truly believe there is a particular AI tool that aligns with the mission, you are free to suggest. However be warned that you will need to make a case that goes beyond just \"convenience.\"",
-      "words": 115,
+      "id": "686f01b96ea3",
+      "text": "Patchwork doesn't use AI to evaluate, train on, or compile any user behavior or attributes. Patchwork is designed to be a human-first product. People have been successfully building community for millennia without AI, and while there may be AI tools that promise to help with things like moderation, aggregation, etc., extra caution is applied in this regard because society has not effectively negotiated equitable use of the technology. Patchwork is open source, so if you truly believe there is a particular AI tool that aligns with the mission, you are free to suggest. However be warned that you will need to make a case that goes beyond just \"convenience\" and consider the ethical and community-impact externalities.",
+      "words": 116,
       "tier": "prose",
       "status": "human",
       "replacement": null,
-      "note": "Nathan rewrote the AI page, 2026-11-02",
+      "note": "Nathan edited the AI page, 2026-11-13",
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
           "line": 36,
           "kind": "go-doc-block",
-          "raw": "Patchwork doesn't use AI to evaluate, train on, or compile any user behavior or attributes. I am trying to build something that is human-first. Humans have been successfully building community for millennia without AI, and while there may be AI tools that promise to help with things like moderation, aggregation, etc... I am trying to move slowly in this regard as our culture figures out how to build shared language around this divisive technology. Patchwork is open source, so if you truly believe there is a particular AI tool that aligns with the mission, you are free to suggest. However be warned that you will need to make a case that goes beyond just \"convenience.\"",
+          "raw": "Patchwork doesn't use AI to evaluate, train on, or compile any user behavior or attributes. Patchwork is designed to be a human-first product. People have been successfully building community for millennia without AI, and while there may be AI tools that promise to help with things like moderation, aggregation, etc., extra caution is applied in this regard because society has not effectively negotiated equitable use of the technology. Patchwork is open source, so if you truly believe there is a particular AI tool that aligns with the mission, you are free to suggest. However be warned that you will need to make a case that goes beyond just \"convenience\" and consider the ethical and community-impact externalities.",
           "quote": null
         }
       ],
@@ -6286,11 +6290,11 @@
       }
     },
     {
-      "id": "4f75d76555cb",
-      "text": "The {quilt_name} server opens connections to other machines for these reasons and no others:",
-      "words": 14,
+      "id": "b4409a553f08",
+      "text": "The {quilt_name} server connects to other IPs for these reasons and no others:",
+      "words": 13,
       "tier": "helper",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
       "note": "AI-drafted wording kept, edited by Nathan 2026-11-02",
       "occurrences": [
@@ -6298,10 +6302,14 @@
           "file": "internal/handler/ai_defaults.go",
           "line": 38,
           "kind": "go-doc-block",
-          "raw": "The {quilt_name} server opens connections to other machines for these reasons and no others:",
+          "raw": "The {quilt_name} server connects to other IPs for these reasons and no others:",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "The {quilt_name} server opens connections to other machines for these reasons and no others:",
+      "authorship": {
+        "kind": "written"
+      }
     },
     {
       "id": "1e28142d3a96",
@@ -6343,19 +6351,19 @@
       ]
     },
     {
-      "id": "01e3696797b4",
-      "text": "Not as far as we can control. The site's robots.txt instructs these crawlers to stay away, and the server refuses these known crawlers:",
+      "id": "c9d312b3dec7",
+      "text": "Not as far as Patchwork can control. The site's robots.txt instructs these crawlers to stay away, and the server refuses these known crawlers:",
       "words": 23,
       "tier": "prose",
       "status": "human",
       "replacement": null,
-      "note": "Nathan rewrote the AI page, 2026-11-02",
+      "note": "Nathan edited the AI page, 2026-11-13",
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
           "line": 48,
           "kind": "go-doc-block",
-          "raw": "Not as far as we can control. The site's robots.txt instructs these crawlers to stay away, and the server refuses these known crawlers:",
+          "raw": "Not as far as Patchwork can control. The site's robots.txt instructs these crawlers to stay away, and the server refuses these known crawlers:",
           "quote": null
         }
       ],
@@ -6364,19 +6372,19 @@
       }
     },
     {
-      "id": "cca017113456",
-      "text": "If you know of any others, or any more sophisticated ways of preventing this, please let me know.",
-      "words": 18,
+      "id": "eec6f2d944e2",
+      "text": "If you know of any others, or any more sophisticated ways of preventing this, please reach out or suggest on the GitHub repo.",
+      "words": 23,
       "tier": "prose",
       "status": "human",
       "replacement": null,
-      "note": "Nathan rewrote the AI page, 2026-11-02",
+      "note": "Nathan edited the AI page, 2026-11-13",
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
           "line": 52,
           "kind": "go-doc-block",
-          "raw": "If you know of any others, or any more sophisticated ways of preventing this, please let me know.",
+          "raw": "If you know of any others, or any more sophisticated ways of preventing this, please reach out or suggest on the GitHub repo.",
           "quote": null
         }
       ],
@@ -6403,19 +6411,19 @@
       ]
     },
     {
-      "id": "32cddb2b2e2d",
-      "text": "Yes. Patchwork's codebase was developed with help from AI coding tools. People design it, make every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
-      "words": 43,
+      "id": "fa19ebda4af4",
+      "text": "Yes. Patchwork's codebase was developed with help from AI coding tools. Mission, design, governance decisions, and features are human owned and human originated. All code (human or AI) is available in the open source repository for public evaluation. There are no \"agentic loops\" or simulated AI product managers designing or suggesting features or improvements.",
+      "words": 54,
       "tier": "prose",
       "status": "human",
       "replacement": null,
-      "note": "Nathan rewrote the AI page, 2026-11-02",
+      "note": "Nathan edited the AI page, 2026-11-13",
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
           "line": 56,
           "kind": "go-doc-block",
-          "raw": "Yes. Patchwork's codebase was developed with help from AI coding tools. People design it, make every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
+          "raw": "Yes. Patchwork's codebase was developed with help from AI coding tools. Mission, design, governance decisions, and features are human owned and human originated. All code (human or AI) is available in the open source repository for public evaluation. There are no \"agentic loops\" or simulated AI product managers designing or suggesting features or improvements.",
           "quote": null
         }
       ],
@@ -6424,19 +6432,19 @@
       }
     },
     {
-      "id": "50d6c24268f8",
-      "text": "The core of what visitors and newcomers read is human written by me: the lining, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, and the buttons and messages around them, was drafted with AI and reviewed by me. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please reach out to me or better yet, contribute to the project.",
-      "words": 101,
+      "id": "d26b23d23002",
+      "text": "The core of what visitors and newcomers read is written by a human: this page, the lining, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, and the buttons and messages around them, was drafted with AI and reviewed by a human. If possible, these should be more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please reach out or better yet, contribute to the project yourself.",
+      "words": 102,
       "tier": "prose",
       "status": "human",
       "replacement": null,
-      "note": "Nathan rewrote the AI page, 2026-11-02",
+      "note": "Nathan edited the AI page, 2026-11-13",
       "occurrences": [
         {
           "file": "internal/handler/ai_defaults.go",
           "line": 58,
           "kind": "go-doc-block",
-          "raw": "The core of what visitors and newcomers read is human written by me: the lining, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, and the buttons and messages around them, was drafted with AI and reviewed by me. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please reach out to me or better yet, contribute to the project.",
+          "raw": "The core of what visitors and newcomers read is written by a human: this page, the lining, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, and the buttons and messages around them, was drafted with AI and reviewed by a human. If possible, these should be more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please reach out or better yet, contribute to the project yourself.",
           "quote": null
         }
       ],
@@ -6445,11 +6453,11 @@
       }
     },
     {
-      "id": "d359b9fa6256",
-      "text": "The project's repository keeps [a public record of who wrote each string](https://github.com/nathanswavely/patchwork/blob/main/copy/REPORT.md) a visitor can read.",
+      "id": "982a29095a01",
+      "text": "The project's repository has [a public record of who wrote each string](https://github.com/nathanswavely/patchwork/blob/main/copy/REPORT.md) a visitor can read.",
       "words": 16,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6457,17 +6465,21 @@
           "file": "internal/handler/ai_defaults.go",
           "line": 60,
           "kind": "go-doc-block",
-          "raw": "The project's repository keeps [a public record of who wrote each string](https://github.com/nathanswavely/patchwork/blob/main/copy/REPORT.md) a visitor can read.",
+          "raw": "The project's repository has [a public record of who wrote each string](https://github.com/nathanswavely/patchwork/blob/main/copy/REPORT.md) a visitor can read.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "The project's repository keeps [a public record of who wrote each string](https://github.com/nathanswavely/patchwork/blob/main/copy/REPORT.md) a visitor can read.",
+      "authorship": {
+        "kind": "written"
+      }
     },
     {
-      "id": "fec9f4611308",
-      "text": "Other servers in the fediverse, when the stewards have turned federation on, to deliver public posts to their followers and to read their public keys.",
-      "words": 25,
+      "id": "0308ee3573be",
+      "text": "If federation is enabled, other fediverse servers to send public posts to followers and read public keys.",
+      "words": 17,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6475,10 +6487,14 @@
           "file": "internal/handler/ai_defaults.go",
           "line": 73,
           "kind": "go-string",
-          "raw": "Other servers in the fediverse, when the stewards have turned federation on, to deliver public posts to their followers and to read their public keys.",
+          "raw": "If federation is enabled, other fediverse servers to send public posts to followers and read public keys.",
           "quote": "\""
         }
-      ]
+      ],
+      "previous_ai_text": "Other servers in the fediverse, when the stewards have turned federation on, to deliver public posts to their followers and to read their public keys.",
+      "authorship": {
+        "kind": "written"
+      }
     },
     {
       "id": "64dfd39f5237",
@@ -6499,11 +6515,11 @@
       ]
     },
     {
-      "id": "865a458e2f02",
-      "text": "A patch's own website and domain records, when someone claims the patch and the site checks that they run it.",
-      "words": 20,
+      "id": "12dd7036738b",
+      "text": "A patch's own website and domain records when someone claims the patch for confirmation of ownership.",
+      "words": 16,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6511,10 +6527,14 @@
           "file": "internal/handler/ai_defaults.go",
           "line": 81,
           "kind": "go-string",
-          "raw": "A patch's own website and domain records, when someone claims the patch and the site checks that they run it.",
+          "raw": "A patch's own website and domain records when someone claims the patch for confirmation of ownership.",
           "quote": "\""
         }
-      ]
+      ],
+      "previous_ai_text": "A patch's own website and domain records, when someone claims the patch and the site checks that they run it.",
+      "authorship": {
+        "kind": "written"
+      }
     },
     {
       "id": "1a101036d076",
@@ -6539,7 +6559,7 @@
       "text": "**Labels.** {quilt_name} does not ask people whether AI made what they post. The stewards have turned that question off.",
       "words": 19,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6550,7 +6570,10 @@
           "raw": "**Labels.** {quilt_name} does not ask people whether AI made what they post. The stewards have turned that question off.",
           "quote": null
         }
-      ]
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     },
     {
       "id": "d42e93311946",
@@ -78339,6 +78362,111 @@
           "quote": "'"
         }
       ]
+    },
+    {
+      "id": "6e4007c4d359",
+      "text": "Patchwork doesn't use AI to evaluate, train on, or compile any user behavior or attributes. I am trying to build something that is human-first. Humans have been successfully building community for millennia without AI, and while there may be AI tools that promise to help with things like moderation, aggregation, etc... I am trying to move slowly in this regard as our culture figures out how to build shared language around this divisive technology. Patchwork is open source, so if you truly believe there is a particular AI tool that aligns with the mission, you are free to suggest. However be warned that you will need to make a case that goes beyond just \"convenience.\"",
+      "words": 115,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": "Nathan rewrote the AI page, 2026-11-02",
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 36,
+          "kind": "go-doc-block",
+          "raw": "Patchwork doesn't use AI to evaluate, train on, or compile any user behavior or attributes. I am trying to build something that is human-first. Humans have been successfully building community for millennia without AI, and while there may be AI tools that promise to help with things like moderation, aggregation, etc... I am trying to move slowly in this regard as our culture figures out how to build shared language around this divisive technology. Patchwork is open source, so if you truly believe there is a particular AI tool that aligns with the mission, you are free to suggest. However be warned that you will need to make a case that goes beyond just \"convenience.\"",
+          "quote": null
+        }
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
+    },
+    {
+      "id": "01e3696797b4",
+      "text": "Not as far as we can control. The site's robots.txt instructs these crawlers to stay away, and the server refuses these known crawlers:",
+      "words": 23,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": "Nathan rewrote the AI page, 2026-11-02",
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 48,
+          "kind": "go-doc-block",
+          "raw": "Not as far as we can control. The site's robots.txt instructs these crawlers to stay away, and the server refuses these known crawlers:",
+          "quote": null
+        }
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
+    },
+    {
+      "id": "cca017113456",
+      "text": "If you know of any others, or any more sophisticated ways of preventing this, please let me know.",
+      "words": 18,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": "Nathan rewrote the AI page, 2026-11-02",
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 52,
+          "kind": "go-doc-block",
+          "raw": "If you know of any others, or any more sophisticated ways of preventing this, please let me know.",
+          "quote": null
+        }
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
+    },
+    {
+      "id": "32cddb2b2e2d",
+      "text": "Yes. Patchwork's codebase was developed with help from AI coding tools. People design it, make every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
+      "words": 43,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": "Nathan rewrote the AI page, 2026-11-02",
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 56,
+          "kind": "go-doc-block",
+          "raw": "Yes. Patchwork's codebase was developed with help from AI coding tools. People design it, make every decision about how its governance works, and review the features that ship. All code (human or AI) is available in the open source repository for public evaluation.",
+          "quote": null
+        }
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
+    },
+    {
+      "id": "50d6c24268f8",
+      "text": "The core of what visitors and newcomers read is human written by me: the lining, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, and the buttons and messages around them, was drafted with AI and reviewed by me. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please reach out to me or better yet, contribute to the project.",
+      "words": 101,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": "Nathan rewrote the AI page, 2026-11-02",
+      "occurrences": [
+        {
+          "file": "internal/handler/ai_defaults.go",
+          "line": 58,
+          "kind": "go-doc-block",
+          "raw": "The core of what visitors and newcomers read is human written by me: the lining, the Label, and the pages that explain what Patchwork is and why it exists. A significant amount of copy, including the charter templates, the guides to how governance works, the privacy policy, and the buttons and messages around them, was drafted with AI and reviewed by me. I would love to have these more critically examined, critiqued, and even rewritten by human experts on governance and community building. If you are interested in helping, please reach out to me or better yet, contribute to the project.",
+          "quote": null
+        }
+      ],
+      "authorship": {
+        "kind": "claimed"
+      }
     }
   ],
   "baseline": [
