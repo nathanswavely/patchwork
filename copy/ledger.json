@@ -473,9 +473,9 @@
       "text": "This page is for people who run a patch, or are about to. It explains how a\npatch decides who runs it and how it makes decisions. It assumes no\ntechnical background. If you are deciding whether to run a whole quilt,\nstart with [START-A-QUILT.md](START-A-QUILT.md).",
       "words": 45,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -491,9 +491,9 @@
       "text": "Most of this is optional. A band can ignore nearly all of it. A board or a\ncoalition will use most of it.",
       "words": 23,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -509,9 +509,9 @@
       "text": "The short version",
       "words": 3,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -527,9 +527,9 @@
       "text": "Every patch answers three questions, and Patchwork runs whatever the patch\nanswers:",
       "words": 12,
       "tier": "helper",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -545,9 +545,9 @@
       "text": "1. **How is someone made an admin?** This is the patch's leadership model:\n   maintainer, meritocratic or elected.\n2. **How is a proposal decided?** This is the decision method: the admin\n   decides, a majority, a supermajority, or consensus.\n3. **Where are those decisions made?** In Patchwork, or somewhere else, such\n   as a meeting, and recorded here afterwards. A patch answers this one\n   twice: once for choosing admins and once for proposals.",
       "words": 70,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -563,9 +563,9 @@
       "text": "You choose a starting point when you create the patch, by picking one of four\ntemplates. Some of what a template sets can be changed later in the patch's\ngovernance rules, and some cannot yet (see \"Changing your rules\").",
       "words": 39,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -581,9 +581,9 @@
       "text": "Roles",
       "words": 1,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -599,9 +599,9 @@
       "text": "A person has one of three relationships with a patch:",
       "words": 10,
       "tier": "helper",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -617,9 +617,9 @@
       "text": "- **Admin.** Runs the patch: edits its profile, manages members, creates\n  events and proposals.\n- **Member.** Takes part. Members can make proposals and vote on them, and on\n  an elected patch they can stand for the council.\n- **Follower.** Follows along. Followers see the patch's events and never\n  vote. On most templates they can comment on proposals, and a patch can turn\n  that off.",
       "words": 64,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -635,9 +635,9 @@
       "text": "Becoming a member is the step that gives someone a vote. Following never\ndoes.",
       "words": 14,
       "tier": "helper",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -653,9 +653,9 @@
       "text": "**Admin is a permission, not a title.** Your chair, treasurer and secretary\ncan all be admins, or none of them can. Patchwork does not know about your\ngroup's titles. On a maintainer patch there can be more than one admin: any\nadmin can make another member an admin from Settings → Roles and requests.",
       "words": 54,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -671,9 +671,9 @@
       "text": "Words you will see",
       "words": 4,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -689,9 +689,9 @@
       "text": "- **Council:** the admins of an elected patch.\n- **Seat:** one place on a council. It belongs to the council, not to the\n  person in it.\n- **Term:** how long a seat is held before it comes up for election. The date\n  it runs out is the seat's term end.\n- **Election:** how a council's seats are filled. It takes nominations first,\n  then votes.\n- **Holdover:** the sitting council staying in place when an election\n  decides nothing.\n- **Charter, or governance document:** a written agreement the patch keeps at\n  Governance → Documents.\n- **The lining:** the shared baseline charter every patch starts with.\n- **Record:** the patch's history of governance decisions, at Governance →\n  Record.",
       "words": 115,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -707,9 +707,9 @@
       "text": "Choosing a template",
       "words": 3,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -725,9 +725,9 @@
       "text": "When you create a patch you pick one of four templates. Each card says who\ndecides and how. Every card also ends with the same line: decisions can be\nmade at a meeting instead, and recorded here. That is true of all four.",
       "words": 43,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -743,9 +743,9 @@
       "text": "| Template | Who decides | Leadership | Tends to suit |\n|---|---|---|---|\n| **Minimal** | You decide. Members can propose, and you approve or decline, or ask them to vote first. | Maintainer | Bands, solo artists, pop-up projects |\n| **Casual** | Members vote for three days, and a proposal passes with more approvals than rejections. The admins run things day to day. | Maintainer | Small collectives, meetups, studios |\n| **Collaborative** | Members vote for a week, and a quarter of them must take part. Admins nominate new admins, and members confirm them. | Meritocratic | Venues, co-ops, makerspaces, community radio |\n| **Formal** | Members elect a council for one-year terms. A proposal needs half the members to vote, and fails if anyone rejects it. | Elected council | Boards, coalitions, arts districts, mutual aid networks |",
       "words": 142,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -761,9 +761,9 @@
       "text": "Pick by who decides, not by how big you are. A small board that elects its\nofficers wants Formal. A large venue where two people make the calls may\nwant Minimal.",
       "words": 31,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -779,9 +779,9 @@
       "text": "Each template also gives the patch some starting documents. Every patch gets\nthe lining. Casual adds an operating agreement. Collaborative adds an\noperating agreement, a financial transparency policy and a conflict\nresolution process. Formal adds a charter, bylaws, financial transparency,\nconflict resolution and a succession plan. These are drafts for you to\namend. They describe what Patchwork does, so if you change your rules, check\nthat the documents still agree.",
       "words": 70,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -797,9 +797,9 @@
       "text": "The template is only where you start. After creation the patch is described\nby its rules, not by the card it was made from.",
       "words": 24,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -815,9 +815,9 @@
       "text": "How someone becomes an admin",
       "words": 5,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -867,9 +867,9 @@
       "text": "The patch is run by its admins, with no seats and no terms. Any admin can\nmake another member an admin.",
       "words": 21,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -885,9 +885,9 @@
       "text": "An admin can **name a successor**, any member of the patch, at the\nGovernance tab. If every admin goes quiet for long enough (see \"When admins\ngo quiet\"), the successor becomes the admin. This only happens on a patch\nthat has an inactivity period, and Minimal has none.",
       "words": 48,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -903,9 +903,9 @@
       "text": "Naming a successor is also what lets you leave a patch you run alone.\nPatchwork does not let a patch's only admin leave without someone to hand it\nto.",
       "words": 29,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -954,9 +954,9 @@
       "text": "Admins earn the role. There are no seats and no terms.",
       "words": 11,
       "tier": "helper",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -972,9 +972,9 @@
       "text": "When the patch could use another admin, an existing admin **nominates** a\nmember. The members vote on the nomination like any other proposal. If they\napprove it, the person becomes an admin straight away. Nobody has to apply\nit afterwards.",
       "words": 40,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -990,9 +990,9 @@
       "text": "Only an admin can nominate someone, and the role menu will not make someone\nan admin directly. An admin can withdraw a nomination they made while it is\nstill open.",
       "words": 30,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1033,9 +1033,9 @@
       "text": "Members elect a council. This is the only model with seats and terms.",
       "words": 13,
       "tier": "helper",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1051,9 +1051,9 @@
       "text": "**Seats.** The council's size is however many seats it has. An admin can add\nan empty seat or remove an empty one. A seat with someone in it cannot be\nremoved, so changing the council's size never unseats anyone. Adding or\nremoving a seat goes on the Record and does not send anyone a notification.\nAdding a seat makes nobody an admin: it is filled the same way as any empty\nseat, described below.",
       "words": 74,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1069,9 +1069,9 @@
       "text": "**Terms.** Each seat has a term end, and those dates are the patch's\nelection calendar. Patchwork opens an election early enough that it\nfinishes when the term ends. On Formal that is four weeks ahead: two weeks\nof nominations, then two weeks of voting.",
       "words": 44,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1087,9 +1087,9 @@
       "text": "**Standing.** During the nomination weeks any member can stand, and any\nmember can put another member forward. Sitting admins can stand again.",
       "words": 22,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1105,9 +1105,9 @@
       "text": "**Voting.** Members vote by approval: you mark every candidate you would\naccept. When voting closes, the candidates with the most approvals take the\nseats that were up. A candidate needs at least one approval to be seated. If\ntwo candidates tie for the last seat, the one who stood first takes it.",
       "words": 52,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1123,9 +1123,9 @@
       "text": "**Who can vote.** On Formal, a member has to have been in the patch for 30\ndays before they can vote. A patch younger than 30 days has no such wait.",
       "words": 31,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1141,9 +1141,9 @@
       "text": "**Holdover.** If an election decides nothing, the sitting council stays.\nThat covers nobody standing, too few people voting to reach quorum, and no\ncandidate getting a single approval. A term ending never removes anyone by\nitself: the holder keeps serving until an election that does decide\nsomething.",
       "words": 47,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1159,9 +1159,9 @@
       "text": "An election that seats some people but fewer than the seats it was for is a\ndecision. The people it seated take seats, the sitting admins it did not\nreturn step down, and the seats nobody won are left empty.",
       "words": 40,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1177,9 +1177,9 @@
       "text": "**Empty seats between elections** can be filled without waiting for the next\none. An admin can nominate a member, or a member can stand for the seat\nthemselves with \"Stand for this seat\" on the Governance tab. Either way it\nbecomes a proposal the members vote on. Whoever is approved takes the seat\nfor the rest of its term, not a fresh term, so a council cannot reset its\nown clock by appointing allies. Between elections you can only stand for\nyourself: putting someone else forward is a nomination, and that is an\nadmin's act. This route needs at least one admin on the council; when there\nare none, the next election fills the seats.",
       "words": 115,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1195,9 +1195,9 @@
       "text": "**The role menu.** On an elected patch, Settings → Roles and requests does\nnot make anyone an admin. It tells you how many seats are empty and points\nyou to the Governance tab, or tells you when the next election is.",
       "words": 41,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1213,9 +1213,9 @@
       "text": "Recusal",
       "words": 1,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1231,9 +1231,9 @@
       "text": "A patch can turn on a rule that keeps the person a nomination is about from\nvoting on it. None of the templates turn it on.",
       "words": 26,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1249,9 +1249,9 @@
       "text": "When admins go quiet",
       "words": 4,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1267,9 +1267,9 @@
       "text": "Most templates set an **inactivity period**: 90 days on Casual, 60 on\nCollaborative, 30 on Formal. Minimal has none.",
       "words": 19,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1285,9 +1285,9 @@
       "text": "For this, taking part means voting on a proposal, making a proposal, or\ncommenting on one. Posting events does not count, and neither does voting\nin an election.",
       "words": 28,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1303,9 +1303,9 @@
       "text": "- After one inactivity period without taking part, the admin is warned.\n- After two, they stop being an admin. On an elected patch, their seat\n  becomes empty.",
       "words": 28,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1321,9 +1321,9 @@
       "text": "This is the only thing in Patchwork that takes the admin role away from\nsomeone without a person deciding it. It applies whatever the leadership\nmodel, including on a patch that chooses its admins elsewhere.",
       "words": 35,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1339,9 +1339,9 @@
       "text": "If that leaves the patch with **no admins at all**, what happens next\nfollows the leadership model:",
       "words": 17,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1357,9 +1357,9 @@
       "text": "- **Leadership chosen elsewhere:** Patchwork appoints nobody. The members\n  and an instance admin are told, and the patch records its next leadership\n  decision when the community makes it.\n- **Maintainer:** the named successor takes over, if there is one and they\n  are still a member. If not, the patch's succession policy applies. On the\n  templates that is to ask the patch's longest-standing members to step in\n  (see below).\n- **Meritocratic:** nobody can nominate, because nominating needs an admin.\n  An instance admin is told.\n- **Elected:** the next election is brought forward and opens shortly, and\n  any member may stand. If the seats have no term end, no election can be\n  scheduled, and an instance admin is told instead.",
       "words": 118,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1375,9 +1375,9 @@
       "text": "Except when a successor takes over, the members are told the patch has no\nadmins.",
       "words": 15,
       "tier": "helper",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1393,9 +1393,9 @@
       "text": "The interim-admin offer",
       "words": 3,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1411,9 +1411,9 @@
       "text": "When the succession policy asks members to step in, Patchwork asks first.\nIt never makes someone an admin without their say. Up to three of the\npatch's longest-standing members who have been around recently get a\nnotification asking whether they will step in as an interim admin. Here\n\"around\" is wider than above: posting an event or a notice counts too.",
       "words": 61,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1429,9 +1429,9 @@
       "text": "They answer on the patch's Governance tab, where only they can see the\nquestion.",
       "words": 14,
       "tier": "helper",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1447,9 +1447,9 @@
       "text": "- Accepting makes them an admin.\n- Declining passes the question to the next person in line, as long as the\n  patch still has no admins.\n- An offer has no deadline. No clock makes anyone an admin, and no clock\n  takes the question away.\n- If everyone who has been around says no, an instance admin is told.",
       "words": 59,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1465,9 +1465,9 @@
       "text": "The other members are told that the longest-standing members have been\nasked, but not who.",
       "words": 15,
       "tier": "helper",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1539,9 +1539,9 @@
       "text": "A proposal is how a patch makes a change. Any member or admin can make one.\nFollowers cannot.",
       "words": 18,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1557,9 +1557,9 @@
       "text": "The decision method says how a proposal is decided:",
       "words": 9,
       "tier": "helper",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1575,9 +1575,9 @@
       "text": "- **Majority:** more approvals than rejections.\n- **Supermajority:** more than two-thirds of the approve and reject votes\n  are approvals. Seven for and three against passes. Two for and one against\n  does not.\n- **Consensus:** at least one approval and no rejections. A single\n  rejection stops it. Rejecting is allowed; it is how you block.\n- **Admin decides:** see \"When the admin decides\" below.",
       "words": 63,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1593,9 +1593,9 @@
       "text": "**Quorum** is how many of the people who can vote must take part.\nAbstaining counts as taking part. Collaborative asks for a quarter of\nmembers, Formal for half, and Minimal and Casual ask for none.",
       "words": 35,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1611,9 +1611,9 @@
       "text": "**Lapsed is not rejected.** If voting closes without quorum, the proposal\nlapses. It was not turned down; not enough people took part to decide it\neither way.",
       "words": 27,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1629,9 +1629,9 @@
       "text": "**The rules are fixed when the proposal is made.** Its decision method,\nquorum, threshold and who may vote are the ones in force when it was\ncreated, even if the patch changes its rules while it is open.",
       "words": 38,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1647,9 +1647,9 @@
       "text": "**After a vote passes:**",
       "words": 4,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1665,9 +1665,9 @@
       "text": "- A nomination takes effect at once.\n- An amendment to a document applies itself, unless the patch has turned\n  automatic application off. Formal has it off, so there an admin applies\n  it.\n- Any other proposal is marked approved. An admin then marks it in effect\n  once it has been done, because Patchwork cannot carry out most decisions\n  itself.",
       "words": 60,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1683,9 +1683,9 @@
       "text": "When the admin decides",
       "words": 4,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1701,9 +1701,9 @@
       "text": "On a patch whose decision method is \"admin decides\" (Minimal's), the admin\ndecides every proposal.",
       "words": 15,
       "tier": "helper",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1719,9 +1719,9 @@
       "text": "- **A member's proposal** goes to the admin. There is no vote and no\n  deadline. The admin approves or declines it.\n- **An admin's own proposal** is a direct change, unless they choose to ask\n  the members first.\n- **Asking the members first** opens a vote, but the vote is advisory. When\n  it closes, the proposal goes back to the admin with the result, and the\n  admin still decides. The admin can approve or decline at any point, even\n  while the vote is running.",
       "words": 84,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1737,9 +1737,9 @@
       "text": "Documents and amendments",
       "words": 3,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1755,9 +1755,9 @@
       "text": "A patch's governance documents live at Governance → Documents. A new\ndocument is visible to members only unless the admin creating it chooses\notherwise. Making a document public is an admin's decision.",
       "words": 32,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1773,9 +1773,9 @@
       "text": "To change a document, a member proposes an **amendment**: the new text,\nwhich the patch then decides like any proposal. A patch can set a different\nthreshold for amendments than for other proposals. Collaborative uses a\nsupermajority and Formal uses consensus. On an \"admin decides\" patch, an\nadmin's amendment takes effect directly.",
       "words": 52,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1791,9 +1791,9 @@
       "text": "Changing your rules",
       "words": 3,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1809,9 +1809,9 @@
       "text": "A patch's governance rules are at Governance → Rules. You can read them\nthere without proposing anything. Changing them is a proposal like any\nother, and the editor shows exactly what would change. On an \"admin\ndecides\" patch, and on a patch that decides its proposals elsewhere, an\nadmin's rules change takes effect directly.",
       "words": 54,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1827,9 +1827,9 @@
       "text": "What the rules editor can change: the decision method, where admins are\nchosen, where proposals are decided, the \"where we decide\" note, the\nsuccession policy, who can join, what followers can see and do, and, on a\npatch that votes, the quorum, the voting window, the amendment threshold,\nwhether amendments apply themselves, how long a member waits before voting,\nand recusal.",
       "words": 61,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1845,9 +1845,9 @@
       "text": "What it cannot change yet: the leadership model, the length of a term, the\ninactivity period, and the length of an election's nomination window. These\nstay as the template set them.",
       "words": 31,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1895,9 +1895,9 @@
       "text": "Every patch starts with the **lining**, a shared community-standards\nbaseline that ships with Patchwork and includes an anti-discrimination\nfloor. It is always public and its title cannot be changed.",
       "words": 29,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1913,9 +1913,9 @@
       "text": "A patch can amend its lining the same way it amends anything else. A patch\nwhose lining no longer matches any version Patchwork has shipped wears a\npublic \"Amended lining\" badge. People can choose to hide patches with\namended linings from what they browse, and a quilt can choose to as well.",
       "words": 52,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1931,9 +1931,9 @@
       "text": "When Patchwork ships a new version of the lining, patches still on an older,\nunamended version are updated, and their members are told.",
       "words": 23,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1949,9 +1949,9 @@
       "text": "The lining can never be recorded as adopted elsewhere. On a patch that\ndecides its proposals elsewhere, that means the lining cannot be changed at\nall.",
       "words": 26,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1967,9 +1967,9 @@
       "text": "Deciding elsewhere",
       "words": 2,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -1985,9 +1985,9 @@
       "text": "Many groups already decide things at a meeting: a board meeting, a general\nassembly, a monthly circle. Patchwork does not ask you to move that online.\nEvery patch has two settings in its governance rules:",
       "words": 35,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2003,9 +2003,9 @@
       "text": "- **Where admins are chosen:** in Patchwork, or somewhere else, recorded\n  here.\n- **Where proposals are decided:** in Patchwork, or somewhere else,\n  recorded here.",
       "words": 24,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2021,9 +2021,9 @@
       "text": "They are separate. A patch can elect its board at an annual meeting and\nstill vote on small things here, or the other way round.",
       "words": 25,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2039,9 +2039,9 @@
       "text": "When something is decided elsewhere, Patchwork holds no vote and appoints\nnobody. Instead an admin **records** what was decided, as an attestation:\nthe community's statement that it decided this somewhere Patchwork was not.\nTwo kinds of decision can be recorded: who holds admin, and the adopted text\nof a document. Anything else the meeting decided belongs in its minutes.",
       "words": 59,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2057,9 +2057,9 @@
       "text": "The inactivity period still applies to admins on such a patch.",
       "words": 11,
       "tier": "helper",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2075,9 +2075,9 @@
       "text": "Where we decide",
       "words": 3,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2093,9 +2093,9 @@
       "text": "A patch that decides anything elsewhere can say where, in a short note in\nits governance rules directly under the two venue settings: up to 200\ncharacters, such as \"First Tuesday of the month, 7pm, the church hall.\" It\nappears on the Governance tab, so visitors see where decisions are made\ninstead of only \"outside Patchwork\". The note is only offered while at least\none of the two settings is elsewhere.",
       "words": 71,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2111,9 +2111,9 @@
       "text": "Recording a leadership decision",
       "words": 4,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2129,9 +2129,9 @@
       "text": "When admins are chosen elsewhere, an admin records each leadership decision\non the Governance tab, with \"Record a leadership decision\". It asks when it\nwas decided, what happened, and who it put in place. On an elected patch it\nalso asks when this council's term ends.",
       "words": 46,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2147,9 +2147,9 @@
       "text": "- **Who it put in place.** Pick members of the patch, or type the name of\n  someone who is not a member here yet. Everyone listed is recorded as an\n  admin. Once a typed person joins as a member, an admin can link their\n  name to them on the record in force.\n- **Who stood down.** Optional. Name anyone the meeting took off. This is\n  for the record: a sitting admin who is not listed under \"who it put in\n  place\" steps down whether or not they are named here. The same member\n  cannot be on both sides of one decision.",
       "words": 101,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2165,9 +2165,9 @@
       "text": "Recording a decision makes it so. Every listed person who is a member here\nbecomes an admin, and every current admin who is not listed stops being one.\nIf nobody listed is a member here yet, nobody's role changes until someone\nis linked.",
       "words": 43,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2183,9 +2183,9 @@
       "text": "**Correcting a record.** \"Correct the last one\" writes a new record that\nreplaces the most recent one. The old one stays on the Record.",
       "words": 24,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2201,9 +2201,9 @@
       "text": "**Entered in error.** If a record should never have been made, such as a\nduplicate, an admin can mark it entered in error. Nothing is deleted. The\nrecord stays on the Record, crossed out, with who marked it, and from then\non it counts for nothing. If it was the record in force, the one before it\nis in force again, and admin roles go back to what that one says. If there\nis no record before it, nobody's role changes. Only leadership records can\nbe marked this way, and only while the patch chooses its admins elsewhere.",
       "words": 98,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2219,9 +2219,9 @@
       "text": "Recording an adopted text",
       "words": 4,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2237,9 +2237,9 @@
       "text": "When proposals are decided elsewhere, a proposal can still be made and\ndiscussed here, but a member's proposal has no vote and no deadline. When\nthe meeting adopts a text, an admin uses \"Record an adopted text\" on the\ndocument, and the adopted text replaces the document's whole text. A\nmistaken one is fixed by recording the right text.",
       "words": 59,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2255,9 +2255,9 @@
       "text": "The governance rules and the lining are never recorded this way.",
       "words": 11,
       "tier": "helper",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2273,9 +2273,9 @@
       "text": "Minutes",
       "words": 1,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2291,9 +2291,9 @@
       "text": "On a patch that decides anything elsewhere, any member can add a governance\ndocument, such as the minutes of a meeting. A member's document starts\nvisible to members only, and an admin decides whether to publish it.",
       "words": 37,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2309,9 +2309,9 @@
       "text": "So a meeting usually produces up to three things here: the minutes, as a\ndocument any member can add; a leadership decision, if the meeting changed\nwho runs the patch; and an adopted text, if it changed a charter.",
       "words": 39,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2327,9 +2327,9 @@
       "text": "Passkeys and confirming",
       "words": 3,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2345,9 +2345,9 @@
       "text": "Some acts ask you to confirm it is really you, even though you are signed\nin: naming a successor, recording a leadership decision, marking one\nentered in error, and recording an adopted text. These change who holds\npower or what a charter says. You confirm with your passkey, or with one of\nyour recovery codes from Settings → Security.",
       "words": 59,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2363,9 +2363,9 @@
       "text": "Questions people ask",
       "words": 3,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2381,9 +2381,9 @@
       "text": "**Can I change my template later?** There is no switch from one template to\nanother. Change your governance rules instead, within what the rules editor\noffers (see \"Changing your rules\").",
       "words": 30,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2399,9 +2399,9 @@
       "text": "**Our term ended and no election happened. Are we still the council?** Yes.\nA term ending never removes anyone. If the election found no candidates, or\ntoo few people voted, the sitting council stays.",
       "words": 34,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2417,9 +2417,9 @@
       "text": "**Somebody on our council stopped showing up. Can we remove them?** The\ninactivity period does this for an admin who stops taking part. Another\nadmin can also change their role in Settings → Roles and requests, as long\nas they are not the last admin. There is no member vote for removing an\nadmin.",
       "words": 54,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2435,9 +2435,9 @@
       "text": "**Why can't I just make someone an admin on our elected patch?** Because the\npatch elects its council. Fill an empty seat by nomination, or wait for the\nnext election.",
       "words": 30,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2453,9 +2453,9 @@
       "text": "**Do followers get a vote?** No. Following costs nothing and asks nobody, so\nit gives no vote. Ask the person to become a member.",
       "words": 24,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2471,9 +2471,9 @@
       "text": "**Our meeting decided something. Do we vote again here?** Not if the patch\nis set to decide that kind of thing elsewhere. Record the leadership\ndecision or the adopted text, and put anything else in the minutes. Setting\na patch to decide elsewhere is itself a rules change, so on a patch that\nvotes, that change is put to a vote first.",
       "words": 62,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
@@ -2489,9 +2489,9 @@
       "text": "**I recorded a leadership decision by mistake. Can I take it back?** Mark it\nentered in error. It stays visible, crossed out, and stops counting.",
       "words": 25,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Drafted by a model for the governance guide (F-003). Nathan is rewriting it in his own voice; left as drafted until then.",
+      "note": "Drafted by a model for the governance guide (F-003). Reopened 2026-11-13 for Nathan to rewrite in a SlopChop draft.",
       "occurrences": [
         {
           "file": "docs/GOVERNANCE.md",
