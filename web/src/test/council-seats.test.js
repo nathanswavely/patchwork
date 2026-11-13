@@ -77,7 +77,10 @@ describe('GovernanceOverview — the council is countable', () => {
   // and once more as what *he* can do today. council-calendar.test.js holds
   // the wording; this only holds that the hub is still where he finds it.
   it('tells a member looking for a way onto the council where it is', () => {
-    expect(src).toMatch(/Filled by nomination: an admin puts a member forward and the members ratify it\./);
+    expect(src).toMatch(/Filled by nomination: a member stands, or an admin puts one forward, and the members ratify it\./);
+    // And the door itself, on the chair (F-042).
+    expect(src).toMatch(/governance\/new\?type=stand/);
+    expect(src).toMatch(/Stand for this seat/);
     expect(src).toMatch(/There is nothing to do until \$\{formatDay\(nextContestOpens\)\}, when the next election opens and any member may stand\./);
   });
 
@@ -102,7 +105,7 @@ describe('ProposalForm — a membership proposal names somebody', () => {
   });
 
   it('steers away from the type when an elected council has no vacancy', () => {
-    expect(src).toMatch(/\{#if isElected && !canNominate\}/);
+    expect(src).toMatch(/\{#if isElected && !canNominate && !canStand\}/);
     expect(src).toMatch(/Every seat on the council is held, so there is nobody to nominate\./);
   });
 

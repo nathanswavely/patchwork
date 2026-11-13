@@ -393,6 +393,12 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"this patch decides at meetings, and the governance rules are not something a meeting adopts. Ask an admin to apply the change directly (docs/adr/053)."}`, http.StatusConflict)
 			return
 		}
+		if isRulesDoc {
+			if msg := venueNoteProblem(req.ProposedBody); msg != "" {
+				writeJSONError(w, http.StatusBadRequest, msg)
+				return
+			}
+		}
 
 		id := auth.NewUUIDv7()
 		now := time.Now().UTC()
@@ -977,6 +983,24 @@ func votesNeededForQuorum(gc model.GovernanceConfig, eligible int) int {
 	return needed
 }
 
+// thresholdMet says whether the votes for and against carry a proposal under
+// a threshold. Abstentions count toward quorum and never here.
+//
+// "At least two thirds" has to hold at exactly two thirds, which is what the
+// templates and the vote panel promise. The check this replaced compared a
+// float against 0.667, and 2/3 is 0.6666..., so 2-1, 4-2 and 6-3 all failed.
+// Integers have no rounding to get wrong.
+func thresholdMet(threshold string, approve, reject int) bool {
+	switch threshold {
+	case "supermajority":
+		return approve > 0 && 3*approve >= 2*(approve+reject)
+	case "consensus":
+		return reject == 0 && approve > 0
+	default: // "majority"
+		return approve > reject
+	}
+}
+
 // resolveProposal tallies an open proposal and finalizes it: status update,
 // amendment auto-apply, audit event, AP broadcast. Returns the new status
 // ("approved" or "rejected"), or "" when the proposal stayed open (not open
@@ -1071,15 +1095,7 @@ func resolveProposal(db *database.DB, proposalID string) string {
 		threshold = gc.AmendmentThreshold
 	}
 
-	passed := false
-	switch threshold {
-	case "supermajority":
-		passed = approveCount > 0 && float64(approveCount)/float64(approveCount+rejectCount) >= 0.667
-	case "consensus":
-		passed = rejectCount == 0 && approveCount > 0
-	default: // "majority"
-		passed = approveCount > rejectCount
-	}
+	passed := thresholdMet(threshold, approveCount, rejectCount)
 
 	newStatus := "rejected"
 	if passed {

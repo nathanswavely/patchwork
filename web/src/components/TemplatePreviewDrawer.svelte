@@ -30,22 +30,39 @@
     expandedDoc = expandedDoc === i ? -1 : i;
   }
 
-  // Human-readable rule explanations.
+  // Human-readable rule explanations, in the order a founder asks them: who
+  // runs the patch, then who decides, and only then the arithmetic of a vote.
+  // Where the admin decides, there is no vote to do arithmetic on: Minimal's
+  // preview led with "Quorum 0%, any number of votes counts" under "Admin
+  // decides", and two founders stopped on it (F-032). Quorum and the voting
+  // window are a voting patch's rows, and an advisory vote the maintainer
+  // asks for is described by the decision row itself.
   function explainRules(rules) {
     if (!rules) return [];
     const explanations = [];
 
+    const models = {
+      maintainer: 'The founder runs this patch and can make other members admins.',
+      meritocratic: 'Admins earn their role through sustained contribution. An admin nominates a member, and the members confirm it by vote.',
+      elected: 'The members elect admins for fixed terms. Power rotates through regular elections.',
+    };
+    if (rules.leadership_model) {
+      explanations.push({ label: 'Leadership', value: rules.leadership_model, explain: models[rules.leadership_model] || '' });
+    }
+
     const methods = {
       admin: 'The maintainer makes all decisions, and may ask the members first.',
-      majority: 'Decisions pass when more than half of voters agree.',
-      supermajority: 'Decisions require at least 2 out of 3 voters to agree.',
+      majority: 'A proposal passes with more approvals than rejections.',
+      supermajority: 'A proposal passes when at least two thirds of the votes for or against are for.',
       consensus: 'One reject blocks a proposal. A proposal nobody rejects carries.',
     };
     if (rules.decision_method) {
       explanations.push({ label: 'Decision method', value: rules.decision_method, explain: methods[rules.decision_method] || '' });
     }
 
-    if (rules.quorum_percent !== undefined) {
+    const votes = rules.decision_method && rules.decision_method !== 'admin';
+
+    if (votes && rules.quorum_percent !== undefined) {
       const q = rules.quorum_percent;
       explanations.push({
         label: 'Quorum',
@@ -54,7 +71,7 @@
       });
     }
 
-    if (rules.default_vote_duration_hours) {
+    if (votes && rules.default_vote_duration_hours) {
       const h = rules.default_vote_duration_hours;
       const days = Math.round(h / 24);
       explanations.push({
@@ -62,15 +79,6 @@
         value: days <= 1 ? `${h} hours` : `${days} days`,
         explain: `Proposals stay open for ${days <= 1 ? h + ' hours' : days + ' days'} before closing.`,
       });
-    }
-
-    const models = {
-      maintainer: 'One person (the founder) maintains this patch and makes day-to-day decisions.',
-      meritocratic: 'Admins earn their role through sustained contribution. Existing admins nominate new ones.',
-      elected: 'The community elects admins for fixed terms. Power rotates through regular elections.',
-    };
-    if (rules.leadership_model) {
-      explanations.push({ label: 'Leadership', value: rules.leadership_model, explain: models[rules.leadership_model] || '' });
     }
 
     if (rules.admin_term_months > 0) {
@@ -118,6 +126,9 @@
         <!-- Description -->
         <p class="template-desc">{data.template.description}</p>
         <p class="template-meta lt-muted">{data.template.leadership} &middot; {data.template.best_for}</p>
+        {#if data.template.elsewhere}
+          <p class="template-meta lt-muted">{data.template.elsewhere} Where admins are chosen and where proposals are decided are both in the patch's governance rules.</p>
+        {/if}
 
         <!-- Rules with explanations -->
         {#if ruleExplanations.length > 0}
@@ -142,13 +153,16 @@
         <!-- Documents -->
         {#if data.documents?.length > 0}
           <section class="section">
-            <h3>Included documents ({data.documents.length})</h3>
+            <h3>Documents this patch starts with ({data.documents.length})</h3>
+            {#if data.documents.length > 1}
+              <p class="docs-note lt-muted">The community standards are public. The others start visible to members only, until an admin publishes them.</p>
+            {/if}
             <div class="doc-list">
               {#each data.documents as doc, i}
                 <div class="doc-item">
                   <button class="doc-toggle" onclick={() => toggleDoc(i)}>
                     <span class="doc-chevron" class:open={expandedDoc === i}>&rsaquo;</span>
-                    <span class="doc-name">{docLabel(doc.filename)}</span>
+                    <span class="doc-name">{doc.title || docLabel(doc.filename)}</span>
                   </button>
                   {#if expandedDoc === i}
                     <div class="doc-content">
@@ -188,6 +202,11 @@
 
   .section {
     margin-bottom: 1.5rem;
+  }
+
+  .docs-note {
+    font-size: 0.8rem;
+    margin: -0.4rem 0 0.75rem;
   }
 
   .section h3 {

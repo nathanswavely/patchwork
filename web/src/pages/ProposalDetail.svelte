@@ -319,6 +319,19 @@
     <div class="tab-content">
 
       {#if activeTab === 'overview'}
+        <!-- Who a nomination is about, and what passing it does (F-042).
+             The page named nobody: a member standing for a seat, or put
+             forward by an admin, was a title and an Approve button. -->
+        {#if proposal.proposal_type === 'membership' && proposal.target_user_id && proposal.target_user_name}
+          <p class="nominee-line">
+            {#if proposal.target_user_id === proposal.author_id}
+              {proposal.target_user_name} is standing for admin.
+            {:else}
+              {proposal.author_name || 'An admin'} nominated {proposal.target_user_name} for admin.
+            {/if}
+            If this passes, they become an admin.
+          </p>
+        {/if}
         <!-- Body / rationale -->
         {#if proposal.body}
           <section class="proposal-section">
@@ -555,6 +568,11 @@
 
   .proposal-section {
     padding: 0.75rem 0;
+  }
+
+  .nominee-line {
+    font-size: 0.92rem;
+    margin: 0.75rem 0 0;
   }
 
   .proposal-section + .proposal-section {

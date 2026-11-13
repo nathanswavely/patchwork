@@ -128,15 +128,21 @@ func TestDefaultLiningOnNodeCreation(t *testing.T) {
 	json.NewDecoder(w.Body).Decode(&node)
 	nodeID := node["id"].(string)
 
-	// Check that a governance doc was auto-created.
+	// Check that the lining was auto-created. It is one row of several: an
+	// unnamed template is casual, whose operating agreement is a row too
+	// (docs/adr/2026-11-11-a-template-gives-the-patch-what-its-preview-lists.md).
 	var count int
-	db.QueryRow("SELECT COUNT(*) FROM governance_docs WHERE node_id = ?", nodeID).Scan(&count)
+	if err := db.QueryRow("SELECT COUNT(*) FROM governance_docs WHERE node_id = ? AND kind = 'lining'", nodeID).Scan(&count); err != nil {
+		t.Fatal(err)
+	}
 	if count != 1 {
-		t.Errorf("expected 1 governance doc, got %d", count)
+		t.Errorf("expected 1 lining, got %d", count)
 	}
 
 	var title, docBody string
-	db.QueryRow("SELECT title, body FROM governance_docs WHERE node_id = ?", nodeID).Scan(&title, &docBody)
+	if err := db.QueryRow("SELECT title, body FROM governance_docs WHERE node_id = ? AND kind = 'lining'", nodeID).Scan(&title, &docBody); err != nil {
+		t.Fatal(err)
+	}
 	if title != handler.DefaultLiningTitle {
 		t.Errorf("expected title=%q, got %q", handler.DefaultLiningTitle, title)
 	}

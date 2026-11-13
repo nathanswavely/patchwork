@@ -112,6 +112,14 @@ func CreateRevision(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"change_note is required"}`, http.StatusBadRequest)
 			return
 		}
+		// The same check a rules proposal meets when it is created: a
+		// revision is the other way its text is written.
+		if req.ProposedBody != nil && (targetDoc == rulesFilename || targetDoc == "Governance Rules") {
+			if msg := venueNoteProblem(*req.ProposedBody); msg != "" {
+				writeJSONError(w, http.StatusBadRequest, msg)
+				return
+			}
+		}
 
 		// Get current max revision number.
 		var maxRevision int

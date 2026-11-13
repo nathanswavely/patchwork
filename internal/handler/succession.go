@@ -100,11 +100,22 @@ func nullIfEmpty(s string) interface{} {
 // *members* (so the nominee is one, and a follower never is), and the
 // community *ratifies* (so this is a real vote and not a promotion wearing a
 // proposal's clothes).
+//
+// One exception, on the elected model only: a member may put themselves
+// forward for a vacant chair (docs/adr/2026-11-11-a-member-can-stand-for-a-vacant-seat.md).
+// An elected council's seats are the electorate's to fill, and a contest
+// already lets any member stand; between contests the only door was an
+// admin remembering you, which a member walked into twice (F-042). The
+// ratification is the same vote, so standing grants nothing by itself.
 func validateNomination(db *database.DB, nodeID, authorID, nomineeID string) string {
 	if leadershipDecidedElsewhere(db, nodeID) {
 		return "this patch chooses its admins elsewhere: record that decision instead of nominating"
 	}
-	switch leadershipModel(db, nodeID) {
+	lm := leadershipModel(db, nodeID)
+	if lm == "elected" && authorID == nomineeID {
+		return validateStanding(db, nodeID, authorID)
+	}
+	switch lm {
 	case "meritocratic":
 		// The mechanic this was written for. Conditions below.
 	case "elected":
@@ -139,6 +150,44 @@ func validateNomination(db *database.DB, nodeID, authorID, nomineeID string) str
 	}
 	if role != "member" {
 		return "a nominee must be an active member of this patch"
+	}
+	return ""
+}
+
+// validateStanding checks a member standing for a vacant chair on an elected
+// patch: their own name, a chair to stand for, and a membership to stand
+// from. Returns an error message, empty when the candidacy is good.
+//
+// "A vacant chair" means the same chair a nomination fills, the route
+// seatsOf calls `nomination`: vacant, not in a running contest, and on a
+// council that still has an admin. A council with none is filled by its
+// contest (docs/adr/108), where standing is already a member act, and a
+// standing proposal racing the contest for the same chair would have one of
+// them seat somebody the other then unseats.
+func validateStanding(db *database.DB, nodeID, userID string) string {
+	var role string
+	if err := db.QueryRow(
+		"SELECT role FROM memberships WHERE user_id = ? AND node_id = ? AND status = 'active'",
+		userID, nodeID,
+	).Scan(&role); err != nil || (role != "member" && role != "admin") {
+		return "only an active member of this patch can stand for a seat on its council"
+	}
+	if role == "admin" {
+		return "you already hold admin on this patch"
+	}
+	if vacantSeat(db, nodeID) == "" {
+		// A chair in the running contest is not vacant in this sense
+		// (docs/adr/103), and that contest is the way onto it.
+		if openContestID(db, nodeID) != "" {
+			return "the vacant seats are in the election running now: stand in it instead"
+		}
+		return electedPromotionDenial(db, nodeID)
+	}
+	var admins int
+	_ = db.QueryRow(`SELECT COUNT(*) FROM memberships
+	                 WHERE node_id = ? AND role = 'admin' AND status = 'active'`, nodeID).Scan(&admins)
+	if admins == 0 {
+		return "this council has nobody on it, so its vacant seats are filled at the next election, where any member may stand"
 	}
 	return ""
 }
