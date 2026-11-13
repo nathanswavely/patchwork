@@ -4301,14 +4301,14 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1725,
+          "line": 1735,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1941,
+          "line": 1951,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -5340,7 +5340,7 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1989,
+          "line": 1999,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -5912,14 +5912,14 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1867,
+          "line": 1877,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1921,
+          "line": 1931,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -7091,13 +7091,6 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1301,
-          "kind": "go-error-body",
-          "raw": "proposal not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/proposals.go",
           "line": 1311,
           "kind": "go-error-body",
           "raw": "proposal not found",
@@ -7105,28 +7098,35 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1652,
+          "line": 1321,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1836,
+          "line": 1662,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1913,
+          "line": 1846,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 2037,
+          "line": 1923,
+          "kind": "go-error-body",
+          "raw": "proposal not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/proposals.go",
+          "line": 2047,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
@@ -16018,7 +16018,7 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 2067,
+          "line": 2077,
           "kind": "go-error-body",
           "raw": "an election is closed by the electorate, not by an admin (docs/adr/051)",
           "quote": null
@@ -16252,7 +16252,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1657,
+          "line": 1667,
           "kind": "go-error-body",
           "raw": "proposal is not open for voting",
           "quote": null
@@ -16270,7 +16270,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1668,
+          "line": 1678,
           "kind": "go-error-body",
           "raw": "this patch decides elsewhere; the decision is recorded here after it is made",
           "quote": null
@@ -16288,7 +16288,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1675,
+          "line": 1685,
           "kind": "go-error-body",
           "raw": "this proposal is waiting on the maintainer; there is no vote open on it",
           "quote": null
@@ -16306,7 +16306,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1683,
+          "line": 1693,
           "kind": "go-error-body",
           "raw": "voting period has ended",
           "quote": null
@@ -16324,7 +16324,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1729,
+          "line": 1739,
           "kind": "go-error-body",
           "raw": "value must be approve, reject, or abstain",
           "quote": null
@@ -16342,7 +16342,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1748,
+          "line": 1758,
           "kind": "go-error-body",
           "raw": "failed to cast vote",
           "quote": null
@@ -16360,7 +16360,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1841,
+          "line": 1851,
           "kind": "go-error-body",
           "raw": "can only withdraw open proposals",
           "quote": null
@@ -16378,7 +16378,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1859,
+          "line": 1869,
           "kind": "go-error-body",
           "raw": "an election cannot be withdrawn: the calendar opens it and the electorate closes it (docs/adr/051)",
           "quote": null
@@ -16396,7 +16396,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1878,
+          "line": 1888,
           "kind": "go-error-body",
           "raw": "failed to withdraw proposal",
           "quote": null
@@ -16414,7 +16414,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1946,
+          "line": 1956,
           "kind": "go-error-body",
           "raw": "state is not settable: proposals open for voting when they are created (docs/adr/048)",
           "quote": null
@@ -16432,7 +16432,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1959,
+          "line": 1969,
           "kind": "go-error-body",
           "raw": "invalid status transition",
           "quote": null
@@ -16450,7 +16450,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 2001,
+          "line": 2011,
           "kind": "go-error-body",
           "raw": "failed to update proposal",
           "quote": null
@@ -16475,7 +16475,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 2046,
+          "line": 2056,
           "kind": "go-error-body",
           "raw": "only this patch's admins can make proposals official",
           "quote": null
@@ -16493,7 +16493,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 2072,
+          "line": 2082,
           "kind": "go-error-body",
           "raw": "this patch decides proposals by vote; wait for the window to close",
           "quote": null
@@ -16511,7 +16511,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 2075,
+          "line": 2085,
           "kind": "go-error-body",
           "raw": "proposal cannot be applied in its current state",
           "quote": null

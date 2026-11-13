@@ -31,3 +31,8 @@ func SetNodeTagsForTest(db *database.DB, nodeID string, tagIDs []string) error {
 func SuggestTagsForNodeForTest(db *database.DB, nodeID, userID string, names []string) (int, string) {
 	return suggestTagsForNode(db, nodeID, userID, names)
 }
+
+// ThresholdMetForTest exposes the pass rule so its edges can be tabled.
+func ThresholdMetForTest(threshold string, approve, reject int) bool {
+	return thresholdMet(threshold, approve, reject)
+}
